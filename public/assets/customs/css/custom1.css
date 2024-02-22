@@ -1,0 +1,51 @@
+.card-body{
+  padding: 0.75rem 0.9rem;
+}
+.card-header{
+  padding: 0.75rem 0.9rem;
+}
+#img-user-profile{
+  padding: 2px;
+  border-radius: 8px;
+  border: 2px;
+  height: 32px;
+  background-color: whitesmoke;
+}
+.mr-8{
+  margin-right: 8px;
+}
+.cst-mr-5{
+  margin-right: 5px;
+}
+.cst-mt-4{
+  margin-top: 4px;
+}
+/* .mid-icon{
+  vertical-align: middle;
+} */
+.custom-profile-user-img{
+  border: 3px solid #adb5bd;
+  margin: 0 auto;
+  padding: 3px;
+  width: 100px;
+}
+.label-form-control{
+  margin-bottom: 4px;
+}
+.form-group-custom{
+  margin-bottom: 10px;
+}
+.tree-submenu{
+  padding-left: 32px;
+}
+.nav-sidebar>.nav-item .nav-icon {
+  margin-left: 0.05rem;
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+  text-align: center;
+  width: 1.4rem;
+  padding-bottom: 2px;
+}
+.nav-sidebar .nav-treeview>.nav-item>.nav-link>.nav-icon {
+  width: 1.1rem;
+}

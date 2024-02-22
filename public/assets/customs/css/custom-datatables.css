@@ -1,0 +1,55 @@
+.table-bordered {
+	border: 1px solid #007EFA !important;
+}
+.card-body .table-bordered {
+	border-collapse: collapse;
+	width: 100%;
+}
+.card-body .table-bordered thead tr th {
+	background-color: #007EFA;
+  color: #f2f2f2;
+	vertical-align: middle;
+	font-size: 12px;
+  padding: 4px 8px;
+	border: 1px solid #007EFA !important;
+}
+.card-body .table-bordered tbody tr td {
+  vertical-align: middle;
+	font-size: 14px;
+  padding: 2px 8px;
+	border-color: #007EFA;
+}
+.table td:last-child {
+  border-right :none;
+  background-color: #ffffff;
+}
+.table td:first-child {
+	text-align: center;
+}
+.pagination .paginate_button .page-link{
+	font-size: 14px;
+	padding:0.2rem 0.5rem !important;
+	border-radius: 0.1em;
+}
+div.dataTables_wrapper div.dataTables_info{
+	font-size: 14px;
+	padding-top: 3px !important;
+}
+label {
+	margin-bottom: 0.125rem;
+}
+.dataTables_filter label .form-control-sm{
+	border-radius: 0.1em;
+}
+.dataTables_length label .custom-select{
+	border-radius: 0.1em !important;
+}
+.content-header{
+	padding: 8px 0.5rem;
+}
+[class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active,
+[class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active:focus,
+[class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active:hover {
+	background-color: #484e53 ;
+	color: #ffbf35;
+}

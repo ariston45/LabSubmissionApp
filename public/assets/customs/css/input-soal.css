@@ -1,0 +1,104 @@
+#gambar-soal{
+  display: none;
+}
+#gambar-soal{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+#gambar-pila{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+#gambar-pilb{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+#gambar-pilc{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+#gambar-pild{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+#gambar-pile{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+#img-upload{
+  min-height: 90px;
+  max-height: 450px;
+  max-width: 400px;
+}
+#img-upload-a{
+  min-height: 90px;
+  max-height: 450px;
+  max-width: 400px;
+}
+#img-upload-b{
+  min-height: 90px;
+  max-height: 450px;
+  max-width: 400px;
+}
+#img-upload-c{
+  min-height: 90px;
+  max-height: 450px;
+  max-width: 400px;
+}
+#img-upload-d{
+  min-height: 90px;
+  max-height: 450px;
+  max-width: 400px;
+}
+#img-upload-e{
+  min-height: 90px;
+  max-height: 450px;
+  max-width: 400px;
+}
+#img-exist{
+  min-height: 90px;
+  max-height: 450px;
+  max-width: 500px;
+}
+#img-exist-a{
+  min-height: 90px;
+  max-height: 450px;
+  max-width: 500px;
+}
+#img-exist-b{
+  min-height: 90px;
+  max-height: 450px;
+  max-width: 500px;
+}
+#img-exist-c{
+  min-height: 90px;
+  max-height: 450px;
+  max-width: 500px;
+}
+#img-exist-d{
+  min-height: 90px;
+  max-height: 450px;
+  max-width: 500px;
+}
+#img-exist-d{
+  min-height: 90px;
+  max-height: 450px;
+  max-width: 500px;
+}
+#img-exist-e{
+  min-height: 90px;
+  max-height: 450px;
+  max-width: 500px;
+}
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.well{
+  margin: 0px;
+  padding: 5px;
+  border-radius: 0px;
+  max-height: 100px;
+  max-height: 460px;
+}

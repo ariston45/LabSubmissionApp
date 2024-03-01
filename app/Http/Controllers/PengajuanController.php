@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Lab_facility;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PengajuanPostRequest;
-use App\Models\Lab_submission;
+use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\User;
 use DataTables;
 use Storage;
+
+use App\Models\Lab_facility;
+use App\Models\Lab_submission;
+use App\Models\User;
 // use PDF;
 
 class PengajuanController extends Controller
@@ -97,55 +99,4 @@ class PengajuanController extends Controller
 		return $pdf->download('laporan-pegawai-pdf.pdf');
 	}
 	/* Tags:... */
-	public function sourceDataPengajuan(Request $request)
-	{
-		$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
-		->get();
-		return DataTables::of($data)
-		->addIndexColumn()
-		->addColumn('empty_str', function ($k) {
-			return '';
-		})
-		->addColumn('opsi', function ($data) {
-			return ' <div style="text-align:center;">
-			<div class="btn-group">
-				<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					Menu <span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu pull-right">
-					<li><a href="'.url('pengajuan/detail-pengajuan').'/'.$data->lsb_id. '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Lihat Detail</a></li>
-					<li role="separator" class="divider" style="margin-top: 0px;margin-bottom: 0px;"></li>
-					<li><a href="' . url('pengajuan/pembatalan-pengajuan') . '/' . $data->lsb_id . '" class="del-siswa" id="'.$data->lsb. '"><i class="ri-close-circle-line" aria-hidden="true" style="margin-right:12px;"></i>Batal</a></li>
-				</ul>
-			</div></div>';
-		})
-		->addColumn('kegiatan', function ($data) {
-			if ($data->lsb_activity == 'tp_penelitian') {
-				$res = 'Penelitian';
-			} elseif ($data->lsb_activity == 'tp_pelatihan') {
-				$res = 'Pelatihan';
-			} elseif ($data->lsb_activity == 'tp_pengabdian_masyarakat') {
-				$res = 'Pengadian Masyarakat';
-			} elseif ($data->lsb_activity == 'tp_magang') {
-				$res = 'Magan';
-			}else{
-				$res = 'Lain-lain.';
-			}
-			return $res;
-		})
-		->addColumn('judul', function ($data) {
-			return $data->lsb_title;
-		})
-		->addColumn('waktu', function ($data) {
-			$dt1 = date('d M Y',strtotime($data->lsb_date_start));
-			$dt2 = date('d M Y', strtotime($data->lsb_date_end));
-			$res = $dt1 .'  s/d  '. $dt2;
-			return $res;
-		})
-		->addColumn('status', function ($data) {
-			return '<div style="text-align:center;"><span class="badge bg-blue">Disetujui Kalab</span><span class="badge bg-blue">Disetujui Kalab</span></div>';
-		})
-		->rawColumns(['opsi', 'kegiatan', 'judul','status','waktu'])
-		->make(true);
-	}
 }

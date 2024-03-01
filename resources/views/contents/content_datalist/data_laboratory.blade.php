@@ -25,10 +25,10 @@ Lab management | Dashboard
 				<thead>
 					<tr>
 						<th style="width: 5%">No</th>
-						<th style="width: 30%">Nama</th>
-						<th style="width: 20%">Kalab</th>
-						<th style="width: 30%">Lokasi</th>
-            <th style="width: 15%">Status</th>
+						<th style="width: 30%">Laboratorium</th>
+						<th style="width: 20%">Kepala Lab</th>
+						<th style="width: 15%">Status</th>
+            <th style="width: 30%">Lokasi</th>
 						<th style="width: 10%;text-align:center;">Opsi</th>
 					</tr>
 				</thead>
@@ -66,21 +66,21 @@ Lab management | Dashboard
 <script src="{{ url('assets/plugins/datatables/extensions/Responsive/js/dataTables.responsive.js') }}"></script>
 <script>
 	$(document).ready(function (){
-		tabel_siswa = $('#tabel_pengajuan').DataTable({
+		tabel_siswa = $('#tabel_laboratorium').DataTable({
 			processing: true,
 			serverSide: true,
 			responsive: true,
 			lengthChange: true,
 			ajax: {
-				"url" : "{!! route('source-datatables-pengajuan') !!}",
+				"url" : "{!! route('source-datatables-laboratorium') !!}",
 				"type" : "POST",
 			},
 			columns: [
 				{data: 'DT_RowIndex', name: 'DT_RowIndex'},
-				{data: 'kegiatan', name: 'kegiatan', orderable: true, searchable: true },
-				{data: 'judul', name: 'judul', orderable: true, searchable: true },
-				{data: 'waktu', name: 'waktu', orderable: true, searchable: true },
+				{data: 'name', name: 'name', orderable: true, searchable: true },
+				{data: 'head', name: 'head', orderable: true, searchable: true },
 				{data: 'status', name: 'status', orderable: true, searchable: true },
+				{data: 'location', name: 'location', orderable: true, searchable: true },
 				{data: 'opsi', name: 'opsi', orderable: false, searchable: false},
 			]
 		});

@@ -64,7 +64,13 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-id" class="form-control" name="inp_teknisi" value="{{ old('inp_teknisi') }}" placeholder="Input input teknisi lab..">
+            {{-- <input type="text" id="inp-id" class="form-control" name="inp_teknisi" value="{{ old('inp_teknisi') }}" placeholder="Input input teknisi lab.."> --}}
+            <select type="text" class="form-control" name="inp_teknisi[]" id="inp-teknisi" value="" placeholder="Pilih user..">
+              <option value=""></option>
+              @foreach ($users as $list)
+              <option value="{{ $list->id }}">{{ $list->name }}</option>
+              @endforeach
+            </select>
             @if ($errors->has('inp_kalab'))
 						<span style="color: red;"><i>{{ $errors->first('inp_teknisi') }}</i></span>
 						@endif
@@ -90,13 +96,13 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select id="inp-kegiatan" class="form-control" name="inp_status">
-              <option value="{{ null }}">Pilih status..</option>
+            <select id="inp-status" class="form-control" name="inp_status" placeholder="Input lokasi lab..">>
+              <option value="{{ null }}"></option>
               <option value="tersedia" @if (old('inp_status') == 'tersedia') selected @endif >Tersedia</option>
               <option value="tidak_tersedia" @if (old('inp_status') == 'tidak_tersedia') selected @endif >Tidak Tersedia</option>
             </select>
-            @if ($errors->has('inp_kegiatan'))
-						<span style="color: red;"><i>{{ $errors->first('inp_kegiatan') }}</i></span>
+            @if ($errors->has('inp_status'))
+						<span style="color: red;"><i>{{ $errors->first('inp_status') }}</i></span>
 						@endif
           </div>
         </div>
@@ -114,10 +120,16 @@ Lab management | Dashboard
 <link rel="stylesheet" href="{{ url('/public/assets/plugins/timepicker/bootstrap-timepicker.min.css') }}">
 <link rel="stylesheet" href="{{ url('/public/assets/plugins/tom-select/dist/css/tom-select.bootstrap4.min.css') }}">
 <style>
+  /* .ts-wrapper.multi .ts-control>div{
+
+  } */
   .ts-control {
 		border-radius: 0px;
     padding: 6px 12px;
 	}
+  /* .has-items .ts-control>input{
+    margin: 4px 4px !important;
+  } */
 	.form-select {
 		border-radius: 0px;
 	}
@@ -125,7 +137,7 @@ Lab management | Dashboard
     border-color: #0277bd;
     box-shadow: 0 0 0 0rem rgba(254, 255, 255, 0.25);
     outline: 0;
-}
+  }
 </style>
 @endpush
 @push('scripts')
@@ -148,8 +160,23 @@ Lab management | Dashboard
 			}
 		}
   });
-  var select_technician = new TomSelect("#inp-technician",{
-    create: false,			
+  var select_technician = new TomSelect("#inp-teknisi",{
+    create: false,
+    maxItems: 10,
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+  var select_status = new TomSelect("#inp-status",{
+    create: false,
 		valueField: 'id',
 		labelField: 'title',
 		searchField: 'title',

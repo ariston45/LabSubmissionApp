@@ -1,10 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-use App\Models\Lab_submission;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+
+use App\Models\User;
+use App\Models\Lab_submission;
+use App\Models\Laboratory;
+use App\Models\Laboratory_technician;
+use App\Models\Laboratory_facility;
+use App\Models\Laboratory_facility_count_status;
+use App\Models\Lab_schedule;
 
 function genIdUser(){
   $max_id_user = User::max('id');
@@ -43,5 +49,46 @@ function strDateEnd($val)
 {
   $date_end = Carbon::parse($val)->isoFormat('dddd, D MMMM Y, HH:mm');
   return $date_end;
+}
+
+function genIdLab() {
+  $max_id_lab = Laboratory::max('lab_id');
+  $new_id = $max_id_lab + 1;
+  return $new_id;
+}
+
+function genIdTechnician(){
+  $max_id_tech = Laboratory_technician::max('lat_id');
+  $new_id = $max_id_tech + 1;
+  return $new_id;
+}
+
+function strLabStatus($strings)
+{
+  $mutTitle = Str::of($strings)->replace('_', ' ');
+  $mutSetTitle = Str::of($mutTitle)->title();
+  return $mutSetTitle;
+}
+
+/* Tags:... */
+function genIdLabF()
+{
+  $max_id = Laboratory_facility::max('laf_id');
+  $new_id = $max_id + 1;
+  return $new_id;
+}
+
+function genIdLabFC()
+{
+  $max_id = Laboratory_facility_count_status::max('lcs_id');
+  $new_id = $max_id + 1;
+  return $new_id;
+}
+
+function genIdLaSch()
+{
+  $max_id = Lab_schedule::max('lbs_id');
+  $new_id = $max_id + 1;
+  return $new_id;
 }
 

@@ -51,24 +51,33 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('{id}/jadwal', [LaboratoryController::class, 'viewLabSchedule'])->name('laboratorium_schedule');
 		Route::get('detail-fasilitas/{id}', [LaboratoryController::class, 'viewLabFacilityDetail']);
 		# form
+		Route::get('{id}/update-lab', [LaboratoryController::class, 'formUpdateLab'])->name('update_lab');
 		Route::get('form-input-lab', [LaboratoryController::class, 'formLaboratory']);
 		Route::get('{id}/form-tambah-fasilitas', [LaboratoryController::class, 'formAddLaboratoryFacility']);
 		Route::get('form-update-fasilitas/{id}', [LaboratoryController::class, 'formUpdateLaboratoryFacility']);
 		Route::get('form-input-jadwal/{id}', [LaboratoryController::class, 'formInputLaboratorySch']);
+		Route::get('update-jadwal-lab/{id_lab}/{id_sch_lab}', [LaboratoryController::class, 'formUpdateLaboratorySch']);
 		
 		# action
 		Route::post('input-laboratorium', [LaboratoryController::class, 'actionInputLaboratory'])->name('input_laboratorium');
+		Route::post('update-laboratorium', [LaboratoryController::class, 'actionUpdateLaboratory'])->name('update_laboratorium');
 		Route::post('input-user-tech', [LaboratoryController::class, 'actionInputUserTech'])->name('input_user_tech');
-		Route::get('hapus-teknisi/{id}', [LaboratoryController::class, 'actionDeleteTechnician']);
+		Route::get('delete-teknisi/{id}', [LaboratoryController::class, 'actionDeleteTechnician']);
 		Route::post('input-fasilitas-laboratorium', [LaboratoryController::class, 'actionInputLabFacilities'])->name('input_fasilitas_laboratorium');
 		Route::post('update-fasilitas-laboratorium', [LaboratoryController::class, 'actionUpdateLabFacilities'])->name('update_fasilitas_laboratorium');
-		Route::post('input-sch-laboratorium', [LaboratoryController::class, 'actionInputLabSch'])->name('update_sch_laboratorium');
+		Route::post('input-sch-laboratorium', [LaboratoryController::class, 'actionInputLabSch'])->name('input_sch_laboratorium');
+		Route::post('update-sch-laboratorium', [LaboratoryController::class, 'actionUpdateLabSch'])->name('update_sch_laboratorium');
+		Route::get('delete-sch-laboratorium/{id_sch_lab}', [LaboratoryController::class, 'actionDelLabSch'])->name('delete_sch_laboratorium');
 		
 		# Source datatables
 		Route::post('source-datatables-laboratorium', [DatatablesController::class, 'sourceDataLaboratorium'])->name('source-datatables-laboratorium');
 		Route::post('source-datatables-teknisi-lab', [DatatablesController::class, 'sourceDataTeknisiLab'])->name('source-datatables-teknisi-lab');
 		Route::post('source-datatables-fasilitas-lab', [DatatablesController::class, 'sourceDataFasilitasLab'])->name('source-datatables-fasilitas-lab');
 		Route::post('source-datatables-schedule-lab', [DatatablesController::class, 'sourceDataScheduleLab'])->name('source-datatables-schedule-lab');
+
+		#Source data
+		Route::post('source-data-sch-lab', [LaboratoryController::class, 'sourceDataScheduleLabJson'])->name('source_data_sch_lab');
+		
 	});
 	Route::prefix('datasource')->group(function () {
 		Route::post('users', [LaboratoryController::class, 'sourceDataUser'])->name('source-data-users');

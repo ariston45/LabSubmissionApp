@@ -41,16 +41,15 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_kalab') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Kepala Lab
+              Kepala Sub Lab
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            {{-- <input type="text" id="inp-kalab" class="form-control" name="inp_kalab" value="{{ old('inp_kalab') }}" placeholder="Input input kepala lab.."> --}}
             <select type="text" class="form-control" name="inp_kalab" id="inp-kalab" value="" placeholder="Pilih user..">
               <option value=""></option>
-              @foreach ($users as $list)
+              {{-- @foreach ($users as $list)
               <option value="{{ $list->id }}">{{ $list->name }}</option>
-              @endforeach
+              @endforeach --}}
             </select>
             @if ($errors->has('inp_kalab'))
 						<span style="color: red;"><i>{{ $errors->first('inp_kalab') }}</i></span>
@@ -64,12 +63,11 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            {{-- <input type="text" id="inp-id" class="form-control" name="inp_teknisi" value="{{ old('inp_teknisi') }}" placeholder="Input input teknisi lab.."> --}}
             <select type="text" class="form-control" name="inp_teknisi[]" id="inp-teknisi" value="" placeholder="Pilih user..">
               <option value=""></option>
-              @foreach ($users as $list)
+              {{-- @foreach ($users as $list)
               <option value="{{ $list->id }}">{{ $list->name }}</option>
-              @endforeach
+              @endforeach --}}
             </select>
             @if ($errors->has('inp_kalab'))
 						<span style="color: red;"><i>{{ $errors->first('inp_teknisi') }}</i></span>
@@ -146,7 +144,7 @@ Lab management | Dashboard
 <script src="{{ url('/public/assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
 {{-- varibles --}}
 <script>
-  var select_kalab = new TomSelect("#inp-kalab",{
+  var select_kasublab = new TomSelect("#inp-kalab",{
     create: false,			
 		valueField: 'id',
 		labelField: 'title',
@@ -192,6 +190,69 @@ Lab management | Dashboard
 </script>
 {{-- function --}}
 <script>
+  function actGetUser_labSubhead() {
+		var par_a = 'LAB_SUBHEAD';
+		var dataOption_users = [];
+		$.ajaxSetup({
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			}
+		});
+		$.ajax({
+			type: 'POST',
+			url: "{{ route('source-data-users') }}",
+			data: {
+				"level":par_a
+			},
+			async: false,
+			success: function(result) {
+				var dataOpt_users = JSON.parse(result);
+				for (let index = 0; index < dataOpt_users.length; index++) {
+          dataOption_users.push({
+            id:dataOpt_users[index].id,
+            title:dataOpt_users[index].title,
+          });
+        }
+			},
+		});
+		return dataOption_users;
+	};
+  function actGetUser_labTechnicians() {
+		var par_a = 'LAB_TECHNICIAN';
+		var dataOption_users = [];
+		$.ajaxSetup({
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			}
+		});
+		$.ajax({
+			type: 'POST',
+			url: "{{ route('source-data-users') }}",
+			data: {
+				"level":par_a
+			},
+			async: false,
+			success: function(result) {
+				var dataOpt_users = JSON.parse(result);
+				for (let index = 0; index < dataOpt_users.length; index++) {
+          dataOption_users.push({
+            id:dataOpt_users[index].id,
+            title:dataOpt_users[index].title,
+          });
+        }
+			},
+		});
+		return dataOption_users;
+	};
+</script>
+{{-- ready function --}}
+<script>
+  $(document).ready( function() {
+    var user_subhead_lab = actGetUser_labSubhead();
+    var user_technicians = actGetUser_labTechnicians();
+    select_kasublab.addOptions(user_subhead_lab);
+    select_technician.addOptions(user_technicians);
+  });
   $(document).ready( function() {
     $(document).on('change', '#btn-file-foto :file', function() {
       var input = $(this),

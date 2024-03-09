@@ -212,7 +212,7 @@ Lab management | Dashboard
 		return data_a;
 	};
 	function actDelTech(id) {
-		var del_url = '{{ url("laboratorium/hapus-teknisi/") }}/'+id;
+		var del_url = '{{ url("laboratorium/delete-teknisi/") }}/'+id;
 		$.confirm({
 			title: 'Konfirmasi Hapus !',
 			content: 'Apakah anda yakin akan menghapus teknisi dari laboratorium <b>{{ $data_lab->lab_name }}</b> ?',

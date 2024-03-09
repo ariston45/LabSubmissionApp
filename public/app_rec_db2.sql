@@ -11,7 +11,7 @@
  Target Server Version : 100413 (10.4.13-MariaDB)
  File Encoding         : 65001
 
- Date: 01/03/2024 16:54:28
+ Date: 09/03/2024 17:29:40
 */
 
 SET NAMES utf8mb4;
@@ -64,12 +64,16 @@ CREATE TABLE `lab_schedules`  (
   `lbs_id` int(11) NOT NULL,
   `lbs_lab` int(11) NULL DEFAULT NULL,
   `lbs_day` enum('sunday','monday','tuesday','wednesday','thursday','friday','saturday') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lbs_date_start` date NULL DEFAULT NULL,
   `lbs_time_start` time NULL DEFAULT NULL,
+  `lbs_date_end` date NULL DEFAULT NULL,
   `lbs_time_end` time NULL DEFAULT NULL,
+  `lbs_sch_dates_canceled` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lbs_type` enum('reguler','non_reguler') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lbs_matkul` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lbs_group_study` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lbs_tenant_init` bigint(20) NULL DEFAULT NULL,
+  `lbs_tenant_name` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lbs_res_person` varchar(75) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lbs_matkul` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `updated_at` datetime NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
   `created_by` int(11) NULL DEFAULT NULL,
   `created_at` datetime NULL DEFAULT current_timestamp(),
@@ -79,7 +83,10 @@ CREATE TABLE `lab_schedules`  (
 -- ----------------------------
 -- Records of lab_schedules
 -- ----------------------------
-INSERT INTO `lab_schedules` VALUES (1, 1, 'monday', '10:15:00', '12:00:00', 'reguler', 'tes', 'test', '1', '2024-03-01 13:38:22', NULL, '2024-03-01 11:09:05');
+INSERT INTO `lab_schedules` VALUES (1, 1, 'monday', NULL, '08:00:00', NULL, '09:00:00', '2024-02-26', 'reguler', NULL, 'IXA', '2', 'Jadwal Test', '2024-03-06 14:21:51', 1, '2024-03-04 14:27:43');
+INSERT INTO `lab_schedules` VALUES (2, 1, 'monday', NULL, '09:00:00', NULL, '10:00:00', NULL, 'reguler', NULL, 'IXB', '2', 'Jadwal Test', '2024-03-06 10:34:00', 1, '2024-03-04 14:27:43');
+INSERT INTO `lab_schedules` VALUES (3, 1, 'monday', NULL, '10:00:00', NULL, '11:00:00', NULL, 'reguler', NULL, 'IXC', '2', 'Jadwal Test', '2024-03-06 10:34:31', 1, '2024-03-04 14:27:43');
+INSERT INTO `lab_schedules` VALUES (4, 1, NULL, '2024-03-06', '08:00:00', '2024-03-09', '23:59:59', NULL, 'non_reguler', 2, 'Aldi', '3', 'Apa kabar dunia', '2024-03-06 14:36:22', NULL, '2024-03-06 11:26:37');
 
 -- ----------------------------
 -- Table structure for lab_submissions
@@ -148,9 +155,9 @@ CREATE TABLE `laboratories`  (
 -- ----------------------------
 -- Records of laboratories
 -- ----------------------------
-INSERT INTO `laboratories` VALUES (1, 'lab12', NULL, NULL, 2, 'gedung C', '2024-02-22 16:11:15', '2024-02-22 16:11:15');
-INSERT INTO `laboratories` VALUES (2, 'lab13', NULL, NULL, 2, 'gedung A', '2024-02-22 16:14:54', '2024-02-22 16:14:54');
-INSERT INTO `laboratories` VALUES (3, 'lab13', NULL, NULL, 2, 'gedung A', '2024-02-22 16:17:23', '2024-02-22 16:17:23');
+INSERT INTO `laboratories` VALUES (1, 'lab12 X', NULL, 'tersedia', 2, 'gedung C', '2024-02-22 16:11:15', '2024-03-07 08:17:04');
+INSERT INTO `laboratories` VALUES (2, 'lab13', NULL, 'tersedia', 2, 'gedung A', '2024-02-22 16:14:54', '2024-03-06 16:08:45');
+INSERT INTO `laboratories` VALUES (3, 'lab13', NULL, 'tersedia', 2, 'gedung A', '2024-02-22 16:17:23', '2024-03-07 08:20:26');
 
 -- ----------------------------
 -- Table structure for laboratory_facilities
@@ -213,8 +220,9 @@ CREATE TABLE `laboratory_technicians`  (
 -- ----------------------------
 -- Records of laboratory_technicians
 -- ----------------------------
-INSERT INTO `laboratory_technicians` VALUES (5, '1', 3, '2024-02-26 13:35:53', NULL);
-INSERT INTO `laboratory_technicians` VALUES (6, '1', 3, '2024-02-26 13:37:54', NULL);
+INSERT INTO `laboratory_technicians` VALUES (1, '1', 3, '2024-03-07 08:17:05', NULL);
+INSERT INTO `laboratory_technicians` VALUES (2, '1', 4, '2024-03-07 08:17:05', NULL);
+INSERT INTO `laboratory_technicians` VALUES (3, '3', 3, '2024-03-07 08:20:26', NULL);
 
 -- ----------------------------
 -- Table structure for menus
@@ -352,7 +360,8 @@ CREATE TABLE `users`  (
 -- Records of users
 -- ----------------------------
 INSERT INTO `users` VALUES (1, 144, 'Agus Salim', 'agus123', 'ADMIN_SYSTEM', '$2y$10$HS8EWaWAgNiho1AyetSIGeWKqQE63FrInMbc859BsAQwGJ4oKwqpy', 'agus@webmaster.com', '2022-12-01 15:03:18', NULL, '2022-12-01 15:04:29', '2024-01-25 13:50:18', NULL);
-INSERT INTO `users` VALUES (2, 122, 'aldi taher', 'aldi', 'ADMIN_MASTER', '$2y$10$HS8EWaWAgNiho1AyetSIGeWKqQE63FrInMbc859BsAQwGJ4oKwqpy', 'aldi@gmail.com', NULL, NULL, '2022-12-23 15:33:58', '2024-01-25 15:02:51', NULL);
+INSERT INTO `users` VALUES (2, 122, 'aldi taher', 'aldi', 'LAB_SUBHEAD', '$2y$10$HS8EWaWAgNiho1AyetSIGeWKqQE63FrInMbc859BsAQwGJ4oKwqpy', 'aldi@gmail.com', NULL, NULL, '2022-12-23 15:33:58', '2024-03-06 15:31:54', NULL);
 INSERT INTO `users` VALUES (3, 3537, 'Aliefman Hakim', NULL, 'LAB_TECHNICIAN', '$2y$10$GXRXkIOT30U9qGQXGwm08ePkDfsv/E.CHPDg9dMqNXu90jMo0JOfG', 'splashtrick@gmail.com', NULL, NULL, '2024-01-25 15:25:02', '2024-02-26 11:53:25', NULL);
+INSERT INTO `users` VALUES (4, 666, 'Johanes R', NULL, 'LAB_TECHNICIAN', '$2y$10$GXRXkIOT30U9qGQXGwm08ePkDfsv/E.CHPDg9dMqNXu90jMo0JOfG', 'Rahmat@gmail.com', NULL, NULL, '2024-01-25 15:25:02', '2024-02-26 11:53:25', NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -22,7 +22,7 @@ Lab management | Dashboard
         </a>
       </div>
     </div>
-    <form class="form-horizontal" action="{{ route('update_sch_laboratorium') }}" method="POST" enctype="multipart/form-data">
+    <form class="form-horizontal" action="{{ route('input_sch_laboratorium') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="box-body">
         {{-- !! --}}
@@ -183,11 +183,11 @@ Lab management | Dashboard
 			success: function(result) {
         var dataOpt_users = JSON.parse(result);
 				for (let index = 0; index < dataOpt_users.length; index++) {
-				dataOption_users.push({
-					id:dataOpt_users[index].id,
-					title:dataOpt_users[index].title,
-				});
-			}
+          dataOption_users.push({
+            id:dataOpt_users[index].id,
+            title:dataOpt_users[index].title,
+          });
+        }
 			},
 		});
   };

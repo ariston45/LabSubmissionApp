@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\LabPostRequest;
 use App\Http\Requests\LabFacilityPostRequest;
 use App\Http\Requests\LabSchPostRequest;
+use App\Models\Lab_facility;
 use App\Models\Lab_schedule;
 use Auth;
 use Carbon\Carbon;
@@ -105,25 +106,6 @@ class LaboratoryController extends Controller
 		return redirect()->back();
 	}
 
-	/* Tags:... */
-	public function sourceDataUser(Request $request)
-	{
-		if ($request->level == null) {
-			$users = User::get();
-		} else {
-			$users = User::where('level',$request->level)->get();
-		}
-		$data = [];
-		foreach ($users as $key => $value) {
-			$data[$key] = [
-				'id' => $value->id,
-				'title' => $value->name,
-				'level' => $value->level
-			];
-		}
-		$data_json = json_encode($data);
-		return $data_json;
-	}
 	/* Tags:... */
 	public function actionInputUserTech(Request $request)
 	{
@@ -233,6 +215,12 @@ class LaboratoryController extends Controller
 		return redirect()->route('laboratorium_fasilitas', ['id' => $request->lab_id]);
 	}
 	/* Tags:... */
+	public function actionDeleteLabFacilities(Request $request)
+	{
+		$action = Laboratory_facility::where('laf_id',$request->id)->delete();
+		return redirect()->back();
+	}
+	/* Tags:... */
 	public function viewLabSchedule(Request $request)
 	{
 		$lab_id = $request->id;
@@ -247,14 +235,50 @@ class LaboratoryController extends Controller
 		return view('contents.content_form.form_input_schedule', compact('lab_id'));
 	}
 	/* Tags:... */
+	public function formExcludeLaboratorySch(Request $request)
+	{
+			$lab_id = $request->id;
+		return view('contents.content_form.form_exclude_schedule', compact('lab_id'));
+	}
+	/* Tags:... */
 	public function actionInputLabSch(LabSchPostRequest $request)
 	{
 		$user = Auth::user();
+		$err = array();
 		$id_lab_sch = genIdLaSch();
 		$day = date('l',strtotime($request->inp_day));
 		$tm_start = date('H:i',strtotime($request->inp_time_start));
 		$tm_end = date('H:i', strtotime($request->inp_time_end));
 		$ids_str = implode('.',$request->inp_res_person);
+		
+		$data_sch = Lab_schedule::where('lbs_lab', $request->lab_id)
+		->where('lbs_day',$day)
+		->where('lbs_type', 'reguler')
+		->orderBy('lbs_time_start','asc')
+		->get();
+		$time_set_start = Carbon::parse($request->inp_time_start)->format('H:i');
+
+		$idx = 0;
+		foreach ($data_sch as $key => $value) {
+			$check_start[$key] = Carbon::parse($value->lbs_time_start)->format('H:i');
+			$check_end[$key] = Carbon::parse($value->lbs_time_end)->format('H:i');
+
+			if (Carbon::parse($request->inp_time_start)->Between($check_start[$key], $check_end[$key],true)) {
+				$checkTimeErr[$idx] = 'Input jam mulai ['. $request->inp_time_start.'] tidak tersedia, karena konflik dengan jadwal pukul ['.$check_start[$key].' - '.$check_end[$key].']. ';
+			}
+			$idx++;
+			if (Carbon::parse($request->inp_time_end)->Between($check_start[$key], $check_end[$key], true)) {
+				$checkTimeErr[$idx] = 'Input jam berakhir [' . $request->inp_time_end . '] tidak tersedia, karena konflik dengan jadwal pukul [' . $check_start[$key] . ' - ' . $check_end[$key] . ']. ';
+			}
+			$idx++;
+		}
+		if (isset($checkTimeErr)) {
+			$strMsg = '';
+			foreach ($checkTimeErr as $key => $value) {
+				$strMsg.= $value;
+			}
+			return redirect()->back()->withInput($request->input())->withErrors(['check_time' => $strMsg]);
+		}
 		$data = [
 			'lbs_id' => $id_lab_sch,
 			'lbs_lab' => $request->lab_id,
@@ -263,7 +287,7 @@ class LaboratoryController extends Controller
 			'lbs_time_end' => $tm_end,
 			'lbs_type' => 'reguler',
 			'lbs_matkul' => $request->inp_subject,
-			'lbs_group_study' => $request->inp_group,
+			'lbs_tenant_name' => $request->inp_group,
 			'lbs_res_person' => $ids_str,
 			'created_by' => $user->id
 		];
@@ -294,7 +318,7 @@ class LaboratoryController extends Controller
 			'lbs_time_end' => $tm_end,
 			'lbs_type' => 'reguler',
 			'lbs_matkul' => $request->inp_subject,
-			'lbs_group_study' => $request->inp_group,
+			'lbs_tenant_name' => $request->inp_group,
 			'lbs_res_person' => $ids_str,
 		];
 		$updateLabSch = Lab_schedule::where('lbs_id',$request->lbs_id)->update($data);
@@ -306,7 +330,6 @@ class LaboratoryController extends Controller
 		$updateLabSch = Lab_schedule::where('lbs_id', $lbs_id)->delete();
 		return redirect()->back();		
 	}
-
 	/* Tags:... */
 	public function sourceDataScheduleLabJson(Request $request)
 	{
@@ -336,12 +359,12 @@ class LaboratoryController extends Controller
 		foreach ($dataDays as $key => $value) {
 			$dts[$key] = $collect_sch_reguler->where('lbs_day',strtolower($value['day']));
 			foreach ($dts[$key] as $skey => $svalue) {
-				$date_exclude = explode('$',$svalue->lbs_sch_dates_canceled);
+				$date_exclude[$sch_index] = explode('$',$svalue->lbs_sch_dates_excluded);
 				$str_start = $value['date'].' '.$svalue->lbs_time_start;
 				$datetime_start = date('Y-m-d H:i:s',strtotime($str_start));
 				$str_end = $value['date'] . ' ' . $svalue->lbs_time_end;
 				$datetime_end = date('Y-m-d H:i:s', strtotime($str_end));
-				if (!in_array($value['date'], $date_exclude)) {
+				if (!in_array($value['date'], $date_exclude[$sch_index])) {
 					$dataSch[$sch_index] = [
 						'title' => $svalue->lbs_matkul,
 						'start' => $datetime_start,
@@ -378,5 +401,35 @@ class LaboratoryController extends Controller
 		
 		$res = json_encode($dataSch);
 		return $res;
+	}
+	/* Tags:... */
+	public function actionInputExcludeSch(Request $request)
+	{
+		$day = date('l',strtotime($request->date_exclude));
+		// print_r($dates);
+		if ($request->inp_times == 'all') {
+			// die($request->inp_times);
+			$data_sch = Lab_schedule::where('lbs_lab',$request->lab_id)
+			->where('lbs_day',$day)
+			->get();
+			foreach ($data_sch as $key => $value) {
+				$dates_excluded[$value->lbs_id] = explode('$', $value->lbs_sch_dates_excluded);
+				array_push($dates_excluded[$value->lbs_id], $request->date_exclude);
+				$data_exclude_str[$value->lbs_id] = implode('$', $dates_excluded[$value->lbs_id]);
+			}
+			foreach ($dates_excluded as $key => $value) {
+				Lab_schedule::where('lbs_id',$key)->update(['lbs_sch_dates_excluded' => $data_exclude_str[$key]]);
+			}
+		}else {
+			// echo 'test';
+			$data_sch = Lab_schedule::where('lbs_lab', $request->lab_id)
+			->where('lbs_id', $request->inp_times)
+			->first();
+			$dates_excluded = explode('$', $data_sch->lbs_sch_dates_excluded);
+			array_push($dates_excluded, $request->date_exclude);
+			$data_exclude_str = implode('$', $dates_excluded);
+			Lab_schedule::where('lbs_id', $request->inp_times)->update(['lbs_sch_dates_excluded' => $data_exclude_str]);
+		}
+		return redirect()->back();
 	}
 }

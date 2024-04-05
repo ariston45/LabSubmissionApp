@@ -59,7 +59,7 @@ class AuthController extends Controller
 			'email' => $request->email,
 			'name' => $request->name,
 			'level' => $request->level,
-			'password' => Hash::make($request->password)
+			'password' => bcrypt($request->password)
 		];
 		// dd($data_post);
 		$storeUser = User::insert($data_post);

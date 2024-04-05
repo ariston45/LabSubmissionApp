@@ -24,6 +24,8 @@ Lab management | Dashboard
       @csrf
       <div class="box-body">
         {{-- !! --}}
+        <input type="hidden" name="app_level" value="{{ $user_data->level }}">
+        {{-- !! --}}
         <div class="form-group has-feedback {{ $errors->has('inp_nama') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -31,7 +33,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-nama" class="form-control" name="inp_nama" value="{{ $user_data->name}}" placeholder="Input nama..">
+            <input type="text" id="inp-nama" class="form-control" name="inp_nama" value="{{ $user_data->name }}" placeholder="Input nama..">
             @if ($errors->has('inp_nama'))
 						<span style="color: red;"><i>{{ $errors->first('inp_nama') }}</i></span>
 						@endif
@@ -44,7 +46,11 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
+            @if ($user_data->no_id != null)
+            <input type="text" id="inp-id" class="form-control" name="inp_id" value="{{ $user_data->no_id }}" placeholder="Input no id..">
+            @else
             <input type="text" id="inp-id" class="form-control" name="inp_id" value="{{ old('inp_id') }}" placeholder="Input no id..">
+            @endif
             @if ($errors->has('inp_id'))
 						<span style="color: red;"><i>{{ $errors->first('inp_id') }}</i></span>
 						@endif
@@ -57,7 +63,11 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_prodi != null)
+            <input type="text" id="inp-program-studi" class="form-control" name="inp_program_studi" value="{{ $user_data->usd_prodi }}" placeholder="Input program studi..">
+            @else
             <input type="text" id="inp-program-studi" class="form-control" name="inp_program_studi" value="{{ old('inp_program_studi') }}" placeholder="Input program studi..">
+            @endif
             @if ($errors->has('inp_program_studi'))
 						<span style="color: red;"><i>{{ $errors->first('inp_program_studi') }}</i></span>
 						@endif
@@ -70,7 +80,11 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_fakultas != null)
+            <input type="text" id="inp-fakultas" class="form-control" name="inp_fakultas" value="{{ $user_data->usd_fakultas }}" placeholder="Input fakultas">  
+            @else
             <input type="text" id="inp-fakultas" class="form-control" name="inp_fakultas" value="{{ old('inp_fakultas') }}" placeholder="Input fakultas">
+            @endif
             @if ($errors->has('inp_fakulas'))
 						<span style="color: red;"><i>{{ $errors->first('inp_fakultas') }}</i></span>
 						@endif
@@ -83,9 +97,13 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_universitas != null)
+            <input type="text" id="inp-institusi" class="form-control" name="inp_institusi" value="{{ $user_data->usd_universitas }}" placeholder="Input universitas/institusi..">  
+            @else
             <input type="text" id="inp-institusi" class="form-control" name="inp_institusi" value="{{ old('inp_institusi') }}" placeholder="Input universitas/institusi..">
+            @endif
             @if ($errors->has('inp_institusi'))
-						<span style="color: red;"><i>{{ $errors->first('inp_nama') }}</i></span>
+						<span style="color: red;"><i>{{ $errors->first('inp_institusi') }}</i></span>
 						@endif
           </div>
         </div>
@@ -96,7 +114,25 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_phone != null)
+            <input type="text" id="inp-nomor-kontak" class="form-control" name="inp_nomor_kontak" value="{{ $user_data->usd_phone }}" placeholder="Input no kontak...">
+            @else
             <input type="text" id="inp-nomor-kontak" class="form-control" name="inp_nomor_kontak" value="{{ old('inp_nomor_kontak') }}" placeholder="Input no kontak...">
+            @endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_address') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Alamat
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_address != null)
+            <input type="text" id="inp-nomor-kontak" class="form-control" name="inp_address" value="{{ $user_data->usd_address }}" placeholder="Input alamat...">
+            @else
+            <input type="text" id="inp-nomor-kontak" class="form-control" name="inp_address" value="{{ old('inp_address') }}" placeholder="Input alamat...">
+            @endif
           </div>
         </div>
         {{-- !! --}}
@@ -133,7 +169,26 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        <div class="form-group has-feedback {{ $errors->has('date_start') ? ' has-error' : '' }}">
+        {{--  --}}
+        @if (rulesUser(['STUDENT']))
+        <div class="form-group {{ $errors->has('inp_pembimbing') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Dosen Pembimbing
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <select id="inp-dosen" class="form-control" name="inp_pembimbing">
+              <option value="{{ null }}">Pilih dosen pembimbing..</option>
+            </select>
+            @if ($errors->has('inp_pembimbing'))
+						<span style="color: red;"><i>{{ $errors->first('inp_pembimbing') }}</i></span>
+						@endif
+          </div>
+        </div>
+        @endif
+        {{--  --}}
+        <div class="form-group has-feedback {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
               Jadwal Mulai
@@ -166,7 +221,7 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        <div class="form-group has-feedback {{ $errors->has('date_end') ? ' has-error' : '' }}">
+        <div class="form-group has-feedback {{ $errors->has('date_end') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
               Jadwal Selesai
@@ -199,6 +254,14 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        @if ($errors->has('check_time'))
+        <div class="form-group has-feedback">
+          <label class="col-sm-12 col-md-3 control-label"></label>
+          <div class="divcol-sm-12 col-md-9">
+            <span style="color: red;"><i>{!! $errors->first('check_time') !!}</i></span>
+          </div>
+        </div>
+        @endif
         <div class="form-group has-feedback {{ $errors->has('inp_lab') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -208,10 +271,33 @@ Lab management | Dashboard
           <div class="col-sm-12 col-md-9">
             <select id="inp-lab" class="form-control" name="inp_lab" >
               <option value="{{ null }}">Pilih laboratorium..</option>
-              <option value="tes">test</option>
+              @foreach ($lab_data as $list)
+              <option value="{{ $list->lab_id }}">{{ $list->lab_name }}</option>
+                
+              @endforeach
             </select>
             @if ($errors->has('inp_lab'))
 						<span style="color: red;"><i>{{ $errors->first('inp_lab') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group {{ $errors->has('inp_fasiitas') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Fasilitas/Alat
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <select id="inp-fasilitas" class="form-control" name="inp_fasiltas[]" multiple>
+              <option value="{{ null }}">Pilih fasilitas/alat..</option>
+              {{-- <option value="tp_penelitian" @if (old('inp_kegiatan') == 'tp_penelitian') selected @endif >Penelitian</option>
+              <option value="tp_pelatihan" @if (old('inp_kegiatan') == 'tp_pelatihan') selected @endif >Pelatihan</option>
+              <option value="tp_pengabdian_masyarakat" @if (old('inp_kegiatan') == 'tp_pengabdian_masyarakat') selected @endif >Pengabdian Masyarakat</option>
+              <option value="tp_magang" @if (old('inp_kegiatan') == 'tp_magang') selected @endif >Magang</option>
+              <option value="tp_lain_lain" @if (old('inp_kegiatan') == 'tp_lain_lain') selected @endif >Lain-lain*</option> --}}
+            </select>
+            @if ($errors->has('inp_fasilitas'))
+						<span style="color: red;"><i>{{ $errors->first('inp_fasilitas') }}</i></span>
 						@endif
           </div>
         </div>
@@ -247,13 +333,148 @@ Lab management | Dashboard
 @push('css')
 <link rel="stylesheet" href="{{ url('/public/assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}">
 <link rel="stylesheet" href="{{ url('/public/assets/plugins/timepicker/bootstrap-timepicker.min.css') }}">
+<link rel="stylesheet" href="{{ url('/public/assets/plugins/tom-select/dist/css/tom-select.bootstrap4.min.css') }}">
+<style>
+  .ts-control {
+		border-radius: 0px;
+    padding: 6px 12px;
+	}
+  /* .has-items .ts-control>input{
+    margin: 4px 4px !important;
+  } */
+	.form-select {
+		border-radius: 0px;
+	}
+  .focus .ts-control {
+    border-color: #0277bd;
+    box-shadow: 0 0 0 0rem rgba(254, 255, 255, 0.25);
+    outline: 0;
+  }
+</style>
 @endpush
 @push('scripts')
 <script src="{{ url('/public/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
 <script src="{{ url('/public/assets/plugins/timepicker/bootstrap-timepicker.min.js') }}"></script>
+<script src="{{ url('/public/assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
 {{-- varibles --}}
-<script></script>
+<script>
+  var select_lab = new TomSelect("#inp-lab",{
+    create: false,			
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+  var select_facility = new TomSelect("#inp-fasilitas",{
+    create: false,
+    maxItem: 20,			
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+  select_lab.on('change', function () {  
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var data_facility = [];
+    var item_lab = select_lab.getValue();
+    
+    $.ajax({
+      type: 'POST',
+      url: "{{ route('source-data-facilities') }}",
+      data: {
+        "lab_id":item_lab,
+      },
+      async: false,
+      success: function(result) {
+        console.log(result);
+        select_facility.clear();
+        select_facility.clearOptions();
+        var dataLabOption = JSON.parse(result);
+        for (let index = 0; index < dataLabOption.length; index++) {
+          data_facility.push({
+            id:dataLabOption[index].id,
+            title:dataLabOption[index].title,
+          });
+        }
+        select_facility.addOptions(data_facility);
+      },
+    });
+  });
+</script>
+@if (rulesUser(['STUDENT']))
+<script>
+  var select_lecture = new TomSelect("#inp-dosen",{
+    create: false,			
+    valueField: 'id',
+    labelField: 'title',
+    searchField: 'title',
+    render: {
+      option: function(data, escape) {
+        return '<div><span class="title">'+escape(data.title)+'</span></div>';
+      },
+      item: function(data, escape) {
+        return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+      }
+    }
+  });
+  var par_a = 'LECTURE';
+  var data_a = [];
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+  $.ajax({
+    type: 'POST',
+    url: "{{ route('source-data-users') }}",
+    data: {
+      "level":par_a,
+    },
+    async: false,
+    success: function(result) {
+      data_a = result;
+    },
+  });
+  var opt_1 = [];
+  select_lecture.clear();
+  select_lecture.clearOptions();
+  if (data_a != null) {
+    var dataOption = JSON.parse(data_a);
+    for (let index = 0; index < dataOption.length; index++) {
+      opt_1.push({
+        id:dataOption[index].id,
+        title:dataOption[index].title,
+      });
+    }
+    select_lecture.addOptions(opt_1);
+  }
+</script>
+@endif
 {{-- function --}}
+<script>
+  function actionGetFacility() {
+    
+  };
+</script>
+{{-- ready function --}}
 <script>
   $(document).ready( function() {
     $(document).on('change', '#btn-file-foto :file', function() {
@@ -288,13 +509,15 @@ Lab management | Dashboard
   });
   $('#time-pick-start').timepicker({
     showInputs: false,
-    format: 'hh:mm',
+    defaultTime:false,
     showMeridian: false,
+    format: 'HH:mm',
   });
   $('#time-pick-end').timepicker({
     showInputs: false,
-    format: 'hh:mm',
+    defaultTime:false,
     showMeridian: false,
+    format: 'HH:mm',
   });
 </script>
 @endpush

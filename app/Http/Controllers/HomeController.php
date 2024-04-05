@@ -14,7 +14,14 @@ class HomeController extends Controller
 	}
 	public function HomeSystem(Request $request)
 	{
-		return view('contents.content_start.home_system');
+		if (rulesUser(['LAB_HEAD','LAB_SUBHEAD', 'ADMIN_SYSTEM', 'ADMIN_MASTER'])) {
+			return view('contents.content_start.home_admin');
+		}elseif (rulesUser(['LECTURE'])) {
+			return view('contents.content_start.home_lecture');
+		}elseif(rulesUser(['STUDENT', 'PUBLIC_MEMBER', 'PUBLIC_NON_MEMBER'])){
+			return view('contents.content_start.home_tenant');
+		}
+		
 	}
 	public function HomeRecipient(Request $request)
 	{

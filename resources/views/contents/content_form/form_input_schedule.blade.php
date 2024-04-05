@@ -70,6 +70,12 @@ Lab management | Dashboard
                 @if ($errors->has('inp_time_end'))
                 <span style="color: red;"><i>{{ $errors->first('inp_time_end') }}</i></span>
                 @endif
+                @if ($errors->has('check_time'))
+                <span style="color: red;"><i>{{ $errors->first('check_time') }}</i></span>
+                  {{-- @foreach ($errors->first('check_time') as $value)
+                  {{ $value }}
+                  @endforeach --}}
+                @endif
               </div>
             </div>
           </div>
@@ -265,6 +271,7 @@ Lab management | Dashboard
     defaultTime:false,
     showMeridian: false,
     format: 'HH:mm',
+    orientation:'bottom',
   });
   $('#time-pick-end').timepicker({
     showInputs: false,

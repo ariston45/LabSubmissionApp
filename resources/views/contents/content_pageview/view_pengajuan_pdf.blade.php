@@ -63,31 +63,31 @@
     <tbody>
       <tr>
         <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;width:25%;">Nama<span class="pull-right">:</span></td>
-        <td style="padding-top: 0px;padding-bottom: 0px;">abtckdsj sdf;alsf asfeowkfo asdffeowpfk</td>
+        <td style="padding-top: 0px;padding-bottom: 0px;">{{ $data->name }}</td>
       </tr>
       <tr>
         <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;">NIM<span class="pull-right">:</span></td>
-        <td style="padding-top: 0px;padding-bottom: 0px;"></td>
+        <td style="padding-top: 0px;padding-bottom: 0px;">{{ $data->no_id }}</td>
       </tr>
       <tr>
         <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;">Program studi<span class="pull-right">:</span></td>
-        <td style="padding-top: 0px;padding-bottom: 0px;"></td>
+        <td style="padding-top: 0px;padding-bottom: 0px;">{{ $data->usd_prodi }}</td>
       </tr>
       <tr>
         <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;">Fakultas<span class="pull-right">:</span></td>
-        <td style="padding-top: 0px;padding-bottom: 0px;"></td>
+        <td style="padding-top: 0px;padding-bottom: 0px;">{{ $data->usd_fakultas }}</td>
       </tr>
       <tr>
         <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;">Universitas<span class="pull-right">:</span></td>
-        <td style="padding-top: 0px;padding-bottom: 0px;"></td>
+        <td style="padding-top: 0px;padding-bottom: 0px;">{{ $data->usd_universitas }}</td>
       </tr>
       <tr>
         <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;">Alamat<span class="pull-right">:</span></td>
-        <td style="padding-top: 0px;padding-bottom: 0px;"></td>
+        <td style="padding-top: 0px;padding-bottom: 0px;">{{ $data->usd_address }}</td>
       </tr>
       <tr>
         <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;">No. HP/CP <span class="pull-right">:</span></td>
-        <td style="padding-top: 0px;padding-bottom: 0px;"></td>
+        <td style="padding-top: 0px;padding-bottom: 0px;">{{ $data->usd_phone }}</td>
       </tr>
       <tr>
         <td colspan="2">
@@ -99,7 +99,7 @@
       </tr>
       <tr>
         <td>
-          text judul
+          {{ $data->lsb_title }}
         </td>
       </tr>
       <tr>
@@ -109,16 +109,17 @@
       </tr>
       <tr>
         <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;"> Hari/Tanggal<span class="pull-right">:</span></td>
-        <td style="padding-top: 2px;padding-bottom: 2px;"></td>
+        <td style="padding-top: 2px;padding-bottom: 2px;">{{ strDateStart($data->lsb_date_start) }} <b>s/d</b> {{ strDateEnd($data->lsb_date_end) }}</td>
       </tr>
       <tr>
         <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;"> Di Laboratorium<span class="pull-right">:</span></td>
-        <td style="padding-top: 2px;padding-bottom: 2px;"></td>
+        <td style="padding-top: 2px;padding-bottom: 2px;">{{ strJudul($data->lab_name) }}</td>
       </tr>
       <tr>
         <td colspan="2">
           <div class="cst-paragraf">
-            Fasilitas laboratorium yang digunakan terlampir. <br>
+            Fasilitas laboratorium yang digunakan terlampir. 
+            <br>
             Demikian permohonan ini saya buat dan saya menyatakan akan bertanggungjawab sepenuhnya apabila terjadi kerusakan
             atau kehilangan atas alat terlampir selama saya pakai/pinjam.
             Atas perhatian dan bantuannya saya sampaikan terimaksih.
@@ -130,17 +131,31 @@
   <table class="table" style="width: 100%;">
     <tbody>
       <tr>
+        @if ($data->level == 'STUDENT')
         <td style="width: 50%; text-align: center;">
           Mengetahui,
           Dosen Pembimbing,
+          <br><br><br><br>
+          ( {{ $acc_data_lecture->name }} )
           <br>
-          NIP
+          NIP: {{ $acc_data_lecture->no_id }}
         </td>
         <td style="width: 50%; text-align: center;">
           Pemohon,
+          <br><br><br><br>
+          ( {{ $data->name }} )
           <br>
-          NIM
+          NIM: {{ $data->no_id }}
         </td>
+        @else
+        <td style="width: 50%; text-align: center;">
+          Pemohon,
+          <br><br><br><br>
+          ( {{ $data->name }} )
+          <br>
+          No.ID: {{ $data->no_id }}
+        </td>
+        @endif
       </tr>
     </tbody>
   </table>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Auth;
 use DataTables;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -13,9 +14,38 @@ use App\Models\Laboratory_technician;
 use App\Models\Lab_submission;
 use App\Models\Laboratory_facility;
 use App\Models\Lab_schedule;
+use App\Models\User;
+use App\Models\Lab_submission_acc;
 
 class DatatablesController extends Controller
 {
+	public function sourceDataUser(Request $request)
+	{
+		$colect_data = User::all();
+		return DataTables::of($colect_data)
+			->addIndexColumn()
+			->addColumn('empty_str', function ($k) {
+				return '';
+			})
+			->addColumn('menu', function ($colect_data) {
+				return '<div class="btn-group">
+			<button type="button" class="btn btn-xs bg-gradient-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Menu</button>
+			<div class="dropdown-menu dropdown-menu-right">
+				<a href="' . url('setting/user/detail-user/' . $colect_data->id) . '"><button class="dropdown-item btn-sm" type="button"><i class="fas fa-eye cst-mr-5"></i>Lihat Detail</button></a>
+			</div></div>';
+			})
+			->addColumn('name', function ($colect_data) {
+				return $colect_data->name;
+			})
+			->addColumn('username', function ($colect_data) {
+				return $colect_data->username;
+			})
+			->addColumn('email', function ($colect_data) {
+				return $colect_data->email;
+			})
+			->rawColumns(['name', 'username', 'email', 'menu'])
+			->make('true');
+	}
 	/* Tags:... */
 	public function sourceDataLaboratorium(Request $request)
 	{
@@ -119,8 +149,271 @@ class DatatablesController extends Controller
 	}
 	public function sourceDataPengajuan(Request $request)
 	{
-		$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
-		->get();
+		if ($request->status == null) {
+			# code...
+			$status = ['menunggu', 'disetujui','ditolak','selesai'];
+		}else{
+			$status = [$request->status];
+		}
+		$user = authUser();
+		if (rulesUser(['ADMIN_SYSTEM', 'ADMIN_MASTER', 'LAB_HEAD'])) {
+			if ($request->dt_start == null && $request->dt_end == null) {
+				if ($request->status == null) {
+					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+					->whereIn('lsb_status', $status)
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->get();
+				}else{
+					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+					->whereIn('lsb_status', $status)
+					->where('lsb_status',$request->status)
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->get();
+				}
+			} elseif($request->dt_start != null && $request->dt_end != null) {
+				if ($request->status == null) {
+					$colData = collect();
+					$period = CarbonPeriod::create($request->dt_start, $request->dt_end);
+					foreach ($period as $key => $value) {
+						$date_perform = date('Y-m-d',strtotime($value));
+						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+						->whereIn('lsb_status', $status)
+						->where('lsb_period','like','%'. $date_perform.'%')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->get();
+						$colData = $colData->merge($data_colect[$key]);
+					}
+					$data = $colData->unique();
+				} else {
+					$colData = collect();
+					$period = CarbonPeriod::create($request->dt_start, $request->dt_end);
+					foreach ($period as $key => $value) {
+						$date_perform = date('Y-m-d', strtotime($value));
+						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+						->whereIn('lsb_status', $status)
+						->where('lsb_period', 'like', '%' . $date_perform . '%')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->get();
+						$colData = $colData->merge($data_colect[$key]);
+					}
+					$data = $colData->unique();
+				}
+			}else{
+				// 
+			}
+		} elseif (rulesUser(['LAB_SUBHEAD'])) {
+			if ($request->dt_start == null && $request->dt_end == null) {
+				if ($request->status == null) {
+					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+					->whereIn('lsb_status', $status)
+					->where('lsb_user_subhead', $user->id)
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->get();
+				} else {
+					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+					->whereIn('lsb_status', $status)
+					->where('lsb_user_subhead', $user->id)
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->get();
+				}
+			} elseif ($request->dt_start != null && $request->dt_end != null) {
+				if ($request->status == null) {
+					$colData = collect();
+					$period = CarbonPeriod::create($request->dt_start, $request->dt_end);
+					foreach ($period as $key => $value) {
+						$date_perform = date('Y-m-d', strtotime($value));
+						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+						->whereIn('lsb_status', $status)
+						->where('lsb_user_subhead', $user->id)
+						->where('lsb_period', 'like', '%' . $date_perform . '%')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->get();
+						$colData = $colData->merge($data_colect[$key]);
+					}
+					$data = $colData->unique();
+				} else {
+					$colData = collect();
+					$period = CarbonPeriod::create($request->dt_start, $request->dt_end);
+					foreach ($period as $key => $value) {
+						$date_perform = date('Y-m-d', strtotime($value));
+						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+						->whereIn('lsb_status', $status)
+						->where('lsb_user_subhead', $user->id)
+						->where('lsb_period', 'like', '%' . $date_perform . '%')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->get();
+						$colData = $colData->merge($data_colect[$key]);
+					}
+					$data = $colData->unique();
+				}
+			} else {
+				// 
+			}
+			// $data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+			// ->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+			// ->whereIn('lsb_status',$status)
+			// ->where('lsb_user_subhead',$user->id)
+			// ->get();
+		} elseif (rulesUser(['LAB_TECHNICIAN'])) {
+			if ($request->dt_start == null && $request->dt_end == null) {
+				if ($request->status == null) {
+					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+					->whereIn('lsb_status', $status)
+					->where('lsb_user_tech', $user->id)
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->get();
+				} else {
+					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+					->whereIn('lsb_status', $status)
+					->where('lsb_user_tech', $user->id)
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->get();
+				}
+			} elseif ($request->dt_start != null && $request->dt_end != null) {
+				if ($request->status == null) {
+					$colData = collect();
+					$period = CarbonPeriod::create($request->dt_start, $request->dt_end);
+					foreach ($period as $key => $value) {
+						$date_perform = date('Y-m-d', strtotime($value));
+						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+						->whereIn('lsb_status', $status)
+						->where('lsb_user_tech', $user->id)
+						->where('lsb_period', 'like', '%' . $date_perform . '%')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->get();
+						$colData = $colData->merge($data_colect[$key]);
+					}
+					$data = $colData->unique();
+				} else {
+					$colData = collect();
+					$period = CarbonPeriod::create($request->dt_start, $request->dt_end);
+					foreach ($period as $key => $value) {
+						$date_perform = date('Y-m-d', strtotime($value));
+						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+						->whereIn('lsb_status', $status)
+						->where('lsb_user_tech', $user->id)
+						->where('lsb_period', 'like', '%' . $date_perform . '%')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->get();
+						$colData = $colData->merge($data_colect[$key]);
+					}
+					$data = $colData->unique();
+				}
+			} else {
+				// 
+			}
+			// $data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+			// ->whereIn('lsb_status',$status)
+			// ->where('lsb_user_tech', $user->id)
+			// ->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+			// ->get();
+		} elseif (rulesUser(['LECTURE'])) {
+			if ($request->dt_start == null && $request->dt_end == null) {
+				if ($request->status == null) {
+					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+					->whereIn('lsb_status', $status)
+					->where('lsb_user_lecture', $user->id)
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->get();
+				} else {
+					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+					->whereIn('lsb_status', $status)
+					->where('lsb_user_lecture', $user->id)
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->get();
+				}
+			} elseif ($request->dt_start != null && $request->dt_end != null) {
+				if ($request->status == null) {
+					$colData = collect();
+					$period = CarbonPeriod::create($request->dt_start, $request->dt_end);
+					foreach ($period as $key => $value) {
+						$date_perform = date('Y-m-d', strtotime($value));
+						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+						->whereIn('lsb_status', $status)
+						->where('lsb_user_lecture', $user->id)
+						->where('lsb_period', 'like', '%' . $date_perform . '%')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->get();
+						$colData = $colData->merge($data_colect[$key]);
+					}
+					$data = $colData->unique();
+				} else {
+					$colData = collect();
+					$period = CarbonPeriod::create($request->dt_start, $request->dt_end);
+					foreach ($period as $key => $value) {
+						$date_perform = date('Y-m-d', strtotime($value));
+						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+						->whereIn('lsb_status', $status)
+						->where('lsb_user_lecture', $user->id)
+						->where('lsb_period', 'like', '%' . $date_perform . '%')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->get();
+						$colData = $colData->merge($data_colect[$key]);
+					}
+					$data = $colData->unique();
+				}
+			} else {
+				// 
+			}
+			// $data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+			// ->whereIn('lsb_status',$status)
+			// ->where('lsb_user_lecture', $user->id)
+			// ->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+			// ->get();
+		}elseif(rulesUser(['STUDENT', 'PUBLIC_MEMBER', 'PUBLIC_NON_MEMBER'])){
+			if ($request->dt_start == null && $request->dt_end == null) {
+				if ($request->status == null) {
+					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+					->whereIn('lsb_status', $status)
+					->where('lsb_user_id', $user->id)
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->get();
+				} else {
+					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+					->whereIn('lsb_status', $status)
+					->where('lsb_user_id', $user->id)
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->get();
+				}
+			} elseif ($request->dt_start != null && $request->dt_end != null) {
+				if ($request->status == null) {
+					$colData = collect();
+					$period = CarbonPeriod::create($request->dt_start, $request->dt_end);
+					foreach ($period as $key => $value) {
+						$date_perform = date('Y-m-d', strtotime($value));
+						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+						->whereIn('lsb_status', $status)
+						->where('lsb_user_id', $user->id)
+						->where('lsb_period', 'like', '%' . $date_perform . '%')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->get();
+						$colData = $colData->merge($data_colect[$key]);
+					}
+					$data = $colData->unique();
+				} else {
+					$colData = collect();
+					$period = CarbonPeriod::create($request->dt_start, $request->dt_end);
+					foreach ($period as $key => $value) {
+						$date_perform = date('Y-m-d', strtotime($value));
+						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+						->whereIn('lsb_status', $status)
+						->where('lsb_user_id', $user->id)
+						->where('lsb_period', 'like', '%' . $date_perform . '%')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->get();
+						$colData = $colData->merge($data_colect[$key]);
+					}
+					$data = $colData->unique();
+				}
+			} else {
+				// 
+			}
+			// $data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+			// ->whereIn('lsb_status',$status)
+			// ->where('lsb_user_id', $user->id)
+			// ->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+			// ->get();
+		}
 		return DataTables::of($data)
 		->addIndexColumn()
 		->addColumn('empty_str', function ($k) {
@@ -128,16 +421,21 @@ class DatatablesController extends Controller
 		})
 		->addColumn('opsi', function ($data) {
 			return ' <div style="text-align:center;">
-		<div class="btn-group">
-			<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				Menu <span class="caret"></span>
-			</button>
-			<ul class="dropdown-menu pull-right">
-				<li><a href="' . url('pengajuan/detail-pengajuan') . '/' . $data->lsb_id . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Lihat Detail</a></li>
-				<li role="separator" class="divider" style="margin-top: 0px;margin-bottom: 0px;"></li>
-				<li><a href="' . url('pengajuan/pembatalan-pengajuan') . '/' . $data->lsb_id . '" class="del-siswa" id="' . $data->lsb . '"><i class="ri-close-circle-line" aria-hidden="true" style="margin-right:12px;"></i>Batal</a></li>
-			</ul>
-		</div></div>';
+			<div class="btn-group">
+				<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Menu <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu pull-right">
+					<li><a href="' . url('pengajuan/detail-pengajuan') . '/' . $data->lsb_id . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Lihat Detail</a></li>
+				</ul>
+			</div></div>';
+		})
+		->addColumn('pemohon', function ($data) {
+			return $data->name;
+		})
+		->addColumn('waktu_pengajuan', function ($data) {
+			$date = date('d/m/Y',strtotime($data->lsb_created));
+			return $date;
 		})
 		->addColumn('kegiatan', function ($data) {
 			if ($data->lsb_activity == 'tp_penelitian') {
@@ -147,7 +445,7 @@ class DatatablesController extends Controller
 			} elseif ($data->lsb_activity == 'tp_pengabdian_masyarakat') {
 				$res = 'Pengadian Masyarakat';
 			} elseif ($data->lsb_activity == 'tp_magang') {
-				$res = 'Magan';
+				$res = 'Magang';
 			} else {
 				$res = 'Lain-lain.';
 			}
@@ -159,13 +457,222 @@ class DatatablesController extends Controller
 		->addColumn('waktu', function ($data) {
 			$dt1 = date('d M Y', strtotime($data->lsb_date_start));
 			$dt2 = date('d M Y', strtotime($data->lsb_date_end));
-			$res = $dt1 . '  s/d  ' . $dt2;
+			$res = $dt1 . '  <b>s/d</b>  ' . $dt2;
 			return $res;
 		})
-		->addColumn('status', function ($data) {
-			return '<div style="text-align:center;"><span class="badge bg-blue">Disetujui Kalab</span><span class="badge bg-blue">Disetujui Kalab</span></div>';
+		->addColumn('acc', function ($data) {
+			$data = Lab_submission_acc::where('lsa_submission',$data->lsb_id)->select('las_username')->get();
+			$str = '';
+			foreach ($data as $key => $value) {
+				$str.= '<span class="badge bg-blue">Acc: '.$value->las_username.'</span>';
+			}
+			return '<div style="text-align:center;">'.$str.'</div>';
 		})
-		->rawColumns(['opsi', 'kegiatan', 'judul', 'status', 'waktu'])
+		->addColumn('status',function ($data) {
+			if ($data->lsb_status == 'menunggu') {
+				$res = '<span class="badge bg-default">' . $data->lsb_status . '</span>';
+			}elseif ($data->lsb_status == 'disetujui') {
+				$res = '<span class="badge bg-green">' . $data->lsb_status . '</span>';
+			}elseif ($data->lsb_status == 'ditolak') {
+				$res = '<span class="badge bg-red">' . $data->lsb_status . '</span>';
+			}elseif ($data->lsb_status == 'selesai') {
+				$res = '<span class="badge bg-navy">' . $data->lsb_status . '</span>';
+			}
+			return '<div style="text-align:center;">' . $res . '</div>';
+		})
+		->rawColumns(['opsi', 'kegiatan', 'judul','acc' , 'status', 'waktu', 'pemohon', 'waktu_pengajuan'])
+		->make(true);
+	}
+	public function sourceDataPengajuanArchive(Request $request)
+	{
+		$status = ['ditolak','selesai'];
+		$user = authUser();
+		if (rulesUser(['ADMIN_SYSTEM', 'ADMIN_MASTER', 'LAB_HEAD'])) {
+			$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+			->whereIn('lsb_status',$status)
+			->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+			->get();
+		} elseif (rulesUser(['LAB_SUBHEAD'])) {
+			// $labs = Laboratory::where('lab_head', $user->id)->get();
+			// $ids_lab = [];
+			// foreach ($labs as $key => $value) {
+			// 	$ids_lab[$key] = $value->lab_id;
+			// }
+			$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+			->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+			->whereIn('lsb_status', $status)
+			->where('lsb_user_subhead', $user->id)
+			->get();
+		} elseif (rulesUser(['LAB_TECHNICIAN'])) {
+			$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+			->where('lsb_user_tech', $user->id)
+			->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+			->whereIn('lsb_status', $status)
+			->get();
+		} elseif (rulesUser(['LECTURE'])) {
+			$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+			->where('lsb_user_lecture', $user->id)
+			->whereIn('lsb_status', $status)
+			->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+			->get();
+		} elseif (rulesUser(['STUDENT', 'PUBLIC_MEMBER', 'PUBLIC_NON_MEMBER'])) {
+			$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+			->where('lsb_user_id', $user->id)
+			->whereIn('lsb_status', $status)
+			->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+			->get();
+		}
+		return DataTables::of($data)
+			->addIndexColumn()
+			->addColumn('empty_str', function ($k) {
+				return '';
+			})
+			->addColumn('opsi', function ($data) {
+				return ' <div style="text-align:center;">
+			<div class="btn-group">
+				<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Menu <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu pull-right">
+					<li><a href="' . url('pengajuan/detail-pengajuan') . '/' . $data->lsb_id . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Lihat Detail</a></li>
+				</ul>
+			</div></div>';
+			})
+			->addColumn('pemohon', function ($data) {
+				return $data->name;
+			})
+			->addColumn('waktu_pengajuan', function ($data) {
+				$date = date('d/m/Y', strtotime($data->lsb_created));
+				return $date;
+			})
+			->addColumn('kegiatan', function ($data) {
+				if ($data->lsb_activity == 'tp_penelitian') {
+					$res = 'Penelitian';
+				} elseif ($data->lsb_activity == 'tp_pelatihan') {
+					$res = 'Pelatihan';
+				} elseif ($data->lsb_activity == 'tp_pengabdian_masyarakat') {
+					$res = 'Pengadian Masyarakat';
+				} elseif ($data->lsb_activity == 'tp_magang') {
+					$res = 'Magang';
+				} else {
+					$res = 'Lain-lain.';
+				}
+				return $res;
+			})
+			->addColumn('judul', function ($data) {
+				return $data->lsb_title;
+			})
+			->addColumn('waktu', function ($data) {
+				$dt1 = date('d M Y', strtotime($data->lsb_date_start));
+				$dt2 = date('d M Y', strtotime($data->lsb_date_end));
+				$res = $dt1 . '  <b>s/d</b>  ' . $dt2;
+				return $res;
+			})
+			->addColumn('acc', function ($data) {
+				$data = Lab_submission_acc::where('lsa_submission', $data->lsb_id)->select('las_username')->get();
+				$str = '';
+				foreach ($data as $key => $value) {
+					$str .= '<span class="badge bg-blue">Acc: ' . $value->las_username . '</span>';
+				}
+				return '<div style="text-align:center;">' . $str . '</div>';
+			})
+			->addColumn('status', function ($data) {
+				if ($data->lsb_status == 'menunggu') {
+					$res = '<span class="badge bg-default">' . $data->lsb_status . '</span>';
+				} elseif ($data->lsb_status == 'disetujui') {
+					$res = '<span class="badge bg-green">' . $data->lsb_status . '</span>';
+				} elseif ($data->lsb_status == 'ditolak') {
+					$res = '<span class="badge bg-red">' . $data->lsb_status . '</span>';
+				} elseif ($data->lsb_status == 'selesai') {
+					$res = '<span class="badge bg-navy">' . $data->lsb_status . '</span>';
+				}
+				return '<div style="text-align:center;">' . $res . '</div>';
+			})
+			->rawColumns(['opsi', 'kegiatan', 'judul', 'acc', 'status', 'waktu', 'pemohon', 'waktu_pengajuan'])
+			->make(true);
+	}
+	public function sourceDataPengajuanAdditional(Request $request)
+	{
+		$user = Auth::user();
+		if (rulesUser(['LECTURE'])) {
+			# code...
+			$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+			->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+			->where('lsb_user_id',$user->id)
+			->get();
+		} else {
+			# code...
+			$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+			->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+			->get();
+		}
+		return DataTables::of($data)
+		->addIndexColumn()
+		->addColumn('empty_str', function ($k) {
+			return '';
+		})
+		->addColumn('opsi', function ($data) {
+			return ' <div style="text-align:center;">
+			<div class="btn-group">
+				<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Menu <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu pull-right">
+					<li><a href="' . url('pengajuan/detail-pengajuan') . '/' . $data->lsb_id . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Lihat Detail</a></li>
+				</ul>
+			</div></div>';
+		})
+		->addColumn('pemohon', function ($data) {
+			return $data->name;
+		})
+		->addColumn('waktu_pengajuan', function ($data) {
+			$date = date('d/m/Y', strtotime($data->lsb_created));
+			return $date;
+		})
+		->addColumn('kegiatan', function ($data) {
+			if ($data->lsb_activity == 'tp_penelitian') {
+				$res = 'Penelitian';
+			} elseif ($data->lsb_activity == 'tp_pelatihan') {
+				$res = 'Pelatihan';
+			} elseif ($data->lsb_activity == 'tp_pengabdian_masyarakat') {
+				$res = 'Pengadian Masyarakat';
+			} elseif ($data->lsb_activity == 'tp_magang') {
+				$res = 'Magang';
+			} else {
+				$res = 'Lain-lain.';
+			}
+			return $res;
+		})
+		->addColumn('judul', function ($data) {
+			return $data->lsb_title;
+		})
+		->addColumn('waktu', function ($data) {
+			$dt1 = date('d M Y', strtotime($data->lsb_date_start));
+			$dt2 = date('d M Y', strtotime($data->lsb_date_end));
+			$res = $dt1 . '  <b>s/d</b>  ' . $dt2;
+			return $res;
+		})
+		->addColumn('acc', function ($data) {
+			$data = Lab_submission_acc::where('lsa_submission', $data->lsb_id)->select('las_username')->get();
+			$str = '';
+			foreach ($data as $key => $value) {
+				$str .= '<span class="badge bg-blue">Acc: ' . $value->las_username . '</span>';
+			}
+			return '<div style="text-align:center;">' . $str . '</div>';
+		})
+		->addColumn('status', function ($data) {
+			if ($data->lsb_status == 'menunggu') {
+				$res = '<span class="badge bg-default">' . $data->lsb_status . '</span>';
+			} elseif ($data->lsb_status == 'disetujui') {
+				$res = '<span class="badge bg-green">' . $data->lsb_status . '</span>';
+			} elseif ($data->lsb_status == 'ditolak') {
+				$res = '<span class="badge bg-red">' . $data->lsb_status . '</span>';
+			} elseif ($data->lsb_status == 'selesai') {
+				$res = '<span class="badge bg-navy">' . $data->lsb_status . '</span>';
+			}
+			return '<div style="text-align:center;">' . $res . '</div>';
+		})
+		->rawColumns(['opsi', 'kegiatan', 'judul', 'acc', 'status', 'waktu', 'pemohon', 'waktu_pengajuan'])
 		->make(true);
 	}
 	public function sourceDataFasilitasLab(Request $request)
@@ -186,8 +693,8 @@ class DatatablesController extends Controller
 			</button>
 			<ul class="dropdown-menu pull-right">
 				<li><a href="' . url('laboratorium/detail-fasilitas/' . $data->laf_id) . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Detail Alat/Fasilitas</a></li>
-				<li><a href="' . url('laboratorium/update-fasilitas/' . $data->laf_id) . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update</a></li>
-				<li><a href="' . url('laboratorium/hapus-fasilitas/' . $data->laf_id) . '"><i class="ri-delete-bin-line" aria-hidden="true" style="margin-right:12px;"></i>Hapus</a></li>
+				<li><a href="' . url('laboratorium/form-update-fasilitas/' . $data->laf_id) . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update</a></li>
+				<li><a href="#" onclick="actDeleteFacility('. $data->laf_id.')" ><i class="ri-delete-bin-line" aria-hidden="true" style="margin-right:12px;"></i>Hapus</a></li>
 			</ul>
 		</div></div>';
 		})
@@ -211,145 +718,76 @@ class DatatablesController extends Controller
 	{
 		$dtStart =Carbon::parse(date('Y-m-d', strtotime($request->dtStart)))->format('Y-m-d');
 		$dtEnd = Carbon::parse(date('Y-m-d', strtotime($request->dtEnd)))->format('Y-m-d');
-		
+
+		$dataSch = [];
+		$sch_index = 0;
 		$idx_date_range = 0;
 		$dataDays = [];
+		$idx_nonreguler_data = 0;
+		$data_all_nonreguler = [];
+		$data_sch_nonreguler = [];
 		while ($dtStart <= date("Y-m-d", strtotime("-1 day", strtotime($dtEnd)))) {
-			// $dataDays[$idx_date_range] = [
-			// 	'day' => date('l', strtotime($dtStart)),
-			// 	'date' => date('Y-m-d', strtotime($dtStart)),
-			// ];
+			$data = Lab_schedule::leftjoin('users', 'lab_schedules.lbs_res_person', '=', 'users.id')
+			->where('lbs_dates_period','like','%'. date('Y-m-d', strtotime($dtStart)).'%')
+			->where('lbs_type', 'non_reguler')
+			->get();
+			foreach ($data as $key => $value) {
+				if ($value != null) {
+					$data_all_nonreguler[$idx_nonreguler_data] = $value;
+					$idx_nonreguler_data++;
+				}
+			}
 			$days[$idx_date_range]  = date('l', strtotime($dtStart));
 			$dtStart = date("Y-m-d", strtotime("+1 day", strtotime($dtStart)));
 			$idx_date_range++;
 		}
-		$uniq_days = array_unique($days);
-		#
-		// $collect_sch_reguler = Lab_schedule::leftjoin('users', 'lab_schedules.lbs_res_person', '=', 'users.id')
-		// ->where('lbs_lab', $request->lab_id)
-		// ->where('lbs_type', 'reguler')
-		// ->get();
-		// $collect_sch_non_reguler = Lab_schedule::leftjoin('users', 'lab_schedules.lbs_res_person', '=', 'users.id')
-		// ->where('lbs_lab', $request->lab_id)
-		// ->where('lbs_type', 'non_reguler')
-		// ->whereBetween('lbs_date_start', [date('Y-m-d', strtotime($request->dtStart)), date('Y-m-d', strtotime($request->dtEnd))])
-		// ->get();
+		$data_sch_nonreguler = array_unique($data_all_nonreguler);
+		foreach ($data_sch_nonreguler as $key_a => $value) {
+			// die();
+			$lbs_type = 'Non Reguler';
+			$dates_reg[$key_a] = explode('$', $value->lbs_dates_period);
+			$time_start = Carbon::parse($dates_reg[$key_a][min(array_keys($dates_reg[$key_a]))])->format('Y-m-d');
+			$time_end = Carbon::parse($dates_reg[$key_a][max(array_keys($dates_reg[$key_a]))])->format('Y-m-d');
+			$times = $time_start.' - '. $time_end;
+			$dataSch[$sch_index] = [
+				'day' => null,
+				'lab_id' => $value->lbs_lab,
+				'lbs_id' => $value->lbs_id,
+				'lbs_submission' =>	$value->lbs_submission,
+				'time' => 	$times,
+				'subject' => $value->lbs_matkul,
+				'group' =>  $value->lbs_tenant_name,
+				'person' => $value->name,
+				'type' => $lbs_type,
+				'type_par' => $value->lbs_type,
+			];
+			$sch_index++;
+		}
+		$unique_days = array_unique($days);
 		$collect_sch_reguler = Lab_schedule::leftjoin('users', 'lab_schedules.lbs_res_person', '=', 'users.id')
 		->where('lbs_lab', $request->lab_id)
 		->where('lbs_type', 'reguler')
-		->whereIn('lbs_day', $uniq_days)
+		->whereIn('lbs_day', $unique_days)
 		->get();
-		$collect_sch_nonreguler = Lab_schedule::leftjoin('users', 'lab_schedules.lbs_res_person', '=', 'users.id')
-		->where('lbs_lab', $request->lab_id)
-		->where('lbs_type', 'non_reguler')
-		// ->whereBetween('lbs_date_start', [date('Y-m-d', strtotime($request->dtStart)), date('Y-m-d', strtotime($request->dtEnd))])
-		->get();
-		#
-		foreach ($collect_sch_nonreguler as $key => $value) {
-			$date_idx = 1;
-			// while ($value->lbs_date_start <= date("Y-m-d", strtotime("-1 day", strtotime($value->lbs_date_end)))) {
-			// 	$dates_range[$date_idx] = $value->lbs_date_start;
-			// 	$dates_range[$date_idx] = date("Y-m-d", strtotime("+1 day", strtotime($value->lbs_date_start)));
-			// 	$date_idx++;
-			// }
-			echo $date_idx;
-			$date_idx++;
-		}
-		$period = CarbonPeriod::create('2018-06-14', '2018-06-20');
-
-		// Iterate over the period
-		foreach ($period as $key => $date) {
-			$fd [$key]= $date->format('Y-m-d');
-		}
-
-		$dates = $period->toArray();
-		print_r($fd);
-		// Convert the period to an array of dates
-		// print_r($dates_range);
-		die();
-
-		// foreach ($dataDays as $key => $value) {
-		// 	$dts[$key] = $collect_sch_reguler->where('lbs_day', strtolower($value['day']));
-		// 	foreach ($dts[$key] as $skey => $svalue) {
-		// 		$date_exclude = explode('$', $svalue->lbs_sch_dates_canceled);
-		// 		$time_start = Carbon::parse($svalue->lbs_time_start)->isoFormat('HH:mm');
-		// 		$time_end = Carbon::parse($svalue->lbs_time_end)->isoFormat('HH:mm');
-		// 		if ($svalue->lbs_type == 'reguler') {
-		// 			$lbs_type = 'Reguler';
-		// 		} else {
-		// 			$lbs_type = 'Non Reguler';
-		// 		}
-		// 		if (!in_array($value['date'], $date_exclude)) {
-		// 			$dataSch[$sch_index] = [
-		// 				'lab_id' => $svalue->lbs_lab,
-		// 				'lbs_id' => $svalue->lbs_id,
-		// 				'day' => Carbon::parse($svalue->lbs_day)->isoFormat('dddd'),
-		// 				'time' => $time_start . ' - ' . $time_end,
-		// 				'subject' => $svalue->lbs_matkul,
-		// 				'group' =>  $svalue->lbs_tenant_name,
-		// 				'person' => $svalue->name,
-		// 				'type' => $lbs_type,
-		// 			];
-		// 		} else {
-		// 			$dataSch[$sch_index] = [
-		// 				'lab_id' => $svalue->lbs_lab,
-		// 				'lbs_id' => $svalue->lbs_id,
-		// 				'day' => Carbon::parse($svalue->lbs_day)->isoFormat('dddd'),
-		// 				'time' => $time_start . ' - ' . $time_end,
-		// 				'subject' => $svalue->lbs_matkul,
-		// 				'group' =>  $svalue->lbs_tenant_name,
-		// 				'person' => $svalue->name,
-		// 				'type' => $lbs_type,
-		// 			];
-		// 		}
-		// 		$sch_index++;
-		// 	}
-		// }
-		$dataSch = [];
-		$sch_index = 0;
-		# processing sch data with parameter reguler
 		foreach ($collect_sch_reguler as $key => $value) {
 			$lbs_type = 'Reguler';
 			$time_start = Carbon::parse($value->lbs_time_start)->isoFormat('HH:mm');
 			$time_end = Carbon::parse($value->lbs_time_end)->isoFormat('HH:mm');
-			$times = 'Setiap '. Carbon::parse($value->lbs_day)->isoFormat('dddd'). ' pukul ' . $time_start . ' - ' . $time_end;
+			$times = 'Setiap ' . Carbon::parse($value->lbs_day)->isoFormat('dddd') . ' pukul ' . $time_start . ' - ' . $time_end;
 			$dataSch[$sch_index] = [
 				'day' => null,
 				'lab_id' => $value->lbs_lab,
 				'lbs_id' => $value->lbs_id,
+				'lbs_submission' => $value->lbs_submission,
 				'time' => 	$times,
 				'subject' => $value->lbs_matkul,
 				'group' =>  $value->lbs_tenant_name,
 				'person' => $value->name,
 				'type' => $lbs_type,
+				'type_par' => $value->lbs_type,
 			];
 			$sch_index++;
 		}
-		# processing sch data with parameter reguler
-		foreach ($collect_sch_nonreguler as $key => $value) {
-			$range_date_x = date('d-m-Y', strtotime($value->lbs_date_start)) . ' s/d ' . date('d-m-Y', strtotime($value->lbs_date_end));
-			$lbs_type = 'Non Reguler';
-			$times = $range_date_x;
-			$dataSch[$sch_index] = [
-				'day' => null,
-				'lab_id' => $value->lbs_lab,
-				'lbs_id' => $value->lbs_id,
-				'time' => 	$times,
-				'subject' => $value->lbs_matkul,
-				'group' =>  $value->lbs_tenant_name,
-				'person' => $value->name,
-				'type' => $lbs_type,
-			];
-			$sch_index++;
-		}
-		// die();
-		#
-		// print_r($dataSch);
-		// $data = Lab_schedule::leftjoin('users', 'lab_schedules.lbs_res_person', '=', 'users.id')
-		// ->whereBetween('lbs_date_start', [date('Y-m-d', strtotime($request->dtStart)), date('Y-m-d', strtotime($request->dtEnd))])
-		// ->where('lbs_lab', $request->lab_id)
-		// ->get();
-		// die();
 		#
 		return DataTables::of($dataSch)
 		->addIndexColumn()
@@ -357,16 +795,29 @@ class DatatablesController extends Controller
 			return '';
 		})
 		->addColumn('opsi', function ($dataSch) {
-			return ' <div style="text-align:center;">
-		<div class="btn-group">
-			<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				Menu <span class="caret"></span>
-			</button>
-			<ul class="dropdown-menu pull-right">
-				<li><a href="' . url('laboratorium/update-jadwal-lab/'. $dataSch['lab_id'].'/'. $dataSch['lbs_id']) . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update</a></li>
-				<li><a href="#" onclick="actDeleteSchLab('. $dataSch['lbs_id'].')"><i class="ri-delete-bin-line" aria-hidden="true" style="margin-right:12px;"></i>Delete</a></li>
-			</ul>
-		</div></div>';
+
+			if ($dataSch['type_par'] == 'reguler') {
+				return ' <div style="text-align:center;">
+			<div class="btn-group">
+				<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Menu <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu pull-right">
+					<li><a href="' . url('laboratorium/update-jadwal-lab/'. $dataSch['lab_id'].'/'. $dataSch['lbs_id']) . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update</a></li>
+					<li><a href="#" onclick="actDeleteSchLab('. $dataSch['lbs_id'].')"><i class="ri-delete-bin-line" aria-hidden="true" style="margin-right:12px;"></i>Delete</a></li>
+				</ul>
+			</div></div>';
+			} else {
+				return ' <div style="text-align:center;">
+			<div class="btn-group">
+				<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Menu <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu pull-right">
+					<li><a href="' . url('pengajuan/detail-pengajuan/' . $dataSch['lbs_submission']) . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Lihat Detail</a></li>
+				</ul>
+			</div></div>';
+			}
 		})
 		->addColumn('day', function ($dataSch) {
 			$res = $dataSch['day'];
@@ -466,6 +917,163 @@ class DatatablesController extends Controller
 			return $res;
 		})
 		->rawColumns(['opsi', 'day', 'time', 'type', 'subject', 'group', 'person'])
+		->make(true);
+	}
+	public function sourceDataLabSchedule(Request $request)
+	{
+		$data = Laboratory::join('users', 'laboratories.lab_head', '=', 'users.id')
+		->get();
+		return DataTables::of($data)
+			->addIndexColumn()
+			->addColumn('empty_str', function ($k) {
+				return '';
+			})
+			->addColumn('opsi', function ($data) {
+				return '<a href="'.url('jadwal_lab/'. $data->lab_id).'">
+				<button class="btn btn-block btn-flat btn-default btn-xs " type="button" > <b>Lihat Jadwal</b></button></a>';
+			})
+			->addColumn('name', function ($data) {
+				$res = $data->lab_name;
+				return $res;
+			})
+			->addColumn('head', function ($data) {
+				$res = $data->name;
+				return $res;
+			})
+			->addColumn('status', function ($data) {
+				if ($data->lab_status == 'tersedia') {
+					$res = '<div style="text-align:center;"><span class="badge bg-green">' . strLabStatus($data->lab_status) . '</span>';
+				} elseif ($data->lab_status == 'tidak_tersedia') {
+					$res = '<div style="text-align:center;"><span class="badge bg-yellow">' . strLabStatus($data->lab_status) . '</span>';
+				} else {
+					$res = '<div style="text-align:center;"><span class="badge bg-default">Not Set</span>';
+				}
+				return $res;
+			})
+			->addColumn('location', function ($data) {
+				$res = $data->lab_location;
+				return $res;
+			})
+			->rawColumns(['opsi', 'name', 'head', 'status', 'location'])
+			->make(true);
+	}
+	/* Tags:... */
+	public function sourceDataLabFacility(Request $request)
+	{
+		$data = Laboratory::join('users', 'laboratories.lab_head', '=', 'users.id')
+		->get();
+		return DataTables::of($data)
+		->addIndexColumn()
+		->addColumn('empty_str', function ($k) {
+			return '';
+		})
+		->addColumn('opsi', function ($data) {
+			return '<a href="' . url('fasilitas_lab/' . $data->lab_id) . '">
+				<button class="btn btn-block btn-flat btn-default btn-xs " type="button" > <b>Lihat Fasilitas Laboratorium</b></button></a>';
+		})
+		->addColumn('name', function ($data) {
+			$res = $data->lab_name;
+			return $res;
+		})
+		->addColumn('head', function ($data) {
+			$res = $data->name;
+			return $res;
+		})
+		->addColumn('status', function ($data) {
+			if ($data->lab_status == 'tersedia') {
+				$res = '<div style="text-align:center;"><span class="badge bg-green">' . strLabStatus($data->lab_status) . '</span>';
+			} elseif ($data->lab_status == 'tidak_tersedia') {
+				$res = '<div style="text-align:center;"><span class="badge bg-yellow">' . strLabStatus($data->lab_status) . '</span>';
+			} else {
+				$res = '<div style="text-align:center;"><span class="badge bg-default">Not Set</span>';
+			}
+			return $res;
+		})
+		->addColumn('location', function ($data) {
+			$res = $data->lab_location;
+			return $res;
+		})
+		->rawColumns(['opsi', 'name', 'head', 'status', 'location'])
+		->make(true);
+	}
+	public function sourceDataFasilitas(Request $request)
+	{
+		$data = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
+		->where('laf_laboratorium', $request->lab_id)
+			->get();
+		return DataTables::of($data)
+			->addIndexColumn()
+			->addColumn('empty_str', function ($k) {
+				return '';
+			})
+			->addColumn('opsi', function ($data) {
+				return ' <div style="text-align:center;">
+		<div class="btn-group">
+			<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				Menu <span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu pull-right">
+				<li><a href="' . url('fasilitas_lab/detail-fasilitas/' . $data->laf_id) . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Detail Alat/Fasilitas</a></li>
+				<li><a href="' . url('fasilitas_lab/form-update-fasilitas/' . $data->laf_id) . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update</a></li>
+				<li><a href="#" onclick="actDeleteFacility(' . $data->laf_id . ')" ><i class="ri-delete-bin-line" aria-hidden="true" style="margin-right:12px;"></i>Hapus</a></li>
+			</ul>
+		</div></div>';
+			})
+			->addColumn('name', function ($data) {
+				$res = $data->laf_name;
+				return $res;
+			})
+			->addColumn('brand', function ($data) {
+				$res = $data->laf_brand;
+				return $res;
+			})
+			->addColumn('utility', function ($data) {
+				$res = $data->laf_utility;
+				return $res;
+			})
+			->rawColumns(['opsi', 'name', 'brand', 'utility'])
+			->make(true);
+	}
+	/* Tags:... */
+	public function sourceDataUsers(Request $request)
+	{
+		$data = User::leftjoin('user_details','users.id','=', 'user_details.usd_user')
+		->get();
+		return DataTables::of($data)
+		->addIndexColumn()
+		->addColumn('empty_str', function ($k) {
+			return '';
+		})
+		->addColumn('opsi', function ($data) {
+			return ' <div style="text-align:center;">
+			<div class="btn-group">
+				<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Menu <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu pull-right">
+				<li><a href="' . url('pengaturan/user-detail/' . $data->id) . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Detail User</a></li>
+					<li><a href="' . url('pengaturan/form-update-user/' . $data->id) . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update User</a></li>
+					<li><a href="#" onclick="actBlockUser(' . $data->id . ')" ><i class="ri-delete-bin-line" aria-hidden="true" style="margin-right:12px;"></i>Block</a></li>
+				</ul>
+			</div></div>';
+		})
+		->addColumn('name', function ($data) {
+			$res = $data->name;
+			return $res;
+		})
+		->addColumn('no_id', function ($data) {
+			$res = $data->no_id;
+			return $res;
+		})
+		->addColumn('email', function ($data) {
+			$res = $data->email;
+			return $res;
+		})
+		->addColumn('level', function ($data) {
+			$res = $data->level;
+			return $res;
+		})
+		->rawColumns(['opsi', 'name', 'no_id', 'email','level'])
 		->make(true);
 	}
 }

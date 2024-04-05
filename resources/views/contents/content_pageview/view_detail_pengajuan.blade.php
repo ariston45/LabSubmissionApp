@@ -12,73 +12,175 @@ Lab management | Dashboard
 <div class="col-md-12">
   <div class="box box-primary">
     <div class="box-header with-border">
-      <h3 class="box-title" style="color: #0277bd"><i class="ri-file-list-3-line" style="margin-right: 4px;"></i> Detail Permohonan</h3>
+      <h3 class="box-title" style="color: #0277bd"><i class="ri-file-list-3-line" style="margin-right: 4px;"></i> Detail Permohonan </h3>
       <div class="pull-right">
-        <a href="{{ url('pengajuan/form-pengajuan') }}">
-          <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
-        </a>
+        @if ($data_pengajuan->level == 'STUDENT')
+          @if (rulesUser(['LECTURE']))
+            @if ($acc_data_lecture == null)
+              <a href="#" onclick="actionAccept();">
+                <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Persetujuan</button>
+              </a>
+            @endif
+          @elseif (rulesUser(['LAB_HEAD']))
+            @if ($acc_data_lecture != null)
+              @if ($data_pengajuan->lsb_status == 'menunggu')
+              <a href="#" onclick="actionAccept();">
+                <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Persetujuan</button>
+              </a>
+              @elseif($data_pengajuan->lsb_status == 'disetujui')
+              <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
+                <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
+              </a>
+              @endif
+            @endif
+          @endif
+        @else
+          @if ($data_pengajuan->lsb_status == 'menunggu')
+            <a href="#" onclick="actionAccept();">
+              <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Persetujuan</button>
+            </a>
+          @elseif($data_pengajuan->lsb_status == 'disetujui')
+            <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
+              <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
+            </a>
+          @endif
+        @endif
+        @if (rulesUser(['LAB_SUBHEAD']))
+          <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
+            <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
+          </a>
+          <a href="#" onclick="actionSetTech();">
+            <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Set Teknikal Pendamping</button>
+          </a>
+        @endif
+        @if (rulesUser(['LAB_TECHNICIAN']))
+          <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
+            <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
+          </a>
+          <a href="#" onclick="actionSetTechReport();">
+            <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Laporan Kegiatan</button>
+          </a>
+        @endif
+        @if ($data_pengajuan->lsb_user_id == authUser()->id)
         <a href="{{ url('pengajuan/form-pengajuan') }}">
           <button class="btn btn-flat btn-xs btn-default"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Update Pengajuan</button>
         </a>
+        <a href="{{ url('pengajuan/form-laporan') }}">
+          <button class="btn btn-flat btn-xs btn-default"><i class="ri-draft-line" style="margin-right: 4px;"></i> Laporan Kegiatan</button>
+        </a>
+        @endif
         <a href="{{ url('pengajuan') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
     </div>
     <div class="box-body">
-      {{ $data_pengajuan }}
+      {{-- {{ $data_pengajuan }} --}}
       <table class="table table-bordered">
         <tbody>
           <tr>
-            <td style="width: 20%;"><b>Nama</b></td>
-            <td style="width: 80%;">{{ $data_pengajuan->name }}</td>
+            <td style="width: 30%;"><b>Nama</b></td>
+            <td style="width: 70%;">{{ $data_pengajuan->name }}</td>
           </tr>
           <tr>
-            <td style="width: 20%;"><b>NIM/No.ID/ID Lainnya</b></td>
-            <td style="width: 80%;">{{ $data_pengajuan->no_id }}</td>
+            <td style="width: 30%;"><b>NIM/No.ID/ID Lainnya</b></td>
+            <td style="width: 70%;">{{ $data_pengajuan->no_id }}</td>
           </tr>
           <tr>
-            <td style="width: 20%;"><b>Studi</b></td>
-            <td style="width: 80%;">{{ $data_pengajuan->usd_prodi }}</td>
+            <td style="width: 30%;"><b>Program Studi</b></td>
+            <td style="width: 70%;">{{ $data_pengajuan->usd_prodi }}</td>
           </tr>
           <tr>
-            <td style="width: 20%;"><b>Fakultas</b></td>
-            <td style="width: 80%;">{{ $data_pengajuan->usd_fakultas }}</td>
+            <td style="width: 30%;"><b>Fakultas</b></td>
+            <td style="width: 70%;">{{ $data_pengajuan->usd_fakultas }}</td>
           </tr>
           <tr>
-            <td style="width: 20%;"><b>Universitas</b></td>
-            <td style="width: 80%;">{{ $data_pengajuan->usd_universitas }}</td>
+            <td style="width: 30%;"><b>Universitas</b></td>
+            <td style="width: 70%;">{{ $data_pengajuan->usd_universitas }}</td>
           </tr>
           <tr>
-            <td style="width: 20%;"><b>Alamat</b></td>
-            <td style="width: 80%;">{{ $data_pengajuan->usd_address }}</td>
+            <td style="width: 30%;"><b>Alamat</b></td>
+            <td style="width: 70%;">{{ $data_pengajuan->usd_address }}</td>
           </tr>
           <tr>
-            <td style="width: 20%;"><b>No. HP/CP</b></td>
-            <td style="width: 80%;">{{ $data_pengajuan->usd_phone }}</td>
+            <td style="width: 30%;"><b>No. HP/CP</b></td>
+            <td style="width: 70%;">{{ $data_pengajuan->usd_phone }}</td>
           </tr>
           <tr>
-            <td style="width: 20%;"><b>Keperluan Kegiatan</b></td>
-            <td style="width: 80%;">{{ strActivity($data_pengajuan->lsb_activity) }}</td>
+            <td style="width: 30%;"><b>Keperluan Kegiatan</b></td>
+            <td style="width: 70%;">{{ strActivity($data_pengajuan->lsb_activity) }}</td>
           </tr>
           <tr>
-            <td style="width: 20%;"><b>Judul</b></td>
-            <td style="width: 80%;">{{ strJudul($data_pengajuan->lsb_title) }}</td>
+            <td style="width: 30%;"><b>Judul</b></td>
+            <td style="width: 70%;">{{ strJudul($data_pengajuan->lsb_title) }}</td>
           </tr>
           <tr>
-            <td style="width: 20%;"><b>Hari/Tanggal Pelaksanaan</b></td>
-            <td style="width: 80%;">{{ strDateStart($data_pengajuan->lsb_date_start) }} <b>s/d</b> {{ strDateEnd($data_pengajuan->lsb_date_end) }}</td>
+            <td style="width: 30%;"><b>Hari/Tanggal Pelaksanaan</b></td>
+            <td style="width: 70%;">{{ strDateStart($data_pengajuan->lsb_date_start) }} <b>s/d</b> {{ strDateEnd($data_pengajuan->lsb_date_end) }}</td>
           </tr>
           <tr>
-            <td style="width: 20%;"><b>Laboratorium</b></td>
-            <td style="width: 80%;">{{ strJudul($data_pengajuan->lab_name) }}</td>
+            <td style="width: 30%;"><b>Laboratorium</b></td>
+            <td style="width: 70%;">{{ strJudul($data_pengajuan->lab_name) }}</td>
           </tr>
           <tr>
-            <td style="width: 20%;"><b>Fasiltas Laboratorium</b></td>
-            <td style="width: 80%;">
-            @foreach ($data_facility as $list)
-              - {{ $list->laf_name }}<br>              
-            @endforeach
+            <td style="width: 30%;"><b>Fasilitas Laboratorium</b></td>
+            <td style="width: 70%;">
+            @if ($data_facility->count() == 0)
+              --
+            @else
+              @foreach ($data_facility as $list)
+                - {{ $list->laf_name }}<br>
+              @endforeach
+            @endif
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 30%;"><b>Laporan</b></td>
+            <td style="width: 70%;">
+              @if ($data_pengajuan->lsb_file_2 == null)
+                --
+              @else
+                <a href="{{ route('download_laporan',['filename'=> $data_pengajuan->lsb_file_2]) }}">{{ $data_pengajuan->lsb_file_2 }}</a> 
+                @if ($errors->has('file_laporan_err'))
+                <br> <span style="color: red;"><i>{{ $errors->first('file_laporan_err') }}</i></span>
+                @endif
+              @endif
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 30%;"><b>Bukti Pembayaran</b></td>
+            <td style="width: 70%;">
+              @if ($data_pengajuan->lsb_file_1 == null)
+                --
+              @else
+                <a href="{{ route('download_bukti_bayar',['filename'=> $data_pengajuan->lsb_file_1]) }}">{{ $data_pengajuan->lsb_file_1 }}</a> 
+                @if ($errors->has('file_err'))
+                <br> <span style="color: red;"><i>{{ $errors->first('file_err') }}</i></span>
+                @endif
+              @endif
+            </td>
+          </tr>
+          {!! $str_acc !!}
+          <tr>
+            <td style="width: 30%;"><b>Kepala Sub Lab</b></td>
+            <td style="width: 70%;">
+            @if ($user_kasublab == null)
+              --
+            @else
+              {{ strJudul($user_kasublab->name) }} 
+              <br> <i>No. Kontak: {{ $user_kasublab->usd_phone }}</i>
+            @endif
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 30%;"><b>Teknikal Lab</b></td>
+            <td style="width: 70%;">
+            @if ($user_technical == null)
+              --
+            @else
+              {{ strJudul($user_technical->name) }} 
+              <br> <i>No. Kontak: {{ $user_technical->usd_phone }}</i>
+            @endif
             </td>
           </tr>
         </tbody>
@@ -86,10 +188,254 @@ Lab management | Dashboard
     </div>
   </div>
 </div>
+<div class="modal fade" id="modalAcceptable" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Persetujuan Pengajuan</h4>
+			</div>
+			<form action="{{ route('update_acceptable_submission') }}" method="POST" enctype="multipart/form-data" autocomplete="new-password">
+				@csrf
+				<div class="modal-body">
+					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
+          <input type="hidden" name="lab_subhead" value="{{ $data_pengajuan->lab_head }}">
+					<div class="form-group has-feedback" style="margin-bottom: 12px;">
+						<label>
+							Persetujuan
+						</label>
+						<select name="inp_acc" id="inp-persetujuan" class="form-control" placeholder="">
+							<option value=""></option>
+              <option value="disetujui">Disetujui</option>
+              <option value="ditolak">Ditolak</option>
+						</select>
+					</div>
+          <div class="form-group has-feedback" style="margin-bottom: 0px;">
+						<label>
+							Catatan
+						</label>
+						<textarea name="inp_catatan" class="form-control" id="" cols="30" rows="10"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
+					<button type="submit" class="btn btn-sm btn-primary btn-flat"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Kirim</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="modalSetTech" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Teknikal Pendamping</h4>
+			</div>
+			<form action="{{ route('update_technical_submission') }}" method="POST" enctype="multipart/form-data" autocomplete="new-password">
+				@csrf
+				<div class="modal-body">
+					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
+          <input type="hidden" name="lab_subhead" value="{{ $data_pengajuan->lab_head }}">
+					<div class="form-group has-feedback" style="margin-bottom: 12px;">
+						<label>
+							Teknikal Pendamping
+						</label>
+						<select type="text" class="form-control" name="inp_teknisi" id="inp-teknisi" value="" placeholder="Pilih user..">
+              <option value=""></option>
+            </select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
+					<button type="submit" class="btn btn-sm btn-primary btn-flat"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Kirim</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="modalSetTechReport" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Laporan Kegiatan</h4>
+			</div>
+			<form action="{{ route('update_technical_report_submission') }}" method="POST" enctype="multipart/form-data" autocomplete="new-password">
+				@csrf
+				<div class="modal-body">
+					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
+          <input type="hidden" name="lab_subhead" value="{{ $data_pengajuan->lab_head }}">
+					<div class="form-group has-feedback" style="margin-bottom: 12px;">
+						<label>
+							Status Kegiatan
+						</label>
+						<select type="text" class="form-control" name="inp_status" id="inp-status" value="" placeholder="Pilih status..">
+              <option value=""></option>
+              <option value="selesai">Kegiatan Selesai</option>
+            </select>
+					</div>
+          <div class="form-group has-feedback" style="margin-bottom: 12px;">
+						<label>
+							Laporan Kegiatan
+						</label>
+						<div class="input-group">
+							<span class="input-group-btn">
+								<span id="btn-file-foto" class="btn btn-default btn-file btn-flat">
+									Buka Berkas <input type="file" id="id-upload" name="laporan_kegiatan" >
+								</span>
+							</span>
+              <input type="text" class="form-control" readonly="" name="image2">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
+					<button type="submit" class="btn btn-sm btn-primary btn-flat"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Kirim</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="modalMssg" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Persetujuan Pengajuan</h4>
+			</div>
+      <div class="modal-body">
+        {{ $errors->first('inp_error_a') }}.
+      </div>
+      <div class="modal-footer">
+        <button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
+      </div>
+		</div>
+	</div>
+</div>
 @endsection
 @push('css')
-  
+<link rel="stylesheet" href="{{ url('/public/assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}">
+<link rel="stylesheet" href="{{ url('/public/assets/plugins/timepicker/bootstrap-timepicker.min.css') }}">
+<link rel="stylesheet" href="{{ url('/public/assets/plugins/tom-select/dist/css/tom-select.bootstrap4.min.css') }}">
+<style>
+  /* .ts-wrapper.multi .ts-control>div{
+
+  } */
+  .ts-control {
+		border-radius: 0px;
+    padding: 6px 12px;
+	}
+  /* .has-items .ts-control>input{
+    margin: 4px 4px !important;
+  } */
+	.form-select {
+		border-radius: 0px;
+	}
+  .focus .ts-control {
+    border-color: #0277bd;
+    box-shadow: 0 0 0 0rem rgba(254, 255, 255, 0.25);
+    outline: 0;
+  }
+</style>
 @endpush
-@push('script')
-  
+@push('scripts')
+<script src="{{ url('/public/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ url('/public/assets/plugins/timepicker/bootstrap-timepicker.min.js') }}"></script>
+<script src="{{ url('/public/assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
+{{-- varibles --}}
+<script>
+  var select_technician = new TomSelect("#inp-teknisi",{
+    create: false,
+    maxItems: 1,
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+  var select_status = new TomSelect("#inp-status",{
+    create: false,
+    maxItems: 1,
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+</script>
+@if ($errors->has('inp_error_a'))
+{{-- <span style="color: red;"><i>{{ $errors->first('inp_lab') }}</i></span> --}}
+<script>
+  $('#modalMssg').modal('show');
+</script>
+@endif
+{{-- function --}}
+<script>
+  function actionAccept() {
+    $('#modalAcceptable').modal('show');
+  };
+  function actionSetTech() {  
+    $('#modalSetTech').modal('show');
+    var par_a = 'LAB_TECHNICIAN';
+		var dataOption_users = [];
+		$.ajaxSetup({
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			}
+		});
+		$.ajax({
+			type: 'POST',
+			url: "{{ route('source-data-users') }}",
+			data: {
+				"level":par_a
+			},
+			async: false,
+			success: function(result) {
+				var dataOpt_users = JSON.parse(result);
+				for (let index = 0; index < dataOpt_users.length; index++) {
+          dataOption_users.push({
+            id:dataOpt_users[index].id,
+            title:dataOpt_users[index].title,
+          });
+        }
+			},
+		});
+    select_technician.addOptions(dataOption_users);
+  };
+  function actionSetTechReport() {
+    $('#modalSetTechReport').modal('show');
+  };
+</script>
+{{-- call by id or class --}}
+<script>
+  $(document).ready( function() {
+    $(document).on('change', '#btn-file-foto :file', function() {
+      var input = $(this),
+        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+      input.trigger('fileselect', [label]);
+    });
+    $('#btn-file-foto :file').on('fileselect', function(event, label) {
+      var input = $(this).parents('.input-group').find(':text'),
+      log = label;
+      if( input.length ) {
+        input.val(log);
+      } else {
+        if( log ) alert(log);
+      }
+    });
+  });
+</script>
 @endpush

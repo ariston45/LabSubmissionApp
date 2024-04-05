@@ -249,6 +249,27 @@ Lab management | Dashboard
 			select_technician.addOptions(opt_1);
 		}
 	};
+	function actDeleteFacility(id) {
+		var del_url = '{{ url("laboratorium/delete-facility-laboratorium/") }}/' + id;
+		$.confirm({
+			title: 'Konfirmasi Hapus !',
+			content: 'Apakah anda yakin akan menghapus alat atau fasilitas dari laboratorium <b>{{ $data_lab->lab_name }}</b> ?',
+			type: 'red',
+			animateFromElement: false,
+			animation: 'opacity',
+			closeAnimation: 'opacity',
+			buttons: {
+				confirm: {
+					text: 'Iya Hapus',
+					btnClass: 'btn-danger',
+					action: function() {
+						location.replace(del_url);
+					}
+				},
+				batal: function() {},
+			}
+		});
+	};
 </script>
 {{-- Running Functions Js --}}
 @endpush

@@ -24,6 +24,10 @@ class PengajuanPostRequest extends FormRequest
 	public function rules()
 	{
 		return [
+			'inp_nama' => 'required',
+			'inp_id' => 'required',
+			'inp_nomor_kontak' => 'required',
+			'inp_institusi' => 'required',
 			'inp_kegiatan' => 'required',
 			'inp_judul' => 'required',
 			'date_start' => 'required',
@@ -31,12 +35,16 @@ class PengajuanPostRequest extends FormRequest
 			'date_end' => 'required',
 			'time_end' => 'required',
 			'inp_lab' => 'required',
-			'bukti_pembayaran' => 'max:500'
+			'bukti_pembayaran' => 'max:500',
 		];
 	}
 	public function messages()
 	{
 		return [
+			'inp_nama.required' => 'Silakan silahkan isikan nama anda.',
+			'inp_id.required' => 'Silakan silahkan isikan nomor id anda.',
+			'inp_nomor_kontak.required' => 'Silakan silahkan isikan nomor kontak anda.',
+			'inp_institusi.required' => 'Silakan inputkan institusi anda.',
 			'inp_kegiatan.required' => 'Silakan pilih jenis kegiatan terlebih dahulu.',
 			'inp_judul.required' => 'Masukkan judul kegiatan terlebih dahulu.',
 			'date_start.required' => 'Masukkan tanggal mulai kegiatan terlebih dahulu.',

@@ -71,7 +71,8 @@
             @foreach ($menus as $menu)
             <li class="@if (count($menu->children)) treeview @endif @if (request()->is($menu->mn_slug . '*') == true) active @endif" >
               <a @if (count($menu->children)) href="#" @else href="{{ url($menu->mn_slug)}}" @endif>
-                <i class="fa fa-institution"></i> 
+                {{-- <i class="fa fa-institution"></i>  --}}
+                <i class="{{ $menu->mn_icon_code }}" style="margin-right: 4px"></i>
                 <span>{{ $menu->mn_title }} </span>
                 @if (count($menu->children)) <span class="pull-right-container"> <i class="fa fa-angle-left pull-right"></i> </span> @endif
               </a>

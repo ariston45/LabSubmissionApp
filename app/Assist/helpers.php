@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\User;
 use App\Models\Lab_submission;
@@ -51,6 +52,12 @@ function strDateEnd($val)
   return $date_end;
 }
 
+function setDate($val)
+{
+  $date_end = Carbon::parse($val)->isoFormat('dddd, D MMMM Y, HH:mm');
+  return $date_end;
+}
+
 function genIdLab() {
   $max_id_lab = Laboratory::max('lab_id');
   $new_id = $max_id_lab + 1;
@@ -90,5 +97,38 @@ function genIdLaSch()
   $max_id = Lab_schedule::max('lbs_id');
   $new_id = $max_id + 1;
   return $new_id;
+}
+
+/* Tags:... */
+function rulesUser($datas)
+{
+  $authUser = Auth::user();
+  $user = User::where('id',$authUser->id)->first();
+  if (in_array($user->level,$datas)) {
+    return true;
+  }else{
+    return false;
+  }
+}
+
+/* Tags:... */
+function authUser()
+{
+  $authUser = Auth::user();
+  $user = User::leftjoin('user_details','users.id','=','user_details.usd_user')
+  ->where('id', $authUser->id)
+  ->first();
+  return $user;
+}
+/* Tags:... */
+function downloadBuktiPembayan($str)
+{
+  return Storage::download($str);
+};
+
+/* Tags:... */
+function checkAcceptable()
+{
+  return true;
 }
 

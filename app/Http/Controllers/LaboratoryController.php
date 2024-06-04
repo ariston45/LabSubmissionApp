@@ -3,19 +3,28 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\LabTestPostRequest;
 use App\Http\Requests\LabPostRequest;
 use App\Http\Requests\LabFacilityPostRequest;
 use App\Http\Requests\LabSchPostRequest;
+use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
+use Auth;
+use Str;
+use Storage;
+
+
 use App\Models\Lab_facility;
 use App\Models\Lab_schedule;
-use Auth;
-use Carbon\Carbon;
-
 use App\Models\Laboratory;
+use App\Models\Laboratory_group;
 use App\Models\Laboratory_technician;
 use App\Models\User;
 use App\Models\Laboratory_facility_count_status;
 use App\Models\Laboratory_facility;
+use App\Models\Laboratory_labtest;
+use App\Models\Laboratory_labtest_facility;
+
 class LaboratoryController extends Controller
 {
 	/* Tags:... */
@@ -26,25 +35,93 @@ class LaboratoryController extends Controller
 	/* Tags:... */
 	public function formLaboratory(Request $request)
 	{
-		return view('contents.content_form.form_input_lab');
+		$data_rumpun = Laboratory_group::get();
+		return view('contents.content_form.form_input_lab',compact('data_rumpun'));
 	}
 	/* Tags:... */
 	public function formUpdateLab(Request $request)
 	{
 		$data_lab = Laboratory::leftjoin('users', 'laboratories.lab_head','=','users.id')
 		->where('lab_id',$request->id)
-		->select('lab_id', 'lab_name','id','name', 'lab_location','lab_status')
+		->select('*')
 		->first();
+		$data_kasublab = User::where('level','LAB_SUBHEAD')->get();
+		$data_all_tech = Laboratory_technician::leftjoin('users', 'laboratory_technicians.lat_tech_id', '=', 'users.id')
+		->select('lat_id', 'lat_tech_id', 'id', 'name')
+		->get();
 		$data_technicians = Laboratory_technician::leftjoin('users','laboratory_technicians.lat_tech_id','=','users.id')
 		->select('lat_id', 'lat_tech_id','id','name')
 		->where('lat_laboratory',$request->id)
 		->get();
-		return view('contents.content_form.form_update_lab',compact('data_lab', 'data_technicians'));
+		$data_tech =[];
+		foreach($data_technicians as $key => $value){
+			$data_tech[$key] = $value->id;
+		}
+		$data_rumpun = Laboratory_group::get();
+		return view('contents.content_form.form_update_lab',compact('data_all_tech','data_lab', 'data_technicians', 'data_rumpun', 'data_tech', 'data_kasublab'));
+	}
+	/* Tags:... */
+	public function actionInputLaboratory(LabPostRequest $request)
+	{
+		// 
+		$lab_name = Str::slug($request->inp_laboratorium, '_');
+		$getFile = $request->file('upload_url_img');
+		if ($getFile == true
+		) {
+			$file_name = date('Ymd') . '_' . date('His') . '_' . $lab_name . '.' . $getFile->extension();
+			$filePath = $getFile->storeAs('public/image_lab', $file_name);
+		} else {
+			$file_name = null;
+		}
+		// 
+		$lab_id = genIdLab();
+		$data_laboratorium = [
+			"lab_id" => $lab_id,
+			"lab_name" => $request->inp_laboratorium,
+			"lab_group" => $request->inp_rumpun,
+			"lab_code" => null,
+			"lab_head" => $request->inp_kalab,
+			"lab_location" => $request->inp_lokasi,
+			"lab_status" => $request->inp_status,
+			"lab_note_short" => $request->inp_notes_short,
+			"lab_notes" => $request->inp_notes,
+			"lab_img" => $file_name,
+			"lab_rent_cost" => funFormatCurToDecimal($request->inp_cost),
+		];
+		$insLabData = Laboratory::insert($data_laboratorium);
+		// 
+		foreach ($request->inp_teknisi as $key => $list) {
+			$data_technicians[$key] = [
+				"lat_id" => genIdTechnician(),
+				"lat_laboratory" => $lab_id,
+				"lat_tech_id" => $list
+			];
+			$insTechLabData = Laboratory_technician::insert($data_technicians[$key]);
+		}
+		// return redirect('laboratorium');
 	}
 	/* Tags:... */
 	public function actionUpdateLaboratory(LabPostRequest $request)
 	{
 		$lab_id = $request->lab_id;
+		$lab_data = Laboratory::where('lab_id', $lab_id)->first();
+
+		$lab_name = Str::slug($request->inp_laboratorium, '_');
+		$getFile = $request->file('upload_url_img');
+		if ($getFile == null) {
+			if ($request->param_upload_url_img == 'delete') {
+				$file_name = null;
+				$file_remove = Storage::delete('public/image_lab/' . $lab_data->lab_img);
+			} else {
+				$file_name = $lab_data->lab_img;
+			}
+		} else {
+			echo $lab_data->lab_img;
+			// die($lab_data->lab_img);
+			$file_remove = Storage::delete('public/image_lab/'.$lab_data->lab_img);
+			$file_name = date('Ymd') . '_' . date('His') . '_' . $lab_name . '.' . $getFile->extension();
+			$filePath = $getFile->storeAs('public/image_lab', $file_name);
+		}
 		$data_laboratorium = [
 			"lab_id" => $lab_id,
 			"lab_name" => $request->inp_laboratorium,
@@ -52,6 +129,10 @@ class LaboratoryController extends Controller
 			"lab_head" => $request->inp_kalab,
 			"lab_location" => $request->inp_lokasi,
 			"lab_status" => $request->inp_status,
+			"lab_note_short" => $request->inp_notes_short,
+			"lab_notes" => $request->inp_notes,
+			"lab_img" => $file_name,
+			"lab_rent_cost" => funFormatCurToDecimal($request->inp_cost),
 		];
 		$insLabData = Laboratory::where('lab_id',$lab_id)->update($data_laboratorium);
 		$delTechLap = Laboratory_technician::where('lat_laboratory',$lab_id)->delete();
@@ -65,30 +146,7 @@ class LaboratoryController extends Controller
 		}
 		return redirect('laboratorium');
 	}
-	/* Tags:... */
-
-	public function actionInputLaboratory(LabPostRequest $request)
-	{
-		$lab_id = genIdLab();
-		$data_laboratorium = [
-			"lab_id" => $lab_id,
-			"lab_name" => $request->inp_laboratorium,
-			"lab_code" => null,
-			"lab_head" => $request->inp_kalab,
-			"lab_location"=> $request->inp_lokasi,
-			"lab_status" => $request->inp_status,
-		];
-		$insLabData = Laboratory::insert($data_laboratorium);
-		foreach ($request->inp_teknisi as $key => $list) {
-			$data_technicians[$key] = [
-				"lat_id" => genIdTechnician(),
-				"lat_laboratory" => $lab_id,
-				"lat_tech_id" => $list
-			];
-			$insTechLabData = Laboratory_technician::insert($data_technicians[$key]);
-		}
-		return redirect('laboratorium');
-	}
+	
 	
 	/* Tags:... */
 	public function viewLabTechnicians(Request $request)
@@ -131,6 +189,15 @@ class LaboratoryController extends Controller
 		return view('contents.content_datalist.data_lab_facilities', compact('data_lab'));
 	}
 	/* Tags:... */
+	public function viewUjiLab(Request $request)
+	{
+		$data_lab = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+		->where('lab_id', $request->id)
+		->select('lab_name', 'name', 'lab_id')
+		->first();
+		return view('contents.content_datalist.data_lab_ujilab', compact('data_lab'));
+	}
+	/* Tags:... */
 	public function formAddLaboratoryFacility(Request $request)
 	{
 		$users = User::get();
@@ -139,6 +206,17 @@ class LaboratoryController extends Controller
 		->select('lab_name', 'name', 'lab_id')
 		->first();
 		return view('contents.content_form.form_input_facilities', compact('users', 'data_lab'));
+	}
+	/* Tags:... */
+	public function formAddLaboratoryTest(Request $request)
+	{
+		$data_utility = Laboratory_facility::where('laf_laboratorium',$request->id)->get();
+		$users = User::get();
+		$data_lab = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+		->where('lab_id', $request->id)
+		->select('lab_name', 'name', 'lab_id')
+		->first();
+		return view('contents.content_form.form_add_labtest', compact('users', 'data_lab', 'data_utility'));
 	}
 	/* Tags:... */
 	public function actionInputLabFacilities(LabFacilityPostRequest $request)
@@ -152,6 +230,7 @@ class LaboratoryController extends Controller
 			'laf_name' => $request->inp_fasilitas,
 			'laf_utility' => $request->inp_utility,
 			'laf_brand' => $request->inp_brand,
+			'laf_value' => funFormatCurToDecimal($request->inp_cost),
 			'created_by' => null,
 		];
 		$data_lab_count_detail = [
@@ -177,6 +256,25 @@ class LaboratoryController extends Controller
 		return view('contents.content_pageview.view_detail_fasilitas',compact('data_fasilitas'));
 	}
 	/* Tags:... */
+	public function viewLabTestDetail(Request $request)
+	{
+		// $data_fasilitas = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
+		// ->where('laf_id', $request->id)
+		// ->first();
+		$id= $request->id;
+		$data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id','=', 'laboratories.lab_id')
+		->where('lsv_id',$id)
+		->first();
+		$data_alat = Laboratory_labtest_facility::join('laboratory_facilities', 'laboratory_labtest_facilities.lst_facility', '=', 'laboratory_facilities.laf_id')
+		->where('lst_lsv_id', $id)
+		->get();
+		$tools = array();
+		foreach ($data_alat as $key => $value) {
+			$tools[$key] = $value->laf_name;
+		}
+		return view('contents.content_pageview.view_detail_ujilab', compact('data', 'tools'));
+	}
+	/* Tags:... */
 	public function formUpdateLaboratoryFacility(Request $request)
 	{
 		$users = User::get();
@@ -184,7 +282,7 @@ class LaboratoryController extends Controller
 		->leftJoin('laboratories', 'Laboratory_facilities.laf_laboratorium','=', 'laboratories.lab_id')
 		->where('laf_id', $request->id)
 		->first();
-		// dd($data_facility);
+		dd($data_facility);
 		return view('contents.content_form.form_update_facilities', compact('users', 'data_facility'));
 	}
 	/* Tags:... */
@@ -198,6 +296,7 @@ class LaboratoryController extends Controller
 			'laf_name' => $request->inp_fasilitas,
 			'laf_utility' => $request->inp_utility,
 			'laf_brand' => $request->inp_brand,
+			'laf_value' => funFormatCurToDecimal($request->inp_cost),
 			'created_by' => null,
 		];
 		$data_lab_count_detail = [
@@ -209,6 +308,7 @@ class LaboratoryController extends Controller
 			'lcs_condition_poor' => $request->inp_cn_poor,
 			'lcs_condition_unwearable' => $request->inp_cn_unwearable,
 		];
+		dd($data_lab);
 		#
 		$storeFacility = Laboratory_facility::where('laf_id',$lab_facility_id)->update($data_lab);
 		$storeFacilityCnt = Laboratory_facility_count_status::where('lcs_id', $lab_fa_conunt_id)->update($data_lab_count_detail);
@@ -342,7 +442,8 @@ class LaboratoryController extends Controller
 		->where('lbs_type', 'non_reguler')
 		->whereBetween('lbs_date_start', [$dtStart, $dtEnd])
 		->get();
-
+		// echo $collect_sch_non_reguler;
+		// die();
 		$dataSch=[];
 		$sch_index=0;
 		# processing sch data with parameter reguler
@@ -366,6 +467,7 @@ class LaboratoryController extends Controller
 				$datetime_end = date('Y-m-d H:i:s', strtotime($str_end));
 				if (!in_array($value['date'], $date_exclude[$sch_index])) {
 					$dataSch[$sch_index] = [
+						'url' => url('jadwal_lab/'. $svalue->lbs_lab.'#'),
 						'title' => $svalue->lbs_matkul,
 						'start' => $datetime_start,
 						'end' => $datetime_end,
@@ -373,6 +475,7 @@ class LaboratoryController extends Controller
 					];
 				}else{
 					$dataSch[$sch_index] = [
+						'url' => url('jadwal_lab/' . $svalue->lbs_lab . '#'),
 						'title' => '(Batal)'.$svalue->lbs_matkul,
 						'start' => $datetime_start,
 						'end' => $datetime_end,
@@ -391,6 +494,7 @@ class LaboratoryController extends Controller
 			$datetime_end = date('Y-m-d H:i:s', strtotime($str_end));
 
 			$dataSch[$sch_index] = [
+				'url' => url('pengajuan/detail-pengajuan/' . $value->lbs_submission),
 				'title' => $value->lbs_matkul,
 				'start' => $datetime_start,
 				'end' => $datetime_end,
@@ -431,5 +535,104 @@ class LaboratoryController extends Controller
 			Lab_schedule::where('lbs_id', $request->inp_times)->update(['lbs_sch_dates_excluded' => $data_exclude_str]);
 		}
 		return redirect()->back();
+	}
+	/* Tags:... */
+	public function actionInputUjiLab(LabTestPostRequest $request)
+	{
+		// data
+		$id_testlab = genIdLabTest();
+		// image
+		$getFile = $request->file('upload_url_img');
+		$labtest_name = Str::slug($request->inp_name, '_');
+		if ($getFile == true) {
+			$file_name = date('Ymd') . '_' . date('His') . '_' . $labtest_name . '.' . $getFile->extension();
+			$filePath = $getFile->storeAs('public/image_lab_test', $file_name);
+		} else {
+			$file_name = null;
+		}
+		$data = [
+			"lsv_id" => $id_testlab,
+			"lsv_lab_id" => $request->lab_id,
+			"lsv_name" => $request->inp_name,
+			"lsv_price" => funFormatCurToDecimal($request->inp_cost),
+			"lsv_notes" => $request->inp_notes_short,
+			"lsv_notes_short" => $request->inp_notes,
+			"lsv_img" => $file_name,
+		];
+		$index = genIdLabTestFacility();
+		foreach ($request->inp_utility as $key => $value) {
+			$data_utility[$key] = [
+				"lst_id" => $index,
+				"lst_lsv_id" => $id_testlab,
+				"lst_facility" => $value
+			];
+			$index++;
+		}
+		Laboratory_labtest::insert($data);
+		Laboratory_labtest_facility::insert($data_utility);
+		return redirect()->route('laboratorium_uji_lab',['id' => $request->lab_id]);
+	}
+	/* Tags:... */
+	public function actionUpdateUjiLab(Request $request)
+	{
+		$lsv_id = $request->lsv_id;
+		$lab_id = $request->lab_id;
+		$lab_data = Laboratory_labtest::where('lsv_id', $lsv_id)->first();
+		$labtest_name = Str::slug($request->inp_name, '_');
+		$getFile = $request->file('upload_url_img');
+		if ($getFile == null) {
+			if ($request->param_upload_url_img == 'delete') {
+				$file_name = null;
+				$file_remove = Storage::delete('public/image_lab_test/' . $lab_data->lsv_img);
+			} else {
+				$file_name = $lab_data->lab_img;
+			}
+		} else {
+			echo $lab_data->lab_img;
+			$file_remove = Storage::delete('public/image_lab_test/' . $lab_data->lsv_img);
+			$file_name = date('Ymd') . '_' . date('His') . '_' . $labtest_name . '.' . $getFile->extension();
+			$filePath = $getFile->storeAs('public/image_lab_test', $file_name);
+		}
+		$id_testlab = $request->lsv_id;
+		$data = [
+			"lsv_lab_id" => $request->lab_id,
+			"lsv_name" => $request->inp_name,
+			"lsv_price" => funFormatCurToDecimal($request->inp_cost),
+			"lsv_notes" => $request->inp_notes,
+			"lsv_notes_short" => $request->inp_notes_short,
+			"lsv_img" => $file_name,
+		];
+		$index = genIdLabTestFacility();
+		foreach ($request->inp_utility as $key => $value) {
+			$data_utility[$key] = [
+				"lst_id" => $index,
+				"lst_lsv_id" => $id_testlab,
+				"lst_facility" => $value
+			];
+			$index++;
+		}
+		Laboratory_labtest::where('lsv_id', $id_testlab)->update($data);
+		Laboratory_labtest_facility::where('lst_lsv_id', $id_testlab)->delete();
+		Laboratory_labtest_facility::insert($data_utility);
+		return redirect()->route('laboratorium_uji_lab', ['id' => $request->lab_id]);
+	}
+	/* Tags:... */
+	public function formUpdateLaboratoryUji(Request $request)
+	{
+		$users = User::get();
+		$id = $request->id;
+		$data_lab = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id', '=', 'laboratories.lab_id')
+		->where('lsv_id', $id)
+		->first();
+		$data_utility = Laboratory_facility::where('laf_laboratorium', $data_lab->lsv_lab_id)->get();
+		$data_alat = Laboratory_labtest_facility::join('laboratory_facilities','laboratory_labtest_facilities.lst_facility','=', 'laboratory_facilities.laf_id')
+		->where('lst_lsv_id',$id)
+		->get();
+		// dd($data_alat); die();
+		$tools = array();
+		foreach ($data_alat as $key => $value) {
+			$tools[$key] = $value->laf_id;
+		}
+		return view('contents.content_form.form_update_labtest', compact('users', 'data_lab', 'data_utility', 'tools'));
 	}
 }

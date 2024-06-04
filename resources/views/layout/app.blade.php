@@ -21,6 +21,28 @@
     <link rel="stylesheet" href="{{ url('assets/plugins/sweetalert-master/themes/facebook/facebook.css') }}">
     <link rel="stylesheet" href="{{ url('assets/plugins/sweetalert2-1.0.5/dist/sweetalert2.min.css') }}">
     <link rel="stylesheet" href="{{ url('assets/customs/css/custom_layout.css') }}">
+    <style>
+      .navbar-custom-menu-left{
+        float: left;
+      }
+      .nav-custom {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #0d0f10;
+      }
+      .nav-custom>li {
+        float: left;
+      }
+      .nav-custom>li>a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        text-decoration: none;
+      }
+    </style>
     @stack('css')
   </head>
   <body class="hold-transition skin-blue fixed sidebar-mini">
@@ -31,9 +53,18 @@
           <a href="#" onclick="hide_logo_func()" class="sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">Toggle navigation</span>
           </a>
-          <a href="#" class="time-sidebar" role="button">
-          <span style="font-size: 10px">Waktu Server</span><br> <b><span id="digital-time"></span></b>
-          </a>
+          {{-- <a href="#" class="time-sidebar" role="button">
+            <span style="font-size: 10px">Waktu Server</span><br> <b><span id="digital-time"></span></b>
+          </a> --}}
+          <div class="navbar-custom-menu-left">
+
+            <ul class="nav-custom navbar-nav-custom">
+              <li><a href="{{ url('page-panduan')}}" @if (request()->is('page-panduan*') == true) class="active" @endif>Panduan</a></li>
+              {{-- <li><a href="{{ url('page-panduan/'.$user->level) }}" @if (request()->is('page-panduan*') == true) class="active" @endif>Panduan</a></li> --}}
+              <li class="active"><a href="{{ url('page-laboratorium') }}">Laboratorium <span class="sr-only">(current)</span></a></li>
+              <li><a href="{{ url('page-layanan') }}">Uji Lab</a></li>
+            </ul>
+          </div>
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
               <li class="dropdown user user-menu">
@@ -64,7 +95,7 @@
                 <img src="{{ url('/public/assets/img/logo_unesa.png') }}">
               </div>
             </div>
-            <text id="logo_name" class="logo-name logo-lg" >UNESA</text>
+            <text id="logo_name" class="logo-name logo-lg" >FAKULTAS TEKNIK</text>
           </span>
           <ul class="sidebar-menu">
             <li class="header">Daftar Menu</li>
@@ -87,9 +118,11 @@
         </section>
       </aside>
       <div class="content-wrapper">
+        @if (request()->is('beranda') == false)
         <section class="content-header">
           @yield('breadcrumb')
         </section>
+        @endif
         <section class="content">
           <div class="row">
             @yield('content')
@@ -149,6 +182,7 @@
         }
       }
     </script>
+{{--     
     <script>
       var x = waktu();
       function waktu() {
@@ -165,7 +199,7 @@
         document.getElementById("digital-time").innerHTML = dayName+', '+date+' '+monthName+'/'+year+', '+clockTime+"s WIB";
         setTimeout("waktu()", 1000);
       }
-    </script>
+    </script> --}}
     @stack('scripts')
   </body>
 </html>

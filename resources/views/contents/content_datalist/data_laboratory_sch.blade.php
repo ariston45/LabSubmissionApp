@@ -3,7 +3,7 @@
 Lab management | Dashboard
 @endsection
 @section('breadcrumb')
-<h4>Laboratorium</h4>
+<h4>Jadwal Laboratorium</h4>
 <ol class="breadcrumb">
 	<li><a href="#"><i class="fa fa-home"></i> Laboratorium</a></li>
 	<li class="active"><a href="#">Jadwal Laboratorium</a></li>
@@ -15,63 +15,31 @@ Lab management | Dashboard
 		<div class="box-header with-border">
 			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Jadwal Laboratorium</h3>
 			<div class="pull-right">
-				<a href="{{ url('laboratorium/form-exclude-jadwal/'.$lab_id) }}">
+				@if (rulesUser(['ADMIN_SYSTEM','ADMIN_MASTER','LAB_HEAD','ADMIN_PRODI']))
+				<a href="{{ url('jadwal_lab/form-exclude-jadwal/'.$lab_id) }}">
 					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-list-check-3" style="margin-right: 4px;"></i> Exclude Jadwal Laboratorium</button>
 				</a>
-				<a href="{{ url('laboratorium/form-input-jadwal/'.$lab_id) }}">
+				<a href="{{ url('jadwal_lab/form-input-jadwal/'.$lab_id) }}">
 					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah Jadwal Laboratorium</button>
+				</a>
+				@elseif (rulesUser(['STUDENT','PUBLIC_MEMBER','PUBLIC_NON_MEMBER','LECTURE']))
+				<a href="{{ url('#') }}">
+					<button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Buat Pengajuan</button>
+				</a>
+				@endif
+				<a href="{{ url('jadwal_lab') }}">
+					<button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
 				</a>
 			</div>
 		</div>
 		<div class="box-body">
-			{{-- <div class="row">
-				<div class="col-lg-12" style="margin: 0px 0px 10px 0px;">
-					<button id="act-filter" class="btn btn-flat btn-xs btn-default" onclick="actFilterSch()"><i class="ri-filter-line" style="margin-right: 4px;"></i> Filter Jadwal</button>
-					<button id="act-calender" class="btn btn-flat btn-xs btn-default" onclick="actCalenderSch()"><i class="ri-calendar-schedule-line" style="margin-right: 4px;"></i> Kalender</button>
-					<button id="act-close-button" class="btn btn-flat btn-xs btn-default pull-right" onclick="actCloseButton()" style=" display:none;"><i class="ri-close-circle-line" style="margin-right: 4px;"></i> Tutup</button>
-				</div>
-			</div> --}}
-			<div id="field-filter" style="margin: 0px 0px 10px 0px;display:none;">
-				<div class="row">
-					<div class="col-md-4">
-						<div class="form-group" style="margin-bottom: 10px">
-							<label class="control-label">
-								Filter Tipe Jadwal
-							</label>
-							<select name="inp_tipe_jadal" id="inp-tipe-jadwal" class="form-control input-sm" placeholder="">
-								<option value="all">Semua</option>
-								<option value="reguler">Reguler</option>
-								<option value="non_reguler">Non Reguler</option>
-							</select>
-						</div>
-					</div>
-					<div class="col-md-8">
-						<div class="form-group" style="margin-bottom: 10px">
-							<label class="control-label">
-								Filter Hari
-							</label>
-							<div class="row">
-								<div class="col-md-6">
-									{{-- <input type="text" name="inp_start" id="date-pick-start" class="form-control input-sm" placeholder="mulai.."> --}}
-									<select type="text" class="form-control input-sm" name="inp_day" id="inp-day" value="" placeholder="Pilih hari..">
-										<option value="all">Semua</option>
-										<option value="sunday" @if (old('inp_day')=='sunday' ) selected @endif>Minggu</option>
-										<option value="monday" @if (old('inp_day')=='monday' ) selected @endif>Senin</option>
-										<option value="tuesday" @if (old('inp_day')=='tuesday' ) selected @endif>Selasa</option>
-										<option value="wednesday" @if (old('inp_day')=='wednesday' ) selected @endif>Rabu</option>
-										<option value="thursday" @if (old('inp_day')=='thursday' ) selected @endif>Kamis</option>
-										<option value="friday" @if (old('inp_day')=='friday' ) selected @endif>Jumat</option>
-										<option value="saturday" @if (old('inp_day')=='saturday' ) selected @endif>Sabtu</option>
-									</select>
-								</div>
-								<div class="col-md-6">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-12">
-						<button class="btn btn-sm btn-default" onclick="actFilter()">Filter</button>
-					</div>
+			<div class="row">
+				<div class="col-lg-12" style="margin: 0px 0px 0px 0px;">
+					<h4>
+						<b>
+							Laboratorium : {{ $data_lab->lab_name }}
+						</b>
+					</h4>
 				</div>
 			</div>
 			<div id="field-calender" style="margin: 0px 0px 10px 0px;display:block;">
@@ -348,13 +316,14 @@ Lab management | Dashboard
 			data: {
 				'lab_id':id,
 				'start':parStart,
-				'end':parEnd				
+				'end':parEnd
 			},
 			async: false,
 			success: function(result) {
 				var dataJsonPhr = JSON.parse(result);
 				for (let index = 0; index < dataJsonPhr.length; index++) {
           valData.push({
+						'url':dataJsonPhr[index].url,
             'title':dataJsonPhr[index].title,
             'start':dataJsonPhr[index].start,
 						'end':dataJsonPhr[index].end,
@@ -385,9 +354,9 @@ Lab management | Dashboard
 			initialDate: now,
 			initialView: 'dayGridMonth',
 			headerToolbar: {
-				left: 'today prev,next',
+				left: 'prev,next',
 				center: 'title',
-				right: 'dayGridMonth,timeGridWeek,resourceTimelineDay'
+				right: 'dayGridMonth,timeGridWeek,timeGridDay'
 			},
 			eventTimeFormat: {
 				hour: '2-digit',
@@ -400,12 +369,12 @@ Lab management | Dashboard
 			selectable: true,
 			selectMirror: true,
 			nowIndicator: true,
-			
 			dateClick: function(info) {
-				
 			},
 			eventClick: function(info) {
-
+				if (info.event.url) {
+					window.open(info.event.url,'_blank');
+				}
 			},
 			select: function (fetchInfo, successCallback, failureCallback) {
 				var parStart = fetchInfo.startStr;

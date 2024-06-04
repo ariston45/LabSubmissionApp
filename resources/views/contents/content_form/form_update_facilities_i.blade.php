@@ -78,7 +78,21 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        <div class="form-group has-feedback {{ $errors->has('inp_cn_facility') ? ' has-error' : '' }}">
+        <div class="form-group has-feedback {{ $errors->has('inp_cost') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-4 control-label" >
+            <span style="padding-right: 30px;">
+              Biaya Pinjam
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-8">
+            <input type="text" id="inp-cost" class="form-control" name="inp_cost" oninput="fcurrencyInput('inp-cost')" value="{{ funCurrencyRupiah($data_facility->laf_value) }}" placeholder="Rp 0,00">
+            @if ($errors->has('inp_cost'))
+						<span style="color: red;"><i>{{ $errors->first('inp_cost') }}</i></span>
+						@endif
+          </div>
+        </div>
+
+        {{-- <div class="form-group has-feedback {{ $errors->has('inp_cn_facility') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
               Jumlah Alat/fasilitas
@@ -155,7 +169,7 @@ Lab management | Dashboard
 						<span style="color: red;"><i>{{ $errors->first('inp_cn_unwearable') }}</i></span>
 						@endif
           </div>
-        </div>
+        </div> --}}
       </div>
       <div class="box-footer">
         <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Simpan</button>
@@ -241,6 +255,26 @@ Lab management | Dashboard
   });
 </script>
 {{-- function --}}
+<script>
+  function fcurrencyInput(elem) {
+    var inputElement = document.getElementById(elem);
+    inputElement.value = formatRupiah(inputElement.value, 'Rp ');
+  }
+  function formatRupiah(number, prefix) {
+    var number_string = number.replace(/[^,\d]/g, '').toString(),
+    split = number_string.split(','),
+    sisa = split[0].length % 3,
+    rupiah = split[0].substr(0, sisa),
+    ribuan = split[0].substr(sisa).match(/\d{3}/gi);  
+    if (ribuan) {
+      separator = sisa ? '.' : '';
+      rupiah += separator + ribuan.join('.');
+    }
+    rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+    return prefix == undefined ? rupiah : (rupiah ? 'Rp ' + rupiah : '');
+  };
+</script>
+{{-- ready function --}}
 <script>
   $(document).ready( function() {
     $(document).on('change', '#btn-file-foto :file', function() {

@@ -16,6 +16,10 @@ use App\Models\Laboratory_facility;
 use App\Models\Lab_schedule;
 use App\Models\User;
 use App\Models\Lab_submission_acc;
+use App\Models\Lab_submission_adviser;
+use App\Models\Laboratory_labtest;
+use App\Models\Laboratory_labtest_facility;
+
 
 class DatatablesController extends Controller
 {
@@ -49,8 +53,23 @@ class DatatablesController extends Controller
 	/* Tags:... */
 	public function sourceDataLaboratorium(Request $request)
 	{
-		$data = Laboratory::join('users', 'laboratories.lab_head', '=', 'users.id')
-		->get();
+		$user = Auth::user();
+		if (rulesUser(['ADMIN_SYSTEM', 'ADMIN_MASTER', 'LAB_HEAD'])) {
+			$data = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->get();
+		}elseif(rulesUser(['LAB_SUBHEAD'])){
+			$data = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->where('id',$user->id)
+			->get();
+		}elseif (rulesUser(['LAB_TECHNICIAN'])) {
+			$data = Laboratory::join('laboratory_technicians', 'laboratories.lab_id', '=', 'laboratory_technicians.lat_laboratory')
+			->leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->where('lat_tech_id', $user->id)
+			->get();
+		}else{
+			$data = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->get();
+		}
 		return DataTables::of($data)
 		->addIndexColumn()
 		->addColumn('empty_str', function ($k) {
@@ -65,6 +84,7 @@ class DatatablesController extends Controller
 			<ul class="dropdown-menu pull-right">
 				<li><a href="' . url('laboratorium/' . $data->lab_id . '/jadwal') . '"><i class="ri-calendar-2-line" aria-hidden="true" style="margin-right:12px;"></i>Jadwal Lab</a></li>
 				<li><a href="' . url('laboratorium/' . $data->lab_id . '/teknisi') . '"><i class="ri-user-settings-line" aria-hidden="true" style="margin-right:12px;"></i>Teknisi Lab</a></li>
+				<li><a href="' . url('laboratorium/' . $data->lab_id . '/ujilab') . '"><i class="ri-microscope-line" aria-hidden="true" style="margin-right:12px;"></i>Uji Lab</a></li>
 				<li><a href="' . url('laboratorium/' . $data->lab_id . '/fasilitas') . '"><i class="ri-computer-line" aria-hidden="true" style="margin-right:12px;"></i>Fasilitas Lab</a></li>
 				<li><a href="' . url('laboratorium/' . $data->lab_id . '/update-lab') . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update Data</a></li>
 			</ul>
@@ -102,7 +122,7 @@ class DatatablesController extends Controller
 		->leftJoin('user_details', 'laboratory_technicians.lat_tech_id', '=', 'user_details.usd_user')
 		->where('lat_laboratory', $request->lab_id)
 		->select('id', 'name', 'lat_id', 'usd_phone', 'email', 'lat_laboratory')
-		->get();
+		->get();;
 		return DataTables::of($data)
 		->addIndexColumn()
 		->addColumn('empty_str', function ($k) {
@@ -115,7 +135,6 @@ class DatatablesController extends Controller
 					Menu <span class="caret"></span>
 				</button>
 				<ul class="dropdown-menu pull-right">
-					<li><a href="' . url('setting/user/') . '/' . $data->id . '"><i class="ri-user-search-line" aria-hidden="true" style="margin-right:12px;"></i>Lihat User</a></li>
 					<li><a href="#" onclick="actDelTech(' . $data->lat_id . ')"><i class="ri-close-circle-line" aria-hidden="true" style="margin-right:12px;"></i>Hapus</a></li>
 				</ul>
 			</div></div>';
@@ -150,7 +169,6 @@ class DatatablesController extends Controller
 	public function sourceDataPengajuan(Request $request)
 	{
 		if ($request->status == null) {
-			# code...
 			$status = ['menunggu', 'disetujui','ditolak','selesai'];
 		}else{
 			$status = [$request->status];
@@ -201,7 +219,7 @@ class DatatablesController extends Controller
 			}else{
 				// 
 			}
-		} elseif (rulesUser(['LAB_SUBHEAD'])) {
+		}elseif (rulesUser(['LAB_SUBHEAD'])) {
 			if ($request->dt_start == null && $request->dt_end == null) {
 				if ($request->status == null) {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
@@ -249,12 +267,7 @@ class DatatablesController extends Controller
 			} else {
 				// 
 			}
-			// $data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
-			// ->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
-			// ->whereIn('lsb_status',$status)
-			// ->where('lsb_user_subhead',$user->id)
-			// ->get();
-		} elseif (rulesUser(['LAB_TECHNICIAN'])) {
+		}elseif (rulesUser(['LAB_TECHNICIAN'])) {
 			if ($request->dt_start == null && $request->dt_end == null) {
 				if ($request->status == null) {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
@@ -307,18 +320,26 @@ class DatatablesController extends Controller
 			// ->where('lsb_user_tech', $user->id)
 			// ->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
 			// ->get();
-		} elseif (rulesUser(['LECTURE'])) {
+		}elseif (rulesUser(['LECTURE'])) {
+			$set_id = $user->no_id;
+			$lsb_ids = Lab_submission_adviser::where('las_user_no_id', $set_id)->select('las_lbs_id')->get();
+			$lids = [];
+			foreach ($lsb_ids as $key => $value) {
+				$lids[$key] = $value->las_lbs_id;
+			}
+			// print_r('test'); die();
 			if ($request->dt_start == null && $request->dt_end == null) {
 				if ($request->status == null) {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+					->whereIn('lsb_id', $lids)
 					->whereIn('lsb_status', $status)
-					->where('lsb_user_lecture', $user->id)
 					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
 					->get();
 				} else {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+					// ->where('lsb_user_lecture', $user->id)
+					->whereIn('lsb_id', $lids)
 					->whereIn('lsb_status', $status)
-					->where('lsb_user_lecture', $user->id)
 					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
 					->get();
 				}
@@ -329,8 +350,9 @@ class DatatablesController extends Controller
 					foreach ($period as $key => $value) {
 						$date_perform = date('Y-m-d', strtotime($value));
 						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+						// ->where('lsb_user_lecture', $user->id)
+						->whereIn('lsb_id', $lids)
 						->whereIn('lsb_status', $status)
-						->where('lsb_user_lecture', $user->id)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
 						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
 						->get();
@@ -343,8 +365,9 @@ class DatatablesController extends Controller
 					foreach ($period as $key => $value) {
 						$date_perform = date('Y-m-d', strtotime($value));
 						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+						// ->where('lsb_user_lecture', $user->id)
+						->where('lsb_id', $lids)
 						->whereIn('lsb_status', $status)
-						->where('lsb_user_lecture', $user->id)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
 						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
 						->get();
@@ -414,6 +437,9 @@ class DatatablesController extends Controller
 			// ->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
 			// ->get();
 		}
+		$data = $data->sortBy(function ($item) {
+			return array_search($item->lsb_status, ['menunggu','disetujui','selesai','ditolak']);
+		});
 		return DataTables::of($data)
 		->addIndexColumn()
 		->addColumn('empty_str', function ($k) {
@@ -421,14 +447,9 @@ class DatatablesController extends Controller
 		})
 		->addColumn('opsi', function ($data) {
 			return ' <div style="text-align:center;">
-			<div class="btn-group">
-				<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					Menu <span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu pull-right">
-					<li><a href="' . url('pengajuan/detail-pengajuan') . '/' . $data->lsb_id . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Lihat Detail</a></li>
-				</ul>
-			</div></div>';
+			<a href="' . url('pengajuan/detail-pengajuan') . '/' . $data->lsb_id . '" target="_blank">
+			<button class="btn btn-flat btn-default btn-xs" type="button"> Detail </button>
+			</a></div>';
 		})
 		->addColumn('pemohon', function ($data) {
 			return $data->name;
@@ -461,7 +482,7 @@ class DatatablesController extends Controller
 			return $res;
 		})
 		->addColumn('acc', function ($data) {
-			$data = Lab_submission_acc::where('lsa_submission',$data->lsb_id)->select('las_username')->get();
+			$data = Lab_submission_acc::where('lsa_submission',$data->lsb_id)->where('lsa_rule','LAB_HEAD')->select('las_username')->get();
 			$str = '';
 			foreach ($data as $key => $value) {
 				$str.= '<span class="badge bg-blue">Acc: '.$value->las_username.'</span>';
@@ -493,11 +514,6 @@ class DatatablesController extends Controller
 			->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
 			->get();
 		} elseif (rulesUser(['LAB_SUBHEAD'])) {
-			// $labs = Laboratory::where('lab_head', $user->id)->get();
-			// $ids_lab = [];
-			// foreach ($labs as $key => $value) {
-			// 	$ids_lab[$key] = $value->lab_id;
-			// }
 			$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 			->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
 			->whereIn('lsb_status', $status)
@@ -677,8 +693,10 @@ class DatatablesController extends Controller
 	}
 	public function sourceDataFasilitasLab(Request $request)
 	{
-		$data = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
-		->where('laf_laboratorium',$request->lab_id)
+		// $data = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
+		// ->where('laf_laboratorium',$request->lab_id)
+		// ->get();
+		$data = Laboratory_facility::where('laf_laboratorium',$request->lab_id)
 		->get();
 		return DataTables::of($data)
 		->addIndexColumn()
@@ -711,6 +729,55 @@ class DatatablesController extends Controller
 			return $res;
 		})
 		->rawColumns(['opsi', 'name', 'brand', 'utility'])
+		->make(true);
+	}
+	/* Tags:... */
+	public function sourceDataTestLab(Request $request)
+	{
+		// $data = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
+		// ->where('laf_laboratorium', $request->lab_id)
+		// ->get();
+		$data = Laboratory_labtest::where('lsv_lab_id',$request->lab_id)->get();
+		return DataTables::of($data)
+		->addIndexColumn()
+		->addColumn('empty_str', function ($k) {
+			return '';
+		})
+		->addColumn('opsi', function ($data) {
+			return ' <div style="text-align:center;">
+		<div class="btn-group">
+			<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				Menu <span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu pull-right">
+				<li><a href="' . url('laboratorium/detail-ujilab/' . $data->lsv_id) . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Detail Uji Lab</a></li>
+				<li><a href="' . url('laboratorium/form-update-ujilab/' . $data->lsv_id) . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update</a></li>
+				<li><a href="#" onclick="actDeleteFacility(' . $data->lvs_id . ')"><i class="ri-delete-bin-line" aria-hidden="true" style="margin-right:12px;"></i>Hapus</a></li>
+			</ul>
+		</div></div>';
+		})
+		->addColumn('name', function ($data) {
+			$res = $data->lsv_name;
+			return $res;
+		})
+		->addColumn('notes', function ($data) {
+			$res = $data->lsv_notes;
+			return $res;
+		})
+		->addColumn('utility', function ($data) {
+			$data_utlity = Laboratory_labtest_facility::join('laboratory_facilities', 'laboratory_labtest_facilities.lst_facility','=', 'laboratory_facilities.laf_id')
+			->where('lst_lsv_id',$data->lsv_id)->select('laf_name')->get();
+			$res ='';
+			foreach ($data_utlity as $key => $value) {
+				$res.='- '.$value->laf_name.'<br>';
+			}
+			return $res;
+		})
+		->addColumn('price', function ($data) {
+			$res = $data->lsv_price;
+			return $res;
+		})
+		->rawColumns(['opsi', 'name', 'notes', 'utility','price'])
 		->make(true);
 	}
 	/* Tags:... */
@@ -921,8 +988,23 @@ class DatatablesController extends Controller
 	}
 	public function sourceDataLabSchedule(Request $request)
 	{
-		$data = Laboratory::join('users', 'laboratories.lab_head', '=', 'users.id')
-		->get();
+		$user = Auth::user();
+		if (rulesUser(['ADMIN_SYSTEM', 'ADMIN_MASTER', 'LAB_HEAD'])) {
+			$data = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->get();
+		} elseif (rulesUser(['LAB_SUBHEAD'])) {
+			$data = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->where('id', $user->id)
+				->get();
+		} elseif (rulesUser(['LAB_TECHNICIAN'])) {
+			$data = Laboratory::join('laboratory_technicians', 'laboratories.lab_id', '=', 'laboratory_technicians.lat_laboratory')
+			->leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->where('lat_tech_id', $user->id)
+				->get();
+		} else {
+			$data = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->get();
+		}
 		return DataTables::of($data)
 			->addIndexColumn()
 			->addColumn('empty_str', function ($k) {
@@ -960,8 +1042,23 @@ class DatatablesController extends Controller
 	/* Tags:... */
 	public function sourceDataLabFacility(Request $request)
 	{
-		$data = Laboratory::join('users', 'laboratories.lab_head', '=', 'users.id')
-		->get();
+		$user = Auth::user();
+		if (rulesUser(['ADMIN_SYSTEM', 'ADMIN_MASTER', 'LAB_HEAD'])) {
+			$data = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->get();
+		} elseif (rulesUser(['LAB_SUBHEAD'])) {
+			$data = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->where('id', $user->id)
+				->get();
+		} elseif (rulesUser(['LAB_TECHNICIAN'])) {
+			$data = Laboratory::join('laboratory_technicians', 'laboratories.lab_id', '=', 'laboratory_technicians.lat_laboratory')
+			->leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->where('lat_tech_id', $user->id)
+				->get();
+		} else {
+			$data = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->get();
+		}
 		return DataTables::of($data)
 		->addIndexColumn()
 		->addColumn('empty_str', function ($k) {
@@ -1000,7 +1097,7 @@ class DatatablesController extends Controller
 	{
 		$data = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
 		->where('laf_laboratorium', $request->lab_id)
-			->get();
+		->get();
 		return DataTables::of($data)
 			->addIndexColumn()
 			->addColumn('empty_str', function ($k) {
@@ -1052,7 +1149,7 @@ class DatatablesController extends Controller
 				</button>
 				<ul class="dropdown-menu pull-right">
 				<li><a href="' . url('pengaturan/user-detail/' . $data->id) . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Detail User</a></li>
-					<li><a href="' . url('pengaturan/form-update-user/' . $data->id) . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update User</a></li>
+					<li><a href="' . url('pengaturan/user-detail/form-update-user/' . $data->id) . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update User</a></li>
 					<li><a href="#" onclick="actBlockUser(' . $data->id . ')" ><i class="ri-delete-bin-line" aria-hidden="true" style="margin-right:12px;"></i>Block</a></li>
 				</ul>
 			</div></div>';

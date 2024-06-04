@@ -93,4 +93,6 @@ class ScheduleController extends Controller
 		$storeLabSch = Lab_schedule::insert($data);
 		return redirect()->route('schedule_lab', ['id' => $request->lab_id]);
 	}
+	/* Tags:... */
+	
 }

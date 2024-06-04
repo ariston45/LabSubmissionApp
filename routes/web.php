@@ -3,7 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LaboratoryController;
+use App\Http\Controllers\LandController;
+use App\Http\Controllers\DataController;
+// use Artisan;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,15 +18,46 @@ use App\Http\Controllers\HomeController;
 |
 */
 
-Route::get('/', [HomeController::class, 'viewLanding'])->name('landing');
+Route::get('/', [LandController::class, 'viewFirstPage'])->name('landing');
+Route::get('page-laboratorium', [LandController::class, 'viewLaboratoriumPage']);
+Route::get('page-laboratorium/detail-laboratorium/{id}', [LandController::class, 'viewLaboratoriumDetail']);
+Route::get('page-layanan', [LandController::class, 'viewLayananPage']);
+Route::get('page-layanan/detail-uji-lab/{id}', [LandController::class, 'viewUjiLabDetail']);
+Route::get('page-kontak', [LandController::class, 'viewKontakPage']);
+Route::get('page-about-unesa', [LandController::class, 'viewAboutUnesapage']);
+Route::get('page-about-lab-teknik', [LandController::class, 'viewAboutLabTekpage']);
+Route::get('page-about-app', [LandController::class, 'viewAboutApp']);
+// Panduan
+Route::get('page-panduan', [LandController::class, 'viewpanduanPage']);
+Route::get('page-panduan/{rule}', [LandController::class, 'viewpanduanPageRule']);
+// Data Source
+Route::post('source-data-labs', [DataController::class, 'sourceDataLabs'])->name('source-data-labs');
+Route::post('source-data-labs-find', [DataController::class, 'sourceDataLabsFind'])->name('source-data-labs-find');
+Route::post('source-data-lab-test', [DataController::class, 'sourceDataLabTest'])->name('source-data-lab-test');
+Route::post('source-data-filter-lab', [DataController::class, 'sourceDataFilterLab'])->name('source-data-filter-lab');
+Route::post('source-data-sch-lab-open', [LaboratoryController::class, 'sourceDataScheduleLabJson'])->name('source_data_sch_lab_open');
 
+Route::prefix('data_api_student')->group(function () {
+  Route::get('/', [DataController::class, 'sourceDataStudent']);
+});
+Route::prefix('data_api_lecture')->group(function () {
+  Route::get('/', [DataController::class, 'sourceDataLecture']);
+});
+Route::prefix('data_api_lecture/migration')->group(function () {
+  Route::get('/', [DataController::class, 'sourceDataLectureMig']);
+});
+
+// Auth
 Route::get('login', [AuthController::class,'viewLogin'])->name('login');
 Route::post('login-action',[AuthController::class, 'actionLogin'])->name('login-action');
-
 Route::get('register', [AuthController::class, 'viewRegister'])->name('view-register');
 Route::post('register-action', [AuthController::class, 'actionRegister'])->name('register-action');
-
 Route::get('logout', [AuthController::class, 'actionLogout'])->name('logout');
 Route::get('init-user', [ProfileController::class,'IdenUser'])->name('init-user');
+// Test
+Route::get('test', [LandController::class, 'test'])->name('test');
 
-Route::get('test', [AuthController::class, 'test'])->name('test');
+Route::get('/foo', function () {
+  echo 'test';
+  Artisan::call('storage:link');
+});

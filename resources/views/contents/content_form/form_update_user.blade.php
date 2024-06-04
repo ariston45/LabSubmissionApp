@@ -17,7 +17,7 @@ Lab management | Dashboard
     <div class="box-header with-border">
       <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Update User</h3>
       <div class="pull-right">
-        <a href="{{ url('pengaturan/user') }}">
+        <a href="{{ url('pengaturan/user-detail') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
@@ -136,6 +136,8 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        {{--  --}}
+        @if ( rulesUser(['ADMIN_SYSTEM','ADMIN_MASTER']))
         <div class="form-group has-feedback {{ $errors->has('inp_level') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -153,7 +155,7 @@ Lab management | Dashboard
               <option value="LAB_SUBHEAD" @if ($data_user->level == 'LAB_SUBHEAD') selected @endif >LAB_SUBHEAD</option>
               <option value="LAB_TECHNICIAN" @if ($data_user->level == 'LAB_TECHNICIAN') selected @endif >LAB_TECHNICIAN</option>
               <option value="ADMIN_PRODI" @if ($data_user->level == 'ADMIN_PRODI') selected @endif >ADMIN_PRODI</option>
-              <option value="ADMIN_MASTER" @if ($data_user->level == 'ADMIN_MASTER') selected @endif >ADMIN_PRODI</option>
+              <option value="ADMIN_MASTER" @if ($data_user->level == 'ADMIN_MASTER') selected @endif >ADMIN_MASTER</option>
             </select>
             {{-- <input type="text" id="inp-institusi" class="form-control" name="inp_institusi" value="{{ old('inp_institusi') }}" placeholder="Input Universitas / Institusi.."> --}}
             @if ($errors->has('inp_level'))
@@ -161,6 +163,10 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        @else
+          <input type="hidden" name="inp_level" value="{{ $data_user->level }}">
+        @endif
+        {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_password') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">

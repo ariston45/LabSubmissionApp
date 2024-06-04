@@ -98,7 +98,7 @@
         </td>
       </tr>
       <tr>
-        <td>
+        <td colspan="2">
           {{ $data->lsb_title }}
         </td>
       </tr>
@@ -133,12 +133,12 @@
       <tr>
         @if ($data->level == 'STUDENT')
         <td style="width: 50%; text-align: center;">
-          Mengetahui,
+          {{-- Mengetahui,
           Dosen Pembimbing,
           <br><br><br><br>
           ( {{ $acc_data_lecture->name }} )
           <br>
-          NIP: {{ $acc_data_lecture->no_id }}
+          NIP: {{ $acc_data_lecture->no_id }} --}}
         </td>
         <td style="width: 50%; text-align: center;">
           Pemohon,

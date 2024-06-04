@@ -25,10 +25,10 @@ Lab management | Dashboard
 				<thead>
 					<tr>
 						<th style="width: 5%">No</th>
-						<th style="width: 30%">Laboratorium</th>
-						<th style="width: 20%">Kepala Lab</th>
-						<th style="width: 15%">Status</th>
-            <th style="width: 30%">Lokasi</th>
+						<th style="width: 30%">Nama</th>
+						<th style="width: 20%">No Kontak</th>
+						<th style="width: 15%">Email</th>
+            <th style="width: 30%">Level</th>
 						<th style="width: 10%;text-align:center;">Opsi</th>
 					</tr>
 				</thead>

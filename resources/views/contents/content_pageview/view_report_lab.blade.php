@@ -23,11 +23,12 @@ Lab management | Dashboard
 						<button class="btn btn-block btn-flat btn-sm btn-dafault" style="margin-bottom: 10px;">Lap. Pengajuan</button>
 					</a>
 					<a href="{{ url('laporan/laboratorium') }}">
-						<button class="btn btn-block btn-flat btn-sm btn-primary" style="margin-bottom: 10px;">Lap. Laboratorium</button>
+						<button class="btn btn-block btn-flat btn-sm btn-primary" style="margin-bottom: 10px;">Lap. Pendapatan</button>
 					</a>
 				</div>
 				<div class="col-md-10">
-					<form class="form-horizontal" action="{{ route('kirim_pengajuan') }}" method="POST" enctype="multipart/form-data">
+					<form class="form-horizontal" action="{{ route('report_order') }}" method="POST" enctype="multipart/form-data">
+						@csrf
 						<div class="form-group has-feedback {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}">
 							<label class="col-sm-12 col-md-3 control-label">
 								<span style="padding-right: 30px;">
@@ -90,6 +91,66 @@ Lab management | Dashboard
 		</div>
 	</div>
 </div>
+@if (session('data_report'))
+<div class="col-md-12">
+	<div class="box">
+		<div class="box-header with-border">
+			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i>Data Report</h3>
+			<div class="pull-right">
+				<button class="btn btn-flat btn-xs btn-default" onclick="actionFormDownload();"><i class="ri-download-2-line" style="margin-right: 4px;"></i> Download Report </button>
+			</div>
+		</div>
+		<div class="box-body">
+			<div class="clearfix"></div>
+			<form id="form-download" action="{{ route('download_income_excel') }}" method="POST">
+				@csrf
+				<table id="tabel_laboratorium" class="table tabel_custom table-condensed">
+					<thead>
+						<tr>
+							<th style="width: 5%">No</th>
+							<th style="width: 10%">No.Id</th>
+							<th style="width: 15%">Nama</th>
+							<th style="width: 20%">Lab.</th>
+							<th style="width: 20%">Alat & Fasilitas</th>
+							<th style="width: 15%">Potongan</th>
+							<th style="width: 15%;text-align:center;">Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						@php
+							$no = 1;
+						@endphp
+						@foreach (session('data_report') as $list)
+							@if ($list['no_id'] != null)
+							<tr>
+								<td>{{ $no }}</td>
+								<td>{{ $list['no_id'] }}</td>
+								<td>{{ $list['user'] }}</td>
+								<td>{{ $list['lab'] }}</td>
+								<td>{!! $list['fasilitas'] !!}</td>
+								<td>{{ $list['potongan'] }}</td>
+								<td style="text-align:center;">{{ $list['total'] }}</td>
+							</tr>
+							@else
+								<tr>
+								<td colspan="6" style="text-align:center;">
+									<b>TOTAL</b>
+									<input type="hidden" value="{{ $list['lab'] }}" name="income_json_data">
+								</td>
+								<td style="text-align:center;">{{ $list['total'] }}</td>
+							</tr>
+							@endif
+						@php
+							$no++;
+						@endphp
+						@endforeach
+					</tbody>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>
+@endif
 @endsection
 @push('css')
 <link rel="stylesheet" href="{{ url('assets/plugins/datatables/media/css/dataTables.bootstrap.css') }}">
@@ -189,6 +250,9 @@ Lab management | Dashboard
 			},
 		});
 		return data_lab;
+	};
+	function actionFormDownload() {
+		$("#form-download").submit();
 	};
 </script>
 {{-- Ready Function --}}

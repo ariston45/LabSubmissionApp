@@ -61,7 +61,7 @@ class PengaturanController extends Controller
 	{
 		$id_user = $request->id;
 		$id_user_detail = $request->usd_id;
-		if ($request->password == null) {
+		if ($request->inp_password == null) {
 			# code...
 			$data = [
 				'no_id' => $request->inp_no_id,
@@ -79,7 +79,7 @@ class PengaturanController extends Controller
 				'email' => $request->inp_email,
 				'name' => $request->inp_name,
 				'level' => $request->inp_level,
-				'password' => bcrypt($request->password)
+				'password' => bcrypt($request->inp_password)
 			];
 		}
 		$data_ii = [
@@ -112,7 +112,7 @@ class PengaturanController extends Controller
 		$data_user = User::leftjoin('user_details', 'users.id', '=', 'user_details.usd_user')
 		->where('id', $auth->id)
 		->first();
-		return view('contents.content_pageview.view_detail_user', compact('data_user'));
+		return view('contents.content_pageview.view_detail_profil', compact('data_user'));
 	}
 	/* Tags:... */
 	public function formUpdateUser(Request $request)
@@ -122,5 +122,13 @@ class PengaturanController extends Controller
 		->first();
 		// dd($data_user);
 		return view('contents.content_form.form_update_user',compact('data_user'));
+	}
+	public function formUpdateProfil(Request $request)
+	{
+		$data_user = User::leftjoin('user_details', 'users.id', '=', 'user_details.usd_user')
+		->where('id', $request->id)
+			->first();
+		// dd($data_user);
+		return view('contents.content_form.form_update_user', compact('data_user'));
 	}
 }

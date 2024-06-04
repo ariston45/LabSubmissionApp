@@ -14,7 +14,7 @@ Lab management | Dashboard
     <div class="box-header with-border">
       <h3 class="box-title" style="color: #0277bd"><i class="ri-file-list-3-line" style="margin-right: 4px;"></i> Detail User</h3>
       <div class="pull-right">
-        <a href="{{ url('pengaturan/form-update-user/'.$data_user->id) }}">
+        <a href="{{ url('pengaturan/user-detail/form-update-user/'.$data_user->id) }}">
           <button class="btn btn-flat btn-xs btn-default"><i class="ri-edit-2-line" style="margin-right: 4px;"></i> Update </button>
         </a>
         <a href="{{ url('pengaturan/user') }}">

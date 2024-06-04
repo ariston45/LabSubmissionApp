@@ -25,6 +25,19 @@ Lab management | Dashboard
       @csrf
       <div class="box-body">
         {{-- !! --}}
+        <div class="form-group">
+          <div class="col-md-offset-3 col-md-9">
+            <img src="{{ url('public/assets/img/noimage.jpg') }}" id="wrap-img" class="img img-thumbnail" style="width: 30%"><br>
+            <input type="file" class="upload_url_img" id="upload_url_img" name="upload_url_img" />
+            <label for="upload_url_img">
+              <i class="fas fa-cloud-upload-alt"></i>
+              Tambah Foto
+            </label>
+            @if ($errors->has('upload_url_img'))
+						<span style="color: red;"><i>{{ $errors->first('upload_url_img') }}</i></span>
+						@endif
+          </div>
+        </div>
         <div class="form-group has-feedback {{ $errors->has('inp_laboratorium') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -35,6 +48,24 @@ Lab management | Dashboard
             <input type="text" id="inp-laboratorium" class="form-control" name="inp_laboratorium" value="" placeholder="Input nama laboratorium..">
             @if ($errors->has('inp_laboratorium'))
 						<span style="color: red;"><i>{{ $errors->first('inp_laboratorium') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_runpun') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Rumpun
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <select id="inp-rumpun" class="form-control" name="inp_rumpun" placeholder="Input Rumpun..">
+              @foreach ($data_rumpun as $list)
+              <option value="{{ null }}"></option>
+              <option value="{{ $list->lag_id }}" @if (old('inp_rumpun') == $list->lag_id) selected @endif >{{ $list->lag_name }}</option>  
+              @endforeach
+            </select>
+            @if ($errors->has('inp_rumpun'))
+						<span style="color: red;"><i>{{ $errors->first('inp_rumpun') }}</i></span>
 						@endif
           </div>
         </div>
@@ -69,11 +100,39 @@ Lab management | Dashboard
               <option value="{{ $list->id }}">{{ $list->name }}</option>
               @endforeach --}}
             </select>
-            @if ($errors->has('inp_kalab'))
+            @if ($errors->has('inp_teknisi'))
 						<span style="color: red;"><i>{{ $errors->first('inp_teknisi') }}</i></span>
 						@endif
           </div>
         </div>
+        {{--  --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_notes_short') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Diskripsi Singkat Lab.
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <textarea id="edt-notes-short" class="form-control" name="inp_notes_short" placeholder="Tuliskan diskripsi disini" style="padding-left: 12px;"></textarea>
+            @if ($errors->has('inp_notes_short'))
+						<span style="color: red;"><i>{{ $errors->first('inp_notes_short') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_notes') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Diskripsi Lab.
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <textarea id="edt-notes" class="form-control" name="inp_notes" placeholder="Tuliskan diskripsi disini" style=""></textarea>
+            @if ($errors->has('inp_notes'))
+						<span style="color: red;"><i>{{ $errors->first('inp_notes') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_lokasi') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -84,6 +143,19 @@ Lab management | Dashboard
             <input type="text" id="inp-lokasi" class="form-control" name="inp_lokasi" value="{{ old('inp_lokasi') }}" placeholder="Input lokasi lab..">
             @if ($errors->has('inp_lokasi'))
 						<span style="color: red;"><i>{{ $errors->first('inp_lokasi') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_cost') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Biaya
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <input type="text" id="inp-cost" class="form-control" name="inp_cost"  value="{{ old('inp_cost') }}" oninput="fcurrencyInput('inp-cost')" placeholder="biaya..">
+            @if ($errors->has('inp_cost'))
+						<span style="color: red;"><i>{{ $errors->first('inp_cost') }}</i></span>
 						@endif
           </div>
         </div>
@@ -117,9 +189,9 @@ Lab management | Dashboard
 <link rel="stylesheet" href="{{ url('/public/assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}">
 <link rel="stylesheet" href="{{ url('/public/assets/plugins/timepicker/bootstrap-timepicker.min.css') }}">
 <link rel="stylesheet" href="{{ url('/public/assets/plugins/tom-select/dist/css/tom-select.bootstrap4.min.css') }}">
+<link rel="stylesheet" href="{{ url('/public/assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}">
 <style>
   /* .ts-wrapper.multi .ts-control>div{
-
   } */
   .ts-control {
 		border-radius: 0px;
@@ -136,12 +208,54 @@ Lab management | Dashboard
     box-shadow: 0 0 0 0rem rgba(254, 255, 255, 0.25);
     outline: 0;
   }
+  .img-thumbnail{
+    border-radius: 0px;
+    border-color: #8a8a8a;
+  }
+  .upload_url_img, .upload_url_bg {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+
+  .upload_url_img + label, .upload_url_bg + label {
+    margin-top: 5px;
+    font-size: 11pt;
+    font-weight: 700;
+    color: white;
+    background-color: #333;
+    display: inline-block;
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 0px;
+    cursor: pointer;
+    width: 30%;
+  }
+
+  .upload_url_img:focus + label,
+  .upload_url_img + label:hover,
+  .upload_url_bg:focus + label,
+  .upload_url_bg + label:hover {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 0px;
+  }
+  .notes-input{
+    width: 100%; 
+    height: 360px; 
+    font-size: 14px;
+    line-height: 14px;
+    padding: 6px;
+  }
 </style>
 @endpush
 @push('scripts')
 <script src="{{ url('/public/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
 <script src="{{ url('/public/assets/plugins/timepicker/bootstrap-timepicker.min.js') }}"></script>
 <script src="{{ url('/public/assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
+<script src="{{ url('/public/assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
 {{-- varibles --}}
 <script>
   var select_kasublab = new TomSelect("#inp-kalab",{
@@ -154,7 +268,7 @@ Lab management | Dashboard
 				return '<div><span class="title">'+escape(data.title)+'</span></div>';
 			},
 			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+				return '<div id="select-kalab">'+escape(data.title)+'</div>';
 			}
 		}
   });
@@ -169,7 +283,7 @@ Lab management | Dashboard
 				return '<div><span class="title">'+escape(data.title)+'</span></div>';
 			},
 			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+				return '<div id="select-teknisi">'+escape(data.title)+'</div>';
 			}
 		}
   });
@@ -183,7 +297,21 @@ Lab management | Dashboard
 				return '<div><span class="title">'+escape(data.title)+'</span></div>';
 			},
 			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+				return '<div id="select-status">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+  var select_rumpun = new TomSelect("#inp-rumpun",{
+    create: false,
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-rumpun">'+escape(data.title)+'</div>';
 			}
 		}
   });
@@ -244,6 +372,35 @@ Lab management | Dashboard
 		});
 		return dataOption_users;
 	};
+  /* function actionRupiahCurFormat(angka) {
+    var number_string = angka.toString(),
+    split = number_string.split(","),
+    sisa = split[0].length % 3,
+    rupiah = split[0].substr(0, sisa) +
+      split[0].substr(sisa).match(/\d{3}/gi).join(",");
+
+    if (split[1]) {
+      rupiah += "." + split[1];
+    }
+    return "Rp. " + rupiah;
+  }; */
+  function fcurrencyInput(elem) {
+    var inputElement = document.getElementById(elem);
+    inputElement.value = formatRupiah(inputElement.value, 'Rp ');
+  }
+  function formatRupiah(number, prefix) {
+    var number_string = number.replace(/[^,\d]/g, '').toString(),
+    split = number_string.split(','),
+    sisa = split[0].length % 3,
+    rupiah = split[0].substr(0, sisa),
+    ribuan = split[0].substr(sisa).match(/\d{3}/gi);  
+    if (ribuan) {
+      separator = sisa ? '.' : '';
+      rupiah += separator + ribuan.join('.');
+    }
+    rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+    return prefix == undefined ? rupiah : (rupiah ? 'Rp ' + rupiah : '');
+  };
 </script>
 {{-- ready function --}}
 <script>
@@ -266,6 +423,50 @@ Lab management | Dashboard
         input.val(log);
       } else {
         if( log ) alert(log);
+      }
+    });
+  });
+  $(document).ready(function (){
+    $('#upload_url_img').change(function(){
+      var input = this;
+      var url = $(this).val();
+      var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+      if (input.files && input.files[0] && (ext == "gif" || ext == "png" || ext == "jpeg" || ext == "jpg")) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          $('#wrap-img').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    });
+  });
+  $(document).ready(function (){
+    $('#edt-notes-short').wysihtml5({
+      toolbar: {
+        "font-styles": true,
+        "emphasis": true,
+        "lists": true,
+        "html": false,
+        "link": false,
+        "image": false,
+        "color": false,  
+        "blockquote": true,
+        "useLineBreaks":true,
+        "size": 'sm',
+        "stylesheets": ["{{ url('/public/assets/plugins/bootstrap-wysihtml5/custom.css') }}"],
+      }
+    });
+    $('#edt-notes').wysihtml5({
+      toolbar: {
+        "font-styles": true,
+        "emphasis": true,
+        "lists": true,
+        "html": false,
+        "link": false,
+        "image": false,
+        "color": false,  
+        "blockquote": true,
+        "size": 'sm', 
       }
     });
   });

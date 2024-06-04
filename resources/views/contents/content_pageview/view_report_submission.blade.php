@@ -23,7 +23,7 @@ Lab management | Dashboard
 						<button class="btn btn-block btn-flat btn-sm btn-primary" style="margin-bottom: 10px;">Lap. Pengajuan</button>
 					</a>
 					<a href="{{ url('laporan/laboratorium') }}">
-						<button class="btn btn-block btn-flat btn-sm btn-default" style="margin-bottom: 10px;">Lap. Laboratorium</button>
+						<button class="btn btn-block btn-flat btn-sm btn-default" style="margin-bottom: 10px;">Lap. Pendapatan</button>
 					</a>
 				</div>
 				<div class="col-md-10">
@@ -73,7 +73,6 @@ Lab management | Dashboard
 							</label>
 							<div class="divcol-sm-12 col-md-9">
 								<select id="inp-lab" class="form-control" name="inp_lab" >
-									<option value="all">Semua Lab</option>
 								</select>
 							</div>
 						</div>
@@ -97,9 +96,6 @@ Lab management | Dashboard
 		<div class="box-header with-border">
 			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i>Data Report</h3>
 			<div class="pull-right">
-				<a href="{{ url('laboratorium/form-input-lab') }}">
-					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah Laboratorium</button>
-				</a>
 			</div>
 		</div>
 		<div class="box-body">
@@ -108,10 +104,11 @@ Lab management | Dashboard
 				<thead>
 					<tr>
 						<th style="width: 5%">No</th>
-						<th style="width: 20%">Nama</th>
-						<th style="width: 35%">Judul</th>
+						<th style="width: 15%">Nama</th>
+						<th style="width: 30%">Judul</th>
 						<th style="width: 10%">Lab.</th>
 						<th style="width: 20%">Waktu Peminjaman</th>
+						<th style="width: 10%">Biaya</th>
 						<th style="width: 10%;text-align:center;">Download Laporan</th>
 					</tr>
 				</thead>
@@ -126,7 +123,8 @@ Lab management | Dashboard
 						<td style="width: 35%">{{ $list['judul'] }}</td>
 						<td style="width: 10%">{{ $list['lab'] }}</td>
 						<td style="width: 20%">{!! $list['waktu'] !!}</td>
-						<td style="width: 10%;text-align:center;">{{ $list['download_laporan'] }}</td>
+						<td style="width: 10%">{{ $list['cost'] }}</td>
+						<td style="width: 10%;text-align:center;">{!! $list['download_laporan'] !!}</td>
 					</tr>
 					@php
 						$no++;

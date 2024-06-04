@@ -10,21 +10,31 @@ Lab management | Dashboard
 @endsection
 @section('content')
 <div class="col-md-12">
+	@if (rulesUser(['STUDENT','LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
+	<div class="box box-solid">
+		<div class="box-body" style="padding-bottom: 0px;padding-left: 0px;background-color: #01070a;">
+			<div class="row">
+				<div class="col-sm-12">
+					@if (rulesUser(['STUDENT','LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
+					<a href="{{ url('pengajuan/form-pengajuan') }}" class="btn btn-app bg-blue" style="min-width: 90px;">
+						<i class="fa fa-building"></i> Pinjam Lab
+					</a>
+					@endif
+					@if (rulesUser(['LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
+					<a href="{{ url('pengajuan/form-pengajuan-labtest') }}" class="btn btn-app bg-blue" style="min-width: 90px;">
+						<i class="fa fa-flask"></i> Uji Lab
+					</a>
+					@endif
+				</div>
+			</div>
+		</div>
+	</div>
+	@endif
 	<div class="box box-primary">
 		<div class="box-header with-border">
 			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Pengajuan</h3>
 			<div class="pull-right">
-				<button class="btn btn-flat btn-xs btn-default" onclick="showFilterField()"><i class="ri-filter-line" style="margin-right: 4px;"></i> Filter</button>
-				@if (rulesUser(['STUDENT','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
-				<a href="{{ url('pengajuan/form-pengajuan') }}">
-					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Buat Pengajuan</button>
-				</a>
-				@endif
-				{{-- @if (rulesUser(['ADMIN_SYSTEM','ADMIN_MASTER','LAB_HEAD','LECTURE','LAB_SUBHEAD','LAB_TECHNICIAN']))
-				<a href="{{ url('pengajuan/data-arsip') }}">
-					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-archive-2-fill" style="margin-right: 4px;"></i>Arsip</button>
-				</a>
-				@endif --}}
+				<button class="btn btn-flat btn-xs btn-default" onclick="showFilterField()"><i class="ri-filter-line" style="margin-right: 4px;"></i> Sembunyikan Filter</button>
 			</div>
 		</div>
 		<div class="box-body">
@@ -40,11 +50,10 @@ Lab management | Dashboard
 				</div>
 			</div>
 			@endif
-			
-			<div id="filter-field" style="margin-bottom: 20px; display: none;" >
+			<div id="filter-field" style="margin-bottom: 20px; display: true;" >
 				<form class="form-horizontal" action="#" method="POST" enctype="multipart/form-data">
 					<div class="form-group has-feedback {{ $errors->has('inp_laboratorium') ? ' has-error' : '' }}">
-						<label class="col-sm-12 col-md-3 control-label" >
+						<label class="col-sm-12 col-md-3 control-label">
 							<span style="padding-right: 30px;">
 								Tanggal Mulai
 							</span>

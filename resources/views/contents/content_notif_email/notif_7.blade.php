@@ -28,28 +28,17 @@
 	<table class="table" style="width:100%">
 		<tbody>
 			<tr>
-				<td colspan="4">
+				<td >
 					Salam Hangat, <br>
-					{{ $data_applicant['inp_nama'] }}<br>
-					di Tempat<br>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="4">
-					Pengajuan peminjaman {{ $data_applicant['lab'] }}, dengan jadwal  peminjaman {!! $data_applicant['time'] !!}. <br> 
-					Pengajuan telah ditolak oleh
-					@if (isset($data_applicant['lecture_acc']))
-					{{ $data_applicant['lecture_acc'] }}.
-					<br>
-					@endif
-					Untuk informasi lebih lanjut silakan klik tombol detail pengajuan yang ada di bawah.
-				</td>
+				<td>Untuk melakukan reset password silahkan klik link dibawah ini;</td>
+			</tr>
+			<tr>
+				<td>{{ $url }}</td>
 			</tr>
 		</tbody>
 	</table>
-	<hr>
-	<a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}">
-		<button type="button" class="btn bg-olive btn-flat margin">Detail Pengajuan</button>
-	</a>
 </body>
 </html>

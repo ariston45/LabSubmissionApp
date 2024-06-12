@@ -36,8 +36,8 @@
 			</tr>
 			<tr>
 				<td colspan="4">
-					Pengajuan peminjaman laboratorium {{ $data_applicant['lab'] }}, dengan jadwal  peminjaman {!! $data_applicant['time'] !!}. <br> 
-					telah ditolak oleh; 
+					Pengajuan peminjaman {{ $data_applicant['lab'] }}, dengan jadwal peminjaman tanggal {!! $data_applicant['dates'] !!}. <br> 
+					telah ditolak oleh
 					@if (isset($data_applicant['head_acc']))
 						{{ $data_applicant['head_acc'] }}.
 						<br>

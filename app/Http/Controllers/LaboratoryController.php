@@ -15,6 +15,7 @@ use Storage;
 
 
 use App\Models\Lab_facility;
+use App\Models\Lab_sch_date;
 use App\Models\Lab_schedule;
 use App\Models\Laboratory;
 use App\Models\Laboratory_group;
@@ -24,6 +25,7 @@ use App\Models\Laboratory_facility_count_status;
 use App\Models\Laboratory_facility;
 use App\Models\Laboratory_labtest;
 use App\Models\Laboratory_labtest_facility;
+use App\Models\Laboratory_time_option;
 
 class LaboratoryController extends Controller
 {
@@ -282,7 +284,6 @@ class LaboratoryController extends Controller
 		->leftJoin('laboratories', 'Laboratory_facilities.laf_laboratorium','=', 'laboratories.lab_id')
 		->where('laf_id', $request->id)
 		->first();
-		dd($data_facility);
 		return view('contents.content_form.form_update_facilities', compact('users', 'data_facility'));
 	}
 	/* Tags:... */
@@ -308,7 +309,6 @@ class LaboratoryController extends Controller
 			'lcs_condition_poor' => $request->inp_cn_poor,
 			'lcs_condition_unwearable' => $request->inp_cn_unwearable,
 		];
-		dd($data_lab);
 		#
 		$storeFacility = Laboratory_facility::where('laf_id',$lab_facility_id)->update($data_lab);
 		$storeFacilityCnt = Laboratory_facility_count_status::where('lcs_id', $lab_fa_conunt_id)->update($data_lab_count_detail);
@@ -332,7 +332,8 @@ class LaboratoryController extends Controller
 	public function formInputLaboratorySch(Request $request)
 	{
 		$lab_id = $request->id;
-		return view('contents.content_form.form_input_schedule', compact('lab_id'));
+		$times = Laboratory_time_option::get();
+		return view('contents.content_form.form_input_schedule', compact('lab_id', 'times'));
 	}
 	/* Tags:... */
 	public function formExcludeLaboratorySch(Request $request)
@@ -435,15 +436,24 @@ class LaboratoryController extends Controller
 	{
 		$dtStart = Carbon::parse($request->start);
 		$dtEnd = Carbon::parse($request->end);
-		$collect_sch_reguler = Lab_schedule::where('lbs_lab',$request->lab_id)
-		->where('lbs_type','reguler')
+		$collect_sch_reguler = Lab_sch_date::join('lab_schedules', 'lab_sch_dates.lscd_sch', '=', 'lab_schedules.lbs_id')
+		->join('lab_sch_times', 'lab_sch_dates.lscd_id', '=', 'lab_sch_times.lsct_date_id')
+		->join('laboratory_time_options', 'lab_sch_times.lsct_time_id', '=', 'laboratory_time_options.lti_id')
+		->where('lbs_lab', $request->lab_id)
+		->where('lbs_type', 'reguler')
+		->select('lbs_id', 'lbs_lab', 'lbs_matkul', 'lbs_submission', 'lbs_tenant_init', 'lbs_tenant_name', 'lbs_type',
+			'lscd_date','lscd_day','lscd_status','lscd_id','lscd_sch','lscd_status','lsct_date_id','lsct_status','lti_start','lti_end')
 		->get();
-		$collect_sch_non_reguler = Lab_schedule::where('lbs_lab', $request->lab_id)
+
+		$collect_sch_non_reguler = Lab_sch_date::join('lab_schedules', 'lab_sch_dates.lscd_sch','=','lab_schedules.lbs_id')
+		->join('lab_sch_times', 'lab_sch_dates.lscd_id','=', 'lab_sch_times.lsct_date_id')
+		->join('laboratory_time_options', 'lab_sch_times.lsct_time_id','=', 'laboratory_time_options.lti_id')
+		->where('lbs_lab', $request->lab_id)
 		->where('lbs_type', 'non_reguler')
-		->whereBetween('lbs_date_start', [$dtStart, $dtEnd])
+		->whereBetween('lscd_date', [$dtStart, $dtEnd])
+		->select('lbs_id', 'lbs_lab', 'lbs_matkul', 'lbs_submission', 'lbs_tenant_init', 'lbs_tenant_name', 'lbs_type',
+			'lscd_date','lscd_day','lscd_status','lscd_id','lscd_sch','lscd_status','lsct_date_id','lsct_status','lti_start','lti_end')
 		->get();
-		// echo $collect_sch_non_reguler;
-		// die();
 		$dataSch=[];
 		$sch_index=0;
 		# processing sch data with parameter reguler
@@ -458,14 +468,14 @@ class LaboratoryController extends Controller
 			$idx_date_range++;
 		}
 		foreach ($dataDays as $key => $value) {
-			$dts[$key] = $collect_sch_reguler->where('lbs_day',strtolower($value['day']));
+			$dts[$key] = $collect_sch_reguler->where('lscd_day',$value['day']);
 			foreach ($dts[$key] as $skey => $svalue) {
-				$date_exclude[$sch_index] = explode('$',$svalue->lbs_sch_dates_excluded);
-				$str_start = $value['date'].' '.$svalue->lbs_time_start;
+				// $date_exclude[$sch_index] = explode('$',$svalue->lbs_sch_dates_excluded);
+				$str_start = $value['date'].' '.$svalue->lti_start;
 				$datetime_start = date('Y-m-d H:i:s',strtotime($str_start));
-				$str_end = $value['date'] . ' ' . $svalue->lbs_time_end;
+				$str_end = $value['date'] . ' ' . $svalue->lti_end;
 				$datetime_end = date('Y-m-d H:i:s', strtotime($str_end));
-				if (!in_array($value['date'], $date_exclude[$sch_index])) {
+				if ($svalue->lsct_status == 'active') {
 					$dataSch[$sch_index] = [
 						'url' => url('jadwal_lab/'. $svalue->lbs_lab.'#'),
 						'title' => $svalue->lbs_matkul,
@@ -487,15 +497,15 @@ class LaboratoryController extends Controller
 		}
 		# processing sch data with parameter non_reguler
 		foreach ($collect_sch_non_reguler as $key => $value) {
-			$str_start = $value->lbs_date_start . ' ' . $value->lbs_time_start;
+			$str_start = $value->lscd_date . ' ' . $value->lti_start;
 			$datetime_start = date('Y-m-d H:i:s', strtotime($str_start));
 
-			$str_end = $value->lbs_date_end . ' ' . $value->lbs_time_end;
+			$str_end = $value->lscd_date . ' ' . $value->lti_end;
 			$datetime_end = date('Y-m-d H:i:s', strtotime($str_end));
 
 			$dataSch[$sch_index] = [
 				'url' => url('pengajuan/detail-pengajuan/' . $value->lbs_submission),
-				'title' => $value->lbs_matkul,
+				'title' => $value->lbs_tenant_name,
 				'start' => $datetime_start,
 				'end' => $datetime_end,
 				'color' => '#09c755'

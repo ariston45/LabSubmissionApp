@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class NotifMailForApplicantRejectByLecture extends Mailable
+class NotifMailForApplicantValidation extends Mailable
 {
 	use Queueable, SerializesModels;
 
@@ -20,7 +20,6 @@ class NotifMailForApplicantRejectByLecture extends Mailable
 	{
 		$this->data = $data;
 	}
-
 	/**
 	 * Build the message.
 	 *
@@ -28,6 +27,6 @@ class NotifMailForApplicantRejectByLecture extends Mailable
 	 */
 	public function build()
 	{
-		return $this->subject('Permohonan Peminjaman ' . $this->data['lab'])->view('contents.content_notif_email.notif_4',)->with('data_applicant', $this->data);
+		return $this->subject('Permohonan Peminjaman ' . $this->data['lab'])->view('contents.content_notif_email.notif_8',)->with('data_applicant', $this->data);
 	}
 }

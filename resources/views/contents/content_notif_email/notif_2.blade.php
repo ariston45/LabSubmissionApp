@@ -36,17 +36,17 @@
 			</tr>
 			<tr>
 				<td colspan="4">
-					Pengajuan peminjaman laboratorium {{ $data_applicant['lab'] }}, dengan jadwal  peminjaman {!! $data_applicant['time'] !!}, <br> 
-					telah  disetujui oleh; <br>
-					@if (isset($data_applicant['lecture_acc']))
-					{{ $data_applicant['lecture_acc'] }}
-					<br>
-					@endif
+					Pengajuan peminjaman laboratorium {{ $data_applicant['lab'] }}, dengan jadwal peminjaman tanggal {!! $data_applicant['dates'] !!}, <br> 
+					telah disetujui oleh 
 					@if (isset($data_applicant['head_acc']))
-					{{ $data_applicant['head_acc'] }}
+					{{ $data_applicant['head_acc'] }}.
 					<br>
 					@endif
-					Untuk informasi lebih lanjut silakan klik tombol <i>Detail Pengajuan</i> yang ada di bawah.
+					Untuk informasi lebih lanjut silakan klik  <a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}"><b>Detail Pengajuan</b></a>, atau menghubungi nomor kontak berikut:
+					<ul>
+						<li>Kepala Laboratorium: {{ $data_applicant['name_subhead'] }} - {{ $data_applicant['no_contact_subhead'] }}</li>
+						<li>Teknisi Pendamping: {{ $data_applicant['name_tech'] }} - {{ $data_applicant['no_contact_tech'] }}</li>
+					</ul>
 				</td>
 			</tr>
 		</tbody>

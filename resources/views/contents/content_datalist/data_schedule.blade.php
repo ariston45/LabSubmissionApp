@@ -16,9 +16,9 @@ Lab management | Dashboard
 			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Jadwal Laboratorium</h3>
 			<div class="pull-right">
 				@if (rulesUser(['ADMIN_SYSTEM','ADMIN_MASTER','LAB_HEAD','ADMIN_PRODI']))
-				<a href="{{ url('jadwal_lab/form-exclude-jadwal/'.$lab_id) }}">
+				{{-- <a href="{{ url('jadwal_lab/form-exclude-jadwal/'.$lab_id) }}">
 					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-list-check-3" style="margin-right: 4px;"></i> Exclude Jadwal Laboratorium</button>
-				</a>
+				</a> --}}
 				<a href="{{ url('jadwal_lab/form-input-jadwal/'.$lab_id) }}">
 					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah Jadwal Laboratorium</button>
 				</a>

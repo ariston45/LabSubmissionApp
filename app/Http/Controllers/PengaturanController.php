@@ -82,19 +82,30 @@ class PengaturanController extends Controller
 				'password' => bcrypt($request->inp_password)
 			];
 		}
-		$data_ii = [
-			'usd_phone' => $request->inp_no_contact,
-			'usd_address' => $request->inp_address,
-			'usd_prodi' => $request->inp_prodi,
-			'usd_fakultas' => $request->inp_fakultas,
-			'usd_universitas' => $request->inp_institusi,
-		];
 		$storeUser = User::where('id',$id_user)->update($data);
 		if (!$storeUser) {
 			return redirect()->back()->withInput($request->input())->withErrors(['check_email' => 'Alamat email sudah didaftarkan.']);
 		}
-		User_detail::where('usd_id',$id_user_detail)->update($data_ii);
-		// return redirect()->route('setting_user');
+		if ($id_user_detail == null) {
+			$data_ii = [
+				'usd_user' => $id_user,
+				'usd_phone' => $request->inp_no_contact,
+				'usd_address' => $request->inp_address,
+				'usd_prodi' => $request->inp_prodi,
+				'usd_fakultas' => $request->inp_fakultas,
+				'usd_universitas' => $request->inp_institusi,
+			];
+			User_detail::insert($data_ii);
+		} else {
+			$data_ii = [
+				'usd_phone' => $request->inp_no_contact,
+				'usd_address' => $request->inp_address,
+				'usd_prodi' => $request->inp_prodi,
+				'usd_fakultas' => $request->inp_fakultas,
+				'usd_universitas' => $request->inp_institusi,
+			];
+			User_detail::where('usd_id', $id_user_detail)->update($data_ii);
+		}
 		return redirect()->back();
 	}
 	/* Tags:... */
@@ -127,7 +138,7 @@ class PengaturanController extends Controller
 	{
 		$data_user = User::leftjoin('user_details', 'users.id', '=', 'user_details.usd_user')
 		->where('id', $request->id)
-			->first();
+		->first();
 		// dd($data_user);
 		return view('contents.content_form.form_update_user', compact('data_user'));
 	}

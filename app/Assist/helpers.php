@@ -13,6 +13,8 @@ use App\Models\Laboratory_technician;
 use App\Models\Laboratory_facility;
 use App\Models\Laboratory_facility_count_status;
 use App\Models\Lab_schedule;
+use App\Models\Lab_sub_date;
+use App\Models\Lab_sch_date;
 use App\Models\Lab_sub_order;
 use App\Models\Laboratory_labtest;
 use App\Models\Laboratory_labtest_facility;
@@ -47,7 +49,7 @@ function strJudul($strings){
 }
 
 function strDateStart($val){
-  $date_start = Carbon::parse($val)->isoFormat('dddd, D MMMM Y, HH:mm');
+  $date_start = Carbon::parse($val)->isoFormat('dddd, D MMMM Y');
   return $date_start;
 }
 function strDateEnd($val)
@@ -65,6 +67,18 @@ function setDate($val)
 function genIdLab() {
   $max_id_lab = Laboratory::max('lab_id');
   $new_id = $max_id_lab + 1;
+  return $new_id;
+}
+
+function genIdDate() {
+  $max_id_lab = Lab_sub_date::max('lsd_id');
+  $new_id = $max_id_lab + 1;
+  return $new_id;
+}
+function genIdDateSch()
+{
+  $max_id_date_sch = Lab_sch_date::max('lscd_id');
+  $new_id = $max_id_date_sch + 1;
   return $new_id;
 }
 
@@ -227,6 +241,11 @@ function checkDataEmail($value)
     return false;
   }
 }
+function setTime($value)
+{
+  $time = date('H:i', strtotime($value));
+  return $time;
+}
 /** */
 function storingData($value){
   $getjson = Http::acceptJson()->get('https://simontasiplus.unesa.ac.id/api_mhs_simontasi/36a169ac-4080-419e-a6c0-3538feb71089')->throw()->json();
@@ -262,4 +281,6 @@ function storingData($value){
   }else{
     return false;
   }
+  /* Tags:... */
+  
 }

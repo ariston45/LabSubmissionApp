@@ -8,15 +8,12 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Lab. Submission | Landing</title>
+  <title>SIPLAB | Landing</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-
   <!-- Favicons -->
-  <link href="{{ url('/public/assets/bootstrap5/img/favicon.png') }}" rel="icon">
-  <link href="{{ url('/public/assets/bootstrap5/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
-  {{-- <link href="{{ url('/public/assets/bootstrap5/normalize.css') }}" rel="stylesheet"> --}}
+  <link rel="icon" type="image/x-icon" href="{{ url('/public/assets/img/logo.png') }}">
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>

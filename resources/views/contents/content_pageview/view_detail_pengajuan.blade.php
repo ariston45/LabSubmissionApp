@@ -96,7 +96,7 @@ Lab management | Dashboard
             <td style="width: 70%;">{{ $data_pengajuan->usd_fakultas }}</td>
           </tr>
           <tr>
-            <td style="width: 30%;"><b>Universitas</b></td>
+            <td style="width: 30%;"><b>Universitas/Instansi</b></td>
             <td style="width: 70%;">{{ $data_pengajuan->usd_universitas }}</td>
           </tr>
           <tr>
@@ -132,7 +132,8 @@ Lab management | Dashboard
           @endforeach
           <tr>
             <td style="width: 30%;"><b>Hari/Tanggal Pelaksanaan</b></td>
-            <td style="width: 70%;">{{ strDateStart($data_pengajuan->lsb_date_start) }} <b>s/d</b> {{ strDateEnd($data_pengajuan->lsb_date_end) }}</td>
+            {{-- <td style="width: 70%;">{{ strDateStart($data_pengajuan->lsb_date_start) }} <b>s/d</b> {{ strDateEnd($data_pengajuan->lsb_date_end) }}</td> --}}
+            <td style="width: 70%;">{!! $web_date !!}</td>
           </tr>
           <tr>
             <td style="width: 30%;"><b>Laboratorium</b></td>
@@ -277,7 +278,7 @@ Lab management | Dashboard
           <input type="hidden" name="lab_subhead" value="{{ $data_pengajuan->lab_head }}">
 					<div class="form-group has-feedback" style="margin-bottom: 12px;">
 						<label>
-							Persetujuan
+							Respon
 						</label>
 						<select name="inp_acc" id="inp-persetujuan" class="form-control" placeholder="">
 							<option value=""></option>
@@ -343,15 +344,17 @@ Lab management | Dashboard
 				<div class="modal-body">
 					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
           <input type="hidden" name="lab_subhead" value="{{ $data_pengajuan->lab_head }}">
-					<div class="form-group has-feedback" style="margin-bottom: 12px;">
+          <input type="hidden" name="inp_status" value="selesai">
+					{{-- <div class="form-group has-feedback" style="margin-bottom: 12px;">
 						<label>
 							Status Kegiatan
 						</label>
 						<select type="text" class="form-control" name="inp_status" id="inp-status" value="" placeholder="Pilih status..">
               <option value=""></option>
               <option value="selesai">Kegiatan Selesai</option>
+              <option value="tunda">Periksa Laporan</option>
             </select>
-					</div>
+					</div> --}}
           <div class="form-group has-feedback" style="margin-bottom: 12px;">
 						<label>
 							Laporan Kegiatan
@@ -390,7 +393,7 @@ Lab management | Dashboard
           @else
             <input type="hidden" name="lsr_id" value="{{ $data_result->lsr_id }}">
           @endif
-					<div class="form-group has-feedback" style="margin-bottom: 12px;">
+					{{-- <div class="form-group has-feedback" style="margin-bottom: 12px;">
 						<label>
 							Status Kegiatan
 						</label>
@@ -398,7 +401,8 @@ Lab management | Dashboard
               <option value=""></option>
               <option value="selesai">Kegiatan Selesai</option>
             </select>
-					</div>
+					</div> --}}
+          <input type="hidden" value="selesai" name="inp_status">
           <div class="form-group has-feedback" style="margin-bottom: 12px;">
 						<label>
 							Tulis Catatan

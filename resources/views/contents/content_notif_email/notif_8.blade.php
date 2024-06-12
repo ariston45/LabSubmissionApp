@@ -36,20 +36,20 @@
 			</tr>
 			<tr>
 				<td colspan="4">
-					Pengajuan peminjaman {{ $data_applicant['lab'] }}, dengan jadwal  peminjaman {!! $data_applicant['time'] !!}. <br> 
-					Pengajuan telah ditolak oleh
-					@if (isset($data_applicant['lecture_acc']))
-					{{ $data_applicant['lecture_acc'] }}.
-					<br>
-					@endif
-					Untuk informasi lebih lanjut silakan klik tombol detail pengajuan yang ada di bawah.
+					Kegiatan peminjaman laboratorium {{ $data_applicant['lab'] }}, dengan jadwal  peminjaman {!! $data_applicant['time'] !!}, <br> 
+					telah selesai. Laporan hasil penelitian anda sudah divalidasi oleh kasublab pada {{ $data_applicant['result_date_validation'] }}
+					Untuk informasi lebih lanjut silakan klik  <a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}"><b>Detail Pengajuan</b></a>, atau menghubungi nomor kontak berikut
+					<ul>
+						<li>Kepala Laboratorium: {{ $data_applicant['name_subhead'] }} - {{ $data_applicant['no_contact_subhead'] }}</li>
+						<li>Teknisi Pendamping: {{ $data_applicant['name_tech'] }} - {{ $data_applicant['no_contact_tech'] }}</li>
+					</ul>
 				</td>
+			</tr>
+			<tr>
+				Salam Hormat, <br>
+				<b>Tim SIPLAB</b>
 			</tr>
 		</tbody>
 	</table>
-	<hr>
-	<a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}">
-		<button type="button" class="btn bg-olive btn-flat margin">Detail Pengajuan</button>
-	</a>
 </body>
 </html>

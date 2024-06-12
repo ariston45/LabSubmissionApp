@@ -49,6 +49,7 @@ Lab management | Dashboard
 					</a>
 				</div>
 			</div>
+			@elseif (rulesUser(['LAB_SUBHEAD']))
 			@endif
 			<div id="filter-field" style="margin-bottom: 20px; display: true;" >
 				<form class="form-horizontal" action="#" method="POST" enctype="multipart/form-data">

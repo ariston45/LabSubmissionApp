@@ -19,6 +19,8 @@ use App\Models\Lab_submission_acc;
 use App\Models\Lab_submission_adviser;
 use App\Models\Laboratory_labtest;
 use App\Models\Laboratory_labtest_facility;
+use App\Models\Lab_sub_date;
+
 
 
 class DatatablesController extends Controller
@@ -476,10 +478,10 @@ class DatatablesController extends Controller
 			return $data->lsb_title;
 		})
 		->addColumn('waktu', function ($data) {
-			$dt1 = date('d M Y', strtotime($data->lsb_date_start));
-			$dt2 = date('d M Y', strtotime($data->lsb_date_end));
-			$res = $dt1 . '  <b>s/d</b>  ' . $dt2;
+			$dt = Lab_sub_date::where('lsd_lsb_id', $data->lsb_id)->get();
+			$res = $dt->implode('lsd_date', ', ');
 			return $res;
+			// return $res;
 		})
 		->addColumn('acc', function ($data) {
 			$data = Lab_submission_acc::where('lsa_submission',$data->lsb_id)->where('lsa_rule','LAB_HEAD')->select('las_username')->get();
@@ -579,9 +581,8 @@ class DatatablesController extends Controller
 				return $data->lsb_title;
 			})
 			->addColumn('waktu', function ($data) {
-				$dt1 = date('d M Y', strtotime($data->lsb_date_start));
-				$dt2 = date('d M Y', strtotime($data->lsb_date_end));
-				$res = $dt1 . '  <b>s/d</b>  ' . $dt2;
+				$dt = Lab_sub_date::where('lsd_lsb_id',$data->lsb_id)->get();
+				$res = $dt->implode('lsd_date',', ');
 				return $res;
 			})
 			->addColumn('acc', function ($data) {

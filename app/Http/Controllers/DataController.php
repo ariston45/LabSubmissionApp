@@ -858,8 +858,32 @@ class DataController extends Controller
 					</tr>
 				</tbody>
 			</table>';
-		}
-		
+		}	
 		return $web;
+	}
+	/* Tags:... */
+	public function cek_data(Request $request)
+	{
+		$user = User::where('level','LAB_SUBHEAD')->get();
+		$data_lecture = getDataLectures();
+		$n = 1;
+		foreach ($data_lecture as $key => $value) {
+			$name = Str::replace(' ', '', Str::lower($value['nama']));
+			
+		}
+
+		$user_local = User::whereIn('level',['LAB_TECHNICIAN'])->get();
+		foreach ($user_local as $key => $value) {
+			$nama_local[$key] =  Str::replace(' ', '', Str::lower($value['name']));
+		}
+		foreach ($data_lecture as $key => $value) {
+			$name = Str::replace(' ', '', Str::lower($value['nama']));
+			if (in_array($name, $nama_local)) {
+				$d[$n] = $value['nama'];
+				$n++;
+			}else{
+				$m[$key] = $value['nama'];
+			}
+		}
 	}
 }

@@ -8,6 +8,8 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>SIPLAB | Aplikasi</title>
+    <link rel="icon" type="image/x-icon" href="{{ url('/public/assets/img/logo.png') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title')</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -182,24 +184,6 @@
         }
       }
     </script>
-{{--     
-    <script>
-      var x = waktu();
-      function waktu() {
-        const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-        const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-        const nowTime = new Date();
-        const clockTime = nowTime.toLocaleTimeString('en-GB', {timeZone: 'Asia/Jakarta'});
-        const dayIndex = nowTime.getDay();
-        const dayName = days[dayIndex];
-        const date = nowTime.getDate();
-        const monthIndex = nowTime.getMonth();
-        const monthName = months[monthIndex];
-        const year = nowTime.getFullYear();
-        document.getElementById("digital-time").innerHTML = dayName+', '+date+' '+monthName+'/'+year+', '+clockTime+"s WIB";
-        setTimeout("waktu()", 1000);
-      }
-    </script> --}}
     @stack('scripts')
   </body>
 </html>

@@ -36,14 +36,10 @@
 			</tr>
 			<tr>
 				<td colspan="4">
-					Pengajuan peminjaman laboratorium {{ $data_applicant['lab'] }}, dengan jadwal  peminjaman {!! $data_applicant['time'] !!}, <br> 
-					telah  disetujui oleh; <br>
-					@if (isset($data_applicant['lecture_acc']))
-					{{ $data_applicant['lecture_acc'] }}
-					<br>
-					@endif
+					Pengajuan peminjaman {{ $data_applicant['lab'] }}, dengan jadwal peminjaman tanggal {!! $data_applicant['dates'] !!}, <br> 
+					telah  disetujui oleh <br>
 					@if (isset($data_applicant['head_acc']))
-					{{ $data_applicant['head_acc'] }}
+					{{ $data_applicant['head_acc'] }}.
 					<br>
 					@endif
 					Dimohon untuk ketersediannya untuk mendampingi selama kegiatan yang ada di laboratorium. <br>

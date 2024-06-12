@@ -31,6 +31,6 @@ class NotifMail extends Mailable
 	public function build()
 	{
 		// return view('contents.content_notif_email.notif_1')->with('data', $this->data);
-		return $this->subject('Permohonan Peminjaman Lab '.$this->data['lab'])->view('contents.content_notif_email.notif_1',)->with('data_applicant',$this->data);
+		return $this->subject('Permohonan Peminjaman '.$this->data['lab'])->view('contents.content_notif_email.notif_1',)->with('data_applicant',$this->data);
 	}
 }

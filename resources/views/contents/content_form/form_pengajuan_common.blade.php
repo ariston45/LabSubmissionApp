@@ -236,7 +236,44 @@ Lab management | Dashboard
         <div id="cost-tables" class="col-sm-offset-3 col-sm-9">
         </div>
         {{--  --}}
+        @php
+          $idx_time = 0;
+        @endphp
         <div class="col-sm-offset-3 col-sm-9">
+          <div class="divider">Jadwal Kegiatan</div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Jadwal Mulai
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <div class="row" style="margin-bottom: 10px;">
+              <div class="col-sm-11">
+                <div class="input-group inp-split-cst date" style="margin-bottom: 6px;">
+									<div class="input-group-addon">
+										<i class="fa fa-calendar"></i>
+									</div>
+									<input type="text" name="inp_date[{{ $idx_time }}]"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
+								</div>
+                <select name="inp_time[{{ $idx_time }}][]" id="inp-time" class="form-control inp-time-cls" multiple>
+                  @foreach ($times as $item)
+                    <option value="{{ $item->lti_id }}">{{ setTime($item->lti_start) }} - {{ setTime($item->lti_end) }}</option>
+                  @endforeach
+                </select>
+              </div>
+              <div class="col-sm-1">
+                <button type="button" id="btn-add-input-datetime" class="btn btn-flat btn-default">
+                  <i class="fa fa-plus" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div id="input-dt-container">
+            </div>
+          </div>
+        </div>
+        {{-- <div class="col-sm-offset-3 col-sm-9">
           <div class="divider">Jadwal Kegiatan</div>
         </div>
         <div class="form-group has-feedback {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}">
@@ -314,7 +351,7 @@ Lab management | Dashboard
         </div>
         @endif
         <div id="check-sch" class="col-sm-offset-3 col-sm-9">
-        </div>
+        </div> --}}
         {{--  --}}
         <div class="col-sm-offset-3 col-sm-9">
           <div class="divider">Pembayaran</div>
@@ -426,6 +463,21 @@ Lab management | Dashboard
 		}
   });
   var select_facility = new TomSelect("#inp-fasilitas",{
+    create: false,
+    maxItem: 20,			
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+  var select_time = new TomSelect(".inp-time-cls",{
     create: false,
     maxItem: 20,			
 		valueField: 'id',
@@ -593,6 +645,39 @@ Lab management | Dashboard
 </script>
 {{-- ready function --}}
 <script>
+  $(document).ready(function(){
+    var Idx_number = {{ $idx_time }};
+    $('#btn-add-input-datetime').click(function(){
+      Idx_number++;
+      $('#input-dt-container').append(
+        '<div class="row inp-dt-group" style="margin-bottom: 10px;"><div class="col-sm-11">'
+        +'<div class="input-group inp-split-cst date" style="margin-bottom: 6px;">'
+        +'<div class="input-group-addon"><i class="fa fa-calendar"></i></div>'
+        +'<input type="text" name="inp_date['+Idx_number+']"  value="{{ old('date_start') }}" class="form-control inp-date-s-'+Idx_number+' pull-right" placeholder="yyyy-mm-dd" readonly>'
+        +'</div>'
+        +'<select name="inp_time['+Idx_number+'][]" id="inp-time-idx-'+Idx_number+'" class="form-control inp-time-cls" multiple>'
+        +'@foreach ($times as $item)<option value="{{ $item->lti_id }}">{{ setTime($item->lti_start) }} - {{ setTime($item->lti_end) }}</option> @endforeach'
+        +'</select>'
+        +'</div>'
+        +'<div class="col-sm-1">'
+        +'<button type="button" id="btn-add-input-datetime" class="btn btn-flat btn-default rm-inp-dt"><i class="fa fa-times" aria-hidden="true"></i></button>'
+        +'</div></div>'
+      );
+      /**/
+      var dateScriptContent = '$(".inp-date-s-'+Idx_number+'").datepicker({autoclose: true,format: "yyyy-mm-dd",todayHighlight: true, orientation:"bottom"});';
+      var newDateScript = document.createElement('script');
+      newDateScript.textContent = dateScriptContent;
+      document.body.appendChild(newDateScript);
+      /**/
+      var newScriptContent = 'new TomSelect("#inp-time-idx-'+Idx_number+'",{create: false,maxItem: 20,valueField: "id",labelField: "title",searchField: "title"});';
+      var newScript = document.createElement('script');
+      newScript.textContent = newScriptContent;
+      document.body.appendChild(newScript);
+    });
+    $('#input-dt-container').on('click', '.rm-inp-dt', function(){
+      $(this).closest('.inp-dt-group').remove();
+    });
+  });
   /**/
   $(document).ready( function() {
     $('#date-pick-start').on('change',function () {
@@ -677,7 +762,7 @@ Lab management | Dashboard
 </script>
 {{-- call by id or class --}}
 <script>
-  $('#date-pick-start').datepicker({
+  $('.inp-date-s').datepicker({
     autoclose: true,
     format: 'yyyy-mm-dd',
     todayHighlight: true,

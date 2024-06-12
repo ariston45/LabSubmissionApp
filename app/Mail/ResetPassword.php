@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class NotifMailForApplicantReject extends Mailable
+class ResetPassword extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -18,7 +18,7 @@ class NotifMailForApplicantReject extends Mailable
      */
     public function __construct($data)
     {
-			$this->data = $data;
+        $this->data = $data;
     }
 
     /**
@@ -28,6 +28,6 @@ class NotifMailForApplicantReject extends Mailable
      */
     public function build()
     {
-			return $this->subject('Permohonan Peminjaman ' . $this->data['lab'])->view('contents.content_notif_email.notif_3',)->with('data_applicant', $this->data);
+        return $this->subject('Reset Password SIPLAB')->view('contents.content_notif_email.notif_7',)->with('url', $this->data);
     }
 }

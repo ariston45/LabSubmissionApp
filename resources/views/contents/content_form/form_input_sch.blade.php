@@ -54,8 +54,19 @@ Lab management | Dashboard
             <span style="padding-right: 30px;">
               Waktu
             </span>
-          </label>
-          <div class="col-sm-12 col-md-9">
+            </label>
+            <div class="col-sm-12 col-md-9">
+            <select type="text" class="form-control" name="inp_time[]" id="inp-time" multiple placeholder="Pilih jam..">
+              <option value=""></option>
+              @foreach ($times as $list)
+              <option value="{{ $list->lti_id }}">{{ setTime($list->lti_start) }} - {{ setTime($list->lti_end) }}</option>  
+              @endforeach
+            </select>
+            @if ($errors->has('inp_time'))
+						<span style="color: red;"><i>{{ $errors->first('inp_time') }}</i></span>
+						@endif
+          </div>
+          {{-- <div class="col-sm-12 col-md-9">
             <div class="row">
               <div class="col-sm-6">
                 <input type="text" id="time-pick-start" class="form-control cst-mb-input-a" name="inp_time_start" value="{{ old('inp_time_start') }}" placeholder="Input waktu mulai..">
@@ -72,13 +83,10 @@ Lab management | Dashboard
                 @endif
                 @if ($errors->has('check_time'))
                 <span style="color: red;"><i>{{ $errors->first('check_time') }}</i></span>
-                  {{-- @foreach ($errors->first('check_time') as $value)
-                  {{ $value }}
-                  @endforeach --}}
                 @endif
               </div>
             </div>
-          </div>
+          </div> --}}
         </div>
         
         <div class="form-group has-feedback {{ $errors->has('inp_subject') ? ' has-error' : '' }}">
@@ -198,6 +206,20 @@ Lab management | Dashboard
 		});
   };
   var select_hari = new TomSelect("#inp-day",{
+    create: false,			
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+  var select_jam = new TomSelect("#inp-time",{
     create: false,			
 		valueField: 'id',
 		labelField: 'title',

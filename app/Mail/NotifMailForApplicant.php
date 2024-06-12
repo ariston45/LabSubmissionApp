@@ -28,6 +28,6 @@ class NotifMailForApplicant extends Mailable
 	 */
 	public function build()
 	{
-		return $this->subject('Permohonan Peminjaman Lab ' . $this->data['lab'])->view('contents.content_notif_email.notif_2',)->with('data_applicant', $this->data);
+		return $this->subject('Permohonan Peminjaman ' . $this->data['lab'])->view('contents.content_notif_email.notif_2',)->with('data_applicant', $this->data);
 	}
 }

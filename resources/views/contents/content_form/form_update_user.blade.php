@@ -6,9 +6,9 @@ Lab management | Dashboard
 @section('breadcrumb')
 <h4>Pengaturan</h4>
 <ol class="breadcrumb">
-  <li><a href="#"><i class="fa fa-home"></i> Laboratorium</a></li>
-  <li class=""><a href="#">Jadwal Laboratorium</a></li>
-  <li class="active"><a href="#">Form Jadwal Laboratorium</a></li>
+  <li><a href="#"><i class="fa fa-home"></i> Pengaturan</a></li>
+  <li class=""><a href="#">Profil</a></li>
+  <li class="active"><a href="#">Form Update Profil</a></li>
 </ol>
 @endsection
 @section('content')
@@ -17,7 +17,7 @@ Lab management | Dashboard
     <div class="box-header with-border">
       <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Update User</h3>
       <div class="pull-right">
-        <a href="{{ url('pengaturan/user-detail') }}">
+        <a href="{{ url('pengaturan/profil') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
@@ -78,7 +78,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-no-contact" class="form-control" name="inp_no_contact" value="{{ $data_user->usd_contact }}" placeholder="Input email.." autocomplete="new-password">
+            <input type="text" id="inp-no-contact" class="form-control" name="inp_no_contact" value="{{ $data_user->usd_phone }}" placeholder="Input no kontak/HP.." autocomplete="new-password">
             @if ($errors->has('inp_no_contact'))
 						<span style="color: red;"><i>{{ $errors->first('inp_no_contact') }}</i></span>
 						@endif

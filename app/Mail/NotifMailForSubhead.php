@@ -28,6 +28,6 @@ class NotifMailForSubhead extends Mailable
      */
     public function build()
     {
-        return $this->subject('Permohonan Peminjaman Lab ' . $this->data['lab'])->view('contents.content_notif_email.notif_5',)->with('data_applicant', $this->data);
+        return $this->subject('Permohonan Peminjaman ' . $this->data['lab'])->view('contents.content_notif_email.notif_5',)->with('data_applicant', $this->data);
     }
 }

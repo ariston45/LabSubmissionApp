@@ -91,10 +91,15 @@ Lab management | Dashboard
 	</div>
 </div>
 @if (session('data_report'))
+@foreach (session('data_report') as $list)
+	@php
+		$no = $list['title'];
+	@endphp
+@endforeach
 <div class="col-md-12">
 	<div class="box">
 		<div class="box-header with-border">
-			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i>Data Report</h3>
+			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i>Data Report Laporan {{ $no }}</h3>
 			<div class="pull-right">
 			</div>
 		</div>
@@ -107,7 +112,7 @@ Lab management | Dashboard
 						<th style="width: 15%">Nama</th>
 						<th style="width: 30%">Judul</th>
 						<th style="width: 10%">Lab.</th>
-						<th style="width: 20%">Waktu Peminjaman</th>
+						<th style="width: 20%">Tanggal Pinjam</th>
 						<th style="width: 10%">Biaya</th>
 						<th style="width: 10%;text-align:center;">Download Laporan</th>
 					</tr>

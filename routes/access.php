@@ -44,7 +44,8 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('source-datatables-teknisi-lab', [DatatablesController::class, 'sourceDataTeknisiLab'])->name('source-datatables-teknisi-lab');
 		Route::post('source-datatables-fasilitas-lab', [DatatablesController::class, 'sourceDataFasilitasLab'])->name('source-datatables-fasilitas-lab');
 		Route::post('source-datatables-test-lab', [DatatablesController::class, 'sourceDataTestLab'])->name('source-datatables-test-lab');
-		Route::post('source-datatables-schedule-lab', [DatatablesController::class, 'sourceDataScheduleLab'])->name('source-datatables-schedule-lab');
+		Route::match(['get','post'], 'source-datatables-schedule-lab',[DatatablesController::class, 'sourceDataScheduleLab'])->name('source-datatables-schedule-lab');
+		Route::match(['get', 'post'], 'source-datatables-reguler-schedule-lab', [DatatablesController::class, 'sourceDataScheduleLabReguler'])->name('source-datatables-reguler-schedule-lab');
 		Route::post('source-datatables-lab-byshcedule', [DatatablesController::class, 'sourceDataLabSchedule'])->name('source_datatables_lab_byshcedule');
 		Route::post('source-datatables-lab-byfacility', [DatatablesController::class, 'sourceDataLabFacility'])->name('source_datatables_lab_byfacility');
 		Route::post('source-datatables-fasilitas', [DatatablesController::class, 'sourceDataFasilitas'])->name('source-datatables-fasilitas');
@@ -55,6 +56,7 @@ Route::group(['middleware' => ['auth']], function () {
 		#Other
 		Route::post('source-data-sch-lab', [LaboratoryController::class, 'sourceDataScheduleLabJson'])->name('source_data_sch_lab');
 		Route::post('users', [DataController::class, 'sourceDataUser'])->name('source-data-users');
+		Route::post('user-lectures', [DataController::class, 'sourceDataUserLectures'])->name('source-data-users-lectures');
 		Route::post('all-lab', [DataController::class, 'sourceDataLab'])->name('source-data-all-lab');
 		Route::post('facilities', [DataController::class, 'sourceDataFacilities'])->name('source-data-facilities');
 		Route::post('search-users', [DataController::class, 'serchingDataUser'])->name('source-data-search-users');
@@ -131,7 +133,7 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('delete-facility-laboratorium/{id}', [LaboratoryController::class, 'actionDeleteLabFacilities']);
 		Route::post('input-sch-laboratorium', [LaboratoryController::class, 'actionInputLabSch'])->name('input_sch_laboratorium');
 		Route::post('update-sch-laboratorium', [LaboratoryController::class, 'actionUpdateLabSch'])->name('update_sch_laboratorium');
-		Route::get('delete-sch-laboratorium/{id_sch_lab}', [LaboratoryController::class, 'actionDelLabSch'])->name('delete_sch_laboratorium');
+		
 		Route::post('input-exclude-sch', [LaboratoryController::class, 'actionInputExcludeSch'])->name('input_exclude_sch');
 		Route::post('input-ujilab', [LaboratoryController::class, 'actionInputUjiLab'])->name('input_ujilab');
 		Route::post('update-ujilab', [LaboratoryController::class, 'actionUpdateUjiLab'])->name('update_ujilab');
@@ -144,7 +146,10 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('/{id}', [ScheduleController::class, 'dataSchedule'])->name('schedule_lab');
 		Route::get('form-exclude-jadwal/{id}', [ScheduleController::class, 'formExcludeLaboratorySch']);
 		Route::get('form-input-jadwal/{id}', [ScheduleController::class, 'formInputLaboratorySch']);
+		Route::get('data-jadwal-reguler/{id}', [ScheduleController::class, 'dataSchReguler']);
 		Route::post('input-sch-laboratorium', [ScheduleController::class, 'actionInputLabSch'])->name('input_schedule_laboratorium');
+		Route::get('update-jadwal-lab/{id_lab}/{id_sch_lab}', [LaboratoryController::class, 'formUpdateLaboratorySch']);
+		Route::get('delete-sch-lab-reguler/{id_sch_lab}', [LaboratoryController::class, 'actionDelLabSch'])->name('delete_sch_laboratorium');
 	});
 	/*************************************************************************************************************************************************/
 	Route::prefix('fasilitas_lab')->group(function () {

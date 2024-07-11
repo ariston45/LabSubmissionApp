@@ -36,7 +36,25 @@
 			</tr>
 			<tr>
 				<td colspan="4">
-					Pengajuan peminjaman laboratorium {{ $data_applicant['lab'] }}, dengan jadwal peminjaman tanggal {!! $data_applicant['dates'] !!}, <br> 
+					Pengajuan peminjaman laboratorium {{ $data_applicant['lab'] }}, dengan jadwal peminjaman tanggal <br>
+					@php
+						$data = dataGetDatetime($data_applicant['lsb_id']);
+					@endphp
+					<table>
+						@foreach ($data as $key => $value)
+							<tr>
+								- {{ strDateStart($key) }}
+								@if (count($value) > 0)
+									<table>
+										@foreach ($value as $li)
+											<tr>&nbsp;&nbsp;{{$li}}</tr>
+										@endforeach
+									</table>
+								@endif
+							</tr>
+						@endforeach
+					</table> 
+					<br> 
 					telah  disetujui oleh
 					@if (isset($data_applicant['head_acc']))
 					{{ $data_applicant['head_acc'] }}.

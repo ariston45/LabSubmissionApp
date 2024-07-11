@@ -20,6 +20,7 @@ use App\Models\Lab_submission_adviser;
 use App\Models\Laboratory_labtest;
 use App\Models\Laboratory_labtest_facility;
 use App\Models\Lab_sub_date;
+use App\Models\Lab_sch_time;
 
 
 
@@ -84,10 +85,10 @@ class DatatablesController extends Controller
 				Menu <span class="caret"></span>
 			</button>
 			<ul class="dropdown-menu pull-right">
-				<li><a href="' . url('laboratorium/' . $data->lab_id . '/jadwal') . '"><i class="ri-calendar-2-line" aria-hidden="true" style="margin-right:12px;"></i>Jadwal Lab</a></li>
+				<li><a href="' . url('jadwal_lab/' . $data->lab_id) . '"><i class="ri-calendar-2-line" aria-hidden="true" style="margin-right:12px;"></i>Jadwal Lab</a></li>
 				<li><a href="' . url('laboratorium/' . $data->lab_id . '/teknisi') . '"><i class="ri-user-settings-line" aria-hidden="true" style="margin-right:12px;"></i>Teknisi Lab</a></li>
 				<li><a href="' . url('laboratorium/' . $data->lab_id . '/ujilab') . '"><i class="ri-microscope-line" aria-hidden="true" style="margin-right:12px;"></i>Uji Lab</a></li>
-				<li><a href="' . url('laboratorium/' . $data->lab_id . '/fasilitas') . '"><i class="ri-computer-line" aria-hidden="true" style="margin-right:12px;"></i>Fasilitas Lab</a></li>
+				<li><a href="' . url('fasilitas_lab/' . $data->lab_id ) . '"><i class="ri-computer-line" aria-hidden="true" style="margin-right:12px;"></i>Fasilitas Lab</a></li>
 				<li><a href="' . url('laboratorium/' . $data->lab_id . '/update-lab') . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update Data</a></li>
 			</ul>
 		</div></div>';
@@ -784,135 +785,254 @@ class DatatablesController extends Controller
 	/* Tags:... */
 	public function sourceDataScheduleLab(Request $request)
 	{
-		$dtStart =Carbon::parse(date('Y-m-d', strtotime($request->dtStart)))->format('Y-m-d');
-		$dtEnd = Carbon::parse(date('Y-m-d', strtotime($request->dtEnd)))->format('Y-m-d');
-
-		$dataSch = [];
-		$sch_index = 0;
-		$idx_date_range = 0;
-		$dataDays = [];
-		$idx_nonreguler_data = 0;
-		$data_all_nonreguler = [];
-		$data_sch_nonreguler = [];
-		while ($dtStart <= date("Y-m-d", strtotime("-1 day", strtotime($dtEnd)))) {
-			$data = Lab_schedule::leftjoin('users', 'lab_schedules.lbs_res_person', '=', 'users.id')
-			->where('lbs_dates_period','like','%'. date('Y-m-d', strtotime($dtStart)).'%')
-			->where('lbs_type', 'non_reguler')
-			->get();
-			foreach ($data as $key => $value) {
-				if ($value != null) {
-					$data_all_nonreguler[$idx_nonreguler_data] = $value;
-					$idx_nonreguler_data++;
-				}
-			}
-			$days[$idx_date_range]  = date('l', strtotime($dtStart));
-			$dtStart = date("Y-m-d", strtotime("+1 day", strtotime($dtStart)));
-			$idx_date_range++;
+		$s = $request->dtStart;
+		$e = $request->dtEnd;
+		$lab_id = $request->lab_id;
+		// $s = date('Y-m-d',strtotime('2024-05-29'));
+		// $e = date('Y-m-d', strtotime('2024-07-05'));
+		// $lab_id = 58;
+		$dtStart =Carbon::parse(date('Y-m-d', strtotime($s)))->format('Y-m-d');
+		$dtEnd = Carbon::parse(date('Y-m-d', strtotime($e)))->format('Y-m-d');
+		$period = CarbonPeriod::create($dtStart, $dtEnd);
+		foreach ($period as $key => $value) {
+			$dateFormated = date('Y-m-d',strtotime($value));
+			$dayFormated = date('l', strtotime($value));
+			$datesAr[$key] = $dateFormated;
 		}
-		$data_sch_nonreguler = array_unique($data_all_nonreguler);
-		foreach ($data_sch_nonreguler as $key_a => $value) {
-			// die();
-			$lbs_type = 'Non Reguler';
-			$dates_reg[$key_a] = explode('$', $value->lbs_dates_period);
-			$time_start = Carbon::parse($dates_reg[$key_a][min(array_keys($dates_reg[$key_a]))])->format('Y-m-d');
-			$time_end = Carbon::parse($dates_reg[$key_a][max(array_keys($dates_reg[$key_a]))])->format('Y-m-d');
-			$times = $time_start.' - '. $time_end;
+		$data_non_reguler = Lab_schedule::join('lab_sch_dates', 'lab_schedules.lbs_id','=', 'lab_sch_dates.lscd_sch')
+		->leftjoin('users', 'lab_schedules.lbs_res_person', '=', 'users.id')
+		->whereIn('lscd_date', $datesAr)
+		->where('lbs_lab', $lab_id)
+		->where('lbs_type', 'non_reguler')
+		->get();
+		$sch_index = 0;
+		$dataSch = [];
+		foreach ($datesAr as $key => $value) {
+			$day = date('l',strtotime($value));
+			$data_reguler = Lab_schedule::join('lab_sch_dates', 'lab_schedules.lbs_id', '=', 'lab_sch_dates.lscd_sch')
+			->leftjoin('users', 'lab_schedules.lbs_res_person', '=', 'users.id')
+			->where('lscd_day', $day)
+			->where('lbs_lab', $lab_id)
+			->where('lbs_type', 'reguler')
+			->get();
+			foreach ($data_reguler as $skey => $svalue) {
+				$ddate = date('l, d-m-Y',strtotime($value));
+				$dataSch[$sch_index] = [
+					'date_index' => $value,
+					'date' => $ddate,
+					'date_id' => $svalue->lscd_id,
+					'lab_id' => $svalue->lbs_lab,
+					'lbs_id' => $svalue->lbs_id,
+					'lbs_submission' =>	$svalue->lbs_submission,
+					'subject' => $svalue->lbs_matkul,
+					'group' =>  $svalue->lbs_tenant_name,
+					'person' => $svalue->name,
+					'type' => 'Reguler',
+					'type_par' => $svalue->lbs_type,
+				];
+				$sch_index++;
+			}
+		}
+		foreach ($data_non_reguler as $key => $value) {
+			$ddate = date('l, d-m-Y', strtotime($value->lscd_date));
 			$dataSch[$sch_index] = [
-				'day' => null,
+				'date_index' => $value->lscd_date,
+				'date' => $ddate,
+				'date_id' => $value->lscd_id,
 				'lab_id' => $value->lbs_lab,
 				'lbs_id' => $value->lbs_id,
 				'lbs_submission' =>	$value->lbs_submission,
-				'time' => 	$times,
 				'subject' => $value->lbs_matkul,
 				'group' =>  $value->lbs_tenant_name,
 				'person' => $value->name,
-				'type' => $lbs_type,
+				'type' => 'Non Reguler',
 				'type_par' => $value->lbs_type,
 			];
 			$sch_index++;
 		}
-		$unique_days = array_unique($days);
-		$collect_sch_reguler = Lab_schedule::leftjoin('users', 'lab_schedules.lbs_res_person', '=', 'users.id')
-		->where('lbs_lab', $request->lab_id)
+		if (count($dataSch) == 0) {
+			return DataTables::of($dataSch)
+			->addIndexColumn()
+			->addColumn('empty_str', function ($k) {})
+			->addColumn('opsi', function ($dataSch) {})
+			->addColumn('day', function ($dataSch) {})
+			->addColumn('time', function ($dataSch) {})
+			->addColumn('type', function ($dataSch) {})
+			->addColumn('subject', function ($dataSch) {})
+			->addColumn('group', function ($dataSch) {})
+			->addColumn('person', function ($dataSch) {})
+			->rawColumns(['opsi', 'day', 'time', 'type', 'subject', 'group', 'person'])
+			->make(true);
+		}else{
+			usort($dataSch, function ($a, $b) {
+				return strtotime($a['date_index']) - strtotime($b['date_index']);
+			});
+			return DataTables::of($dataSch)
+			->addIndexColumn()
+			->addColumn('empty_str', function ($k) {
+				return '';
+			})
+			->addColumn('opsi', function ($dataSch) {
+				if ($dataSch['type_par'] == 'reguler') {
+					return ' <div style="text-align:center;">
+				<div class="btn-group">
+					<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Menu <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu pull-right">
+						<li><a href="' . url('laboratorium/update-jadwal-lab/'. $dataSch['lab_id'].'/'. $dataSch['lbs_id']) . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update</a></li>
+						<li><a href="#" onclick="actDeleteSchLab('. $dataSch['lbs_id'].')"><i class="ri-delete-bin-line" aria-hidden="true" style="margin-right:12px;"></i>Delete</a></li>
+					</ul>
+				</div></div>';
+				} else {
+					return ' <div style="text-align:center;">
+				<div class="btn-group">
+					<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Menu <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu pull-right">
+						<li><a href="' . url('pengajuan/detail-pengajuan/' . $dataSch['lbs_submission']) . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Lihat Detail</a></li>
+					</ul>
+				</div></div>';
+				}
+			})
+			->addColumn('day', function ($dataSch) {
+				$res = $dataSch['date'];
+				return $res;
+			})
+			->addColumn('time', function ($dataSch) {
+				if ($dataSch['date_id'] == null) {
+					$res = null;
+				}else{
+					$data = Lab_sch_time::join('laboratory_time_options', 'lab_sch_times.lsct_time_id','=', 'laboratory_time_options.lti_id')
+					->where('lsct_date_id',$dataSch['date_id'])
+					->get();
+					$res='';
+					foreach ($data as $key => $value) {
+						$res.= '<b>-</b> '.date('H:i',strtotime($value->lti_start)). '-' . date('H:i', strtotime($value->lti_end)) . '<br>';
+					}
+				}
+				return $res;
+			})
+			->addColumn('type', function ($dataSch) {
+				$res = $dataSch['type'];
+				return $res;
+			})
+			->addColumn('subject', function ($dataSch) {
+				$res = $dataSch['subject'];
+				return $res;
+			})
+			->addColumn('group', function ($dataSch) {
+				$res = $dataSch['group'];
+				return $res;
+			})
+			->addColumn('person', function ($dataSch) {
+				$res = $dataSch['person'];
+				return $res;
+			})
+			->addColumn('date', function ($dataSch) {
+				$res = $dataSch['date'];
+				return $res;
+			})
+			->rawColumns(['opsi','day' ,'time', 'type', 'subject', 'group','person','date'])
+			->make(true);
+		}
+	}
+	public function sourceDataScheduleLabReguler(Request $request)
+	{
+		$lab_id = $request->lab_id;
+		// $lab_id = 58;
+		$dataSch = [];
+		$data_reguler = Lab_schedule::join('lab_sch_dates', 'lab_schedules.lbs_id', '=', 'lab_sch_dates.lscd_sch')
+		->leftjoin('users', 'lab_schedules.lbs_res_person', '=', 'users.id')
+		->where('lbs_lab', $lab_id)
 		->where('lbs_type', 'reguler')
-		->whereIn('lbs_day', $unique_days)
 		->get();
-		foreach ($collect_sch_reguler as $key => $value) {
-			$lbs_type = 'Reguler';
-			$time_start = Carbon::parse($value->lbs_time_start)->isoFormat('HH:mm');
-			$time_end = Carbon::parse($value->lbs_time_end)->isoFormat('HH:mm');
-			$times = 'Setiap ' . Carbon::parse($value->lbs_day)->isoFormat('dddd') . ' pukul ' . $time_start . ' - ' . $time_end;
-			$dataSch[$sch_index] = [
-				'day' => null,
-				'lab_id' => $value->lbs_lab,
-				'lbs_id' => $value->lbs_id,
-				'lbs_submission' => $value->lbs_submission,
-				'time' => 	$times,
-				'subject' => $value->lbs_matkul,
-				'group' =>  $value->lbs_tenant_name,
-				'person' => $value->name,
-				'type' => $lbs_type,
-				'type_par' => $value->lbs_type,
+		foreach ($data_reguler as $skey => $svalue) {
+			$dataSch[$skey] = [
+				'date_id' => $svalue->lscd_id,
+				'day' => $svalue->lscd_day,
+				'lab_id' => $svalue->lbs_lab,
+				'lbs_id' => $svalue->lbs_id,
+				'subject' => $svalue->lbs_matkul,
+				'group' =>  $svalue->lbs_tenant_name,
+				'person' => $svalue->name,
+				'type' => 'Reguler',
+				'type_par' => $svalue->lbs_type,
 			];
-			$sch_index++;
-		}
-		#
-		return DataTables::of($dataSch)
-		->addIndexColumn()
-		->addColumn('empty_str', function ($k) {
-			return '';
-		})
-		->addColumn('opsi', function ($dataSch) {
-
-			if ($dataSch['type_par'] == 'reguler') {
+		};
+		if (count($dataSch) == 0) {
+			return DataTables::of($dataSch)
+			->addIndexColumn()
+			->addColumn('empty_str', function ($k) {})
+			->addColumn('opsi', function ($dataSch) {})
+			->addColumn('day', function ($dataSch) {})
+			->addColumn('time', function ($dataSch) {})
+			->addColumn('type', function ($dataSch) {})
+			->addColumn('subject', function ($dataSch) {})
+			->addColumn('group', function ($dataSch) {})
+			->addColumn('person', function ($dataSch) {})
+			->rawColumns(['opsi', 'day', 'time', 'type', 'subject', 'group', 'person'])
+			->make(true);
+		}else{
+			usort($dataSch, function ($a, $b) {
+				return strtotime($a['date_index']) - strtotime($b['date_index']);
+			});
+			// dd($dataSch);
+			return DataTables::of($dataSch)
+			->addIndexColumn()
+			->addColumn('empty_str', function ($k) {
+				return '';
+			})
+			->addColumn('opsi', function ($dataSch) {
 				return ' <div style="text-align:center;">
 			<div class="btn-group">
 				<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					Menu <span class="caret"></span>
 				</button>
 				<ul class="dropdown-menu pull-right">
-					<li><a href="' . url('laboratorium/update-jadwal-lab/'. $dataSch['lab_id'].'/'. $dataSch['lbs_id']) . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update</a></li>
+					<li><a href="' . url('jadwal_lab/update-jadwal-lab/'. $dataSch['lab_id'].'/'. $dataSch['lbs_id']) . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update</a></li>
 					<li><a href="#" onclick="actDeleteSchLab('. $dataSch['lbs_id'].')"><i class="ri-delete-bin-line" aria-hidden="true" style="margin-right:12px;"></i>Delete</a></li>
 				</ul>
 			</div></div>';
-			} else {
-				return ' <div style="text-align:center;">
-			<div class="btn-group">
-				<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					Menu <span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu pull-right">
-					<li><a href="' . url('pengajuan/detail-pengajuan/' . $dataSch['lbs_submission']) . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Lihat Detail</a></li>
-				</ul>
-			</div></div>';
-			}
-		})
-		->addColumn('day', function ($dataSch) {
-			$res = $dataSch['day'];
-			return $res;
-		})
-		->addColumn('time', function ($dataSch) {
-			$res = $dataSch['time'];
-			return $res;
-		})
-		->addColumn('type', function ($dataSch) {
-			$res = $dataSch['type'];
-			return $res;
-		})
-		->addColumn('subject', function ($dataSch) {
-			$res = $dataSch['subject'];
-			return $res;
-		})
-		->addColumn('group', function ($dataSch) {
-			$res = $dataSch['group'];
-			return $res;
-		})
-		->addColumn('person', function ($dataSch) {
-			$res = $dataSch['group'];
-			return $res;
-		})
-		->rawColumns(['opsi','day' ,'time', 'type', 'subject', 'group','person'])
-		->make(true);
+			})
+			->addColumn('day', function ($dataSch) {
+				$res = $dataSch['day'];
+				return $res;
+			})
+			->addColumn('time', function ($dataSch) {
+				if ($dataSch['date_id'] == null) {
+					$res = null;
+				}else{
+					$data = Lab_sch_time::join('laboratory_time_options', 'lab_sch_times.lsct_time_id','=', 'laboratory_time_options.lti_id')
+					->where('lsct_date_id',$dataSch['date_id'])
+					->get();
+					$res='';
+					foreach ($data as $key => $value) {
+						$res.= '<b>-</b> '.date('H:i',strtotime($value->lti_start)). '-' . date('H:i', strtotime($value->lti_end)) . '<br>';
+					}
+				}
+				return $res;
+			})
+			->addColumn('type', function ($dataSch) {
+				$res = $dataSch['type'];
+				return $res;
+			})
+			->addColumn('subject', function ($dataSch) {
+				$res = $dataSch['subject'];
+				return $res;
+			})
+			->addColumn('group', function ($dataSch) {
+				$res = $dataSch['group'];
+				return $res;
+			})
+			->addColumn('person', function ($dataSch) {
+				$res = $dataSch['person'];
+				return $res;
+			})
+			->rawColumns(['opsi','day' ,'time', 'type', 'subject', 'group','person'])
+			->make(true);
+		}
 	}
 	public function sourceDataScheduleLab_Backup(Request $request)
 	{

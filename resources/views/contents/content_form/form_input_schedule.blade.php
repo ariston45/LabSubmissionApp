@@ -6,7 +6,7 @@ Lab management | Dashboard
 @section('breadcrumb')
 <h4>Laboratorium</h4>
 <ol class="breadcrumb">
-  <li><a href="#"><i class="fa fa-home"></i> Laboratorium</a></li>
+  <li><a href="#"><i class="ri-calendar-schedule-fill"></i> Jadwal Lab</a></li>
   <li class=""><a href="#">Jadwal Laboratorium</a></li>
   <li class="active"><a href="#">Form Jadwal Laboratorium</a></li>
 </ol>

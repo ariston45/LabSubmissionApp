@@ -17,7 +17,7 @@ Lab management | Dashboard
     <div class="box-header with-border">
       <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Update Jadwal Laboratorium</h3>
       <div class="pull-right">
-        <a href="{{ url('laboratorium/'.$lab_id.'/jadwal') }}">
+        <a href="{{ url('jadwal_lab/data-jadwal-reguler/'.$lab_id) }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
@@ -27,7 +27,8 @@ Lab management | Dashboard
       <div class="box-body">
         {{-- !! --}}
         <input type="hidden" name="lab_id" value="{{ $lab_id }}">
-        <input type="hidden" name="lbs_id" value="{{ $lab_id }}">
+        <input type="hidden" name="lbs_id" value="{{ $lbs_id }}">
+        <input type="hidden" name="lscd_id" value="{{ $data_sch_lab->lscd_id }}">
         <div class="form-group has-feedback {{ $errors->has('inp_day') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -37,13 +38,13 @@ Lab management | Dashboard
           <div class="col-sm-12 col-md-9">
             <select type="text" class="form-control" name="inp_day" id="inp-day" value="" placeholder="Pilih hari..">
               <option value=""></option>
-              <option value="sunday" @if ( $data_sch_lab->lbs_day == 'sunday') selected @endif >Minggu</option>
-              <option value="monday" @if ( $data_sch_lab->lbs_day == 'monday') selected @endif >Senin</option>
-              <option value="tuesday" @if ( $data_sch_lab->lbs_day == 'tuesday') selected @endif >Selasa</option>
-              <option value="wednesday" @if ( $data_sch_lab->lbs_day== 'wednesday') selected @endif >Rabu</option>
-              <option value="thursday" @if ( $data_sch_lab->lbs_day == 'thursday') selected @endif >Kamis</option>
-              <option value="friday" @if ( $data_sch_lab->lbs_day == 'friday') selected @endif >Jumat</option>
-              <option value="saturday" @if ( $data_sch_lab->lbs_day == 'saturday') selected @endif >Sabtu</option>
+              <option value="Sunday" @if ( $data_sch_lab->lscd_day == 'Sunday') selected @endif >Minggu</option>
+              <option value="Monday" @if ( $data_sch_lab->lscd_day == 'Monday') selected @endif >Senin</option>
+              <option value="Tuesday" @if ( $data_sch_lab->lscd_day == 'Tuesday') selected @endif >Selasa</option>
+              <option value="Wednesday" @if ( $data_sch_lab->lscd_day== 'Wednesday') selected @endif >Rabu</option>
+              <option value="Thursday" @if ( $data_sch_lab->lscd_day == 'Thursday') selected @endif >Kamis</option>
+              <option value="Friday" @if ( $data_sch_lab->lscd_day == 'Friday') selected @endif >Jumat</option>
+              <option value="Saturday" @if ( $data_sch_lab->lscd_day == 'Saturday') selected @endif >Sabtu</option>
             </select>
             @if ($errors->has('inp_day'))
 						<span style="color: red;"><i>{{ $errors->first('inp_day') }}</i></span>
@@ -57,25 +58,19 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <div class="row">
-              <div class="col-sm-6">
-                <input type="text" id="time-pick-start" class="form-control cst-mb-input-a" name="inp_time_start" value="{{ $data_sch_lab->lbs_time_start }}" placeholder="Input waktu mulai..">
-              </div>
-              <div class="col-sm-6">
-                <input type="text" id="time-pick-end" class="form-control" name="inp_time_end" value="{{ $data_sch_lab->lbs_time_end }}" placeholder="Input waktu selesai..">
-              </div>
-              <div class="col-lg-12">
-                @if ($errors->has('inp_time_start'))
-                <span style="color: red;"><i>{{ $errors->first('inp_time_start') }}</i></span>
-                @endif
-                @if ($errors->has('inp_time_end'))
-                <span style="color: red;"><i>{{ $errors->first('inp_time_end') }}</i></span>
-                @endif
-              </div>
-            </div>
+            <select type="text" class="form-control" name="inp_time[]" id="inp-time" multiple placeholder="Pilih jam..">
+              <option value=""></option>
+              @foreach ($times as $list)
+              <option value="{{ $list->lti_id }}" @if (in_array($list->lti_id,$time_ids)) selected @endif>
+                {{ setTime($list->lti_start) }} - {{ setTime($list->lti_end) }}
+              </option>  
+              @endforeach
+            </select>
+            @if ($errors->has('inp_time'))
+						<span style="color: red;"><i>{{ $errors->first('inp_time') }}</i></span>
+						@endif
           </div>
         </div>
-        
         <div class="form-group has-feedback {{ $errors->has('inp_subject') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -100,7 +95,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-group" class="form-control" name="inp_group" value="{{ $data_sch_lab->lbs_group_study }}" placeholder="Input lokasi lab..">
+            <input type="text" id="inp-group" class="form-control" name="inp_group" value="{{ $data_sch_lab->lbs_tenant_name }}" placeholder="Input grup belajar..">
             @if ($errors->has('inp_group'))
 						<span style="color: red;"><i>{{ $errors->first('inp_group') }}</i></span>
 						@endif
@@ -114,7 +109,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select id="inp-res-person" class="form-control" name="inp_res_person[]" placeholder="Input dosen atau penanggung jawab..">
+            <select id="inp-res-person" class="form-control" name="inp_res_person" placeholder="Input dosen atau penanggung jawab..">
               @if ($data_sch_lab->id != null)
               <option value="{{ $data_sch_lab->id }}" selected>{{ $data_sch_lab->name }}</option>
               @endif
@@ -178,7 +173,7 @@ Lab management | Dashboard
 		});
 		$.ajax({
 			type: 'POST',
-			url: "{{ route('source-data-users') }}",
+			url: "{{ route('source-data-users-lectures') }}",
 			data: {
 				"level": null,
 			},
@@ -215,6 +210,20 @@ Lab management | Dashboard
 		labelField: 'title',
 		searchField: 'title',
     options: dataOption_users,
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+  var select_jam = new TomSelect("#inp-time",{
+    create: false,			
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
 		render: {
 			option: function(data, escape) {
 				return '<div><span class="title">'+escape(data.title)+'</span></div>';

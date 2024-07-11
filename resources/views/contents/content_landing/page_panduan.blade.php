@@ -29,9 +29,7 @@ Lab management | Dashboard
       <div class="row gy-4">
         <div class="col-md-12 order-1 order-lg-2" style="color: aliceblue">
           <div class="mb-3">
-
           </div>
-
           <ol type="A">
             <li style="margin-bottom: 30px;"> <b>Panduan Pengguna User Umum</b> <br>
               <video id="player1" playsinline controls>
@@ -39,12 +37,15 @@ Lab management | Dashboard
                 <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default />
               </video>
             </li>
-            <li>
+            <li style="margin-bottom: 30px;">
               <b>Panduan Pengguna User Mahasiswa FT</b> <br>
               <video id="player2" playsinline controls>
                 <source src="{{ url('/public/assets/video/panduan_2_student.mp4') }}" type="video/mp4" />
                 <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default />
               </video>
+            </li>
+            <li>
+              Download Panduan PDF. <a href="{{ url('/public/assets/img/panduan.pdf') }}"> <label class="label label-default">Panduan.pdf</label></a>
             </li>
           </ol>
           {{-- <div class="pb-4" style="text-align: center;">

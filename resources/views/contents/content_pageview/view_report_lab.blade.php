@@ -92,10 +92,19 @@ Lab management | Dashboard
 	</div>
 </div>
 @if (session('data_report'))
+@php
+	$n = 0;
+@endphp
+@foreach (session('data_report') as $list)
+	@php
+		$title[$n] = $list['title'];
+		$n++;
+	@endphp
+@endforeach
 <div class="col-md-12">
 	<div class="box">
 		<div class="box-header with-border">
-			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i>Data Report</h3>
+			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i>{{ $title[0] }}</h3>
 			<div class="pull-right">
 				<button class="btn btn-flat btn-xs btn-default" onclick="actionFormDownload();"><i class="ri-download-2-line" style="margin-right: 4px;"></i> Download Report </button>
 			</div>

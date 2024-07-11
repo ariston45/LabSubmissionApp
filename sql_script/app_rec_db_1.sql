@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : localhost_3306
+ Source Server         : Local
  Source Server Type    : MariaDB
- Source Server Version : 100425 (10.4.25-MariaDB)
+ Source Server Version : 100413 (10.4.13-MariaDB)
  Source Host           : localhost:3306
  Source Schema         : app_rec_db
 
  Target Server Type    : MariaDB
- Target Server Version : 100425 (10.4.25-MariaDB)
+ Target Server Version : 100413 (10.4.13-MariaDB)
  File Encoding         : 65001
 
- Date: 03/06/2024 07:52:13
+ Date: 05/07/2024 17:04:29
 */
 
 SET NAMES utf8mb4;
@@ -23,7 +23,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `cost_reductions`;
 CREATE TABLE `cost_reductions`  (
   `reduction_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `reduction_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `reduction_type` enum('STUDENT','LECTURE') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `reduction_val` int(11) NULL DEFAULT NULL,
   `created_at` datetime NULL DEFAULT NULL,
   `updated_at` datetime NULL DEFAULT NULL,
@@ -33,8 +33,8 @@ CREATE TABLE `cost_reductions`  (
 -- ----------------------------
 -- Records of cost_reductions
 -- ----------------------------
-INSERT INTO `cost_reductions` VALUES (1, 'STUDENT', 25, NULL, NULL);
-INSERT INTO `cost_reductions` VALUES (2, '', 0, NULL, NULL);
+INSERT INTO `cost_reductions` VALUES (1, 'STUDENT', 10, NULL, NULL);
+INSERT INTO `cost_reductions` VALUES (2, 'LECTURE', 10, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for failed_jobs
@@ -69,12 +69,16 @@ CREATE TABLE `lab_facilities`  (
   `created_by` bigint(20) NULL DEFAULT NULL,
   `updated_by` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`lsf_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 73 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_facilities
 -- ----------------------------
-INSERT INTO `lab_facilities` VALUES (34, 1, 1, '2024-06-02 20:58:36', NULL, NULL, NULL);
+INSERT INTO `lab_facilities` VALUES (68, 1, 1, '2024-06-13 09:35:51', NULL, NULL, NULL);
+INSERT INTO `lab_facilities` VALUES (69, 2, 1, '2024-06-13 16:16:42', NULL, NULL, NULL);
+INSERT INTO `lab_facilities` VALUES (70, 3, 1, '2024-06-13 16:25:22', NULL, NULL, NULL);
+INSERT INTO `lab_facilities` VALUES (71, 4, 1, '2024-06-14 13:24:15', NULL, NULL, NULL);
+INSERT INTO `lab_facilities` VALUES (72, 5, 1, '2024-06-14 13:35:45', NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for lab_labtests
@@ -94,34 +98,44 @@ CREATE TABLE `lab_labtests`  (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for lab_schedule_times
+-- Table structure for lab_sch_dates
 -- ----------------------------
-DROP TABLE IF EXISTS `lab_schedule_times`;
-CREATE TABLE `lab_schedule_times`  (
-  `lbs_id` int(11) NOT NULL,
-  `lbs_lab` int(11) NULL DEFAULT NULL,
-  `lbs_day` enum('sunday','monday','tuesday','wednesday','thursday','friday','saturday') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lbs_date_start` date NULL DEFAULT NULL,
-  `lbs_time_start` time NULL DEFAULT NULL,
-  `lbs_date_end` date NULL DEFAULT NULL,
-  `lbs_time_end` time NULL DEFAULT NULL,
-  `lbs_dates_period` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lbs_sch_dates_excluded` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lbs_type` enum('reguler','non_reguler') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lbs_submission` bigint(20) NULL DEFAULT NULL,
-  `lbs_tenant_init` bigint(20) NULL DEFAULT NULL,
-  `lbs_tenant_name` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lbs_res_person` varchar(75) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lbs_matkul` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `updated_at` datetime NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
-  `created_by` int(11) NULL DEFAULT NULL,
+DROP TABLE IF EXISTS `lab_sch_dates`;
+CREATE TABLE `lab_sch_dates`  (
+  `lscd_id` int(11) NOT NULL,
+  `lscd_sch` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lscd_day` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lscd_date` date NULL DEFAULT NULL,
+  `lscd_status` enum('active','nonactive') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `created_at` datetime NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`lbs_id`) USING BTREE
+  `updated_at` datetime NULL DEFAULT NULL,
+  PRIMARY KEY (`lscd_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of lab_schedule_times
+-- Records of lab_sch_dates
 -- ----------------------------
+INSERT INTO `lab_sch_dates` VALUES (2, '2', 'Friday', '2024-06-14', 'active', '2024-06-13 09:37:17', NULL);
+
+-- ----------------------------
+-- Table structure for lab_sch_times
+-- ----------------------------
+DROP TABLE IF EXISTS `lab_sch_times`;
+CREATE TABLE `lab_sch_times`  (
+  `lsct_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lsct_date_id` int(11) NULL DEFAULT NULL,
+  `lsct_time_id` int(11) NULL DEFAULT NULL,
+  `lsct_status` enum('active','nonactive') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`lsct_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 45 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of lab_sch_times
+-- ----------------------------
+INSERT INTO `lab_sch_times` VALUES (26, 2, 4, 'active', '2024-06-19 08:49:22', '2024-06-19 08:49:35');
+INSERT INTO `lab_sch_times` VALUES (27, 2, 5, 'active', '2024-06-19 08:49:28', '2024-06-19 08:49:35');
 
 -- ----------------------------
 -- Table structure for lab_schedules
@@ -130,6 +144,12 @@ DROP TABLE IF EXISTS `lab_schedules`;
 CREATE TABLE `lab_schedules`  (
   `lbs_id` int(11) NOT NULL,
   `lbs_lab` int(11) NULL DEFAULT NULL,
+  `lbs_submission` bigint(20) NULL DEFAULT NULL,
+  `lbs_type` enum('reguler','non_reguler') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lbs_tenant_init` bigint(20) NULL DEFAULT NULL,
+  `lbs_res_person` varchar(75) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lbs_tenant_name` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lbs_matkul` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lbs_day` enum('sunday','monday','tuesday','wednesday','thursday','friday','saturday') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lbs_date_start` date NULL DEFAULT NULL,
   `lbs_time_start` time NULL DEFAULT NULL,
@@ -137,12 +157,6 @@ CREATE TABLE `lab_schedules`  (
   `lbs_time_end` time NULL DEFAULT NULL,
   `lbs_dates_period` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lbs_sch_dates_excluded` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lbs_type` enum('reguler','non_reguler') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lbs_submission` bigint(20) NULL DEFAULT NULL,
-  `lbs_tenant_init` bigint(20) NULL DEFAULT NULL,
-  `lbs_tenant_name` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lbs_res_person` varchar(75) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lbs_matkul` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `updated_at` datetime NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
   `created_by` int(11) NULL DEFAULT NULL,
   `created_at` datetime NULL DEFAULT current_timestamp(),
@@ -152,7 +166,35 @@ CREATE TABLE `lab_schedules`  (
 -- ----------------------------
 -- Records of lab_schedules
 -- ----------------------------
-INSERT INTO `lab_schedules` VALUES (1, 58, NULL, '2024-06-21', '07:00:00', '2024-06-22', '18:00:00', '2024-06-21$2024-06-22', NULL, 'non_reguler', 1, 218, 'ALIF AKBAR HIDAYATULLAH', NULL, 'PERENCANAAN ULANG STRUKTUR GEDUNG RUMAH SAKIT KENDANGSARI KOTA SURABAYA DENGAN BAJA-BETON KOMPOSIT MENGGUNAKAN SISTEM RANGKA PEMIKUL MOMEN', '2024-06-02 21:00:12', NULL, '2024-06-02 21:00:12');
+INSERT INTO `lab_schedules` VALUES (1, 58, NULL, 'reguler', NULL, '11', 'Kelas XI', 'Mata Kuliah Umum Untuk Pemuda dan Pemudi', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-06-19 14:13:04', 6, '2024-06-12 13:35:11');
+INSERT INTO `lab_schedules` VALUES (2, 58, 1, 'non_reguler', 184, NULL, 'ALIF AKBAR HIDAYATULLAH', 'PERENCANAAN ULANG STRUKTUR GEDUNG RUMAH SAKIT KENDANGSARI KOTA SURABAYA DENGAN BAJA-BETON KOMPOSIT MENGGUNAKAN SISTEM RANGKA PEMIKUL MOMEN', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-06-13 09:37:17', NULL, '2024-06-13 09:37:17');
+
+-- ----------------------------
+-- Table structure for lab_sub_dates
+-- ----------------------------
+DROP TABLE IF EXISTS `lab_sub_dates`;
+CREATE TABLE `lab_sub_dates`  (
+  `lsd_id` int(11) NOT NULL,
+  `lsd_lsb_id` int(11) NULL DEFAULT NULL,
+  `lsd_date` date NULL DEFAULT NULL,
+  `lsd_lab` int(11) NULL DEFAULT NULL,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
+  `updates_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`lsd_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of lab_sub_dates
+-- ----------------------------
+INSERT INTO `lab_sub_dates` VALUES (1, 1, '2024-06-14', 58, '2024-06-13 09:35:51', NULL);
+INSERT INTO `lab_sub_dates` VALUES (2, 2, '2024-06-21', 58, '2024-06-13 16:16:42', NULL);
+INSERT INTO `lab_sub_dates` VALUES (3, 2, '2024-06-22', 58, '2024-06-13 16:16:42', NULL);
+INSERT INTO `lab_sub_dates` VALUES (4, 3, '2024-06-27', 58, '2024-06-13 16:25:22', NULL);
+INSERT INTO `lab_sub_dates` VALUES (5, 3, '2024-06-28', 58, '2024-06-13 16:25:22', NULL);
+INSERT INTO `lab_sub_dates` VALUES (6, 4, '2024-06-21', 58, '2024-06-14 13:24:15', NULL);
+INSERT INTO `lab_sub_dates` VALUES (7, 4, '2024-06-22', 58, '2024-06-14 13:24:15', NULL);
+INSERT INTO `lab_sub_dates` VALUES (8, 5, '2024-06-28', 58, '2024-06-14 13:35:44', NULL);
+INSERT INTO `lab_sub_dates` VALUES (9, 5, '2024-06-29', 58, '2024-06-14 13:35:44', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_order_details
@@ -168,14 +210,23 @@ CREATE TABLE `lab_sub_order_details`  (
   `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lod_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 63 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 110 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_sub_order_details
 -- ----------------------------
-INSERT INTO `lab_sub_order_details` VALUES (60, 1, 34, 'lab', 'Lab. Beton', 100000.00, '2024-06-02 20:58:36', NULL);
-INSERT INTO `lab_sub_order_details` VALUES (61, 1, 1, 'tool', 'Elle ADR 3000', 100000.00, '2024-06-02 20:58:36', NULL);
-INSERT INTO `lab_sub_order_details` VALUES (62, 1, 0, 'reduction', 'Potongan biaya 25 %', 50000.00, '2024-06-02 20:58:36', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (98, 1, 34, 'lab', 'Lab. Beton', 100000.00, '2024-06-13 09:35:51', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (99, 1, 1, 'tool', 'Elle ADR 3000', 100000.00, '2024-06-13 09:35:51', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (100, 1, 0, 'reduction', 'Potongan biaya 10 %', 20000.00, '2024-06-13 09:35:51', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (101, 2, 34, 'lab', 'Lab. Beton', 100000.00, '2024-06-13 16:16:42', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (102, 2, 1, 'tool', 'Elle ADR 3000', 100000.00, '2024-06-13 16:16:42', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (103, 2, 0, 'reduction', 'Potongan biaya 10 %', 20000.00, '2024-06-13 16:16:42', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (104, 3, 34, 'lab', 'Lab. Beton', 100000.00, '2024-06-13 16:25:22', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (105, 3, 1, 'tool', 'Elle ADR 3000', 100000.00, '2024-06-13 16:25:22', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (106, 4, 34, 'lab', 'Lab. Beton', 100000.00, '2024-06-14 13:24:15', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (107, 4, 1, 'tool', 'Elle ADR 3000', 100000.00, '2024-06-14 13:24:15', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (108, 5, 34, 'lab', 'Lab. Beton', 100000.00, '2024-06-14 13:35:45', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (109, 5, 1, 'tool', 'Elle ADR 3000', 100000.00, '2024-06-14 13:35:45', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_orders
@@ -195,7 +246,46 @@ CREATE TABLE `lab_sub_orders`  (
 -- ----------------------------
 -- Records of lab_sub_orders
 -- ----------------------------
-INSERT INTO `lab_sub_orders` VALUES (1, 1, NULL, '2024-06-02 20:58:36', 150000.00, '2024-06-02 20:58:36', NULL);
+INSERT INTO `lab_sub_orders` VALUES (1, 1, NULL, '2024-06-13 09:35:51', 180000.00, '2024-06-13 09:35:51', NULL);
+INSERT INTO `lab_sub_orders` VALUES (2, 2, NULL, '2024-06-13 16:16:42', 180000.00, '2024-06-13 16:16:42', NULL);
+INSERT INTO `lab_sub_orders` VALUES (3, 3, NULL, '2024-06-13 16:25:22', 100000.00, '2024-06-13 16:25:22', NULL);
+INSERT INTO `lab_sub_orders` VALUES (4, 4, NULL, '2024-06-14 13:24:15', 100000.00, '2024-06-14 13:24:15', NULL);
+INSERT INTO `lab_sub_orders` VALUES (5, 5, NULL, '2024-06-14 13:35:44', 100000.00, '2024-06-14 13:35:45', NULL);
+
+-- ----------------------------
+-- Table structure for lab_sub_times
+-- ----------------------------
+DROP TABLE IF EXISTS `lab_sub_times`;
+CREATE TABLE `lab_sub_times`  (
+  `lstt_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lstt_date_subs_id` int(11) NULL DEFAULT NULL,
+  `lstt_time_id` int(11) NULL DEFAULT NULL,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`lstt_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of lab_sub_times
+-- ----------------------------
+INSERT INTO `lab_sub_times` VALUES (15, 1, 0, '2024-06-13 09:35:51', NULL);
+INSERT INTO `lab_sub_times` VALUES (16, 1, 1, '2024-06-13 09:35:51', NULL);
+INSERT INTO `lab_sub_times` VALUES (17, 2, 4, '2024-06-13 16:16:42', NULL);
+INSERT INTO `lab_sub_times` VALUES (18, 2, 5, '2024-06-13 16:16:42', NULL);
+INSERT INTO `lab_sub_times` VALUES (19, 3, 4, '2024-06-13 16:16:42', NULL);
+INSERT INTO `lab_sub_times` VALUES (20, 3, 5, '2024-06-13 16:16:42', NULL);
+INSERT INTO `lab_sub_times` VALUES (21, 4, 5, '2024-06-13 16:25:22', NULL);
+INSERT INTO `lab_sub_times` VALUES (22, 4, 6, '2024-06-13 16:25:22', NULL);
+INSERT INTO `lab_sub_times` VALUES (23, 5, 5, '2024-06-13 16:25:22', NULL);
+INSERT INTO `lab_sub_times` VALUES (24, 5, 6, '2024-06-13 16:25:22', NULL);
+INSERT INTO `lab_sub_times` VALUES (25, 6, 0, '2024-06-14 13:24:15', NULL);
+INSERT INTO `lab_sub_times` VALUES (26, 6, 1, '2024-06-14 13:24:15', NULL);
+INSERT INTO `lab_sub_times` VALUES (27, 7, 0, '2024-06-14 13:24:15', NULL);
+INSERT INTO `lab_sub_times` VALUES (28, 7, 1, '2024-06-14 13:24:15', NULL);
+INSERT INTO `lab_sub_times` VALUES (29, 8, 0, '2024-06-14 13:35:45', NULL);
+INSERT INTO `lab_sub_times` VALUES (30, 8, 1, '2024-06-14 13:35:45', NULL);
+INSERT INTO `lab_sub_times` VALUES (31, 9, 0, '2024-06-14 13:35:45', NULL);
+INSERT INTO `lab_sub_times` VALUES (32, 9, 1, '2024-06-14 13:35:45', NULL);
 
 -- ----------------------------
 -- Table structure for lab_submission_accs
@@ -212,13 +302,13 @@ CREATE TABLE `lab_submission_accs`  (
   `created_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`lsa_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 140 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 177 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_submission_accs
 -- ----------------------------
-INSERT INTO `lab_submission_accs` VALUES (138, '1', 'LAB_HEAD', '3', 'Kalab', 'Pengajuan anda disetujui', '2024-06-02 21:00:12', '2024-06-02 21:00:12', NULL);
-INSERT INTO `lab_submission_accs` VALUES (139, '1', 'LECTURE', NULL, 'Meity Wulandari, S.T., M.T.', NULL, '2024-06-02 21:00:12', '2024-06-02 21:00:12', NULL);
+INSERT INTO `lab_submission_accs` VALUES (175, '1', 'LAB_HEAD', '3', 'Dr. Ir. H. Soeparno, M.T.', NULL, '2024-06-13 09:37:17', '2024-06-13 09:37:17', NULL);
+INSERT INTO `lab_submission_accs` VALUES (176, '1', 'LECTURE', NULL, 'Meity Wulandari, S.T., M.T.', NULL, '2024-06-13 09:37:17', '2024-06-13 09:37:17', NULL);
 
 -- ----------------------------
 -- Table structure for lab_submission_advisers
@@ -227,19 +317,21 @@ DROP TABLE IF EXISTS `lab_submission_advisers`;
 CREATE TABLE `lab_submission_advisers`  (
   `las_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `las_lbs_id` int(11) NULL DEFAULT NULL,
-  `las_user_no_id` int(11) NULL DEFAULT NULL,
+  `las_user_id` int(11) NULL DEFAULT NULL,
   `las_nip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `las_byname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `las_fullname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `las_user_no_id` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`las_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_submission_advisers
 -- ----------------------------
-INSERT INTO `lab_submission_advisers` VALUES (24, 1, 28059106, '199105282019032019', 'Pembimbing', 'Meity Wulandari, S.T., M.T.', '2024-06-02 20:58:36', NULL);
+INSERT INTO `lab_submission_advisers` VALUES (32, 1, NULL, '199105282019032019', 'Pembimbing', 'Meity Wulandari, S.T., M.T.', '2024-06-13 09:35:51', NULL, 28059106);
+INSERT INTO `lab_submission_advisers` VALUES (33, 2, NULL, '199105282019032019', 'Pembimbing', 'Meity Wulandari, S.T., M.T.', '2024-06-13 16:16:42', NULL, 28059106);
 
 -- ----------------------------
 -- Table structure for lab_submission_results
@@ -255,12 +347,12 @@ CREATE TABLE `lab_submission_results`  (
   `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lsr_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_submission_results
 -- ----------------------------
-INSERT INTO `lab_submission_results` VALUES (4, 1, 'true', '20050724036_alif_akbar_hidayatullah_02_06_2024_213923.pdf', 34, 'Laporan sudah divalidasi', '2024-06-02 21:39:23', '2024-06-02 21:40:06');
+INSERT INTO `lab_submission_results` VALUES (6, 1, 'true', '20050724036_alif_akbar_hidayatullah_13_06_2024_093943.pdf', 34, NULL, '2024-06-13 09:39:43', '2024-06-13 09:40:09');
 
 -- ----------------------------
 -- Table structure for lab_submissions
@@ -294,7 +386,11 @@ CREATE TABLE `lab_submissions`  (
 -- ----------------------------
 -- Records of lab_submissions
 -- ----------------------------
-INSERT INTO `lab_submissions` VALUES (1, 58, 'PERENCANAAN ULANG STRUKTUR GEDUNG RUMAH SAKIT KENDANGSARI KOTA SURABAYA DENGAN BAJA-BETON KOMPOSIT MENGGUNAKAN SISTEM RANGKA PEMIKUL MOMEN', 'pinjam_lab', 'tp_penelitian_skripsi', '2024-06-21 07:00:00', '2024-06-22 18:00:00', '2024-06-21$2024-06-22', 218, '3', NULL, '34', '73', '20240602_205835_trustopenmail@gmail.com.pdf', NULL, NULL, 'selesai', NULL, NULL, '2024-06-02 21:40:06', '2024-06-02 21:40:06');
+INSERT INTO `lab_submissions` VALUES (1, 58, 'PERENCANAAN ULANG STRUKTUR GEDUNG RUMAH SAKIT KENDANGSARI KOTA SURABAYA DENGAN BAJA-BETON KOMPOSIT MENGGUNAKAN SISTEM RANGKA PEMIKUL MOMEN', 'pinjam_lab', 'tp_penelitian_skripsi', NULL, NULL, NULL, 184, '3', NULL, '34', '73', '20240613_093550_trustopenmail@gmail.com.pdf', NULL, NULL, 'selesai', NULL, NULL, '2024-06-13 09:40:09', '2024-06-13 09:40:09');
+INSERT INTO `lab_submissions` VALUES (2, 58, 'PERENCANAAN ULANG STRUKTUR GEDUNG RUMAH SAKIT KENDANGSARI KOTA SURABAYA DENGAN BAJA-BETON KOMPOSIT MENGGUNAKAN SISTEM RANGKA PEMIKUL MOMEN', 'pinjam_lab', 'tp_penelitian_skripsi', NULL, NULL, NULL, 184, '3', NULL, '34', NULL, '20240613_161642_trustopenmail@gmail.com.pdf', NULL, NULL, 'menunggu', NULL, NULL, '2024-06-13 16:16:42', NULL);
+INSERT INTO `lab_submissions` VALUES (3, 58, 'Penelitian Kekuatan Beton', 'pinjam_lab', 'tp_penelitian', NULL, NULL, NULL, 186, '3', NULL, '34', NULL, '20240613_162522_support1@trustunified.com.pdf', NULL, NULL, 'menunggu', NULL, NULL, '2024-06-13 16:25:23', NULL);
+INSERT INTO `lab_submissions` VALUES (4, 58, 'Penelitian Kekeuatan Beton', 'pinjam_lab', 'tp_penelitian', NULL, NULL, NULL, 186, '3', NULL, '34', NULL, '20240614_132414_support1@trustunified.com.pdf', NULL, NULL, 'menunggu', NULL, NULL, '2024-06-14 13:24:15', NULL);
+INSERT INTO `lab_submissions` VALUES (5, 58, 'Penelitian Kekeuatan Beton', 'pinjam_lab', 'tp_penelitian', NULL, NULL, NULL, 186, '3', NULL, '34', NULL, '20240614_133544_support1@trustunified.com.pdf', NULL, NULL, 'menunggu', NULL, NULL, '2024-06-14 13:35:45', NULL);
 
 -- ----------------------------
 -- Table structure for lab_use_results
@@ -483,17 +579,6 @@ CREATE TABLE `laboratory_facility_count_statuses`  (
 -- ----------------------------
 -- Records of laboratory_facility_count_statuses
 -- ----------------------------
-INSERT INTO `laboratory_facility_count_statuses` VALUES (1, '1', '11', '10', '0', '10', '0', '0', '2024-03-15 10:55:58', '2024-02-27 10:22:17');
-INSERT INTO `laboratory_facility_count_statuses` VALUES (2, '2', '10', '10', '0', '10', '0', '0', NULL, '2024-03-14 13:58:14');
-INSERT INTO `laboratory_facility_count_statuses` VALUES (3, '3', '10', '10', '0', '10', '0', '0', '2024-03-14 14:11:13', '2024-03-14 14:01:11');
-INSERT INTO `laboratory_facility_count_statuses` VALUES (4, '4', '10', '10', '0', '10', '0', '0', NULL, '2024-03-14 14:01:32');
-INSERT INTO `laboratory_facility_count_statuses` VALUES (5, '5', '10', '10', '0', '10', '0', '0', NULL, '2024-03-14 14:02:13');
-INSERT INTO `laboratory_facility_count_statuses` VALUES (6, '6', '10', '10', '0', '10', '0', '0', NULL, '2024-03-14 14:02:34');
-INSERT INTO `laboratory_facility_count_statuses` VALUES (7, '5', '10', '10', '0', '10', '0', '0', NULL, '2024-03-15 10:55:24');
-INSERT INTO `laboratory_facility_count_statuses` VALUES (8, '6', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-05-06 14:55:07');
-INSERT INTO `laboratory_facility_count_statuses` VALUES (9, '6', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-05-06 14:55:30');
-INSERT INTO `laboratory_facility_count_statuses` VALUES (10, '7', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-05-06 16:46:11');
-INSERT INTO `laboratory_facility_count_statuses` VALUES (11, '8', NULL, NULL, NULL, NULL, NULL, NULL, '2024-05-16 09:17:27', '2024-05-16 08:34:04');
 
 -- ----------------------------
 -- Table structure for laboratory_groups
@@ -528,8 +613,7 @@ CREATE TABLE `laboratory_labtest_facilities`  (
 -- ----------------------------
 -- Records of laboratory_labtest_facilities
 -- ----------------------------
-INSERT INTO `laboratory_labtest_facilities` VALUES (5, 1, '6');
-INSERT INTO `laboratory_labtest_facilities` VALUES (8, 5, '1');
+INSERT INTO `laboratory_labtest_facilities` VALUES (1, 1, '1');
 
 -- ----------------------------
 -- Table structure for laboratory_labtests
@@ -550,11 +634,7 @@ CREATE TABLE `laboratory_labtests`  (
 -- ----------------------------
 -- Records of laboratory_labtests
 -- ----------------------------
-INSERT INTO `laboratory_labtests` VALUES (1, 58, 'Sarana untuk menguji listrik', 1000.00, 'Sarana untuk menguji listrik', 'Sarana untuk menguji listrik', '', '2024-05-06 15:09:13');
-INSERT INTO `laboratory_labtests` VALUES (2, 59, 'Test uji struktur tanah', 50000.00, 'Sarana untuk menguji listrik', 'Sarana untuk menguji listrik', NULL, NULL);
-INSERT INTO `laboratory_labtests` VALUES (3, 1, 'test', 12132.00, 'test', 'test', NULL, NULL);
-INSERT INTO `laboratory_labtests` VALUES (4, 1, 'test', 123.00, 'test', 'test', NULL, NULL);
-INSERT INTO `laboratory_labtests` VALUES (5, 1, 'Test ketahanan', 123.00, '<p>123</p>', '<p>123</p>', NULL, '2024-05-13 15:29:17');
+INSERT INTO `laboratory_labtests` VALUES (1, 58, 'Menguji kekuatan beton', 150000.00, 'Sarana untuk menguji listrik', 'Sarana untuk menguji listrik', '', '2024-05-06 15:09:13');
 
 -- ----------------------------
 -- Table structure for laboratory_technicians
@@ -665,6 +745,38 @@ INSERT INTO `laboratory_technicians` VALUES (90, 95, 86, '2024-05-27 17:10:41', 
 INSERT INTO `laboratory_technicians` VALUES (91, 96, 87, '2024-05-27 17:10:41', '2024-05-27 17:14:28');
 
 -- ----------------------------
+-- Table structure for laboratory_time_options
+-- ----------------------------
+DROP TABLE IF EXISTS `laboratory_time_options`;
+CREATE TABLE `laboratory_time_options`  (
+  `lti_id` int(11) NOT NULL,
+  `lti_start` time NULL DEFAULT NULL,
+  `lti_end` time NULL DEFAULT NULL,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`lti_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of laboratory_time_options
+-- ----------------------------
+INSERT INTO `laboratory_time_options` VALUES (0, '07:00:00', '07:45:00', '2024-06-07 16:43:36', '2024-06-08 22:21:26');
+INSERT INTO `laboratory_time_options` VALUES (1, '07:45:00', '08:30:00', '2024-06-07 16:44:44', '2024-06-08 22:21:22');
+INSERT INTO `laboratory_time_options` VALUES (2, '08:30:00', '09:15:00', '2024-06-07 16:45:38', '2024-06-08 22:34:24');
+INSERT INTO `laboratory_time_options` VALUES (3, '09:15:00', '10:00:00', '2024-06-07 16:46:19', '2024-06-08 22:34:27');
+INSERT INTO `laboratory_time_options` VALUES (4, '10:00:00', '10:45:00', '2024-06-07 16:46:22', '2024-06-08 22:34:28');
+INSERT INTO `laboratory_time_options` VALUES (5, '10:45:00', '11:30:00', '2024-06-07 16:46:35', '2024-06-08 22:34:30');
+INSERT INTO `laboratory_time_options` VALUES (6, '11:30:00', '12:15:00', '2024-06-07 16:46:52', '2024-06-08 22:34:31');
+INSERT INTO `laboratory_time_options` VALUES (7, '12:15:00', '13:00:00', '2024-06-07 16:47:20', '2024-06-08 22:34:32');
+INSERT INTO `laboratory_time_options` VALUES (8, '13:00:00', '13:45:00', '2024-06-07 16:47:25', '2024-06-08 22:34:34');
+INSERT INTO `laboratory_time_options` VALUES (9, '13:45:00', '14:30:00', '2024-06-07 16:48:33', '2024-06-08 22:34:35');
+INSERT INTO `laboratory_time_options` VALUES (10, '14:30:00', '15:15:00', '2024-06-07 16:48:52', '2024-06-08 22:34:37');
+INSERT INTO `laboratory_time_options` VALUES (11, '15:15:00', '16:00:00', '2024-06-07 16:50:36', '2024-06-08 22:34:39');
+INSERT INTO `laboratory_time_options` VALUES (12, '16:00:00', '16:45:00', '2024-06-07 16:51:29', '2024-06-08 22:34:42');
+INSERT INTO `laboratory_time_options` VALUES (13, '16:45:00', '17:30:00', '2024-06-07 16:51:47', '2024-06-08 22:34:46');
+INSERT INTO `laboratory_time_options` VALUES (14, '17:30:00', '18:15:00', '2024-06-07 16:52:27', '2024-06-08 22:34:48');
+
+-- ----------------------------
 -- Table structure for laboratory_working_times
 -- ----------------------------
 DROP TABLE IF EXISTS `laboratory_working_times`;
@@ -682,6 +794,7 @@ CREATE TABLE `laboratory_working_times`  (
 -- ----------------------------
 -- Records of laboratory_working_times
 -- ----------------------------
+INSERT INTO `laboratory_working_times` VALUES (1, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for menus
@@ -717,54 +830,53 @@ INSERT INTO `menus` VALUES (15, 'ADMIN_MASTER', 0, 'ri-pencil-ruler-2-fill', 'Fa
 INSERT INTO `menus` VALUES (16, 'ADMIN_MASTER', 0, 'ri-survey-fill', 'Laporan', 'laporan');
 INSERT INTO `menus` VALUES (17, 'ADMIN_MASTER', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
 INSERT INTO `menus` VALUES (18, 'ADMIN_MASTER', 17, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (19, 'ADMIN_MASTER', 17, 'ri-subtract-fill', 'SMTP Mail', 'pengaturan/email');
-INSERT INTO `menus` VALUES (20, 'ADMIN_MASTER', 17, 'ri-subtract-fill', 'Data Semua User', 'pengaturan/user');
-INSERT INTO `menus` VALUES (21, 'LAB_HEAD', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (22, 'LAB_HEAD', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (23, 'LAB_HEAD', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
-INSERT INTO `menus` VALUES (24, 'LAB_HEAD', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (25, 'LAB_HEAD', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
-INSERT INTO `menus` VALUES (26, 'LAB_HEAD', 0, 'ri-survey-fill', 'Laporan', 'laporan');
-INSERT INTO `menus` VALUES (27, 'LAB_HEAD', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (28, 'LAB_HEAD', 27, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (29, 'LAB_SUBHEAD', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (30, 'LAB_SUBHEAD', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (31, 'LAB_SUBHEAD', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
-INSERT INTO `menus` VALUES (32, 'LAB_SUBHEAD', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (33, 'LAB_SUBHEAD', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
-INSERT INTO `menus` VALUES (34, 'LAB_SUBHEAD', 0, 'ri-survey-fill', 'Laporan', 'laporan');
-INSERT INTO `menus` VALUES (35, 'LAB_SUBHEAD', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (36, 'LAB_SUBHEAD', 35, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (29, 'LAB_TECHNICIAN', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (30, 'LAB_TECHNICIAN', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (32, 'LAB_TECHNICIAN', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (35, 'LAB_TECHNICIAN', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (36, 'LAB_TECHNICIAN', 35, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (37, 'ADMIN_PRODI', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (39, 'ADMIN_PRODI', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (41, 'ADMIN_PRODI', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (42, 'ADMIN_PRODI', 41, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (43, 'LECTURE', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (44, 'LECTURE', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (45, 'LECTURE', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (46, 'LECTURE', 0, 'ri-survey-fill', 'Laporan', 'laporan');
-INSERT INTO `menus` VALUES (47, 'LECTURE', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (48, 'LECTURE', 47, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (49, 'STUDENT', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (50, 'STUDENT', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (51, 'STUDENT', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (52, 'STUDENT', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (53, 'STUDENT', 52, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (54, 'PUBLIC_MEMBER', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (55, 'PUBLIC_MEMBER', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (56, 'PUBLIC_MEMBER', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (57, 'PUBLIC_MEMBER', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (58, 'PUBLIC_MEMBER', 57, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (59, 'PUBLIC_NON_MEMBER', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (60, 'PUBLIC_NON_MEMBER', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (61, 'PUBLIC_NON_MEMBER', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (62, 'PUBLIC_NON_MEMBER', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (63, 'PUBLIC_NON_MEMBER', 62, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (19, 'ADMIN_MASTER', 17, 'ri-subtract-fill', 'Data Semua User', 'pengaturan/user');
+INSERT INTO `menus` VALUES (20, 'LAB_HEAD', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (21, 'LAB_HEAD', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (22, 'LAB_HEAD', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
+INSERT INTO `menus` VALUES (23, 'LAB_HEAD', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (24, 'LAB_HEAD', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
+INSERT INTO `menus` VALUES (25, 'LAB_HEAD', 0, 'ri-survey-fill', 'Laporan', 'laporan');
+INSERT INTO `menus` VALUES (26, 'LAB_HEAD', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (27, 'LAB_HEAD', 26, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (28, 'LAB_SUBHEAD', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (29, 'LAB_SUBHEAD', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (30, 'LAB_SUBHEAD', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
+INSERT INTO `menus` VALUES (31, 'LAB_SUBHEAD', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (32, 'LAB_SUBHEAD', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
+INSERT INTO `menus` VALUES (33, 'LAB_SUBHEAD', 0, 'ri-survey-fill', 'Laporan', 'laporan');
+INSERT INTO `menus` VALUES (34, 'LAB_SUBHEAD', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (35, 'LAB_SUBHEAD', 34, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (36, 'LAB_TECHNICIAN', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (37, 'LAB_TECHNICIAN', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (38, 'LAB_TECHNICIAN', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
+INSERT INTO `menus` VALUES (39, 'LAB_TECHNICIAN', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
+INSERT INTO `menus` VALUES (40, 'LAB_TECHNICIAN', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (41, 'LAB_TECHNICIAN', 40, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (42, 'ADMIN_PRODI', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (43, 'ADMIN_PRODI', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (44, 'ADMIN_PRODI', 43, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (45, 'LECTURE', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (46, 'LECTURE', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (47, 'LECTURE', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (48, 'LECTURE', 0, 'ri-survey-fill', 'Laporan', 'laporan');
+INSERT INTO `menus` VALUES (49, 'LECTURE', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (50, 'LECTURE', 49, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (51, 'STUDENT', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (52, 'STUDENT', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (53, 'STUDENT', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (54, 'STUDENT', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (55, 'STUDENT', 54, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (56, 'PUBLIC_MEMBER', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (57, 'PUBLIC_MEMBER', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (58, 'PUBLIC_MEMBER', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (59, 'PUBLIC_MEMBER', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (60, 'PUBLIC_MEMBER', 59, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (61, 'PUBLIC_NON_MEMBER', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (62, 'PUBLIC_NON_MEMBER', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (63, 'PUBLIC_NON_MEMBER', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (64, 'PUBLIC_NON_MEMBER', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (65, 'PUBLIC_NON_MEMBER', 64, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
 
 -- ----------------------------
 -- Table structure for migrations
@@ -792,13 +904,18 @@ DROP TABLE IF EXISTS `password_resets`;
 CREATE TABLE `password_resets`  (
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
   INDEX `password_resets_email_index`(`email`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of password_resets
 -- ----------------------------
+INSERT INTO `password_resets` VALUES ('trustopenmail@gmail.com', '64c50963-761c-4b43-b070-80e4de3dda93', NULL);
+INSERT INTO `password_resets` VALUES ('trustopenmail@gmail.com', '5dfb4272-d8fb-44cf-9772-594072c27e3f', NULL);
+INSERT INTO `password_resets` VALUES ('trustopenmail@gmail.com', '5293bef5-2702-4e80-a526-51e745a2bf37', NULL);
+INSERT INTO `password_resets` VALUES ('trustopenmail@gmail.com', '1720442e-ba0c-4c66-b33a-22d959bf697a', NULL);
+INSERT INTO `password_resets` VALUES ('trustopenmail@gmail.com', '22679626-587b-4359-8c7f-05de6fb91fc5', '2024-06-13 16:43:10');
 
 -- ----------------------------
 -- Table structure for personal_access_tokens
@@ -841,147 +958,144 @@ CREATE TABLE `user_details`  (
   `created_by` bigint(20) NULL DEFAULT NULL,
   `updated_by` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`usd_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 147 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 134 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user_details
 -- ----------------------------
-INSERT INTO `user_details` VALUES (1, 5, NULL, 'ewr', 'SI', 'Teknik', 'UK', '2024-03-15 15:16:59', '2024-04-17 16:04:44', NULL, NULL);
-INSERT INTO `user_details` VALUES (2, 6, '123', 'ewr', 'SI', 'Teknik', 'UK', '2024-03-15 15:42:42', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (3, 7, '1234', 'menteng jakarta timur', 'SI', 'TEknik', 'UNESA', '2024-03-19 12:42:44', '2024-04-04 08:50:30', NULL, NULL);
-INSERT INTO `user_details` VALUES (14, 88, '08113118002', 'SIMOREJO SARI B-8/22-A Kota Surabaya Prov. Jawa Timur 60181 RT. 4 RW. 7', 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-05-28 08:32:03', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (15, 90, '089580311199', 'Jl. Banyu Urip No 187 RT. 6 RW. 2', 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-05-28 14:49:28', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (16, 88, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (17, 89, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (18, 90, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (19, 91, NULL, NULL, 'S1 Perencanaan Wilayah dan Kota', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (20, 92, NULL, NULL, 'S2 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (21, 93, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (22, 94, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (23, 95, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (24, 96, NULL, NULL, 'S2 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (25, 97, NULL, NULL, 'S1 Sistem Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (26, 98, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (27, 99, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (28, 100, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (29, 101, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (30, 102, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (31, 103, NULL, NULL, 'S1 Sistem Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (32, 104, NULL, NULL, 'S1 Perencanaan Wilayah dan Kota', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (33, 105, NULL, NULL, 'S1 Pendidikan Teknologi Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (34, 106, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (35, 107, NULL, NULL, 'S1 Pendidikan Tata Rias', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (36, 108, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (37, 109, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (38, 110, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (39, 111, NULL, NULL, 'S2 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (40, 112, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (41, 113, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (42, 114, NULL, NULL, 'S1 Pendidikan Tata Rias', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (43, 115, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (44, 116, NULL, NULL, 'S1 Pendidikan Teknologi Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (45, 117, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (46, 118, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (47, 119, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (48, 120, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (49, 121, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (50, 122, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (51, 123, NULL, NULL, 'S1 Sistem Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (52, 124, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (53, 125, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (54, 126, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (55, 127, NULL, NULL, 'S1 Pendidikan Tata Rias', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (56, 128, NULL, NULL, 'S1 Pendidikan Tata Rias', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (57, 129, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (58, 130, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (59, 131, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (60, 132, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (61, 133, NULL, NULL, 'S2 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (62, 134, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (63, 135, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (64, 136, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (65, 137, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (66, 138, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (67, 139, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (68, 140, NULL, NULL, 'S1 Pendidikan Teknologi Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (69, 141, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (70, 142, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (71, 143, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (72, 144, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (73, 145, NULL, NULL, 'S1 Pendidikan Tata Rias', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (74, 146, NULL, NULL, 'S2 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (75, 147, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (76, 148, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (77, 149, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (78, 150, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (79, 151, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (80, 152, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (81, 153, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (82, 154, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (83, 155, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (84, 156, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (85, 157, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (86, 158, NULL, NULL, 'S1 Sistem Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (87, 159, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (88, 160, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (89, 161, NULL, NULL, 'S1 Pendidikan Tata Rias', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (90, 162, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (91, 163, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (92, 164, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (93, 165, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (94, 166, NULL, NULL, 'S1 Sistem Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (95, 167, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (96, 168, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (97, 169, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (98, 170, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (99, 171, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (100, 172, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (101, 173, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (102, 174, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (103, 175, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (104, 176, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (105, 177, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (106, 178, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (107, 179, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (108, 180, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (109, 181, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (110, 182, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (111, 183, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (112, 184, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (113, 185, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (114, 186, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (115, 187, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (116, 188, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (117, 189, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (118, 190, NULL, NULL, 'S1 Sistem Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (119, 191, NULL, NULL, 'S1 Pendidikan Teknologi Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (120, 192, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (121, 193, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (122, 194, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (123, 195, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (124, 196, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (125, 197, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (126, 198, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (127, 199, NULL, NULL, 'S1 Perencanaan Wilayah dan Kota', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (128, 200, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (129, 201, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (130, 202, NULL, NULL, 'S1 Perencanaan Wilayah dan Kota', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (131, 203, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (132, 204, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (133, 205, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (134, 206, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (135, 207, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (136, 208, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (137, 209, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (138, 210, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (139, 211, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (140, 212, NULL, NULL, 'S1 Perencanaan Wilayah dan Kota', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (141, 213, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (142, 214, NULL, NULL, 'S1 Pendidikan Tata Rias', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (143, 215, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (144, 216, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (145, 217, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:28:44', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (146, 218, '08113118002', 'SIMOREJO SARI B-8/22-A Kota Surabaya Prov. Jawa Timur 60181 RT. 4 RW. 7', 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-01 14:33:08', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (1, 31, NULL, NULL, 'S1 Perencanaan Wilayah dan Kota', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (2, 3, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (3, 46, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (4, 24, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (5, 36, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (6, 41, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (7, 49, NULL, NULL, 'S1 Sistem Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (8, 23, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (9, 12, NULL, NULL, 'S2 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (10, 18, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (11, 14, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (12, 29, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (13, 34, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (14, 50, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (15, 15, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (16, 22, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (17, 39, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (18, 40, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (19, 28, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (20, 42, NULL, NULL, 'S1 Pendidikan Tata Rias', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (21, 20, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (22, 27, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (23, 32, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (24, 37, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (25, 45, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (26, 35, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (27, 21, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (28, 16, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (29, 25, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (30, 33, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (31, 26, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (32, 47, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (33, 19, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (34, 43, NULL, NULL, 'S1 Pendidikan Tata Rias', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (35, 88, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (36, 89, NULL, NULL, 'S1 Perencanaan Wilayah dan Kota', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (37, 90, NULL, NULL, 'S2 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (38, 91, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (39, 92, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (40, 93, NULL, NULL, 'S1 Pendidikan Tata Rias', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (41, 94, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (42, 95, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (43, 96, NULL, NULL, 'S1 Sistem Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (44, 97, NULL, NULL, 'S1 Pendidikan Teknologi Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (45, 98, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (46, 99, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (47, 100, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (48, 101, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (49, 102, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (50, 103, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (51, 104, NULL, NULL, 'S2 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (52, 105, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (53, 106, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (54, 107, NULL, NULL, 'S1 Pendidikan Tata Rias', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (55, 108, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (56, 109, NULL, NULL, 'S1 Pendidikan Teknologi Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (57, 110, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (58, 111, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (59, 112, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (60, 113, NULL, NULL, 'S1 Sistem Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (61, 114, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (62, 115, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (63, 116, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (64, 117, NULL, NULL, 'S1 Pendidikan Tata Rias', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (65, 118, NULL, NULL, 'S1 Pendidikan Tata Rias', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (66, 119, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (67, 120, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (68, 121, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (69, 122, NULL, NULL, 'S2 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (70, 123, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (71, 124, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (72, 125, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (73, 126, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (74, 127, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (75, 128, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (76, 129, NULL, NULL, 'S1 Pendidikan Teknologi Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (77, 130, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (78, 131, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (79, 132, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (80, 133, NULL, NULL, 'S2 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (81, 134, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (82, 135, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (83, 136, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (84, 137, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (85, 138, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (86, 139, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (87, 140, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (88, 141, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (89, 142, NULL, NULL, 'S1 Sistem Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (90, 143, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (91, 144, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (92, 145, NULL, NULL, 'S1 Pendidikan Tata Rias', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (93, 146, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (94, 147, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (95, 148, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (96, 149, NULL, NULL, 'S1 Sistem Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (97, 150, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (98, 151, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (99, 152, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (100, 153, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (101, 154, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (102, 155, NULL, NULL, 'S1 Pendidikan Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (103, 156, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (104, 157, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (105, 158, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (106, 159, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (107, 160, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (108, 161, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (109, 162, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (110, 163, NULL, NULL, 'S1 Sistem Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (111, 164, NULL, NULL, 'S1 Pendidikan Teknologi Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (112, 165, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (113, 166, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (114, 167, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (115, 168, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (116, 169, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (117, 170, NULL, NULL, 'S1 Perencanaan Wilayah dan Kota', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (118, 171, NULL, NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (119, 172, NULL, NULL, 'S1 Perencanaan Wilayah dan Kota', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (120, 173, NULL, NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (121, 174, NULL, NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (122, 175, NULL, NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (123, 176, NULL, NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (124, 177, NULL, NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (125, 178, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (126, 179, NULL, NULL, 'S1 Perencanaan Wilayah dan Kota', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (127, 180, NULL, NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (128, 181, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (129, 182, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (130, 183, NULL, NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (131, 184, '08113118002', 'SIMOREJO SARI B-8/22-A Kota Surabaya Prov. Jawa Timur 60181 RT. 4 RW. 7', 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 13:03:19', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (132, 185, NULL, NULL, NULL, NULL, NULL, '2024-06-13 16:19:11', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (133, 186, NULL, NULL, NULL, NULL, NULL, '2024-06-13 16:22:44', NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for users
@@ -1010,221 +1124,189 @@ CREATE TABLE `users`  (
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (0, 0, 'Sugiono, ST', NULL, NULL, 'UNSET', '', NULL, NULL, NULL, '2024-05-27 16:57:38', NULL, NULL);
-INSERT INTO `users` VALUES (1, 100, 'System', 'agus123', 'active', 'ADMIN_SYSTEM', '$2y$10$HS8EWaWAgNiho1AyetSIGeWKqQE63FrInMbc859BsAQwGJ4oKwqpy', 'master@webmaster.com', '2022-12-01 15:03:18', NULL, '2022-12-01 15:04:29', '2024-04-18 15:17:36', NULL);
-INSERT INTO `users` VALUES (2, 200, 'Admin', NULL, 'active', 'ADMIN_MASTER', '$2y$10$HS8EWaWAgNiho1AyetSIGeWKqQE63FrInMbc859BsAQwGJ4oKwqpy', 'admin@webmaster.com', NULL, NULL, '2022-12-23 15:33:58', '2024-04-18 15:17:38', NULL);
-INSERT INTO `users` VALUES (3, 3537, 'Kalab', NULL, 'active', 'LAB_HEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'arizluck@gmail.com', NULL, NULL, '2024-01-25 15:25:02', '2024-04-18 14:08:36', NULL);
-INSERT INTO `users` VALUES (4, 310, 'Kasublab', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-01-25 15:25:02', '2024-06-01 22:47:34', NULL);
-INSERT INTO `users` VALUES (5, 320, 'Teknisi', NULL, 'active', 'ADMIN_PRODI', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-03-15 15:16:59', '2024-06-01 22:47:15', NULL);
-INSERT INTO `users` VALUES (6, 330, 'Dosen A', NULL, 'active', 'LECTURE', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-03-15 15:42:42', '2024-06-01 22:47:31', NULL);
-INSERT INTO `users` VALUES (7, 340, 'Siswa A', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-03-19 12:42:44', '2024-06-01 22:47:27', NULL);
+INSERT INTO `users` VALUES (0, 0, '', '0', 'block', 'UNSET', '0', '0', '0000-00-00 00:00:00', '0', '2024-05-29 08:24:59', '2024-05-29 08:25:29', 0);
+INSERT INTO `users` VALUES (1, 111, 'System', 'agus123', 'active', 'ADMIN_SYSTEM', '$2y$10$HS8EWaWAgNiho1AyetSIGeWKqQE63FrInMbc859BsAQwGJ4oKwqpy', 'master@webmaster.com', '2022-12-01 15:03:18', NULL, '2022-12-01 15:04:29', '2024-05-29 08:11:16', NULL);
+INSERT INTO `users` VALUES (2, 112, 'Admin', NULL, 'active', 'ADMIN_MASTER', '$2y$10$HS8EWaWAgNiho1AyetSIGeWKqQE63FrInMbc859BsAQwGJ4oKwqpy', 'admin@webmaster.com', NULL, NULL, '2022-12-23 15:33:58', '2024-05-29 08:11:18', NULL);
+INSERT INTO `users` VALUES (3, 113, 'Dr. Ir. H. Soeparno, M.T.', NULL, 'active', 'LAB_HEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'arizluck@gmail.com', NULL, NULL, '2024-01-25 15:25:02', '2024-06-12 12:44:40', NULL);
+INSERT INTO `users` VALUES (4, 114, 'Kasublab', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-01-25 15:25:02', '2024-05-29 08:16:25', NULL);
+INSERT INTO `users` VALUES (5, 115, 'Teknisi', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-03-15 15:16:59', '2024-05-29 08:15:53', NULL);
+INSERT INTO `users` VALUES (6, 116, 'Admin Prodi', NULL, 'active', 'ADMIN_PRODI', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'zacebox02@gmail.com', NULL, NULL, '2024-03-15 15:42:42', '2024-06-12 13:15:50', NULL);
+INSERT INTO `users` VALUES (7, 117, 'Dosen', NULL, 'active', 'LECTURE', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-03-19 12:42:44', '2024-05-29 08:15:36', NULL);
 INSERT INTO `users` VALUES (11, 196502171990021001, 'Prof. Dr. Joko, M.Pd., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:03', NULL);
-INSERT INTO `users` VALUES (12, 196103251987011001, 'Prof. Dr. Bambang Suprianto, M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:03', NULL);
+INSERT INTO `users` VALUES (12, 196103251987011001, 'Prof. Dr. Bambang Suprianto, M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'bambangsuprianto@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 09:56:36', NULL);
 INSERT INTO `users` VALUES (13, 197107061999031001, 'Prof. Dr. IGP. Asto Buditjahjanto, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:03', NULL);
-INSERT INTO `users` VALUES (14, 199007032019032023, 'L. Endah Cahya Ningrum, S.Pd., M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:03', NULL);
-INSERT INTO `users` VALUES (15, 198605232014041001, 'Farid Baskoro, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:03', NULL);
-INSERT INTO `users` VALUES (16, 196403311990031001, 'Endryansyah, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:03', NULL);
+INSERT INTO `users` VALUES (14, 199007032019032023, 'L. Endah Cahya Ningrum, S.Pd., M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'endahningrum@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 09:58:02', NULL);
+INSERT INTO `users` VALUES (15, 198605232014041001, 'Farid Baskoro, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'faridbaskoro@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:02:59', NULL);
+INSERT INTO `users` VALUES (16, 196403311990031001, 'Endryansyah, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'endryansyah@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:38:20', NULL);
 INSERT INTO `users` VALUES (17, 197706252006041003, 'M. Syariffuddien Zuhrie, S.Pd., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:03', NULL);
-INSERT INTO `users` VALUES (18, 199012262019031016, 'Fendi Achmad, S.Pd., M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:03', NULL);
-INSERT INTO `users` VALUES (19, 202103045, 'Roswina Dianawati, S.Pd., M.Ed.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (20, 196109131992031001, 'Prof. Dr.  Muhaji, ST., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (21, 196712281994031003, 'Prof. Dr. I Made Arsana, S.Pd., MT.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (22, 196208231986011001, 'Dr. A. Grummy Wailanduw, M.Pd., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (23, 198803202014041001, 'Akhmad Hafizh Ainur Rasyid, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (24, 196408091992021001, 'Dr. Dewanto, M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (25, 196504231992031001, 'Dr. Yunus, M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (26, 198712062019031013, 'Rachmad Syarifudin Hidayatullah, S.Pd., M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (27, 197109072005011002, 'Indra Herlambang  Siregar, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (28, 197803302008121002, 'Aris Ansori, S.Pd., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (29, 198904202019031017, 'Ali Hasbi Ramadani, S.Pd., M.Pd', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
+INSERT INTO `users` VALUES (18, 199012262019031016, 'Fendi Achmad, S.Pd., M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'fendiachmad@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 09:57:37', NULL);
+INSERT INTO `users` VALUES (19, 202103045, 'Roswina Dianawati, S.Pd., M.Ed.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'roswinadianawati@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:42:37', NULL);
+INSERT INTO `users` VALUES (20, 196109131992031001, 'Prof. Dr.  Muhaji, ST., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'muhaji61@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:18:42', NULL);
+INSERT INTO `users` VALUES (21, 196712281994031003, 'Prof. Dr. I Made Arsana, S.Pd., MT.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'madearsana@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:36:58', NULL);
+INSERT INTO `users` VALUES (22, 196208231986011001, 'Dr. A. Grummy Wailanduw, M.Pd., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'grummywailanduw@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:03:51', NULL);
+INSERT INTO `users` VALUES (23, 198803202014041001, 'Akhmad Hafizh Ainur Rasyid, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'akhmadrasyid@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 09:55:58', NULL);
+INSERT INTO `users` VALUES (24, 196408091992021001, 'Dr. Dewanto, M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'dewanto@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 09:53:50', NULL);
+INSERT INTO `users` VALUES (25, 196504231992031001, 'Dr. Yunus, M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'yunus@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:38:44', NULL);
+INSERT INTO `users` VALUES (26, 198712062019031013, 'Rachmad Syarifudin Hidayatullah, S.Pd., M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'rachmadhidayatullah@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:40:53', NULL);
+INSERT INTO `users` VALUES (27, 197109072005011002, 'Indra Herlambang  Siregar, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'indrasiregar@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:19:15', NULL);
+INSERT INTO `users` VALUES (28, 197803302008121002, 'Aris Ansori, S.Pd., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'arisansori@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:17:44', NULL);
+INSERT INTO `users` VALUES (29, 198904202019031017, 'Ali Hasbi Ramadani, S.Pd., M.Pd', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'aliramadani@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 09:58:19', NULL);
 INSERT INTO `users` VALUES (30, 197803272008012016, 'Novi Sukma Drastiawati, S.T., M.Eng.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (31, 197012041999031003, 'Prof. Dr. Agus Wiyono, S.Pd., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (32, 196206291998021001, 'Drs. Djoni Irianto, M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (33, 198905102018032001, 'Danayanti Azmi Dewi Nusantara, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (34, 201405003, 'Muhammad Imaduddin, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'ariston@windowslive.com', NULL, NULL, NULL, '2024-06-02 13:04:47', NULL);
-INSERT INTO `users` VALUES (35, 197110072005012001, 'Krisna Dwi Handayani, S.T., M.MT., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (36, 196003201999032001, 'Ir. Nurhayati Aritonang, M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (37, 195707311987122001, 'Prof. Dr. Marniati, S.E., M.M.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
+INSERT INTO `users` VALUES (31, 197012041999031003, 'Prof. Dr. Agus Wiyono, S.Pd., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'aguswiyono@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 09:52:04', NULL);
+INSERT INTO `users` VALUES (32, 196206291998021001, 'Drs. Djoni Irianto, M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'djoniirianto@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:19:40', NULL);
+INSERT INTO `users` VALUES (33, 198905102018032001, 'Danayanti Azmi Dewi Nusantara, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'danayantinusantara@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:39:14', NULL);
+INSERT INTO `users` VALUES (34, 201405003, 'Muhammad Imaduddin, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'splashtrick@gmail.com', NULL, NULL, NULL, '2024-06-12 12:46:57', NULL);
+INSERT INTO `users` VALUES (35, 197110072005012001, 'Krisna Dwi Handayani, S.T., M.MT., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'krisnahandayani@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:35:48', NULL);
+INSERT INTO `users` VALUES (36, 196003201999032001, 'Ir. Nurhayati Aritonang, M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'nurhayatiaritonang@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 09:54:04', NULL);
+INSERT INTO `users` VALUES (37, 195707311987122001, 'Prof. Dr. Marniati, S.E., M.M.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'marniati@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:21:37', NULL);
 INSERT INTO `users` VALUES (38, 197405142005012002, 'Prof. Dr. Mutimmatul Faidah, S.Ag., M.Ag.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (39, 196705071993021001, 'Drs. Ec. Mein Kharnolis, M.SM.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (40, 197111141997022001, 'Dr. Sn. Inty Nahari, S.Pd., M.Ds.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (41, 197807052005012001, 'Dr. Deny Arifiana, S.Pd., M.A.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (42, 198008022008122002, 'Octaverina Kecvara Pritasari, S.Pd., M.Farm.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (43, 198801262023211007, 'Apt. M.A.Hanny Ferry Fernanda, S.Farm., M.Farm.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
+INSERT INTO `users` VALUES (39, 196705071993021001, 'Drs. Ec. Mein Kharnolis, M.SM.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'meinkharnolis@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:04:18', NULL);
+INSERT INTO `users` VALUES (40, 197111141997022001, 'Dr. Sn. Inty Nahari, S.Pd., M.Ds.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'intynahari@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:10:06', NULL);
+INSERT INTO `users` VALUES (41, 197807052005012001, 'Dr. Deny Arifiana, S.Pd., M.A.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'denyarifiana@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 09:55:21', NULL);
+INSERT INTO `users` VALUES (42, 198008022008122002, 'Octaverina Kecvara Pritasari, S.Pd., M.Farm.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'octaverinakecvara@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:17:59', NULL);
+INSERT INTO `users` VALUES (43, 198801262023211007, 'Apt. M.A.Hanny Ferry Fernanda, S.Farm., M.Farm.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'apt.fernanda@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:44:23', NULL);
 INSERT INTO `users` VALUES (44, 198709252015042004, 'Dindy Sinta Megasari, S.Pd., M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (45, 196709281993032002, 'Dr. Lucia Tri Pangesti, M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (46, 196803221994032001, 'Nugrahani Astuti, S.Pd., M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (47, 199107022020121012, 'Andika Kuncoro Widagdo, M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
+INSERT INTO `users` VALUES (45, 196709281993032002, 'Dr. Lucia Tri Pangesti, M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'luciapangesthi@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:34:47', NULL);
+INSERT INTO `users` VALUES (46, 196803221994032001, 'Nugrahani Astuti, S.Pd., M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'nugrahaniastuti@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 09:53:34', NULL);
+INSERT INTO `users` VALUES (47, 199107022020121012, 'Andika Kuncoro Widagdo, M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'andikawidagdo@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:42:09', NULL);
 INSERT INTO `users` VALUES (48, 196004041987011001, 'Prof. Dr. Ekohariadi, M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:04', NULL);
-INSERT INTO `users` VALUES (49, 198702092015041003, 'Rahadian Bisma, S.Kom., M.Kom.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:05', NULL);
-INSERT INTO `users` VALUES (50, 198411242015041003, 'I Made Suartana, S.Kom., M.Kom.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:05', NULL);
-INSERT INTO `users` VALUES (51, 196701151992031000, 'Sugiono, ST', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:08', NULL);
-INSERT INTO `users` VALUES (52, 202203047, 'Rokhis Rosyidi, S.Kom', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:08', NULL);
-INSERT INTO `users` VALUES (53, 197104232002121001, 'Gitud Sudarto, ST', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:08', NULL);
-INSERT INTO `users` VALUES (54, 1201311204, 'Hening Ary Widhowati, S.Sos', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:08', NULL);
-INSERT INTO `users` VALUES (55, 1201707251, 'Hikmat Oka, S.T', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:08', NULL);
-INSERT INTO `users` VALUES (56, 1200302001, 'Jamiin', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:08', NULL);
-INSERT INTO `users` VALUES (57, 197505182001121002, 'Sumardi', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:08', NULL);
-INSERT INTO `users` VALUES (58, 197401222005011002, 'Anton Hartanto', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (59, 196609062001121001, 'Suhadi', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (60, 197610292005011002, 'Okky Ardiansyah', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (61, 197608072000031002, 'Slamet Riyanto', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (62, 198003032008011015, 'Margo Nurcahyo', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (63, 198507032014041001, 'Hendra Saputra P', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (64, 197209141999031002, 'Hendra Saputra S', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (65, 196707081989021001, 'Djarwo', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (66, 197209141999031002, 'Ronny Tuhumena', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (67, 201507057, 'Kusetyono L.S', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (68, 1200405004, 'Eko Heru Santoso, A.Md', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (69, 196809131993031002, 'Langgeng, ST.', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (70, 196812091994031003, 'Tohir Widada, S.Pd, ST, MM', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (71, 2200804121, 'Novi Camelia', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (72, 2200803120, 'Ali Mustain, ST', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (73, 197311172001121002, 'Sunyata, S.E', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'ariston45@gmail.com', NULL, NULL, '2024-05-27 16:59:09', '2024-06-02 21:19:14', NULL);
-INSERT INTO `users` VALUES (74, 2201401236, 'Agus Faudin, S.Pd', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (75, 202204060, 'Tuesday Tri Wardani, S.Pd', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (76, 197507021999031002, 'Rifky.S.T', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (77, 196705132000122001, 'Dra nusriningyati', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (78, 2201111147, 'Laylatul Al Bariyah, S.Pd.', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (79, 2201001132, 'Swandini Endar Damayanti, S.Pd.', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-27 17:03:09', NULL);
-INSERT INTO `users` VALUES (80, 197211032001122001, 'Kusuma Ayu NI, S.H.', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-27 17:03:10', NULL);
-INSERT INTO `users` VALUES (81, 202204061, 'Alful laili.,S.Pd', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-27 17:03:10', NULL);
-INSERT INTO `users` VALUES (82, 199105262015042001, 'Minnar Titis Santoso, S.Pd', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-27 17:03:10', NULL);
-INSERT INTO `users` VALUES (83, 201507052, 'Patni, S.Pd.', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-27 17:03:10', NULL);
-INSERT INTO `users` VALUES (84, 202204062, 'Siti Yuliana, S.Pd.,M. Pd.', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-27 17:03:10', NULL);
-INSERT INTO `users` VALUES (85, 1201506102, 'Sugianto, A.Md.', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-27 17:03:10', NULL);
-INSERT INTO `users` VALUES (86, 0, 'Afrizal Ibnu Ervianto.ST', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-27 17:03:10', NULL);
-INSERT INTO `users` VALUES (87, 197506082009101003, 'Zainul Abidin', NULL, 'active', 'LAB_TECHNICIAN', '', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-27 17:03:10', NULL);
-INSERT INTO `users` VALUES (88, 1116506, 'Dr. Ir. H. Soeparno, M.T.', NULL, 'active', 'LECTURE', '$2y$10$D2DNq1Yg6i7iH0HnCxwhk.NDE30RTXWnyhlVUafXQllY27PsGB5SG', 'soeparno@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (89, 16039502, 'Ratna Palupi Nurfatimah, S.TP., M.T.P.', NULL, 'active', 'LECTURE', '$2y$10$M.eXEnLObu7xCZQaPmQ7T.LdLGiql2iExB5lBXs9jtl276N69U14q', 'ratnanurfatimah@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (90, 5077803, 'Dr. Deny Arifiana, S.Pd., M.A.', NULL, 'active', 'LECTURE', '$2y$10$EpjO2/kmWl9fX0e8RdBbMuG1oz7bQaWy66S7PjPHaW.cu9vu16g/C', 'denyarifiana@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (91, 23048803, 'Dr.rer.nat. Sammy Alidrus, M.Sc.', NULL, 'active', 'LECTURE', '$2y$10$wDhJAzTHVRwXPpFaVp9sTuor15Jff5cCUuAYcOR5VG1Cf7jhnJJK.', 'sammyalidrus@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (92, 6077107, 'Prof. Dr. I Gusti Putu Asto Buditjahjanto, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$crEFBP086NGTrJSIJ9oTjeZnaEqKXQMgWErGa8OzIBFxu94.dTTNe', 'asto@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (93, 22036801, 'Nugrahani Astuti, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$VxGlMWTpsRDuZ2dyA3FlR.Yg/xOTPntvTiuAXHrYjvSE446nttJAa', 'nugrahaniastuti@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (94, 9086409, 'Dr. Dewanto, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$MzYSIzOAM674S9ZteG/z4.Q5.PWf4ESqqlI/ORtNhm8PvZNDBM.V.', 'dewanto@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (95, 20036004, 'Ir. Nurhayati Aritonang, M.T.', NULL, 'active', 'LECTURE', '$2y$10$8m2M7YG4nBvZs0kHXEVJ6.5PhY0Oh1rVfcuNeJdBLBofzE1Do0f7a', 'nurhayatiaritonang@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (96, 25036102, 'Prof. Dr. Bambang Suprianto, M.T.', NULL, 'active', 'LECTURE', '$2y$10$ebhYOW7fTmKz8gA/rDhP/.d2xpN.C3LFjmEkMRAMI4ATZnTevJo4.', 'bambangsuprianto@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (97, 9028702, 'Rahadian Bisma, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$.c.EGE2PNcczI7zEho7uBe7croSTLdsR.fTaN3sbFLONrQrmSEaty', 'rahadianbisma@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (98, 20038801, 'Akhmad Hafizh Ainur Rasyid, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$YCHvCey4V.7Uu12VcCpw/u4dS2HtlS0NCTJL/HkaDGLYJPPmGr742', 'akhmadrasyid@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (99, 13046304, 'Dr. Ir. Bambang Sabariman, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$9YOCeWRMZiznQiwLYzXXeuM16ZkVgSIh6gsCB0E6dh5VfwNKklxNa', 'bambangsabariman@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (100, 4117104, 'Muhammad Imaduddin, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$wHC6tfHB4TZUFy.Op3vEfOs09GzQYNsRMfKF7lcamrNNP8ITayG8C', 'muhammadimaduddin@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (101, 7028102, 'Mochamad Arif Irfa\'i, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$eBi6B1TLqAzxC702Rd6zXeRyqpbygLDkcmyKfaLCrYmBxw3FZuRPy', 'arifirfai@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (102, 715128303, 'Ir.  Wahyu Dwi Kurniawan, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$bZq5EcXQBjo/MImziR7vMujbsEMhYdG6OA/IbU3K0KE/lEhnf3vN2', 'wahyukurniawan@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (103, 21028109, 'Ardhini Warih Utami, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$mgurY82XBuFfieOX7HLiaeGegDz0qQ3olyMpq4P.EvZTN1hTRI1AK', 'ardhiniwarih@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (104, 4127004, 'Prof. Dr. Agus Wiyono, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$qAfRxb06k.AcVXrAVToNdeK9eSil0gO3veO7mxcKLfGHLbqjnr7NK', 'aguswiyono@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (105, 19056503, 'Drs. Bambang Sujatmiko, M.T.', NULL, 'active', 'LECTURE', '$2y$10$v7Z0dZ34Ermh.QAyxgHxH.H5dCbGqhiqwN5DV78pLgUxDTXQ4U0iS', 'bambangsujatmiko@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (106, 24118405, 'I Made Suartana, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$CwOBkCJDlhrIwS.IHCnIC.hSjExvCHcWRIl7aqRs2pNJSgZHS1V5u', 'madesuartana@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (107, 17127706, 'Nia Kusstianti, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$ksAf3zije84tLzj8rPBdkOSRibR5cIhN8L9hfBiPuq4ajhtQWlFim', 'niakusstianti@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (108, 22097302, 'Dr. Lutfiyah Hidayati, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$oi0QK4QnlnzeNclJw4edguYY6ux95xwdjNiFuIFQJzsSQw6FY/Xh2', 'lutfiyahhidayati@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (109, 6047303, 'Arie Wardhono, S.T., M.MT., M.T., Ph.D.', NULL, 'active', 'LECTURE', '$2y$10$n1L2rbuHwtxHwqC5onMTk.emKFKbIxKP9VROKSxUQQVdSeMr4Eujm', 'ariewardhono@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (110, 24046006, 'Dr. Mochamad Cholik, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$59LMseSr1T.Gx4QO/SF2se8vkRmughGVHNX.rbjdhbUQMt1HlHhGm', 'mochamadcholik@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (111, 21027602, 'Unit Three Kartini, S.T., M.T., Ph.D.', NULL, 'active', 'LECTURE', '$2y$10$5CWyZG4.MKA/51MvWGs.WOGHR3ZvztiA.8e3KOSgx7xCiUipAnGF6', 'unitthree@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (112, 716018704, 'Dr. Ricky Eka Putra, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$EK9d.JOIDOtxLL/cPnZGquMRjgtbudeb0R3cq4mME2hJuczkBHnSW', 'rickyeka@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (113, 10027105, 'Dr. Hj. Sri Handajani, S.Pd., M.Kes.', NULL, 'active', 'LECTURE', '$2y$10$eZ2n45/1VAK0X0LaO0SFZ.JUX.MRBX9urbjV2dn94UmG8Na86CV2a', 'srihandajani@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (114, 24118403, 'Biyan Yesi Wilujeng, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$tFHdLsV1rZDqb88hEtCXnuA6I9HbUC1uxftPDbcDnPgYOTPPBHyQ.', 'biyanyesi@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (115, 30098402, 'Tri Hartutuk Ningsih, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$cffLO7T8kCyms5oaZqR/u.AKG6Z.LQwCkEtaE0GThRGZRy1g5Bd4e', 'triningsih@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (116, 25038013, 'I Gusti Lanang Putra Eka Prismana, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$CmFL.Ugr54HoO4ywn8pcjONj49y6Q.LaOa8jCVj2XPY8ML3matjdG', 'lanangprismana@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (117, 25016903, 'Anita Qoiriah, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$ORcY3l3EAD56m9zJwmsEWuMD8iR/LGKg8uQgxo4YFsWdLvk3JaW0S', 'anitaqoiriah@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (118, 23058603, 'Farid Baskoro, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$xgEfOSDww/AiVNmYJNEUM.PNVaWbdUSAz8FO.Km.P2yzQBCbhk2MK', 'faridbaskoro@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (119, 3098901, 'Hanna Zakiyya, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$Nivdup820OjsywYU3Ibo4Ohrqasmr7Chy9yxuAlo58PEftDLXK7rS', 'hannazakiyya@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (120, 23086203, 'Dr. A. Grummy Wailanduw, M.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$tGD09nTBuNiBxMT6ezCTge30dwVquAFwaYfy.qaIcvdy7NwwdFth6', 'grummywailanduw@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (121, 12108004, 'Dr. Lusia Rakhmawati, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$onWjrmohRqFhOrXoDcl6r.u7iW37AJRUs5LB5H4lYGF0q0cbcYO66', 'lusiarakhmawati@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (122, 7056703, 'Drs. Ec. Mein Kharnolis, M.SM.', NULL, 'active', 'LECTURE', '$2y$10$bpPQcepJUNjHFYwR3RmXkewgfxyq48nmfn5rkp3DHiUtsUB7vahi2', 'meinkharnolis@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (123, 20127904, 'Dwi Fatrianto Suyatno, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$o55OxSE2GwcwLd90LX7aK.XXjxakSFtoY.erN7/5C0Tpgb/h9nGGK', 'dwifatrianto@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (124, 1117905, 'Nur Aini Susanti, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$wDkdpLTLTdkM/xJr3G/gR.4wxxb10VFVRPh/mCHqA80Od88CoKisO', 'nursusanti@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (125, 18046005, 'Dr. Soeryanto, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$8sWqiTHCGsAaPMEs3GGFNOTxACIl8E//WXAtMoRduCTT6hzBC3I/q', 'soeryanto@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (126, 712078801, 'Diastian Vinaya Wijanarko, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$UOw9KU.tG1MDJJjoapg9jO2VVMUWjvv6eGGAPpQVKgDhGkuQuAsSW', 'diastianwijanarko@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (127, 6027901, 'Sri Dwiyanti, S.Pd., M.PSDM.', NULL, 'active', 'LECTURE', '$2y$10$7tdNCqn8wvEo3FUieGzghuvxxZh/LcInw4R2X6XPeEies.zfPLF4C', 'sridwiyanti@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (128, 18116102, 'Dra. Dewi Lutfiati, M.Kes.', NULL, 'active', 'LECTURE', '$2y$10$4jGQmsnF.7OnuZTH07WQ8ObEr6hYdzG2xtPklWSvTc5hSE1dhzPCW', 'dewilutfiati@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (129, 21057204, 'Dr.  Nur Kholis, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$bZS7Rqr/xxttWZ9M9Dofeed2frwX4m2fwDmOkzyldimxVkUfUGfUK', 'nurkholis@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (130, 24118402, 'Novi Sukma Drastiawati, S.T., M.Eng.', NULL, 'active', 'LECTURE', '$2y$10$.PnRq62BUHujc9wUowjUFeUj6qP7ToyPLVBYAFiysYEeR3Uo3w.mO', 'novidrastiawati@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (131, 13087905, 'Prof. Dr.  Erina Rahmadyanti, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$yskcnDTw7fQ6c3xMtnKvLeQYWHJwUjR7IfULzJctjWaq1Wjgoua16', 'erinarahmadyanti@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (132, 14117105, 'Dr.Sn. Inty Nahari, S.Pd., M.Ds.', NULL, 'active', 'LECTURE', '$2y$10$OjsOqHwZ2jTl8eufRUVuCeLquAyH2BfddfxhCh2MTnH2xVSQEooZ2', 'intynahari@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (133, 4127803, 'Dr. Nurhayati, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$OdVbcm87.y/jKPR9ohdBLO2GG7hAv9mQzHZzrUpYDaVhWyEB0wEOK', 'nurhayati@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (134, 19077503, 'Yogie Risdianto, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$Lz7whBZQtwC5ZUysZEdhtOU1oJkicKx9vZA3JW6qMHfYtAWofbj2K', 'yogierisdianto@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (135, 29078704, 'Mochamad Firmansyah Sofianto, S.T., M.Sc., M.T.', NULL, 'active', 'LECTURE', '$2y$10$T9oQLbLdlhtmu6Id9BN9heStdX3CgTNgjrPDSH.MnfDX6fjZoY/JS', 'mochamadfirmansyah@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (136, 2126207, 'Dra. Nur Andajani, M.T.', NULL, 'active', 'LECTURE', '$2y$10$wbYtXNJjVJEiJNwfSb8WK.RIUvm2PR.UYVs7reK2sMcrZpMlDKCk2', 'nurandajani@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (137, 16078502, 'Yulia Fransisca, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$OgQoN7qxPPgfXUYfESpgnOOX9FbF6J3i09tv0.VwA2DIl3KxQA9my', 'yuliafransisca@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (138, 20087506, 'Dr. Subuh Isnur Haryudo, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$i6H75p7rTpkOskPJl7cY5.T1jd0kQz9fso6BeaPjNuW5O2SuVxqgi', 'subuhisnur@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (139, 17087505, 'Dr. Raden Roro Hapsari Peni Agustin Tjahyaningtijas, S.Si., M.T.', NULL, 'active', 'LECTURE', '$2y$10$3ZECCjD/ywhjhjhbyRlgjun/eSipQ.kEN9mw8m2htCDkiGExXcEze', 'hapsaripeni@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (140, 27108403, 'Dr. Yeni Anistyasari, S.Pd., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$UgxLmDS2pnXPRoYus3Cud.IOYt/gFGckWA2TQDh/S6d0j6m6MvJl2', 'yenian@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (141, 7026904, 'Ibrohim, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$iPm9yYbagSSlu5GTK4lXke4sNUmGBY5V3H6aPTcQycuwI6etjidju', 'ibrohim@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (142, 701128101, 'Imami Arum Tri Rahayu, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$rayfN2pzJAZhePpiFWMwc.L6.j/EoKCiBhwL5M.lX0ENdk.T4MY8G', 'imamirahayu@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (143, 13058110, 'Dr. Gde Agus Yudha Prawira Adistana, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$iHg4cSMzKyA6732vMb6N1uiVJ36AE5PKHM64.pWXFohcsK2HNPO7q', 'gdeadistana@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (144, 30037800, 'Dr. Aris Ansori, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$u5J8wc4Cz7KvZAINNKD/4ON7P7YJ9rxeoqkxbcpzIKBtGKUbb6zhC', 'arisansori@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (145, 2088004, 'Octaverina Kecvara Pritasari, S.Pd., M.Farm.', NULL, 'active', 'LECTURE', '$2y$10$9gJ76AqqrUW8tLOPCvKGU./eavfZ/0FTCr.pdMG4AInW1PGFNpszO', 'octaverinakecvara@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (146, 2097901, 'Dr. Lilik Anifah, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$Yl/ujuwe5xzwAvoDJoTRCOxqPstACsizYwlzfEzj1jSyAArDebZHG', 'lilikanifah@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (147, 13096103, 'Prof. Dr. Muhaji, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$Gta8BMNgJZLa6.GzKXkwz.tx5cezAzzRDErw2hdhcQ6IGvNNCsKcS', 'muhaji61@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (148, 25067709, 'Muhamad Syariffuddien Zuhrie, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$z6AiMCwiKKXF51puNzUwzOu8kmfadWpMX9W5auMMQXYEuGhnIqCfi', 'zuhrie@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (149, 7097103, 'Indra Herlamba Siregar, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$cHCgs2n2LW0sAELbGm1ydekK6xrU3Xa9hgIwH.P93uxXMVtnSB4aS', 'indrasiregar@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (150, 29066201, 'Drs. Djoni Irianto, M.T.', NULL, 'active', 'LECTURE', '$2y$10$MGrMsQTWa9iRIBR3UEebE.CabiLtPuEX.36knatVcmRkIjEIUOgn.', 'djoniirianto@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (151, 5036509, 'Dr. Djoko Suwito, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$NHWkmjpXDpmJYa7O3BuECu1JGKA8J/rsUr/OyBIjF33PORD5BO1JG', 'djokosuwito@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (152, 2047602, 'Ir. Priyo Heru Adiwibowo, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$JFt9HDRT1ix9Q8pQrzf3B.OOSFT/5UJqWeaJZ3b9gZPzIX7.DYSmW', 'priyoheruadiwibowo@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (153, 17126805, 'Dr. Rina Harimurti, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$Q8sIMbTTzrRuqS00x3O0b.jCKo9GVSMCepr.BiQOkPBzPwbff..Me', 'rinaharimurti@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (154, 2067504, 'Dr. Yuni Yamasari, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$M9nyqCkc0BH1JWnjUXSGo.gAeqYPNl4sZXZKglVhcHjdj.NNwvOs2', 'yuniyamasari@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (155, 2117005, 'Iskandar, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$gY.v2lipgUYZ4SFkVn6Ri.K4E5zHSGuu77KJNcX9I077vzCkObrRW', 'iskandar@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (156, 29068803, 'Pradini Puspitaningayu, S.T., M.T., Ph.D.', NULL, 'active', 'LECTURE', '$2y$10$Ifo6D2w7ZmYbqkoy/ogAjOIK12Fk6R16X96IuZ0C2bmELCl1qo5wq', 'pradinip@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (157, 24068703, 'Bellina Yunitasari, S.Si., M.Si.', NULL, 'active', 'LECTURE', '$2y$10$/RTUuldaIt0Q1UNgsyPAh.yS5r/FPkH5TJXfy3cBGWn4oIDuO89hy', 'bellinayunitasari@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (158, 12048006, 'Aries Dwi Indriyanti, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$9c.BDXvrC4.UbOgMhmwY1OJQ3yWk.uieTqy.QYxqCQ7Jb6u0SGC.W', 'ariesdwi@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (159, 7086006, 'Dr. Ir. Asrul Bahar, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$DWdReSt08lBufqScgacnuOjmoUYZQjy/FuNdll3XYJ60i5A526/ny', 'asrulbahar@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (160, 19056502, 'Drs. Andang Widjaja, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$RqW1q/aLGUFaNyZmutOome/n9x82SIezmPv/Vz.uFiFO9Y5.9CsjK', 'andangwidjaja@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (161, 1046411, 'Dr. Maspiyah, M.Kes.', NULL, 'active', 'LECTURE', '$2y$10$evpEZbLRwv727zbcvbkDT.a4ZHuo83rha86WgBRWyosJQecz5iFYa', 'maspiyah@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (162, 20046403, 'Dr. Edy Sulistiyo, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$kxKiJKgTSYKCu.3AdeBsJOACt/SltwV9w8d9nwMst9gg7ujAuqkGm', 'edysulistiyo@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (163, 31075702, 'Prof. Dr. Marniati, S.E., M.M.', NULL, 'active', 'LECTURE', '$2y$10$qn.8Uo28qC1UWPZwDwxnk.CUwoTjCIrbj2x9LvFtyWQraOeJQGFXG', 'marniati@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (164, 16127101, 'Ninik Wahju Hidajati, S.Si., M.Si.', NULL, 'active', 'LECTURE', '$2y$10$7xbTEVME5zsFb/87IGh..uNHxEqemNPErrxlZJNvx7qpISXoAbsvi', 'ninikwahju@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (165, 11037706, 'Dr. Mohammad Effendy, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$cM0ipwChqU4SYIo/1SHXRua2pulcqZvhCYVYMLe.QHJIbFlIj1XPa', 'mohammadeffendy@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (166, 3027708, 'Wiyli Yustanti, S.Si., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$P9eJJkd3uG21sI2xwIAJxuoDutd1KbTwPyg0XuQFuZ/VU/bbmrrPy', 'wiyliyustanti@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (167, 704038901, 'Rifqi Firmansyah, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$ZorMGPShqBs0PVkXwLh2sudhhC/IuyyeS3xmw8ylfbKCzIG3YjKZS', 'rifqifirmansyah@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (168, 28096702, 'Dra. Lucia Tri Pangesthi, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$jbolLVYeVZMrVuf3z8G/j.WdkAJHpPm0ARCQuvwHtCaGUClkmHzH2', 'luciapangesthi@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (169, 6087903, 'Agus Prihanto, S.T., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$AfQMW817OIOEZmP1sqf/bOuVVVX9aut2utkUF1Cf9d6gX3kA3hNaK', 'agusprihanto@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (170, 7107105, 'Krisna Dwi Handayani, S.T., M.MT., M.T.', NULL, 'active', 'LECTURE', '$2y$10$NhBUS8F1q912/tGNDHLobORNFT7VNwpY1Qecb.hhSKySQER5Bd9T6', 'krisnahandayani@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (171, 22067003, 'Dr. Puput Wanarti Rusimamto, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$T.tb7gqvdO804RVTmYDVbO7ducB32u8g.DY/DwIdVjHriYh2w7c1u', 'puputwanarti@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (172, 20096903, 'Agung Prijo Budijono, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$2RrSnn2CAp9SsQZmutGut.w0Zt0TjvrIsHwz.TGplGgb04pw1AU1u', 'agungbudijono@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (173, 12038901, 'Mauren Gita Miranti, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$eimMeJMZG19iUoNIlX007uXVX9r7NiKAh2eBD56Ur4lE//lJ5cujm', 'maurenmiranti@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (174, 18066802, 'Dr. Ir. Achmad Imam Agung, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$KsPCy1HDiPkB2jhgwNaiS.gRAP3bsRkWxqOBVENOmIl/CjNucdkHW', 'achmadimam@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (175, 28126704, 'Prof. Dr. I Made Arsana, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$cgisSwx5phGjtBGL3Gi3ueP72oR2KVOcHrIWmLuneJ8v17MYaWSZi', 'madearsana@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (176, 4036708, 'Hendra Wahyu Cahyaka, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$6tw../M7Hzycly0XY4XiMOjv6tSZbY57V3L.0UJ2GGvkDmi2JISSS', 'hendracahyaka@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (177, 25126605, 'Saiful Anwar, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$wxXoCd7H69CUIJhKdn1hxuicXkadGB.60OiLiY/vq7LnEF2IiqsmS', 'saifulanwar@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (178, 31036406, 'Endryansyah, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$4P4m6InBd746Fhkj2yQMsunwsqmJX/ihoUzdikhN6DQicK9/hbEh.', 'endryansyah@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (179, 23046502, 'Dr. Yunus, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$4fvSsLOv8/DwfAfJR/QmKuzSW/2yXYOIYxH.kJPM3Os0ns88LBQKm', 'yunus@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (180, 1117406, 'Aditya Prapanca, S.T., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$xXjuca6J1d0q5bVrFQzhYOgUoQp1pIqfSltxmG/cdH.dkxpf2F0CO', 'adityaprapanca@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (181, 1047307, 'Ir.  Mas Suryanto H.S., S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$cJiUXleBMoyIB8o.LsrwLu/pVJLxkxhlU2aY6HQSiR8DcG.meSm9e', 'massuryantohs@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (182, 10058904, 'Danayanti Azmi Dewi Nusantara, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$r8T4.Zf5d0M98RJWbUGjcuivxHOp.bxgmRGPTShmKUbpapYdodX42', 'danayantinusantara@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (183, 20099101, 'Ma\'rifatun Nashikhah, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$63kjOsL6mjatyeDvBmgfSOJzDNcv2GWYSk6FJWjOG/m2QidQP7hPa', 'marifatunnashikhah@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (184, 7028704, 'Peppy Mayasari, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$xYPEqrzZpeICnPmMxTY3s.b0jI1Rq/3sP5UJubiK4DTPRM9XzehGi', 'peppymayasari@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (185, 701129003, 'Fendi Achmad, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$nBIbvhZNWAvvFjRAs0l8kOMMluLlDCuT9ueW67sfQj/mMal29MU3a', 'fendiachmad@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (186, 703079005, 'L. Endah Cahya Ningrum, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$j/46aXKo6jbVJdbdG03XouCEq4BOC5dZQrDabz1whrIr0Ug7ttTDe', 'endahningrum@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (187, 7078705, 'Miftahur Rohman, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$Rgl3yFMDB4LhKCC1nm2sMuYipBLmmLKWi47eRVFvFycju03DkLUai', 'miftahurrohman@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (188, 26078508, 'Heru Arizal,  S.Pd., M.M., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$4Cbkzz7Af051ZnldcemPA.kU7RYh/LA6uUq8ygiUIknTqwiopaMtC', 'heruarizal@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (189, 729058902, 'Paramitha Nerisafitra, S.ST., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$Gk6bi77IUM/LXhRV3Dxcc.i5gvj0UrxhHnTN7yQnoYHahv0MQESl.', 'paramithanerisafitra@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (190, 9039301, 'Ghea Sekar Palupi, S.Kom., M.I.M.', NULL, 'active', 'LECTURE', '$2y$10$vbPH6xjGLbSJgknj6Apjjutl3h5PE0YeCZXcdyZ02tViK93dk2CSG', 'gheapalupi@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (191, 5099302, 'Rindu Puspita Wibawa, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$j66q1kLSucMUFUu20G9se.7Twp2w5rsMkuQi5PUTZkYVWSerack7q', 'rinduwibawa@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (192, 27088504, 'Muamar Zainul Arif, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$XraWkMprK34ICjIX5SEw4ORP1LKMwhEm6McMXUFldlteOJiXDJ6nG', 'muamararif@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (193, 720048904, 'Ali Hasbi Ramadani, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$8RABh92.9jaCPSx/KJXJnuBw3Mu4rZxajddCJApYcfXi0A7QAHgvO', 'aliramadani@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (194, 6128708, 'Rachmad Syarifudin Hidayatullah, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$g.BsqvTYb0yv2t5O2w1MC.SVcpD2yLhCvbP9565NanGoST5TaBME6', 'rachmadhidayatullah@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (195, 4049013, 'Ika Nurjannah, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$iLwL007ucvARX.0/I904Xe.cRqIxCZniWu4idF1z1wTdr3PUo7O2y', 'ikajannah@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (196, 2068907, 'Wahyu Dwi Mulyono, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$ShM145gP1wOwA24VEQEBO.o7RUBVFPXbQHZC8UbkRdmO/YVrmDJEC', 'wahyumulyono@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (197, 26128701, 'Heri Suryaman, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$qfzUjQkFis9IqknSVeU2GO2MLAUBvawwnoOz14OFboVInL/ONLT9S', 'herisuryaman@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (198, 28059106, 'Meity Wulandari, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$xt4hceMI5iX9fBxGIYgAY..7PCeXVFbfu6fh9MfCb70nTPshpwSjq', 'meitywulandari@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (199, 730078601, 'Abdiyah Amudi, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$.3AoBFerDkbGsXIWCgG0t.h5OoDhJYIGFLBlLN3oL2fGIYUFlT0j.', 'abdiyahamudi@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (200, 9029108, 'Mita Yuniati, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$YKrjAmaRDWwKD8as6yBGgeUHo4gWmz3y1DcKqIQYNcIsXUsf1C27y', 'mitayuniati@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (201, 2079104, 'Andika Kuncoro Widagdo, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$iUU.02hGN4715./wZblHtOs1W0AAm9Ah5Gp5TUpodNa5b400LJ/8S', 'andikawidagdo@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (202, 26079205, 'Lynda Refnitasari, S.Si., M.URP', NULL, 'active', 'LECTURE', '$2y$10$jPzYrIOMZaKJaWCvCtY/0e2lxPsc5G4QSxlz6lT0YxF2y.2eyddEK', 'lyndarefnitasari@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (203, 729119001, 'Handini Novita Sari, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$JjEa5Y7vqBqBSI6aMFruKOToHM3Hgwci8Cr463DpGr6bcYRP/wGx6', 'handinisari@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (204, 714019401, 'Parama Diptya Widayaka, S.ST., M.T.', NULL, 'active', 'LECTURE', '$2y$10$PqN.rKAM1MTgo14jm7QOHuJbzFVWC960mCI8drehaVFfC4ArOEth2', 'paramawidayaka@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (205, 30119301, 'Roswina Dianawati, S.Pd., M.Ed.', NULL, 'active', 'LECTURE', '$2y$10$8BIVw891fkXMfiZuO1XSOeoLxly5WMsmDhdovsQaUhHS8fj8Us0We', 'roswinadianawati@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (206, 26029701, 'Alwan Gangsar Brilian Putra, S.Tr.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$Eze3Gs.7jhhQjmyCXueh6.6NOmihlobCb0IWdeFqQz2k1p0GI0xFK', 'alwanputra@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (207, 9079802, 'Sayyidul Aulia Alamsyah, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$zgsbEiF1PlicGPhfjXoTrOsDpPMCqj2hcnwPSaMeL9fmdAp0gMf6a', 'sayyidulalamsyah@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (208, 1019312, 'Bima Anggana Widhiarta Putra, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$708bVtjtRnUATGTtANK4D.CaJxBq8ZdiN3p7O8GE.C/qdmdnqDCZK', 'bimaputra@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (209, 1079106, 'Ervin Yohannes, S.Kom., M.Kom., M.Sc., Ph.D.', NULL, 'active', 'LECTURE', '$2y$10$Ab9/VDmM57ioy0yc33tlvOstZr/8F.cAhHV9QD8RHjWzr29QaUGhe', 'ervinyohannes@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (210, 706038903, 'Ahmad Saepuddin, S.T., M.Sc.', NULL, 'active', 'LECTURE', '$2y$10$kPz82iyFAbWQRg0XFF8dXOsdQ3MeV6b0pGIU1DqvcAK3SWUbf.qU.', 'ahmadsaepuddin@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (211, 3819129301, 'Nurul Farikhatir Rizkiyah, M.Pd', NULL, 'active', 'LECTURE', '$2y$10$5aQxXO6KMMJdjp325uSUb.yqv4HhZGwYRjubwzt.AGEckA2xlFMu2', 'nurulrizkiyah@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (212, 705018402, 'Nurul Makhmudiyah, S.Si., M.T.', NULL, 'active', 'LECTURE', '$2y$10$pcxzoBaAt6mp1sHKMC0LmuWYTeS8c1eztyrdg.Or45ra02Hxpme3S', 'nurulmakhmudiyah@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (213, 608129105, 'Desy Ratna Arthaningtyas, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$Tz3AHoPQVlRZJCExedBBSuaWxy9VniogkN5Vcc5NrzYp/3SYI.2By', 'desyarthaningtyas@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (214, 726018802, 'apt.  M.A. Hanny Ferry Fernanda, S.Farm., M.Farm.', NULL, 'active', 'LECTURE', '$2y$10$3gPN4Js.O/VoTNFOd/KeGezoZZrIli1Wv1KGyyQE0zlfnHYjSWfVi', 'apt.fernanda@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (215, 12029306, 'Febriani Lukitasari, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$tbRQpvdeWU9c8wUdOUI0auFfXV.2GBjza7LRb8RQrxuGB5kSQBpTG', 'febrianilukitasari@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (216, 23129601, 'Annisa Nur\'aini, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$1vCdaS4tohKInHrmFv6rZeE5O1F8t6y5ugI/VZ/NcrYc7POj.SBn.', 'annisanuraini@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (217, 5069801, 'Rendra Lebdoyono, S.T.P., M.Sc.', NULL, 'active', 'LECTURE', '$2y$10$BYdqXhE3f8kVgS1tKwuxXeENKvJ2wihWhTkodgBIT3Z2G8zYoJLy2', 'rendralebdoyono@unesa.ac.id', NULL, NULL, '2024-06-01 14:28:44', '2024-06-01 14:31:14', NULL);
-INSERT INTO `users` VALUES (218, 20050724036, 'ALIF AKBAR HIDAYATULLAH', NULL, 'active', 'STUDENT', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'trustopenmail@gmail.com', NULL, NULL, '2024-06-01 14:33:08', '2024-06-02 13:02:33', NULL);
+INSERT INTO `users` VALUES (49, 198702092015041003, 'Rahadian Bisma, S.Kom., M.Kom.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'rahadianbisma@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 09:55:36', NULL);
+INSERT INTO `users` VALUES (50, 198411242015041003, 'I Made Suartana, S.Kom., M.Kom.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'madesuartana@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:00:27', NULL);
+INSERT INTO `users` VALUES (51, 196701151992031000, 'Sugiono, ST', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:23', NULL);
+INSERT INTO `users` VALUES (52, 202203047, 'Rokhis Rosyidi, S.Kom', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:23', NULL);
+INSERT INTO `users` VALUES (53, 197104232002121001, 'Gitud Sudarto, ST', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:23', NULL);
+INSERT INTO `users` VALUES (54, 1201311204, 'Hening Ary Widhowati, S.Sos', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:23', NULL);
+INSERT INTO `users` VALUES (55, 1201707251, 'Hikmat Oka, S.T', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:23', NULL);
+INSERT INTO `users` VALUES (56, 1200302001, 'Jamiin', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:23', NULL);
+INSERT INTO `users` VALUES (57, 197505182001121002, 'Sumardi', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:23', NULL);
+INSERT INTO `users` VALUES (58, 197401222005011002, 'Anton Hartanto', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:23', NULL);
+INSERT INTO `users` VALUES (59, 196609062001121001, 'Suhadi', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:23', NULL);
+INSERT INTO `users` VALUES (60, 197610292005011002, 'Okky Ardiansyah', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (61, 197608072000031002, 'Slamet Riyanto', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (62, 198003032008011015, 'Margo Nurcahyo', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (63, 198507032014041001, 'Hendra Saputra P', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (64, 197209141999031002, 'Hendra Saputra S', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (65, 196707081989021001, 'Djarwo', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (66, 197209141999031002, 'Ronny Tuhumena', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (67, 201507057, 'Kusetyono L.S', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (68, 1200405004, 'Eko Heru Santoso, A.Md', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (69, 196809131993031002, 'Langgeng, ST.', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (70, 196812091994031003, 'Tohir Widada, S.Pd, ST, MM', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (71, 2200804121, 'Novi Camelia', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (72, 2200803120, 'Ali Mustain, ST', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (73, 197311172001121002, 'Sunyata, S.E', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'ariston45@gmail.com', NULL, NULL, '2024-05-27 16:59:09', '2024-06-03 08:12:49', NULL);
+INSERT INTO `users` VALUES (74, 2201401236, 'Agus Faudin, S.Pd', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:09', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (75, 202204060, 'Tuesday Tri Wardani, S.Pd', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (76, 197507021999031002, 'Rifky.S.T', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (77, 196705132000122001, 'Dra nusriningyati', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (78, 2201111147, 'Laylatul Al Bariyah, S.Pd.', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (79, 2201001132, 'Swandini Endar Damayanti, S.Pd.', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (80, 197211032001122001, 'Kusuma Ayu NI, S.H.', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (81, 202204061, 'Alful laili.,S.Pd', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (82, 199105262015042001, 'Minnar Titis Santoso, S.Pd', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (83, 201507052, 'Patni, S.Pd.', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (84, 202204062, 'Siti Yuliana, S.Pd.,M. Pd.', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (85, 1201506102, 'Sugianto, A.Md.', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (86, 0, 'Afrizal Ibnu Ervianto.ST', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (87, 197506082009101003, 'Zainul Abidin', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-05-27 16:59:10', '2024-05-31 14:01:24', NULL);
+INSERT INTO `users` VALUES (88, 16039502, 'Ratna Palupi Nurfatimah, S.TP., M.T.P.', NULL, 'active', 'LECTURE', '$2y$10$g8llLfI.RHIHKfgaUghWxeh5xsHDh/LBnNuP7fGhMN.LwR5bBxDB.', 'ratnanurfatimah@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (89, 23048803, 'Dr.rer.nat. Sammy Alidrus, M.Sc.', NULL, 'active', 'LECTURE', '$2y$10$r0bkDzIBttdkdhDWHt5yt.RAtOmNtZGBK02jGw2.nd3sJAtjFTQKC', 'sammyalidrus@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (90, 6077107, 'Prof. Dr. I Gusti Putu Asto Buditjahjanto, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$H2pr.0L4RIR39vljGuWqL.VIVnUqzsm.7syddglwWQu1MTjn7Xmd.', 'asto@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (91, 7028102, 'Mochamad Arif Irfa\'i, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$o/V1KnUWDoMvhK6suxB2Qu9DRwxApu6rL3X9RrDpyo/pvLUiQpIdq', 'arifirfai@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (92, 13046304, 'Dr. Ir. Bambang Sabariman, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$UGOULxvejWJ3CQvyJOwTKuwSRmvoFXnHxdSPg8ZWO91tRLR.otK6S', 'bambangsabariman@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (93, 17127706, 'Nia Kusstianti, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$WD..UqxwYs7r7witScvzYO7F9wfw.FQsZZ1LAIH4p5.wZsy6wr4dm', 'niakusstianti@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (94, 1117406, 'Aditya Prapanca, S.T., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$8avp0fOrmPuIw/XP8clyBuPy4toCCmr2NPPuwkyOD.6fFTEBQqspi', 'adityaprapanca@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (95, 715128303, 'Ir.  Wahyu Dwi Kurniawan, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$YThCB4lCinZOs3ZvuWovieJynjYY1Dyrbh0l.eYYdQaZN.l9lCJWC', 'wahyukurniawan@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (96, 21028109, 'Ardhini Warih Utami, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$iAa8P5IWTwLdAjtMA0wdfuNnyZcg4oUr.e4S32h0w8X.kEkuWiNHe', 'ardhiniwarih@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (97, 19056503, 'Drs. Bambang Sujatmiko, M.T.', NULL, 'active', 'LECTURE', '$2y$10$xSC6mhNJrNMmaA4O4x12GO9uouw3AyjizDaRIbNs5Rin76iVO5X56', 'bambangsujatmiko@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (98, 7028704, 'Peppy Mayasari, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$o9fDPEOj1qflu.P6wlZNLOo.YauxjjZPisqsAe4vQ1T3gXRO27N7a', 'peppymayasari@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (99, 729119001, 'Handini Novita Sari, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$4kz3S893V7NXkP1c9gu1luVQ6vdqzeFgeyjM8s0RwY.BipETsgOm2', 'handinisari@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (100, 714019401, 'Parama Diptya Widayaka, S.ST., M.T.', NULL, 'active', 'LECTURE', '$2y$10$4KCKWBcQxNY1SOBF1b/IDeiNp/yjuJV/DUTznGWXAhkz0iRotRUkC', 'paramawidayaka@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (101, 22097302, 'Dr. Lutfiyah Hidayati, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$UQn6UJcv.h4UkuWMakiv3uMZvdIPz3mnhLEu4XS1QHNteLWH.5T36', 'lutfiyahhidayati@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (102, 6047303, 'Arie Wardhono, S.T., M.MT., M.T., Ph.D.', NULL, 'active', 'LECTURE', '$2y$10$G9quEIjQXtJaPhuAaNWAmeWsY88d2DLeZ4NetUVq9p5ixqAHrh2Qy', 'ariewardhono@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (103, 24046006, 'Dr. Mochamad Cholik, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$P9QZiZhrcT2Fx6ziXet2XuPNEDQXhxJohJdEiTr21IagWlyUmLiRa', 'mochamadcholik@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (104, 21027602, 'Unit Three Kartini, S.T., M.T., Ph.D.', NULL, 'active', 'LECTURE', '$2y$10$eop2a711GKDfsNEzZwDo.OvLoyjqtgnz.FzGldp5msh0pytR2kw2q', 'unitthree@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (105, 716018704, 'Dr. Ricky Eka Putra, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$ZIBSf8/jUvCoP3TNjXPmc.Ie4sdqI0J/UzecXttfuZzSjZ5imhjsO', 'rickyeka@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (106, 10027105, 'Dr. Hj. Sri Handajani, S.Pd., M.Kes.', NULL, 'active', 'LECTURE', '$2y$10$h7UgrQqsStu4U3807iPI7.YeX.Et.kVYis9csY1G1AL/2fg5JRhFK', 'srihandajani@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (107, 24118403, 'Biyan Yesi Wilujeng, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$6vYpc/pq8i/luTdK/nu6XeisGaGTYc7/mgK3YacH.91Wwk2m1LFD6', 'biyanyesi@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (108, 30098402, 'Tri Hartutuk Ningsih, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$l8jH3yDJvS3NBlnBf7QWwuRIkej1cl7ki9sLVUKngVSDd8K.hwZ/q', 'triningsih@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (109, 25038013, 'I Gusti Lanang Putra Eka Prismana, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$BhiEqLmsIyFKsnTePSSM1OCoq6rDlHlJSEybEa0U1lCU7gDlcuW3G', 'lanangprismana@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (110, 25016903, 'Anita Qoiriah, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$UP5ETEnnvi9qxpj8.16Rv.bom075zRDlBB97gmZkDzFnAgfBFodWG', 'anitaqoiriah@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (111, 3098901, 'Hanna Zakiyya, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$iEZtWgz1QKwN68uZdfUmIecl/f.I3SX8sVY9YWlUJyQf7a3AndPEC', 'hannazakiyya@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (112, 12108004, 'Dr. Lusia Rakhmawati, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$8Zv0ujAl15Qz6AFxHVQoiun3XdrD7Z7p0zWmeuDOR69f00cPYWeni', 'lusiarakhmawati@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (113, 20127904, 'Dwi Fatrianto Suyatno, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$HsSVCEIbnkPQ4VneCgBwE.1RtzpSYXaXMLMdNwZFNFgyn5hlYdpOW', 'dwifatrianto@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (114, 1117905, 'Nur Aini Susanti, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$2Fb/DRbBtwztCoAYsDCoj./UX.bwq5TMYcgP4TqYb5YTDJoTnJURe', 'nursusanti@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (115, 18046005, 'Dr. Soeryanto, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$vKdtL8Q5gZFFMbIyyaowz.tr1agQFJtZvlhYeqjJAhTfeqGMLcq/.', 'soeryanto@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (116, 712078801, 'Diastian Vinaya Wijanarko, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$6HgENndcQ8./aEWIuF72tull3fzYRVotzFd3SU39iP322BByTrH/q', 'diastianwijanarko@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:53', NULL);
+INSERT INTO `users` VALUES (117, 6027901, 'Sri Dwiyanti, S.Pd., M.PSDM.', NULL, 'active', 'LECTURE', '$2y$10$iOUnZdGp4Dav37tPSlZLGuYGcx2HXtT8C5TApLMAi3tQgiPX07qlC', 'sridwiyanti@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (118, 18116102, 'Dra. Dewi Lutfiati, M.Kes.', NULL, 'active', 'LECTURE', '$2y$10$klpNm2oN6/J.3Q/evfXYv.2Ud78Au5/.VB5MbiRr7tPggr5qhxl4q', 'dewilutfiati@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (119, 21057204, 'Dr.  Nur Kholis, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$u6NpKguwpHWwv5rVIEU9iO2XqD1ItP8gp/ReqD8Qb4cQDESJJ3K0a', 'nurkholis@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (120, 24118402, 'Novi Sukma Drastiawati, S.T., M.Eng.', NULL, 'active', 'LECTURE', '$2y$10$l44SFuHRd0TWWh6DgjAGhO40XZwQbN/pgh/arCg4a3pm/BRQNB50S', 'novidrastiawati@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (121, 13087905, 'Prof. Dr.  Erina Rahmadyanti, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$lxHNfrR.jDXd0PsIDQtYy.uAoTqioTghtdrhzP8LJIvZ//fbN/uZm', 'erinarahmadyanti@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (122, 4127803, 'Dr. Nurhayati, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$YGLQD6IMlP3wSsLjoH/NvO4bhBA9qwPictmBKGbZttZntG.O52.3C', 'nurhayati@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (123, 19077503, 'Yogie Risdianto, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$V9MSRxL/Mb2TJPGFfjw9iOVsWy2Q9UpRk3UAmkMPJD1Yp7L04L3fW', 'yogierisdianto@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (124, 29078704, 'Mochamad Firmansyah Sofianto, S.T., M.Sc., M.T.', NULL, 'active', 'LECTURE', '$2y$10$qtAbAXvu1tRhWSibuooH4uqJ4FdbtCwB3HCm292lNS1iHT4NvINR6', 'mochamadfirmansyah@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (125, 2126207, 'Dra. Nur Andajani, M.T.', NULL, 'active', 'LECTURE', '$2y$10$ct6xkQRfkScv2HGMDa9d8.9SWULeBIHW8b3KdetQEUBqQwmCThnoC', 'nurandajani@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (126, 16078502, 'Yulia Fransisca, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$0PYRjNGD.1I2Lc9RnzO2muob4hMKyIXGMFaH39bFs2v3XzkJQ68Oa', 'yuliafransisca@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (127, 20087506, 'Dr. Subuh Isnur Haryudo, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$2gEIDnCjIdwFUxk1m48Yv.3J7cibY87mI4ZL8AOv3DMp/Jo48a/3y', 'subuhisnur@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (128, 17087505, 'Dr. Raden Roro Hapsari Peni Agustin Tjahyaningtijas, S.Si., M.T.', NULL, 'active', 'LECTURE', '$2y$10$iKpspAwJOSSkMeGeCsGFx.JuuTk.QBEq4uypftW4euX5hyuWNk7y2', 'hapsaripeni@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (129, 27108403, 'Dr. Yeni Anistyasari, S.Pd., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$3xJFrf2F/qPUsTFfxVmPz.p9L5KrtDGbaZ2El3j.1o0Q.Q/GgzDlC', 'yenian@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (130, 7026904, 'Ibrohim, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$rIdr..umqComEnzpCfGMFuSjEOubtep0qqgY6GYNwUxWcGnHFmZp.', 'ibrohim@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (131, 701128101, 'Imami Arum Tri Rahayu, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$D58vekaM3jnlkvk8H2ppluVeOIjFnD4pqhbFCIN/zCNpNDtPOWXrG', 'imamirahayu@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (132, 13058110, 'Dr. Gde Agus Yudha Prawira Adistana, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$HvCvYLWgAFw5nNQpSNcpOOl83nZqqZGHHQjJGTamvKebhBP/0K8oi', 'gdeadistana@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (133, 2097901, 'Dr. Lilik Anifah, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$iPzLApEXW2sDRFxxFI6G0ukFGx3pyMMggTF2csTW7i9Jvbfy0NqQC', 'lilikanifah@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (134, 25067709, 'Muhamad Syariffuddien Zuhrie, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$ecntzOXuB1H.RVbeVOzOduj9wnq8p.XHFg/aNJnoZX5l9PkIKdvUO', 'zuhrie@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (135, 5036509, 'Dr. Djoko Suwito, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$BrzuUoZFkg4u5D3qzLZcPuEkXQgdb7ZbmghasQ.9J7IdiuS3d./K6', 'djokosuwito@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (136, 2047602, 'Ir. Priyo Heru Adiwibowo, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$LfrUrDIA.JIzfbZEZYm7XOb8ABxbpKlm22br3tuf47tHUUkTNIQAK', 'priyoheruadiwibowo@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (137, 17126805, 'Dr. Rina Harimurti, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$P6ahCz1g/KV0frOSMySHzeFp8NaLPCKZ1Tlq6ezSGy2I5XdUIAXD2', 'rinaharimurti@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (138, 2067504, 'Dr. Yuni Yamasari, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$qFlXfStWxChh7zA.LyLu6.XuAGhtVHDe.fgcrmJC8cS4Kx1tPcx0W', 'yuniyamasari@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (139, 2117005, 'Iskandar, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$WGFNfwDkHGHcBRpYE3PVguKLfUqvJ6DzJKWoPSkBI3pY7eKXu8MPW', 'iskandar@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (140, 29068803, 'Pradini Puspitaningayu, S.T., M.T., Ph.D.', NULL, 'active', 'LECTURE', '$2y$10$DrSMTv.LvUpUBFxp.Fsl.ufzAsj1i.X1tRKSqN0o2ON.7nM7n8tB.', 'pradinip@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (141, 24068703, 'Bellina Yunitasari, S.Si., M.Si.', NULL, 'active', 'LECTURE', '$2y$10$wvaNXy8lV4r7oWnzxNnWTOfFXn.arLtDV1hGAVh5iOtvRlYMwiCBS', 'bellinayunitasari@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (142, 12048006, 'Aries Dwi Indriyanti, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$bcJtF9MtbjmWsePyQzdvR.A.iZu41.y/dlDxPs5jqDDOlwIzd5Ona', 'ariesdwi@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (143, 7086006, 'Dr. Ir. Asrul Bahar, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$/GanwQjMBEDbMuGECNGj2.HoCefRkHwImvGyo5U7bCHpYiLM.MC2O', 'asrulbahar@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (144, 19056502, 'Drs. Andang Widjaja, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$QUqFjm2AwaXZBbP3mybM0.FJJqAkh6pPXMZBF5SZLzRGASHskLJdq', 'andangwidjaja@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (145, 1046411, 'Dr. Maspiyah, M.Kes.', NULL, 'active', 'LECTURE', '$2y$10$HZ49/Cg9JsCMO7JHP57ZDeiFibTtOF7BvOMQj0wkFZs45egYavqvy', 'maspiyah@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:54', NULL);
+INSERT INTO `users` VALUES (146, 20046403, 'Dr. Edy Sulistiyo, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$XIZsZoa5BaVY.Ky3ShaZsuF9Lp7xmR5hDbfkdDg6mfyPli/xgkxXu', 'edysulistiyo@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (147, 16127101, 'Ninik Wahju Hidajati, S.Si., M.Si.', NULL, 'active', 'LECTURE', '$2y$10$IdsTXwbX7z056/i1/GxXIew2VhzuAxGedmUf5R2YpvGgk76LDM/Om', 'ninikwahju@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (148, 11037706, 'Dr. Mohammad Effendy, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$ZCNs0hNuRAdZ4kUc9pyL7uOc9YIkbeE0wfY7Q3vFSViioeX087dIa', 'mohammadeffendy@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (149, 3027708, 'Dr.  Wiyli Yustanti, S.Si., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$/l6cdRSq53.FWxlLcZN6zO9podCxd3y4uitrNTkMPoxYKbfCKNs7m', 'wiyliyustanti@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (150, 704038901, 'Rifqi Firmansyah, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$9AcwyRRihxV2l03hRxYoM.yXju8SbB5cVlTF2ZeUpBRfBYoSkGn2i', 'rifqifirmansyah@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (151, 6087903, 'Agus Prihanto, S.T., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$gaz3cNK/Wxxcj4ab3CsIYOak1G9o/vSWc0YesmLjId4oUITQVVDum', 'agusprihanto@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (152, 22067003, 'Dr. Puput Wanarti Rusimamto, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$/RZO26.2ppgGgdt5F4UkteT4apqnYd59Fkxfw5J42PnBMdkCwkvQC', 'puputwanarti@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (153, 20096903, 'Agung Prijo Budijono, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$UaJwsVA.S7Ais7vcnSoCVeodiAhYGz78/fsYTn28pAlQyFqA//2D.', 'agungbudijono@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (154, 12038901, 'Mauren Gita Miranti, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$/e1LIQVk98T3OvPkDDPxC.Y6Gaj2BjoQlxMwVCyChZpD.OKfxQdIC', 'maurenmiranti@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (155, 18066802, 'Dr. Ir. Achmad Imam Agung, M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$c4VRbkjhHVFAMsV3c6BXFer/fAOcQIPojWMP55dm3CR2I0Pa1xbn6', 'achmadimam@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (156, 4036708, 'Hendra Wahyu Cahyaka, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$VlXWzbSuQlPP8F5FsXAIS.byiD3SV6MkkXCLprDQAUwFM31PqWdu.', 'hendracahyaka@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (157, 25126605, 'Saiful Anwar, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$00En/ObJurzijtdPQ71nn.d6MGgMbcDDmnyOS7VRKLL8JG2TrTCE2', 'saifulanwar@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (158, 1047307, 'Ir.  Mas Suryanto H.S., S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$FjinUHMXxLv/t60Br1OmqOQViWnNy1yeqMtUyMA5ZsZv3pMXdqBEe', 'massuryantohs@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (159, 20099101, 'Ma\'rifatun Nashikhah, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$RVAapJ084Q3Aai0CR0zA.eX8D6g6g5PEg96iCuW7T5SSAS7cWBx/a', 'marifatunnashikhah@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (160, 7078705, 'Miftahur Rohman, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$F81zRi.M0jr0sa4Ls8.n4eUpY.s5Fm9Nws75kUobnVLwuxchRnBvS', 'miftahurrohman@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (161, 26078508, 'Heru Arizal,  S.Pd., M.M., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$OGlrxS4wvbQM6Z9JiLkae.CuzG2JG3p/YuWg6JUQGWhceqHNcQExi', 'heruarizal@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (162, 729058902, 'Paramitha Nerisafitra, S.ST., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$tk3WuL4qR.ajDgzAxf0EkOOefauLWxdW2/1UBUn5PK09Mpg2eoH6.', 'paramithanerisafitra@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (163, 9039301, 'Ghea Sekar Palupi, S.Kom., M.I.M.', NULL, 'active', 'LECTURE', '$2y$10$26wcU5.TD.xevQT6zWXXMukjooDxg0MEPtP7FKZbidoejV80KV8w6', 'gheapalupi@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (164, 5099302, 'Rindu Puspita Wibawa, S.Kom., M.Kom.', NULL, 'active', 'LECTURE', '$2y$10$DqWYyIQeqwY19X7Vi1yFreGI9MID84sB5gNtUg1kO6u5Au5BLVFma', 'rinduwibawa@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (165, 27088504, 'Muamar Zainul Arif, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$jmm.l90Vx7zlogutEUqpTuKiIMhIK2byi1/s6.OQzh01SWfqdd5GC', 'muamararif@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (166, 4049013, 'Ika Nurjannah, S.Pd., M.T.', NULL, 'active', 'LECTURE', '$2y$10$ofSsl3.ocVUUs2Z3PUrqmuSQcQtWUY7/1PZz.pL1AekhPSknR480S', 'ikajannah@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (167, 2068907, 'Wahyu Dwi Mulyono, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$WlRhwC00MabV9/iWs4NCM.Qdo6EI4WNk7BILwbZ8vSfjOEFSQFXOC', 'wahyumulyono@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (168, 26128701, 'Heri Suryaman, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$dZIKwYtN.EhXKwtJpbRG9uRgkmAqEE.ASoLvt4A5Y9cy42Ld1mf1a', 'herisuryaman@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (169, 28059106, 'Meity Wulandari, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$bq1br8RMfROQUsfxecNeqOn1W1Lq7NTI.BK.tvV10v0OQhDycRPfq', 'zacebox01@gmail.com', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (170, 730078601, 'Abdiyah Amudi, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$LcgxQndwEsmT9QReRD6vh.6RXt0YTLHzgSKhC.HXBJ4ZHEokF1diK', 'abdiyahamudi@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (171, 9029108, 'Mita Yuniati, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$/yFr5Alo1JU.su0N/pMp7ekyhgY0R5deGSrMkfEkuOVTQv.aGAkHS', 'mitayuniati@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (172, 26079205, 'Lynda Refnitasari, S.Si., M.URP', NULL, 'active', 'LECTURE', '$2y$10$BCnOQRvJoXrNYs5i/Qx6AucIbSTNlms/MaF8dtH8XENwNu7IiZUEG', 'lyndarefnitasari@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (173, 26029701, 'Alwan Gangsar Brilian Putra, S.Tr.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$lB31fjVqBt97XYlFKVvgmOuqEIf1.V7mSxt2Uz1dc18Z3CAVbG4M2', 'alwanputra@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (174, 9079802, 'Sayyidul Aulia Alamsyah, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$kQrEa9N6ktxfzf923MGrgulc/qAIqEjENsvnTZzMHrqVQYOv5U5lm', 'sayyidulalamsyah@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:55', NULL);
+INSERT INTO `users` VALUES (175, 1019312, 'Bima Anggana Widhiarta Putra, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$DI0Zh17Kq3uRJfLhTgjPlebelCL6BhtHYAddJtL.p5yu95TEtR4mu', 'bimaputra@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:56', NULL);
+INSERT INTO `users` VALUES (176, 1079106, 'Ervin Yohannes, S.Kom., M.Kom., M.Sc., Ph.D.', NULL, 'active', 'LECTURE', '$2y$10$UBwpuLBSM8WNfIfDxX1VMuEzXFO7YzwU71AtMKFa3fSbyaeSFcia6', 'ervinyohannes@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:56', NULL);
+INSERT INTO `users` VALUES (177, 706038903, 'Ahmad Saepuddin, S.T., M.Sc.', NULL, 'active', 'LECTURE', '$2y$10$WZlYP0Muy.KJiwFFqFtGD.LFCZD/W07EBp.nazUn0tfvhL2Lh9QRS', 'ahmadsaepuddin@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:56', NULL);
+INSERT INTO `users` VALUES (178, 3819129301, 'Nurul Farikhatir Rizkiyah, M.Pd', NULL, 'active', 'LECTURE', '$2y$10$O1mQlDCTvO1p18Gq2yCWA.11Ubnhp7pMhRoVxFCWeEKzt1ZrkwC4O', 'nurulrizkiyah@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:56', NULL);
+INSERT INTO `users` VALUES (179, 705018402, 'Nurul Makhmudiyah, S.Si., M.T.', NULL, 'active', 'LECTURE', '$2y$10$nHeTohE5TAcP9kGgw0MIoe64tyNJ/PcF/4OhJwdYibbXfJJwPqPKK', 'nurulmakhmudiyah@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:56', NULL);
+INSERT INTO `users` VALUES (180, 608129105, 'Desy Ratna Arthaningtyas, S.T., M.T.', NULL, 'active', 'LECTURE', '$2y$10$34YUj3T0/NsUc.oXsZygOuNnk0Pb6HcdHViSijIYvGgA3OqyVGPlK', 'desyarthaningtyas@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:56', NULL);
+INSERT INTO `users` VALUES (181, 12029306, 'Febriani Lukitasari, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$sFw.CwtBTHqqNho/Pm11H.w./eWi/W2/yUvOKHva4j3mRazW6p/s.', 'febrianilukitasari@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:56', NULL);
+INSERT INTO `users` VALUES (182, 23129601, 'Annisa Nur\'aini, S.Pd., M.Pd.', NULL, 'active', 'LECTURE', '$2y$10$Tf.fPhlopCdJz1Fj1CBAzuym1kryDn9Tq4KUYejWOIk1Jym.c0SJq', 'annisanuraini@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:56', NULL);
+INSERT INTO `users` VALUES (183, 5069801, 'Rendra Lebdoyono, S.T.P., M.Sc.', NULL, 'active', 'LECTURE', '$2y$10$Wg3twEU9YEArtaPvE.Opb.20B/0srT8OAgBIBtUZaRCQVDMtL5nHS', 'rendralebdoyono@unesa.ac.id', NULL, NULL, '2024-06-12 11:26:40', '2024-06-12 13:03:56', NULL);
+INSERT INTO `users` VALUES (184, 20050724036, 'ALIF AKBAR HIDAYATULLAH', NULL, 'active', 'STUDENT', '$2y$10$ie32cWlMrrumNlEqGoFnpOWkmLxmZOvQBY2qHNlaG7cZeE/W8O4na', 'trustopenmail@gmail.com', NULL, NULL, '2024-06-12 13:03:19', '2024-06-13 16:43:51', NULL);
+INSERT INTO `users` VALUES (185, 123, 'Arya', NULL, 'active', 'PUBLIC_MEMBER', '$2y$10$T4RoxbB6FTVrG4/aW5pvwOjwvFTLeaPU5pmqgF6ZYqK/ghQHM.Ele', 'ariston@windowslive.com', NULL, NULL, '2024-06-13 16:19:11', NULL, NULL);
+INSERT INTO `users` VALUES (186, 3524054203950001, 'SUSANTI ANDRIANA', NULL, 'active', 'PUBLIC_MEMBER', '$2y$10$s6Gj67QeeB/XyGA7F5/R9O8BIa7ssFVYbu0Xgnac1SSS7/g.xRpke', 'support1@trustunified.com', NULL, NULL, '2024-06-13 16:22:44', NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

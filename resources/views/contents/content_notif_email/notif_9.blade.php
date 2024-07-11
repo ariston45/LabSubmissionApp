@@ -76,7 +76,25 @@
 			</tr>
 			<tr>
 				<td colspan="2" style="padding-left: 40px;padding-top: 0px;padding-bottom: 0px;"> Hari/Tanggal </td>
-				<td>: {!! $data_applicant['time'] !!}</td>
+				<td>
+					@php
+						$data = dataGetDatetime($data_applicant['lsb_id']);
+					@endphp
+					<table>
+						@foreach ($data as $key => $value)
+							<tr>
+								- {{ strDateStart($key) }}
+								@if (count($value) > 0)
+									<table>
+										@foreach ($value as $li)
+											<tr>&nbsp;&nbsp;{{$li}}</tr>
+										@endforeach
+									</table>
+								@endif
+							</tr>
+						@endforeach
+					</table> 
+				</td>
 			</tr>
 			<tr>
 				<td colspan="2" style="padding-left: 40px;padding-top: 0px;padding-bottom: 0px;"> Di Laboratorium</td>

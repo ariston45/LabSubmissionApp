@@ -97,7 +97,22 @@
 			</tr>
 			<tr>
 				<td colspan="2" style="padding-left: 40px;padding-top: 0px;padding-bottom: 0px;"> Hari/Tanggal </td>
-				<td>: {!! $data_applicant['dates'] !!}</td>
+				<td>
+					<table>
+						@foreach ($data_applicant['datetimes'] as $key => $value)
+							<tr>
+								- {{ strDateStart($key) }}
+								@if (count($value) > 0)
+									<table>
+										@foreach ($value as $li)
+											<tr>&nbsp;&nbsp;{{$li}}</tr>
+										@endforeach
+									</table>
+								@endif
+							</tr>
+						@endforeach
+					</table>
+				</td>
 			</tr>
 			<tr>
 				<td colspan="2" style="padding-left: 40px;padding-top: 0px;padding-bottom: 0px;"> Di Laboratorium</td>
@@ -107,7 +122,7 @@
 				<td colspan="4">
 					Fasilitas laboratorium yang digunakan terlampir. <br>
 					Demikian permohonan ini saya buat dan saya menyatakan akan bertanggungjawab sepenuhnya apabila terjadi kerusakan atau kehilangan atas alat terlampir selama saya pakai/pinjam. <br>
-					Atas perhatian dan bantuannya saya sampaikan terimaksih.
+					Atas perhatian dan bantuannya saya sampaikan terima kasih.
 				</td>
 			</tr>
 		</tbody>

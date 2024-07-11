@@ -38,6 +38,14 @@
 			<tr>
 				<td>{{ $url }}</td>
 			</tr>
+			<tr>
+				<td>Salam Hormat,</td>
+			</tr>
+			<tr>
+				<td>
+					<b>Tim SIPLAB</b>
+				</td>
+			</tr>
 		</tbody>
 	</table>
 </body>

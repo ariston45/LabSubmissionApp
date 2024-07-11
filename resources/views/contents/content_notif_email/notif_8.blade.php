@@ -36,7 +36,25 @@
 			</tr>
 			<tr>
 				<td colspan="4">
-					Kegiatan peminjaman laboratorium {{ $data_applicant['lab'] }}, dengan jadwal  peminjaman {!! $data_applicant['time'] !!}, <br> 
+					Kegiatan peminjaman laboratorium {{ $data_applicant['lab'] }}, dengan jadwal  peminjaman <br>
+					@php
+						$data = dataGetDatetime($data_applicant['lsb_id']);
+					@endphp
+					<table>
+						@foreach ($data as $key => $value)
+							<tr>
+								- {{ strDateStart($key) }}
+								@if (count($value) > 0)
+									<table>
+										@foreach ($value as $li)
+											<tr>&nbsp;&nbsp;{{$li}}</tr>
+										@endforeach
+									</table>
+								@endif
+							</tr>
+						@endforeach
+					</table> 
+					<br> 
 					telah selesai. Laporan hasil penelitian anda sudah divalidasi oleh kasublab pada {{ $data_applicant['result_date_validation'] }}
 					Untuk informasi lebih lanjut silakan klik  <a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}"><b>Detail Pengajuan</b></a>, atau menghubungi nomor kontak berikut
 					<ul>

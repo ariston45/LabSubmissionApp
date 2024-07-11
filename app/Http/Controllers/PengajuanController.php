@@ -34,7 +34,7 @@ use App\Mail\NotifMailForApplicantValidation;
 use App\Mail\NotifMailForHeadValidation;
 use App\Mail\NotifMailForTechnical;
 use App\Models\Cost_reduction;
-use App\Models\Lab_labtest;
+use App\Models\Laboratory_working_time;
 use App\Models\Lab_sch_date;
 use App\Models\Lab_sch_time;
 use App\Models\Lab_sub_date;
@@ -79,6 +79,8 @@ class PengajuanController extends Controller
 		$times = Laboratory_time_option::get();
 		if ($user->level == 'STUDENT') {
 			return view('contents.content_form.form_pengajuan_student',compact('user_data', 'lab_data','times'));
+		}elseif ($user->level == 'LECTURE') {
+			return view('contents.content_form.form_pengajuan_lecture', compact('user_data', 'lab_data', 'times'));	
 		}else{
 			return view('contents.content_form.form_pengajuan_common', compact('user_data', 'lab_data','times'));
 		}
@@ -92,7 +94,8 @@ class PengajuanController extends Controller
 		->first();
 		$lab_data = Laboratory::where('lab_status', 'tersedia')
 		->get();
-		return view('contents.content_form.form_pengajuan_labtest', compact('user_data', 'lab_data'));
+		$times = Laboratory_time_option::get();
+		return view('contents.content_form.form_pengajuan_labtest', compact('user_data', 'lab_data','times'));
 	}
 	public function formLaporan(Request $request)
 	{
@@ -108,9 +111,10 @@ class PengajuanController extends Controller
 		$user = DataAuth();
 		$id = genIdPengajuan();
 		$id_date = genIdDate();
+		$datetimes = [];
 		if (count($request->inp_time) == 0) {
 			return redirect()->back()->withErrors(['sch_err' => 'Harap inputkan tanggal']);
-			} else {
+		} else {
 				try {
 				$nx = 0;
 				$p_dates = [];
@@ -123,7 +127,10 @@ class PengajuanController extends Controller
 						"lsd_lab" =>  $request->inp_lab
 					];
 					$cv = 0;
+					$times_text[$list_date] = [];
 					foreach($request->inp_time[$key] as $sk => $list_time){
+						$times = Laboratory_time_option::where('lti_id',$list_time)->first();
+						$times_text[$list_date][$sk] = date('H:i',strtotime($times->lti_start)).' - '. date('H:i', strtotime($times->lti_end));
 						$mktime[$cv] = $list_time;
 						$data_time[$nx] = [
 							"lstt_date_subs_id" => $id_date,
@@ -132,7 +139,8 @@ class PengajuanController extends Controller
 						$cv++;
 						$nx++;
 					}
-					$mkdate[$list_date] = $mktime; 
+					$mkdate[$list_date] = $mktime;
+					$datetimes[$list_date] = $times_text;
 					$id_date++;
 				}
 			} catch (\Throwable $th) {
@@ -182,6 +190,7 @@ class PengajuanController extends Controller
 		if ($web_err_time != '') {
 			return redirect()->back()->withErrors(['sch_konflik_err' => $web_err_time]);
 		}
+		// die();
 		$data_pembimbing_filter = [];
 		if (rulesUser(['STUDENT'])) {
 			$data_pembimbing = [
@@ -262,11 +271,11 @@ class PengajuanController extends Controller
 		if ($request->app_level == 'STUDENT') {
 			$lecture = null;
 			$lecture_id = null;
-			$send_to = 'Kepala Laboratorium Riset';
+			$send_to = 'Kepala Laboratorium';
 		} else {
 			$lecture = null;
 			$lecture_id = null;
-			$send_to = 'Kepala Laboratorium Riset';
+			$send_to = 'Kepala Laboratorium';
 		}
 		if ($request->inp_kegiatan == 'tp_penelitian') {
 			$act = 'Penelitian';
@@ -314,6 +323,7 @@ class PengajuanController extends Controller
 			'act' => $act,
 			'send_to' => $send_to,
 			'dates' => implode(', ', $p_dates),
+			'datetimes' => $times_text,
 		];
 		// dd($data_applicant);
 		#order
@@ -331,7 +341,7 @@ class PengajuanController extends Controller
 				'lod_item_id' =>  $data_lab->id,
 				'lod_item_type' => 'lab',
 				'lod_item_name' => $data_lab->lab_name,
-				'lod_cost' => $data_lab->cost,
+				'lod_cost' => null,
 			];
 			$index_item = 1;
 			foreach ($data_tools as $key => $value) {
@@ -340,37 +350,32 @@ class PengajuanController extends Controller
 					'lod_item_id' => $value->laf_id,
 					'lod_item_type' => 'tool',
 					'lod_item_name' => $value->laf_name,
-					'lod_cost' =>  $value->laf_value,
+					'lod_cost' =>  null,
 				];
 				$index_item++;
 			}
-			// dd($order_detail);
-			if (rulesUser(['STUDENT'])) {
-				$reduction = Cost_reduction::where('reduction_type', 'STUDENT')->first();
+			if (in_array($user->level,['LECTURE'])) {
+				$reduction = Cost_reduction::where('reduction_type', 'LECTURE')->first();
 				$cost_total = $data_ujilab->lsv_price;
-				if ($reduction->reduction == 0) {
-					$rec_val = 0;
-				} else {
-					$rec_val = $cost_total * ($reduction->reduction / 100);
+				if ($reduction->reduction_val == 0) {
+					$cost_reduction = 0;
+				}else{
+					$cost_reduction =  number_format(($data_ujilab->lsv_price * $reduction->reduction_val) / 100 , 2, '.', '');
 				}
-				$index_item_new = $index_item + 1;
-				$order_detail[$index_item_new] = [
-					'lod_los_id' => $id_order,
-					'lod_item_id' => $reduction->reduction_type,
-					'lod_item_type' => 'reduction',
-					'lod_item_name' => 'Potongan biaya ' . $reduction->reduction_val . ' %',
-					'lod_cost' =>  $rec_val,
-				];
-				$cost_total_red = number_format($cost_total - $rec_val, 2, '.', '');
-			} else {
-				$cost_total_red = number_format($data_ujilab->lsv_price, 2, '.', '');
+				$cost_after = number_format($data_ujilab->lsv_price - $cost_reduction, 2, '.', '') ;
+			}else{
+				$cost_total = $data_ujilab->lsv_price;
+				$cost_reduction = 0;
+				$cost_after = $data_ujilab->lsv_price - $cost_reduction;
 			}
 			$data_order = [
 				'los_id' => $id_order,
 				'los_lsb_id' => $id,
 				'los_invoice_code' => null,
 				'los_date_order' => date('Y-m-d H:i:s'),
-				'los_cost_total' => $cost_total_red,
+				'los_cost_total'=> $cost_total,
+				'los_cost_reduction'=> $cost_reduction,
+				'los_cost_after' => $cost_after,
 			];
 		} else if ($dt_pengajuan['lsb_type'] == 'pinjam_lab') {
 			$order_detail[0] = [
@@ -395,30 +400,35 @@ class PengajuanController extends Controller
 			}
 			if (rulesUser(['STUDENT'])) {
 				$reduction = Cost_reduction::where('reduction_type', 'STUDENT')->first();
-				$cost_total = number_format($data_lab->cost + array_sum($lod_cost_ar),2,'.','') ;
+				$cost_total = number_format($data_lab->cost + array_sum($lod_cost_ar),2,'.','');
 				if ($reduction->reduction_val == 0) {
-					$rec_val = 0;
+					$cost_reduction = 0;
 				} else {
-					$rec_val = ($reduction->reduction_val / 100) * $cost_total ;
+					$cost_reduction =  number_format(($cost_total * $reduction->reduction_val) / 100, 2, '.', '');
 				}
-				$index_item_new = $index_item+1;
-				$order_detail[$index_item_new] = [
-					'lod_los_id' => $id_order,
-					'lod_item_id' => $reduction->reduction_type,
-					'lod_item_type' => 'reduction',
-					'lod_item_name' => 'Potongan biaya '.$reduction->reduction_val.' %' ,
-					'lod_cost' =>  $rec_val,
-				];
-				$cost_total_red = number_format($cost_total - $rec_val,2,'.','') ;
+				$cost_after = number_format($cost_total - $cost_reduction, 2, '.', '');
+			}else if(rulesUser(['LECTURE'])){
+				$reduction = Cost_reduction::where('reduction_type', 'LECTURE')->first();
+				$cost_total = number_format($data_lab->cost + array_sum($lod_cost_ar), 2, '.', '');
+				if ($reduction->reduction_val == 0) {
+					$cost_reduction = 0;
+				} else {
+					$cost_reduction =  number_format(($cost_total * $reduction->reduction_val) / 100, 2, '.', '');
+				}
+				$cost_after = number_format($cost_total - $cost_reduction, 2, '.', '');
 			}else{
-				$cost_total_red = number_format($data_lab->lab_rent_cost + array_sum($lod_cost_ar),2,'.','');
+				$cost_reduction = 0;
+				$cost_total = number_format($data_lab->cost + array_sum($lod_cost_ar), 2, '.', '');
+				$cost_after = number_format($cost_total - $cost_reduction, 2, '.', '');
 			}
 			$data_order = [
 				'los_id' => $id_order,
 				'los_lsb_id' => $id,
 				'los_invoice_code' => null,
 				'los_date_order' => date('Y-m-d H:i:s'),
-				'los_cost_total' => $cost_total_red,
+				'los_cost_total' => $cost_total,
+				'los_cost_reduction' => $cost_reduction,
+				'los_cost_after' => $cost_after,
 			];
 		}
 		#storing
@@ -429,6 +439,7 @@ class PengajuanController extends Controller
 		$storeFacility = Lab_facility::insert($data_fcl);
 		$actionStorePengajuan = Lab_submission::insert($dt_pengajuan);
 		$storeAdviser = Lab_submission_adviser::insert($data_pembimbing_filter);
+		# Check user
 		$usd = User_detail::where('usd_user', $user->id)->first();
 		if ($usd == null) {
 			$data_user_det = [
@@ -440,6 +451,15 @@ class PengajuanController extends Controller
 				"usd_universitas" => $request->inp_institusi,
 			];
 			$storeUserDetail = User_detail::insert($data_user_det);
+		}else{
+			$data_user_det = [
+				"usd_phone" => $request->inp_nomor_kontak,
+				"usd_address" => $request->inp_address,
+				"usd_prodi" => $request->inp_program_studi,
+				"usd_fakultas" => $request->inp_fakultas,
+				"usd_universitas" => $request->inp_institusi,
+			];
+			$updateUserDetail = User_detail::where('usd_user', $user->id)->update($data_user_det);
 		}
 		#sending mail
 		$data_head = User::where('level', 'LAB_HEAD')->first();
@@ -459,6 +479,7 @@ class PengajuanController extends Controller
 		->leftjoin('laboratories', 'lab_submissions.lsb_lab_id','=', 'laboratories.lab_id')
 		->where('lsb_id', $request->id)
 		->first();
+		// dd($data_pengajuan);
 		$data_date = Lab_sub_date::where('lsd_lsb_id', $request->id)->get();
 		$web_date = '';
 		foreach($data_date as $key => $list){
@@ -490,6 +511,8 @@ class PengajuanController extends Controller
 		->where('id', $data_pengajuan->lsb_user_tech)
 		->select('id', 'name', 'usd_phone', 'email')
 		->first();
+
+		// dd($user_technical);
 
 		$data_adviser = Lab_submission_adviser::where('las_lbs_id', $request->id)->get();
 
@@ -533,8 +556,17 @@ class PengajuanController extends Controller
 				$cost_order[$key] = $value->lod_cost;
 			}
 		}
-		$data_detail_order_reduction = $cost_reduction;
-		$data_detail_order_total = array_sum($cost_order) - $cost_reduction;
+		if (in_array($user->level,['STUDENT'])) {
+			$reduction = Cost_reduction::where('reduction_type', 'STUDENT')->first();
+			$data_name_reduction = 'Potongan ('.$reduction->reduction_val.'%)';
+		}else if(in_array($user->level, ['LECTURE'])){
+			$reduction = Cost_reduction::where('reduction_type', 'LECTURE')->first();
+			$data_name_reduction = 'Potongan (' . $reduction->reduction_val . '%)';
+		}else{
+			$data_name_reduction = 'Potongan';
+		}
+		$data_detail_order_reduction = $data_order->los_cost_reduction;
+		$data_detail_order_total = $data_order->los_cost_after;
 		
 		if ($data_pengajuan->lsb_status == 'menunggu') {
 			$acc_head = 'Proses persetujuan';
@@ -563,7 +595,7 @@ class PengajuanController extends Controller
 			<td style="width: 80%;">' . $acc_head . '</td>
 			</tr>';
 		}
-		return view('contents.content_pageview.view_detail_pengajuan', compact('data_pengajuan', 'data_facility', 'str_acc', 'acc_data_head', 'acc_data_lecture',
+		return view('contents.content_pageview.view_detail_pengajuan', compact('data_pengajuan', 'data_facility', 'str_acc', 'acc_data_head', 'acc_data_lecture','data_name_reduction',
 		'user_kasublab', 'user_technical', 'data_adviser','data_result','data_detail_order','data_detail_order_reduction','data_detail_order_total','user_technical_lab','web_date'));
 
 	}
@@ -607,6 +639,7 @@ class PengajuanController extends Controller
 	public function actionAccA(Request $request)
 	{
 		$user = Auth::user();
+		$id_lab_sch = genIdLaSch();
 		$id_sch_date = genIdDateSch();
 		$data_pengajuan = Lab_submission::leftjoin('users', 'lab_submissions.lsb_user_id','=','users.id')
 		->leftjoin('user_details', 'lab_submissions.lsb_user_id','=', 'user_details.usd_user')
@@ -620,7 +653,7 @@ class PengajuanController extends Controller
 			$p_dates[$key] = $value->lsd_date;
 			$inp_date[$key] = [
 				"lscd_id" => $id_sch_date,
-				"lscd_sch" => $id_sch_date,
+				"lscd_sch" => $id_lab_sch,
 				"lscd_day" => date('l',strtotime($value->lsd_date)),
 				"lscd_date" => $value->lsd_date,
 				"lscd_status" => 'active',
@@ -665,7 +698,6 @@ class PengajuanController extends Controller
 			$i++;
 		}
 		#
-		$id_lab_sch = genIdLaSch();
 		$data_a = [
 			'lbs_id' => $id_lab_sch,
 			'lbs_lab' => $data_pengajuan->lsb_lab_id,
@@ -784,6 +816,7 @@ class PengajuanController extends Controller
 	/* Tags:... */
 	public function actionSettechnical(Request $request)
 	{
+		// dd($request->inp_teknisi);
 		if ($request->inp_teknisi == null) {
 			return redirect()->back()->withErrors(['tech_err' => 'Teknisi lab belum di-set']);
 		} else {

@@ -16,6 +16,7 @@ use Storage;
 
 use App\Models\Lab_facility;
 use App\Models\Lab_sch_date;
+use App\Models\Lab_sch_time;
 use App\Models\Lab_schedule;
 use App\Models\Laboratory;
 use App\Models\Laboratory_group;
@@ -400,36 +401,53 @@ class LaboratoryController extends Controller
 	{
 		$lab_id = $request->id_lab;
 		$lbs_id = $request->id_sch_lab;
-		$data_sch_lab = Lab_schedule::leftjoin('users','lab_schedules.lbs_res_person','=','users.id')
+		$data_sch_lab = Lab_schedule::join('lab_sch_dates', 'lab_schedules.lbs_id','=', 'lab_sch_dates.lscd_sch')
+		->leftjoin('users','lab_schedules.lbs_res_person','=','users.id')
 		->where('lbs_id',$lbs_id)
 		->first();
-		return view('contents.content_form.form_update_schedule', compact('lab_id', 'data_sch_lab'));
+		$times = Laboratory_time_option::get();
+		$data_sch_times = Lab_sch_time::where('lsct_date_id',$data_sch_lab->lscd_id)->get();
+		$time_ids = [];
+		foreach ($data_sch_times as $key => $value) {
+			$time_ids[$key] = $value->lsct_time_id;
+		}
+		return view('contents.content_form.form_update_schedule', compact('lab_id','lbs_id','data_sch_lab', 'times', 'time_ids'));
 	}
 	/* Tags:... */
 	public function actionUpdateLabSch(Request $request)
 	{
 		$user = Auth::user();
-		$day = date('l', strtotime($request->inp_day));
-		$tm_start = date('H:i', strtotime($request->inp_time_start));
-		$tm_end = date('H:i', strtotime($request->inp_time_end));
-		$ids_str = implode('.', $request->inp_res_person);
 		$data = [
-			'lbs_day' => $day,
-			'lbs_time_start' => $tm_start,
-			'lbs_time_end' => $tm_end,
 			'lbs_type' => 'reguler',
 			'lbs_matkul' => $request->inp_subject,
 			'lbs_tenant_name' => $request->inp_group,
-			'lbs_res_person' => $ids_str,
+			'lbs_res_person' => $request->inp_res_person,
 		];
-		$updateLabSch = Lab_schedule::where('lbs_id',$request->lbs_id)->update($data);
-		return redirect()->route('laboratorium_schedule', ['id' => $request->lab_id]);
+		$times = $request->inp_time;
+		$data_times =[];
+		if (count($times)>0) {
+			foreach ($times as $key => $value) {
+				$data_times[$key] = [
+					'lsct_date_id' => $request->lscd_id,
+					'lsct_time_id' => $value,
+					'lsct_status' => 'active'
+				];
+			}
+		}
+		Lab_sch_time::where('lsct_date_id', $request->lscd_id)->delete();
+		Lab_sch_time::insert($data_times);
+		Lab_sch_date::where('lscd_id', $request->lscd_id)->update(['lscd_day'=>$request->inp_day]);
+		Lab_schedule::where('lbs_id', $request->lbs_id)->update($data);
+		return redirect()->back();
 	}
 	public function actionDelLabSch(Request $request)
 	{
 		$lbs_id = $request->id_sch_lab;
-		$updateLabSch = Lab_schedule::where('lbs_id', $lbs_id)->delete();
-		return redirect()->back();		
+		$sch_date = Lab_sch_date::where('lscd_sch', $lbs_id)->first();
+		Lab_sch_time::where('lsct_date_id',$sch_date->lscd_id)->delete();
+		Lab_sch_date::where('lscd_sch', $lbs_id)->delete();
+		Lab_schedule::where('lbs_id', $lbs_id)->delete();
+		return redirect()->back();
 	}
 	/* Tags:... */
 	public function sourceDataScheduleLabJson(Request $request)
@@ -481,7 +499,8 @@ class LaboratoryController extends Controller
 						'title' => $svalue->lbs_matkul,
 						'start' => $datetime_start,
 						'end' => $datetime_end,
-						'color' => '#0955c7'
+						'color' => '#0955c7',
+						'className' => 'sch_reguler'
 					];
 				}else{
 					$dataSch[$sch_index] = [
@@ -489,7 +508,8 @@ class LaboratoryController extends Controller
 						'title' => '(Batal)'.$svalue->lbs_matkul,
 						'start' => $datetime_start,
 						'end' => $datetime_end,
-						'color' => '#e31497'
+						'color' => '#e31497',
+						'className' => 'sch_exclude'
 					];
 				}
 				$sch_index++;
@@ -508,7 +528,8 @@ class LaboratoryController extends Controller
 				'title' => $value->lbs_tenant_name,
 				'start' => $datetime_start,
 				'end' => $datetime_end,
-				'color' => '#09c755'
+				'color' => '#09c755',
+				'className' => 'sch_non_reguler'
 			];
 			$sch_index++;
 		}

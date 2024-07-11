@@ -16,6 +16,7 @@ use App\Models\Lab_schedule;
 use App\Models\Lab_sub_date;
 use App\Models\Lab_sch_date;
 use App\Models\Lab_sub_order;
+use App\Models\Lab_sub_time;
 use App\Models\Laboratory_labtest;
 use App\Models\Laboratory_labtest_facility;
 
@@ -75,6 +76,7 @@ function genIdDate() {
   $new_id = $max_id_lab + 1;
   return $new_id;
 }
+
 function genIdDateSch()
 {
   $max_id_date_sch = Lab_sch_date::max('lscd_id');
@@ -281,6 +283,22 @@ function storingData($value){
   }else{
     return false;
   }
-  /* Tags:... */
-  
+}
+function dataGetDatetime($id){
+  $data = [];
+  $data_date = Lab_sub_date::where('lsd_lsb_id',$id)->select('lsd_id', 'lsd_date')->get();
+  foreach ($data_date as $key => $value) {
+    $date_key = Carbon::parse($value->lsd_date)->isoFormat('dddd, D MMMM Y');
+    $data_time = Lab_sub_time::join('laboratory_time_options', 'lab_sub_times.lstt_time_id','=', 'laboratory_time_options.lti_id')
+    ->where('lstt_date_subs_id', $value->lsd_id)
+    ->select('lti_start', 'lti_end')
+    ->get();
+    $i = 0;
+    foreach ($data_time as $key => $value) {
+      $data_time[$i] = $value->lti_start.' - '. $value->lti_end;
+      $i++;
+    }
+    $data[$date_key] = $data_time;
+  }
+  return $data;
 }

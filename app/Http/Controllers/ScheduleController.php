@@ -98,5 +98,11 @@ class ScheduleController extends Controller
 		}
 	}
 	/* Tags:... */
+	public function dataSchReguler(Request $request)
+	{
+		$lab = Laboratory::where('lab_id',$request->id)->first();
+		// dd($lab);
+		return view('contents.content_datalist.data_schedule_reguler', compact('lab'));
+	}
 	
 }

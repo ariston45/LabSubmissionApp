@@ -22,6 +22,9 @@ Lab management | Dashboard
 				<a href="{{ url('jadwal_lab/form-input-jadwal/'.$lab_id) }}">
 					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah Jadwal Laboratorium</button>
 				</a>
+				<a href="{{ url('jadwal_lab/data-jadwal-reguler/'.$lab_id) }}">
+					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-edit-2-line" style="margin-right: 4px;"></i> Update Jadwal Reguler Laboratorium</button>
+				</a>
 				@endif
 				<a href="{{ url('jadwal_lab') }}">
 					<button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
@@ -43,6 +46,13 @@ Lab management | Dashboard
 			</div>
 			<div id="field-calender" style="margin: 0px 0px 10px 0px;display:block;">
 				<div id="calender" style="width: 100%;"></div>
+				<div class="row">
+					<div class="col-sm-12">
+						<i>Catatan : </i>
+						<small class="label bg-navy">Label warna untuk jadwal reguler</small>
+						<small class="label bg-purple">Label warna untuk jadwal non-reguler</small>
+					</div>
+				</div>
 			</div>
 			<hr class="mt-1" style="margin: 0px 0px 10px 0px;">
 			<div class="clearfix"></div>
@@ -54,13 +64,13 @@ Lab management | Dashboard
 			<table id="tabel_lab_sch" class="table tabel_custom table-condensed">
 				<thead>
 					<tr>
-						<th style="width: 4%">No</th>
-						<th style="width: 25%">waktu</th>
+						<th style="width: 5%">No</th>
+						<th style="width: 15%">Tanggal</th>
+						<th style="width: 10%">waktu</th>
 						<th style="width: 10%">Tipe Jadwal</th>
 						<th style="width: 20%">Mata Kuliah</th>
-						<th style="width: 16%">Perorangan/Kelompok</th>
-						<th style="width: 16%">Dosen/Penanggung Jawab</th>
-						<th style="width: 9%;text-align:center;">Opsi</th>
+						<th style="width: 20%">Perorangan/Kelompok</th>
+						<th style="width: 20%">Dosen/Penanggung Jawab</th>
 					</tr>
 				</thead>
 			</table>
@@ -100,6 +110,18 @@ Lab management | Dashboard
 
 	.tabel_custom tr:nth-child(even) {
 		background-color: #f2f2f2;
+	}
+	.fc-event-title {
+		text-align: left;
+		white-space: normal; /* Membuat teks dalam elemen judul event bisa membungkus */
+		word-break: break-word; /* Memecah kata jika terlalu panjang */
+		overflow-wrap: anywhere; /* Membungkus teks pada titik-titik yang sesuai */
+	}
+	.fc-daygrid-day-number {
+		color: #010414; /* Ganti dengan warna yang diinginkan */
+	}
+	.fc-col-header-cell{
+		color: #000;
 	}
 
 	/* .tabel_custom td:hover {background-color: #f2f2f2;} */
@@ -200,6 +222,7 @@ Lab management | Dashboard
 			responsive: true,
 			stateSave: false,
 			bServerSide: true,
+			ordering: false,
 			pageLength: 15,
 			lengthMenu: [
 				[15, 30, 60, -1],
@@ -221,6 +244,12 @@ Lab management | Dashboard
 			columns: [{
 					data: 'DT_RowIndex',
 					name: 'DT_RowIndex'
+				},
+				{
+					data: 'date',
+					name: 'date',
+					orderable: true,
+					searchable: true
 				},
 				{
 					data: 'time',
@@ -251,12 +280,6 @@ Lab management | Dashboard
 					name: 'person',
 					orderable: true,
 					searchable: true
-				},
-				{
-					data: 'opsi',
-					name: 'opsi',
-					orderable: false,
-					searchable: false
 				},
 			]
 		});
@@ -332,6 +355,7 @@ Lab management | Dashboard
             'start':dataJsonPhr[index].start,
 						'end':dataJsonPhr[index].end,
 						'color':dataJsonPhr[index].color,
+						'classNames':dataJsonPhr[index].className,
           });
         }
 			},
@@ -342,7 +366,6 @@ Lab management | Dashboard
 		// datatablesLabSchedule('all', 'all');
 		var s = moment(parStart).format('YYYYMMDD');
 		var e = moment(parEnd).format('YYYYMMDD');
-		console.log(s);
 		// $('#tabel_lab_sch').DataTable().clear().destroy();
 		datatablesLabSchedule_I(s,e);
 	};
@@ -394,6 +417,26 @@ Lab management | Dashboard
 				$('#tabel_lab_sch').DataTable().clear().destroy();
 				actCalenderFilterByDay(parStart,parEnd);
 				successCallback(eventSource);
+			},
+			eventContent: function(arg) {
+				var init_class = arg.event.classNames;
+				var evn_title = arg.event.title;
+				var set_time = arg.event.start;
+				var evn_time = set_time.toLocaleTimeString('id-ID',{
+					hour: '2-digit',
+					minute: '2-digit',
+					hour12: false,
+				});
+
+				if (init_class == 'sch_reguler') {
+					return{
+						html: '<div class="label bg-navy fc-event-title">'+evn_time+' : '+evn_title+'</div>'
+					}
+				}else if (init_class == 'sch_non_reguler') {
+					return{
+						html: '<div class="label bg-purple fc-event-title">'+evn_time+' : '+evn_title+'</div>'
+					}
+				}
 			},
 		});
 		calendar.render();

@@ -133,11 +133,20 @@ class AuthController extends Controller
 				'level' => $request->level,
 				'password' => bcrypt($request->password)
 			];
+			$data_filter = [
+				"usd_user" => $generate_id,
+				"usd_phone" => null,
+				"usd_address" => null,
+				"usd_prodi" => null,
+				"usd_fakultas" => null,
+				"usd_universitas" => null,
+			];
 		}
 		$detect_user = User::where('email', $request->email)->first();
 		if ($detect_user != null) {
 			return redirect()->back()->withError(['msg_err' => 'Alamat email anda sudah terdaftar.']);
-		}
+			}
+		$storeStudentDetail = User_detail::insert($data_filter);
 		$storeUser = User::insert($data_post);
 		$data_login = [
 			'email' => $request->email,

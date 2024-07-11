@@ -54,8 +54,8 @@ Lab management | Dashboard
             <span style="padding-right: 30px;">
               Waktu
             </span>
-            </label>
-            <div class="col-sm-12 col-md-9">
+          </label>
+          <div class="col-sm-12 col-md-9">
             <select type="text" class="form-control" name="inp_time[]" id="inp-time" multiple placeholder="Pilih jam..">
               <option value=""></option>
               @foreach ($times as $list)
@@ -113,7 +113,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-group" class="form-control" name="inp_group" value="{{ old('inp_group') }}" placeholder="Input lokasi lab..">
+            <input type="text" id="inp-group" class="form-control" name="inp_group" value="{{ old('inp_group') }}" placeholder="Input nama kelas/grup belajar">
             @if ($errors->has('inp_group'))
 						<span style="color: red;"><i>{{ $errors->first('inp_group') }}</i></span>
 						@endif
@@ -189,7 +189,7 @@ Lab management | Dashboard
 		});
 		$.ajax({
 			type: 'POST',
-			url: "{{ route('source-data-users') }}",
+			url: "{{ route('source-data-users-lectures') }}",
 			data: {
 				"level": null,
 			},

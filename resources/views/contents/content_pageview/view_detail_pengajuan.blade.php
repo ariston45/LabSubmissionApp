@@ -212,16 +212,15 @@ Lab management | Dashboard
                     <td style="padding: 2px 10px 2px 2px;">{{ $value->lod_item_name }} </td>
                     <td style="padding: 2px 2px 2px 2px;">: {{ funCurrencyRupiah($value->lod_cost) }}</td>
                   </tr>
-                  @elseif ($value->lod_item_type == 'reduction')
-                  <tr>
-                    <td colspan="2"><b>Potongan biaya</b></td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 2px 10px 2px 2px;">{{ $value->lod_item_name }}</td>
-                    <td style="padding: 2px 2px 2px 2px;">: {{ funCurrencyRupiah($value->lod_cost) }}</td>
-                  </tr>
                   @endif
                 @endforeach
+                <tr>
+                  <td colspan="2"><b>Potongan biaya</b></td>
+                </tr>
+                <tr>
+                  <td style="padding: 2px 10px 2px 2px;">{{ $data_name_reduction }}</td>
+                  <td style="padding: 2px 2px 2px 2px;">: - {{funCurrencyRupiah($data_detail_order_reduction)}}</td>
+                </tr>
                 <tr>
                   <td colspan="2"><b>Total Biaya</b></td>
                 </tr>

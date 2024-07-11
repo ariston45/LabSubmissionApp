@@ -599,7 +599,7 @@ Lab management | Dashboard
     todayHighlight: true,
     orientation:'bottom',
   });
-  $('#date-pick-end').datepicker({
+  $('.inp-date-s').datepicker({
     autoclose: true,
     format: 'yyyy-mm-dd',
     todayHighlight: true,

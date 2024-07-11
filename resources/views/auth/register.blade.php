@@ -64,14 +64,14 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-5">
+		<div class="col-sm-5">
 			<div class="checkbox">
 				<label>
 					<input id="check-password" type="checkbox" name="showpass" onclick="actionShowPass()" {{ old('showpass') ? 'checked' : '' }}> Show Password
 				</label>
 			</div>
 		</div>
-		<div class="col-md-7" style="text-align: right;">
+		<div class="col-sm-7" style="text-align: right;">
 			<div id="wrap-btn">
 				<button type="reset" class="btn btn-flat btn-sm btn-default" id="batal">Bersihkan</button>
 				<button type="submit" class="btn btn-flat btn-sm btn-primary" id="save">Simpan</button>
@@ -79,7 +79,7 @@
 		</div>
 	</div>
 </form>
-<hr>
+<hr style="margin-bottom: 5px;margin-top: 5px;">
 <div style="text-align: center;">
 	<span style="text-align: center;">
 		<a href="{{ url('login') }}"><b>Kembali Ke Login</b></a>
@@ -87,14 +87,6 @@
 </div>
 @endsection
 @push('scripts')
-<script>
-	$(function () {
-		$('input').iCheck({
-			checkboxClass: 'icheckbox_square-blue',
-			radioClass: 'iradio_square-blue',
-		});
-	});
-</script>
 <script>
 	function actionShowPass() {  
 		var x = document.getElementById("password-id");

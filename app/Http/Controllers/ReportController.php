@@ -31,6 +31,7 @@ class ReportController extends Controller
 	public function actionReportPengajuan(Request $request)
 	{
 		$period = CarbonPeriod::create($request->date_start, $request->date_end);
+		$report_title = 'Periode '.date('d-M-Y', strtotime( $request->date_start)).' Sampai '. date('d-M-Y', strtotime($request->date_end));
 		if ($period == null) {
 			return redirect()->back()->withInput()->withErrors('date_error', 'data error');
 		}
@@ -49,16 +50,21 @@ class ReportController extends Controller
 		foreach ($period as $key => $value) {
 			$date_param = date('Y-m-d',strtotime($value));
 			$data_submission[$key] = Lab_submission::leftjoin('users', 'lab_submissions.lsb_user_id','=','users.id')
+			->join('lab_sub_dates', 'lab_submissions.lsb_id','=', 'lab_sub_dates.lsd_lsb_id')
 			->leftjoin('laboratories','lab_submissions.lsb_lab_id','=','laboratories.lab_id')
 			->leftJoin('lab_sub_orders', 'lab_submissions.lsb_id','=', 'lab_sub_orders.los_lsb_id')
 			->leftJoin('lab_submission_results', 'lab_submissions.lsb_id', '=', 'lab_submission_results.lsr_lsb_id')
+			->where('lsd_date', $date_param)
 			->whereIn('lsb_lab_id', $ids)
 			->whereIn('lsb_status', ['disetujui', 'selesai'])
-			->where('lsb_period','like','%'.$date_param.'%')
-			->select('lsb_id','id','lab_id','lsb_title','lsb_date_start','lsb_date_end','lab_name','name', 'los_cost_total', 'lsr_status', 'lsr_filename','lsb_file_1')
+			->select('lsb_id','id','lab_id','lsb_title','lsb_date_start','lsb_date_end','lab_name','name', 'los_cost_total', 'lsr_status', 'lsr_filename','lsb_file_1', 'lsd_date')
 			->get();
 
 			if ($data_submission[$key] != null) {
+				$date_ar[0]=[];
+				foreach ($data_submission[$key] as $key_i => $value_i) {
+					$date_ar[$key_i] = date('d-m-Y',strtotime($value_i->lsd_date));
+				}
 				foreach ($data_submission[$key] as $skey => $svalue) {
 					if ($svalue->lsr_status == 'true') {
 						$btn_download_report = '<a href="' . route('download_result_report', ['filename' => $svalue->lsr_filename]) . '"><button class="btn btn-flat btn-xs btn-default">Download</button></a>';
@@ -70,15 +76,15 @@ class ReportController extends Controller
 					} else {
 						$btn_download_letter = '<a href="' . route('download_bukti_bayar', ['filename' => $svalue->lsb_file_1]) . '"><button class="btn btn-flat btn-xs btn-default">Download</button></a>';
 					}
-					
-					$dt1 = date('d M Y', strtotime($svalue->lsb_date_start));
-					$dt2 = date('d M Y', strtotime($svalue->lsb_date_end));
-					$time_str = $dt1 . '  <b>s/d</b>  ' . $dt2;
+					// $dt1 = date('d M Y', strtotime($svalue->lsb_date_start));
+					// $dt2 = date('d M Y', strtotime($svalue->lsb_date_end));
+					// $time_str = $dt1 . '  <b>s/d</b>  ' . $dt2;
 					$data_subs[$svalue->lsb_id] = [
+						'title' => $report_title,
 						'id' => $svalue->lsb_id,
 						'user' => $svalue->name,
 						'judul' => $svalue->lsb_title,
-						'waktu' => $time_str, 
+						'waktu' => implode(', ', $date_ar), 
 						'lab' => $svalue->lab_name,
 						'cost' => funCurrencyRupiah($svalue->los_cost_total),
 						'download_laporan' => $btn_download_report,
@@ -88,12 +94,12 @@ class ReportController extends Controller
 				}
 			}
 		}
-		// dd($data_subs);
 		return redirect()->back()->with('data_report', $data_subs);
 	}
 	public function actionReportOrder(Request $request)
 	{
 		$period = CarbonPeriod::create($request->date_start, $request->date_end);
+		$report_title = 'Periode ' . date('d-M-Y', strtotime($request->date_start)) . ' - ' . date('d-M-Y', strtotime($request->date_end));
 		if ($period == null) {
 			return redirect()->back()->withInput()->withErrors('date_error', 'data error');
 		}
@@ -112,31 +118,31 @@ class ReportController extends Controller
 		foreach ($period as $key => $value) {
 			$date_param = date('Y-m-d', strtotime($value));
 			$data_submission[$key] = Lab_submission::leftjoin('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+			->join('lab_sub_dates', 'lab_submissions.lsb_id', '=', 'lab_sub_dates.lsd_lsb_id')
 			->leftjoin('laboratories', 'lab_submissions.lsb_lab_id', '=', 'laboratories.lab_id')
 			->leftJoin('lab_sub_orders', 'lab_submissions.lsb_id', '=', 'lab_sub_orders.los_lsb_id')
+			->where('lsd_date', $date_param)
 			->whereIn('lsb_lab_id', $ids)
 			->whereIn('lsb_status', ['disetujui', 'selesai'])
-			->where('lsb_period', 'like', '%' . $date_param . '%')
-			->select('lsb_id', 'id', 'lab_id', 'lsb_title', 'lsb_date_start', 'lsb_date_end', 'lab_name', 'name', 'los_cost_total','no_id', 'lab_submissions.created_at as date_order')
+			->select('lsb_id', 'id', 'lab_id', 'lsb_title', 'lsb_date_start', 'lsb_date_end', 'lab_name', 'name', 'los_cost_after','no_id', 'lab_submissions.created_at as date_order')
 			->get();
 			if ($data_submission[$key] != null) {
 				foreach ($data_submission[$key] as $skey => $svalue) {
-					$data_subs_value[$svalue->lsb_id] = $svalue->los_cost_total;
+					$data_subs_value[$svalue->lsb_id] = $svalue->los_cost_after;
 					$data_order = Lab_sub_order::join('lab_sub_order_details', 'lab_sub_order_details.lod_los_id','=', 'lab_sub_orders.los_id')
 					->where('los_lsb_id', $svalue->lsb_id)
 					->get();
-					$web = '';
+					$web = [];
 					$pot = 0;
 					$ch=0;
+					$idx_coast = 0;
 					foreach ($data_order as $key => $value) {
-						if ($value->lod_item_type == 'reduction') {
-							$pot = $value->lod_cost;
-						} else {
-							$web.= $value->lod_item_name.' ('. funCurrencyRupiah($value->lod_cost).'), ';
-							$ch = $ch + $value->lod_cost;
-						}
+						$pot = $value->los_cost_reduction;
+						$web[$idx_coast]= $value->lod_item_name.' ('. funCurrencyRupiah($value->lod_cost).')';
+						$ch = $ch + $value->lod_cost;
+						$idx_coast++;
 					}
-					$title = 'Data Report Order Periode '.date('d-M-Y',strtotime($request->date_start)).' Sampai '. date('d-M-Y', strtotime($request->date_end));
+					$title = 'Data Report Pendapatan Periode '.date('d-M-Y',strtotime($request->date_start)).' Sampai '. date('d-M-Y', strtotime($request->date_end));
 					$data_subs[$svalue->lsb_id] = [
 						'id' => $svalue->lsb_id,
 						'title' => $title,
@@ -144,9 +150,9 @@ class ReportController extends Controller
 						'no_id' => $svalue->no_id,
 						'user' => $svalue->name,
 						'lab' => $svalue->lab_name,
-						'fasilitas' => $web,
+						'fasilitas' => implode(', ',$web),
 						'potongan' => funCurrencyRupiah($pot),
-						'total' => funCurrencyRupiah($svalue->los_cost_total),
+						'total' => funCurrencyRupiah($svalue->los_cost_after),
 					];
 					$data_push[$svalue->lsb_id] = [
 						'id' => $svalue->lsb_id,
@@ -155,10 +161,10 @@ class ReportController extends Controller
 						'no_id' => $svalue->no_id,
 						'user' => $svalue->name,
 						'lab' => $svalue->lab_name,
-						'fasilitas' => $web,
+						'fasilitas' => implode(', ',$web),
 						'biaya_fasilitas' => funCurrencyRupiah($ch),
 						'potongan' => funCurrencyRupiah($pot),
-						'total' => funCurrencyRupiah($svalue->los_cost_total),
+						'total' => funCurrencyRupiah($svalue->los_cost_after),
 					];
 					$data_idx++;
 				}

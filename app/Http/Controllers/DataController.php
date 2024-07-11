@@ -46,6 +46,20 @@ class DataController extends Controller
 		$data_json = json_encode($data);
 		return $data_json;
 	}
+	public function sourceDataUserLectures(Request $request)
+	{
+		$users = User::whereIn('level',['LECTURE','LAB_HEAD','LAB_SUBHEAD', 'LAB_TECHNICIAN'])->get();
+		$data = [];
+		foreach ($users as $key => $value) {
+			$data[$key] = [
+				'id' => $value->id,
+				'title' => $value->name,
+				'level' => $value->level
+			];
+		}
+		$data_json = json_encode($data);
+		return $data_json;
+	}
 	public function serchingDataUser(Request $request)
 	{
 		if ($request->level == null) {
@@ -798,6 +812,7 @@ class DataController extends Controller
 	/* Tags:... */
 	public function viewLabtestCostTables(Request $request)
 	{
+		$user = Auth::user();
 		$data_labtest = Laboratory_labtest::leftjoin('laboratories', 'laboratory_labtests.lsv_lab_id','=', 'laboratories.lab_id')
 		->where('lsv_id', $request->lab_labtest)
 		->first();
@@ -805,6 +820,7 @@ class DataController extends Controller
 		->where('lst_lsv_id', $request->lab_labtest)
 		->get();
 		$web = null;
+		
 		$web .= '
 		<table class="table-bordered tabel_custom" style="width: 100%;">
 			<thead>
@@ -832,14 +848,15 @@ class DataController extends Controller
 		if ($data_facility != null) {
 			foreach ($data_facility as $key => $value) {
 				$web .= '
-						<tr>
-							<td style="width: 5%; text-align: center;">' . $no . '</td>
-							<td>' . $value->laf_name . '<input type="hidden" name="inp_fasilitas[]" value="'. $value->laf_id.'"></td>
-							<td style="width: 5%; text-align: center;">-</td>
-						</tr>';
+					<tr>
+						<td style="width: 5%; text-align: center;">' . $no . '</td>
+						<td>' . $value->laf_name . '<input type="hidden" name="inp_fasilitas[]" value="'. $value->laf_id.'"></td>
+						<td style="width: 5%; text-align: center;">-</td>
+					</tr>';
 				$no++;
 			}
 		}
+		
 		if ($data_labtest == null) {
 			# code...
 			$web .= '<tr>
@@ -850,11 +867,27 @@ class DataController extends Controller
 				</tbody>
 			</table>';
 		} else {
-			# code...
+			if ($user->level == 'LECTURE') {
+				$reduction = Cost_reduction::where('reduction_type', 'LECTURE')->first();
+				$reduction_val = ($data_labtest->lsv_price * $reduction->reduction_val)/100;
+				$cost_after = $data_labtest->lsv_price - $reduction_val;
+				$web .= '<tr>
+					<td style="width: 5%; text-align: center;"></td>
+					<td> <b>Biaya</b> </td>
+					<td style="width: 5%; text-align: center;"><b> - ' . funCurrencyRupiah($data_labtest->lsv_price) . '</b></td>
+				</tr>';
+				$web .= '<tr>
+					<td style="width: 5%; text-align: center;"></td>
+					<td text-align: center;">Potongan</td>
+					<td style="width: 5%; text-align: center;">'. funCurrencyRupiah($reduction_val).'</td>
+				</tr>';
+			}else{
+				$cost_after = $data_labtest->lsv_price;
+			}
 			$web .= '<tr>
 						<td style="width: 5%; text-align: center;"></td>
 						<td> <b>Total Biaya</b> </td>
-						<td style="width: 5%; text-align: center;"><b>' . funCurrencyRupiah($data_labtest->lsv_price) . '</b></td>
+						<td style="width: 5%; text-align: center;"><b>' . funCurrencyRupiah($cost_after) . '</b></td>
 					</tr>
 				</tbody>
 			</table>';
@@ -864,26 +897,59 @@ class DataController extends Controller
 	/* Tags:... */
 	public function cek_data(Request $request)
 	{
-		$user = User::where('level','LAB_SUBHEAD')->get();
+		$user = User::whereIn('level',['LAB_HEAD','LAB_SUBHEAD', 'LAB_TECHNICIAN'])->whereNotNull('email')->get();
+		foreach ($user as $key => $value) {
+			$user_email[$key] = $value->email;
+		}
 		$data_lecture = getDataLectures();
-		$n = 1;
-		foreach ($data_lecture as $key => $value) {
-			$name = Str::replace(' ', '', Str::lower($value['nama']));
-			
+		$data_student = getDataStudents();
+		foreach ($data_student as $key => $value) {
+			$ar_student[$key] = [
+				'nim' => $value['nim'],
+				'email' => $value['email'],
+				'judul' => $value['judul']
+			];
 		}
-
-		$user_local = User::whereIn('level',['LAB_TECHNICIAN'])->get();
-		foreach ($user_local as $key => $value) {
-			$nama_local[$key] =  Str::replace(' ', '', Str::lower($value['name']));
-		}
+		dd($ar_student);
+		// dd($data_student);
 		foreach ($data_lecture as $key => $value) {
-			$name = Str::replace(' ', '', Str::lower($value['nama']));
-			if (in_array($name, $nama_local)) {
-				$d[$n] = $value['nama'];
-				$n++;
-			}else{
-				$m[$key] = $value['nama'];
+			if (in_array($value['email'], $user_email)) {
+				$data_user_inputed[$key] = $value;
+			} else {
+				$data_user_not_inputed[$key] = $value;
 			}
 		}
+		die('lock');
+
+		foreach ($data_user_inputed as $key => $value) {
+			$user_inputed = User::where('email',$value['email'])->first();
+			$usd_user_inputed[$key] = [
+				"usd_user" => $user_inputed->id,
+				"usd_prodi" => $value['prodi'],
+				"usd_fakultas" => "Fakultas Teknik",
+				"usd_universitas" => 'Universitas Negeri Surabaya'
+			];
+		}
+		User_detail::insert($usd_user_inputed);
+		// die();
+		$id = genIdUser();
+		foreach ($data_user_not_inputed as $key => $value) {
+			$usr_not_inputed[$key] = [
+				"id" => $id,
+				"no_id" => $value['nidn'],
+				"name" => $value['nama'],
+				"email" => $value['email'],
+				"password" => bcrypt("open@123")
+			];
+			$usd_not_inputed[$key] = [
+				"usd_user" => $id,
+				"usd_prodi" => $value['prodi'],
+				"usd_fakultas" => "Fakultas Teknik",
+				"usd_universitas" => 'Universitas Negeri Surabaya'
+			];
+			$id++;
+		}
+		User::insert($usr_not_inputed);
+		User_detail::insert($usd_not_inputed);
 	}
 }

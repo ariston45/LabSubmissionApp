@@ -31,10 +31,7 @@
 			}
 			.login-box, .register-box{
 				width: 540px;
-				margin-top: 2%;
-				margin-right: auto;
-				margin-bottom: 30px;
-				margin-left: auto;
+				margin: 2% auto;
 			}
 		</style>
 	</head>
@@ -49,6 +46,8 @@
 				<hr>
         @yield('content')
 			</div>
+		</div>
+		<div style="margin-top: 10px;">
 		</div>
 		<script src="{{ url('assets/plugins/jQuery/jquery-2.2.3.min.js') }}"></script>
 		<script src="{{ url('assets/bootstrap/js/bootstrap.min.js') }}"></script>

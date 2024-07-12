@@ -574,49 +574,77 @@ class DataController extends Controller
 	/* Tags:... */
 	public function viewLabCostTables(Request $request)
 	{
+		$activity = $request->activity;
+		$user = DataAuth();
 		$data_lab = Laboratory::where('lab_id',$request->lab_id)->first();
 		$web=null;
-		$web.='
-		<table class="table-bordered tabel_custom" style="width: 100%;">
-			<thead>
-				<tr>
-					<th style="width: 5%; text-align: center;">No</th>
-					<th style="width: 65%; text-align: center;">Nama Laboratorium/Fasilitas/Alat</th>
-					<th style="width: 30%;text-align: center;">Biaya Pinjam</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td style="width: 5%; text-align: center;"></td>
-					<td colspan="2"><b>Laboratorium</b></td>
-				</tr>
-				<tr>
-					<td style="width: 5%; text-align: center;">1</td>
-					<td>'.$data_lab->lab_name.'</td>
-					<td style="width: 5%; text-align: center;">'. funCurrencyRupiah($data_lab->lab_rent_cost). '</td>
-				</tr>
-				<tr>
-					<td style="width: 5%; text-align: center;"></td>
-					<td colspan="2"><b>Fasilitas Dan Alat</b></td>
-				</tr>
-				<tr>
-					<td style="width: 5%; text-align: center;">-</td>
-					<td>-</td>
-					<td style="width: 5%; text-align: center;">-</td>
-				</tr>
-				<tr>
-					<td style="width: 5%; text-align: center;"></td>
-					<td> <b>Total Biaya</b> </td>
-					<td style="width: 5%; text-align: center;">' . funCurrencyRupiah($data_lab->lab_rent_cost) . '</td>
-				</tr>
-			</tbody>
-		</table>';
+		if ($user->level == 'STUDENT') {
+			$data_reduce = Cost_reduction::where('reduction_usr_level', 'STUDENT')
+			->where('reduction_act_cat', $activity)
+			->first();
+			if ($activity == 'tp_penelitian_skripsi') {
+			}else{
+				$data_reduce = null;
+			}
+			$web.='<table class="table-bordered tabel_custom" style="width: 100%;">
+				<thead>
+					<tr>
+						<th style="width: 5%; text-align: center;">No</th>
+						<th style="width: 65%; text-align: center;">Nama Laboratorium/Fasilitas/Alat</th>
+						<th style="width: 30%;text-align: center;">Biaya Pinjam</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="width: 5%; text-align: center;"></td>
+						<td colspan="2"><b>Laboratorium</b></td>
+					</tr>
+					<tr>
+						<td style="width: 5%; text-align: center;">1</td>
+						<td>'.$data_lab->lab_name.'</td>
+						<td style="width: 5%; text-align: center;">'. funCurrencyRupiah($data_lab->lab_rent_cost). '</td>
+					</tr>
+					<tr>
+						<td style="width: 5%; text-align: center;"></td>
+						<td colspan="2"><b>Fasilitas Dan Alat</b></td>
+					</tr>
+					<tr>
+						<td style="width: 5%; text-align: center;">-</td>
+						<td>-</td>
+						<td style="width: 5%; text-align: center;">-</td>
+					</tr>
+					<tr>
+						<td style="width: 5%; text-align: center;"></td>
+						<td colspan="2"><b>Potongan Biaya</b></td>
+					</tr>';
+					if ($activity == 'tp_penelitian_skripsi') {
+						$web='<tr>
+							<td style="width: 5%; text-align: center;">1</td>
+							<td>'.$data_reduce->reduction_name.'</td>
+							<td style="width: 5%; text-align: center;">'. $data_reduce->reduction_val.'</td>
+						</tr>';
+					}else{
+					$web='<tr>
+							<td style="width: 5%; text-align: center;">-</td>
+							<td>-</td>
+							<td style="width: 5%; text-align: center;">-</td>
+						</tr>';
+					}
+					$web ='<tr>
+						<td style="width: 5%; text-align: center;"></td>
+						<td> <b>Total Biaya</b> </td>
+						<td style="width: 5%; text-align: center;">' . funCurrencyRupiah($data_lab->lab_rent_cost) . '</td>
+					</tr>
+				</tbody>
+			</table>';
+		}
 		return $web;
 	}
 	public function viewFacilityCostTables(Request $request)
 	{
 		$user = Auth::user();
 		$ids_facility = $request->lab_facility;
+		$activity = $request->activity;
 		$data_lab = Laboratory::where('lab_id', $request->lab_id)->first();
 		if ($ids_facility == null) {
 			$data_facility = [];
@@ -663,20 +691,24 @@ class DataController extends Controller
 					}
 				}
 				if ($user->level == 'STUDENT') {
-					$reduction = Cost_reduction::where('reduction_type', 'STUDENT')->first();
-					$data_cost_total = $data_lab->lab_rent_cost + array_sum($facility_cost_total);
-					if ($reduction->reduction_val == 0) {
-						$data_reduction = $data_cost_total;
-					} else {
-						$data_reduction = ($reduction->reduction_val/100)* $data_cost_total;
+					if ($activity == 'tp_lainnya') {
+						echo "test";
+					}else{
+						$reduction = Cost_reduction::where('reduction_type', 'STUDENT')->first();
+						$data_cost_total = $data_lab->lab_rent_cost + array_sum($facility_cost_total);
+						if ($reduction->reduction_val == 0) {
+							$data_reduction = $data_cost_total;
+						} else {
+							$data_reduction = ($reduction->reduction_val/100)* $data_cost_total;
+						}
+						
+						$data_cost_total_reduction = $data_cost_total - $data_reduction;
+						$web.='<tr>
+							<td style="width: 5%; text-align: center;"></td>
+							<td> <b>Potongan ('.$reduction->reduction_val.'%)</b> </td>
+							<td style="width: 5%; text-align: center;"><b>'. funCurrencyRupiah($data_reduction). '</b></td>
+						</tr>';
 					}
-					
-					$data_cost_total_reduction = $data_cost_total - $data_reduction;
-					$web.='<tr>
-						<td style="width: 5%; text-align: center;"></td>
-						<td> <b>Potongan ('.$reduction->reduction_val.'%)</b> </td>
-						<td style="width: 5%; text-align: center;"><b>'. funCurrencyRupiah($data_reduction). '</b></td>
-					</tr>';
 				}elseif($user->level == 'LECTURE'){
 					$reduction = Cost_reduction::where('reduction_type', 'LECTURE')->first();
 					$data_cost_total = $data_lab->lab_rent_cost + array_sum($facility_cost_total);

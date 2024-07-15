@@ -984,4 +984,10 @@ class DataController extends Controller
 		User::insert($usr_not_inputed);
 		User_detail::insert($usd_not_inputed);
 	}
+	/* Tags:... */
+	public function checkLabDetail(Request $request)
+	{
+		$data_lab = Laboratory::where('lab_id',$request->lab_id)->first();
+		return $data_lab->lab_costbase;
+	}
 }

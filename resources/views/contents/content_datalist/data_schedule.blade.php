@@ -57,7 +57,7 @@ Lab management | Dashboard
 			<hr class="mt-1" style="margin: 0px 0px 10px 0px;">
 			<div class="clearfix"></div>
 			@if (rulesUser(['STUDENT','PUBLIC_MEMBER','PUBLIC_NON_MEMBER','LECTURE']))
-			<a href="{{ url('pengajuan') }}" target="_BLANK">
+			<a href="{{ url('pengajuan/form-pengajuan') }}" target="_BLANK">
 				<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-bottom: 10px;"></i> Buat Pengajuan</button>
 			</a>
 			@endif

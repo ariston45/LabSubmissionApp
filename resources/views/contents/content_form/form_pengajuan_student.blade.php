@@ -58,6 +58,27 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        {{--  --}}
+        @if (rulesUser(['STUDENT']))
+        <div id="data-simontasi"></div>
+        @endif
+        {{--  --}}
+        {{-- Opsi untuk pilihan lain-lain --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_opsi_lainnya') ? ' has-error' : '' }}" id="fm-opsi" style="display: none;">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Opsi Lainnya
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <select id="inp-opsi" class="form-control" name="inp_opsi_lainnya">
+              <option value="{{ null }}">Pilih opsi..</option>
+              <option value="tp_opsi1" @if (old('inp_opsi_lainnya') == 'tp_opsi1') selected @endif >Opsi1</option>
+              <option value="tp_opsi2" @if (old('inp_opsi_lainnya') == 'tp_opsi2') selected @endif >Opsi2</option>
+            </select>
+          </div>
+        </div>
+        {{-- --- --}}
         <div class="form-group has-feedback {{ $errors->has('inp_judul') ? ' has-error' : '' }}" id="fm-judul" style="display: none;">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -71,11 +92,6 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        {{--  --}}
-        @if (rulesUser(['STUDENT']))
-        <div id="data-simontasi"></div>
-        @endif
-        {{--  --}}
         <div class="col-md-offset-3 col-md-9">
           <div class="divider">Fasilitas Dan Alat</div>
         </div>
@@ -86,7 +102,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select id="inp-lab" class="form-control" name="inp_lab" >
+            <select id="inp-lab" class="form-control" name="inp_lab" onchange="actGetLab()">
               <option value="{{ null }}">Pilih laboratorium..</option>
               @foreach ($lab_data as $list)
               <option value="{{ $list->lab_id }}">{{ $list->lab_name }}</option>
@@ -97,7 +113,22 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        <div class="form-group {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}">
+        {{-- ~ --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_sample') ? ' has-error' : '' }}" id="fm-inp-sample" style="display: none;">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Jumlah Sampel
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <input type="text" id="inp-sample" class="form-control" name="inp_sampel" value="{{ old('inp_sampel') }}" placeholder="Inputkan jumlah sampel...">
+            @if ($errors->has('inp_sampel'))
+						<span style="color: red;"><i>{{ $errors->first('inp_sampel') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{-- ~ --}}
+        <div class="form-group {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}" id="fm-inp-tool" style="display: none;">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
               Fasilitas/Alat
@@ -115,8 +146,6 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        <div id="cost-tables" class="col-md-offset-3 col-md-9">
-        </div>
         {{-- !!  --}}
         @php
           $idx_time = 0;
@@ -124,7 +153,7 @@ Lab management | Dashboard
         <div class="col-md-offset-3 col-md-9">
           <div class="divider">Jadwal Kegiatan</div>
         </div>
-        <div class="form-group has-feedback {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}">
+        <div class="form-group has-feedback {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}" style="margin-bottom: 0px;">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
               Jadwal Mulai
@@ -159,7 +188,7 @@ Lab management | Dashboard
           </div> 
         </div>
         {{-- !!  --}}
-        <div class="col-md-offset-3 col-md-9">
+        {{-- <div class="col-md-offset-3 col-md-9">
           <div class="divider">Pembayaran</div>
         </div>
         <div class="form-group has-feedback {{ $errors->has('bukti_pembayaran') ? ' has-error' : '' }}">
@@ -182,11 +211,16 @@ Lab management | Dashboard
 						<span style="color: red;"><i>{{ $errors->first('bukti_pembayaran') }}</i></span>
 						@endif
           </div>
+        </div> --}}
+        <div id="cost-tables" class="col-md-offset-3 col-md-9">
         </div>
       </div>
       <div class="box-footer">
-        <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
-        <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
+        <div class="col-md-offset-3 col-md-9">
+          <button type="button" class="btn btn-default btn-flat"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
+          <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
+          <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
+        </div>
       </div>
     </form>
   </div>
@@ -254,6 +288,34 @@ Lab management | Dashboard
 <script src="{{ url('/public/assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
 {{-- varibles --}}
 <script>
+  var select_act = new TomSelect("#inp-kegiatan",{
+    create: false,			
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-kegitan">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+  var select_opsi = new TomSelect("#inp-opsi",{
+    create: false,			
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-opsi">'+escape(data.title)+'</div>';
+			}
+		}
+  });
   var select_lab = new TomSelect("#inp-lab",{
     create: false,			
 		valueField: 'id',
@@ -264,7 +326,7 @@ Lab management | Dashboard
 				return '<div><span class="title">'+escape(data.title)+'</span></div>';
 			},
 			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+				return '<div id="select-lab">'+escape(data.title)+'</div>';
 			}
 		}
   });
@@ -279,7 +341,7 @@ Lab management | Dashboard
 				return '<div><span class="title">'+escape(data.title)+'</span></div>';
 			},
 			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+				return '<div id="select-fasilitas">'+escape(data.title)+'</div>';
 			}
 		}
   });
@@ -294,61 +356,11 @@ Lab management | Dashboard
 				return '<div><span class="title">'+escape(data.title)+'</span></div>';
 			},
 			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+				return '<div id="select-time">'+escape(data.title)+'</div>';
 			}
 		}
   });
 </script>
-@if (rulesUser(['STUDENT']))
-<script>
-  /*
-  var select_lecture = new TomSelect("#inp-dosen",{
-    create: false,			
-    valueField: 'id',
-    labelField: 'title',
-    searchField: 'title',
-    render: {
-      option: function(data, escape) {
-        return '<div><span class="title">'+escape(data.title)+'</span></div>';
-      },
-      item: function(data, escape) {
-        return '<div id="select-signed-user">'+escape(data.title)+'</div>';
-      }
-    }
-  });
-  var par_a = 'LECTURE';
-  var data_a = [];
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
-  $.ajax({
-    type: 'POST',
-    url: "{{ route('source-data-users') }}",
-    data: {
-      "level":par_a,
-    },
-    async: false,
-    success: function(result) {
-      data_a = result;
-    },
-  });
-  var opt_1 = [];
-  select_lecture.clear();
-  select_lecture.clearOptions();
-  if (data_a != null) {
-    var dataOption = JSON.parse(data_a);
-    for (let index = 0; index < dataOption.length; index++) {
-      opt_1.push({
-        id:dataOption[index].id,
-        title:dataOption[index].title,
-      });
-    }
-    select_lecture.addOptions(opt_1);
-  }*/
-</script>
-@endif
 {{-- function --}}
 <script>
   function callDataStudent() {
@@ -374,15 +386,17 @@ Lab management | Dashboard
   };
   function actActivitySubs() {
     var val_activity = $('#inp-kegiatan').find(":selected").val();
+    alert(val_activity);
     if (val_activity == 'tp_penelitian_skripsi') {
       $("#fm-judul").hide();
-      $("#inp-judul-ii").prop('disabled', true);
+      // $("#inp-judul-ii").prop('disabled', true);
       $('#data-loading').show();
       setTimeout(function() {
         callDataStudent();
       }, 2000);
-    }else if(val_activity == 'tp_lainnya'){
+    }else if(val_activity == 'tp_lain_lain'){
       $('#fm-judul').fadeIn();
+      $('#fm-opsi').fadeIn();
     }
   };
   function actViewLabCost(id) {
@@ -451,6 +465,34 @@ Lab management | Dashboard
       async: false,
       success: function(result) {
         $('#check-sch').html(result);
+      },
+    });
+  };
+  function actGetLab() {
+    var lab_id = select_lab.getValue();
+    var check_lab = null;
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    $.ajax({
+      type: 'POST',
+      url: "{{ route('source_check_lab') }}",
+      data: {
+        "lab_id":lab_id,
+      },
+      async: false,
+      success: function(result) {
+        if (result == 'by_sample') {
+          $('#fm-inp-sample').fadeIn();  
+        }else if(result == 'by_day'){
+          $('#fm-inp-sample').hide(); 
+        }else if(result == 'by_tool'){
+          $('#fm-inp-sample').hide();
+        }else{
+          $('#fm-inp-sample').hide();
+        }
       },
     });
   };

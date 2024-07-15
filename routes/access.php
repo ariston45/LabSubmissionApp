@@ -68,7 +68,8 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::match(['get', 'post'], 'source-data-check-sch', [DataController::class, 'viewCheckDataSch'])->name('source-data-check-sch');
 		Route::match(['get', 'post'], 'source-data-testlab', [DataController::class, 'sourceDataTestLab'])->name('source_data_testlab');
 		Route::match(['get', 'post'], 'source-data-cost-labtest-tables', [DataController::class, 'viewLabtestCostTables'])->name('source_data_cost_labtest_tables');
-		
+		Route::match(['get', 'post'], 'source-check-lab', [DataController::class, 'checkLabDetail'])->name('source_check_lab');
+
 	});
 	
 	/*************************************************************************************************************************************************/

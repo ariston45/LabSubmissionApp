@@ -16,7 +16,7 @@ Lab management | Dashboard
 			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Fasilitas Laboratorium</h3>
 			<div class="pull-right">
 				<a href="{{ url('laboratorium/'.$data_lab->lab_id.'/form-tambah-fasilitas') }}">
-					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah Fasilitas</button>
+					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-tambah-circle-line" style="margin-right: 4px;"></i> Tambah Fasilitas</button>
 				</a>
 				<a href="{{ url('laboratorium') }}">
 					<button class="btn btn-flat btn-xs btn-danger"><i class="ri-close-circle-line" style="margin-right: 4px;"></i> Tutup</button>

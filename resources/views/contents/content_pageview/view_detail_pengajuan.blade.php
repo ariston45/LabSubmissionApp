@@ -195,38 +195,40 @@ Lab management | Dashboard
             <td> <b>Detail Order</b></td>
             <td>
               <table>
+                <tr>
+                  @if ($data_pengajuan->lab_costbase == 'by_day')
+                    <td colspan="2"><b>Daftar Hari :</b></td>
+                  @elseif ($data_pengajuan->lab_costbase == 'by_tool')
+                    <td colspan="2"><b>Daftar Alat dan Fasilitas :</b></td>
+                  @elseif ($data_pengajuan->lab_costbase == 'by_sample')
+                    <td colspan="2"><b>Jumlah sample : </b></td>
+                  @endif
+                </tr>
                 @foreach ($data_detail_order as $value)
-                  @if ($value->lod_item_type == 'lab')
-                  <tr>
-                    <td colspan="2"><b>Laboratorium</b></td>
-                  </tr>
                   <tr>
                     <td style="padding: 2px 10px 2px 2px;">{{ $value->lod_item_name }}</td>
                     <td style="padding: 2px 2px 2px 2px;">: {{ funCurrencyRupiah($value->lod_cost) }}</td>
                   </tr>
-                  @elseif ($value->lod_item_type == 'tool')
-                  <tr>
-                    <td colspan="2"><b>Fasilitas dan Alat</b></td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 2px 10px 2px 2px;">{{ $value->lod_item_name }} </td>
-                    <td style="padding: 2px 2px 2px 2px;">: {{ funCurrencyRupiah($value->lod_cost) }}</td>
-                  </tr>
-                  @endif
                 @endforeach
+                <tr>
+                  <td style="padding: 2px 10px 2px 2px;">Jumlah Biaya</td>
+                  <td style="padding: 2px 2px 2px 2px;">: ({{ funCurrencyRupiah($data_order->los_cost_reduction) }})</td>
+                </tr>
                 <tr>
                   <td colspan="2"><b>Potongan biaya</b></td>
                 </tr>
                 <tr>
-                  <td style="padding: 2px 10px 2px 2px;">{{ $data_name_reduction }}</td>
-                  <td style="padding: 2px 2px 2px 2px;">: - {{funCurrencyRupiah($data_detail_order_reduction)}}</td>
+                  <td style="padding: 2px 10px 2px 2px;">
+                    Potongan @if($data_order->los_cost_reduction_percent == null) [0%] @else [{{ $data_order->los_cost_reduction_percent }}%] @endif
+                  </td>
+                  <td style="padding: 2px 2px 2px 2px;">: - {{funCurrencyRupiah($data_order->los_cost_reduction)}}</td>
                 </tr>
                 <tr>
                   <td colspan="2"><b>Total Biaya</b></td>
                 </tr>
                 <tr>
                   <td style="padding: 2px 10px 2px 2px;">Total</td>
-                  <td style="padding: 2px 2px 2px 2px;">: {{ funCurrencyRupiah($data_detail_order_total) }}</td>
+                  <td style="padding: 2px 2px 2px 2px;">: {{ funCurrencyRupiah($data_order->los_cost_after) }}</td>
                 </tr>
               </table>
             </td>

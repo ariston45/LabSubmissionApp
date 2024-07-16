@@ -233,6 +233,7 @@ class LaboratoryController extends Controller
 			'laf_name' => $request->inp_fasilitas,
 			'laf_utility' => $request->inp_utility,
 			'laf_brand' => $request->inp_brand,
+			'laf_base' => $request->inp_basecost,
 			'laf_value' => funFormatCurToDecimal($request->inp_cost),
 			'created_by' => null,
 		];
@@ -249,7 +250,7 @@ class LaboratoryController extends Controller
 		#
 		$storeFacility = Laboratory_facility::insert($data_lab);
 		$storeFacilityCnt = Laboratory_facility_count_status::insert($data_lab_count_detail);
-		return redirect()->route('laboratorium_fasilitas',['id'=> $request->lab_id]);
+		return redirect()->route('data_fasilitas_lab',['id'=> $request->lab_id]);
 	}
 	public function viewLabFacilityDetail(Request $request)
 	{

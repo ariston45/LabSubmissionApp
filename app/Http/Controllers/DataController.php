@@ -988,6 +988,12 @@ class DataController extends Controller
 	public function checkLabDetail(Request $request)
 	{
 		$data_lab = Laboratory::where('lab_id',$request->lab_id)->first();
-		return $data_lab->lab_costbase;
+		$data = [];
+		foreach ($data_lab as $key => $value) {
+			$data = [
+				'costbase' => $data_lab->lab_costbase
+			];
+		}
+		return $data;
 	}
 }

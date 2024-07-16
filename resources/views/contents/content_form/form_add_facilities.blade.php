@@ -22,7 +22,7 @@ Lab management | Dashboard
         </a>
       </div>
     </div>
-    <form class="form-horizontal" action="{{ route('input_fasilitas') }}" method="POST" enctype="multipart/form-data">
+    <form class="form-horizontal" action="{{ route('input_fasilitas_laboratorium') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="box-body">
         {{-- !! --}}
@@ -76,7 +76,38 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        <div class="form-group has-feedback {{ $errors->has('inp_cn_facility') ? ' has-error' : '' }}">
+        <div class="form-group has-feedback {{ $errors->has('inp_brand') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-4 control-label" >
+            <span style="padding-right: 30px;">
+              Dasar peminjaman
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-8">
+            <select name="inp_base" class="form-control" id="inp-base">
+              <option value="{{ null }}">Pilih dasar peminjaman</option>
+              <option value="Hari">Harian</option>
+              <option value="Minggu">Mingguan</option>
+              <option value="Bulan">Bulanan</option>
+            </select>
+            @if ($errors->has('inp_base'))
+						<span style="color: red;"><i>{{ $errors->first('inp_base') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_brand') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-4 control-label" >
+            <span style="padding-right: 30px;">
+              Biaya Pinjam
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-8">
+            <input type="text" id="inp-cost" class="form-control" name="inp_cost" value="{{ old('inp_cost') }}" oninput="fcurrencyInput('inp-cost')" placeholder="Rp 0.00">
+            @if ($errors->has('inp_brand'))
+						<span style="color: red;"><i>{{ $errors->first('inp_brand') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{-- <div class="form-group has-feedback {{ $errors->has('inp_cn_facility') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
               Jumlah Alat/fasilitas
@@ -153,7 +184,7 @@ Lab management | Dashboard
 						<span style="color: red;"><i>{{ $errors->first('inp_cn_unwearable') }}</i></span>
 						@endif
           </div>
-        </div>
+        </div> --}}
       </div>
       <div class="box-footer">
         <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Simpan</button>
@@ -194,7 +225,7 @@ Lab management | Dashboard
 <script src="{{ url('/public/assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
 {{-- varibles --}}
 <script>
-  var select_kalab = new TomSelect("#inp-kalab",{
+  var select_basecost = new TomSelect("#inp-base",{
     create: false,			
 		valueField: 'id',
 		labelField: 'title',
@@ -204,7 +235,7 @@ Lab management | Dashboard
 				return '<div><span class="title">'+escape(data.title)+'</span></div>';
 			},
 			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+				return '<div id="select-base">'+escape(data.title)+'</div>';
 			}
 		}
   });
@@ -239,6 +270,26 @@ Lab management | Dashboard
   });
 </script>
 {{-- function --}}
+<script>
+  function fcurrencyInput(elem) {
+    var inputElement = document.getElementById(elem);
+    inputElement.value = formatRupiah(inputElement.value, 'Rp ');
+  }
+  function formatRupiah(number, prefix) {
+    var number_string = number.replace(/[^,\d]/g, '').toString(),
+    split = number_string.split(','),
+    sisa = split[0].length % 3,
+    rupiah = split[0].substr(0, sisa),
+    ribuan = split[0].substr(sisa).match(/\d{3}/gi);  
+    if (ribuan) {
+      separator = sisa ? '.' : '';
+      rupiah += separator + ribuan.join('.');
+    }
+    rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+    return prefix == undefined ? rupiah : (rupiah ? 'Rp ' + rupiah : '');
+  };
+</script>
+{{-- ready function --}}
 <script>
   $(document).ready( function() {
     $(document).on('change', '#btn-file-foto :file', function() {

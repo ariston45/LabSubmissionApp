@@ -47,6 +47,7 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::match(['get','post'], 'source-datatables-schedule-lab',[DatatablesController::class, 'sourceDataScheduleLab'])->name('source-datatables-schedule-lab');
 		Route::match(['get', 'post'], 'source-datatables-reguler-schedule-lab', [DatatablesController::class, 'sourceDataScheduleLabReguler'])->name('source-datatables-reguler-schedule-lab');
 		Route::post('source-datatables-lab-byshcedule', [DatatablesController::class, 'sourceDataLabSchedule'])->name('source_datatables_lab_byshcedule');
+		Route::post('source-datatables-labs-sub', [DatatablesController::class, 'sourceDataLabSub'])->name('source_datatables_labs_sub');
 		Route::post('source-datatables-lab-byfacility', [DatatablesController::class, 'sourceDataLabFacility'])->name('source_datatables_lab_byfacility');
 		Route::post('source-datatables-fasilitas', [DatatablesController::class, 'sourceDataFasilitas'])->name('source-datatables-fasilitas');
 		Route::post('source-datatables-user', [DatatablesController::class, 'sourceDataUsers'])->name('source-datatables-user');
@@ -83,14 +84,20 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::prefix('pengajuan')->group(function () {
 		# first
 		Route::get('/', [PengajuanController::class, 'dataPengajuan']);
+		Route::get('laboratorium', [PengajuanController::class, 'dataLabPengajuan']);
 		Route::get('additional', [PengajuanController::class, 'dataPengajuanAdditional']);
 		Route::get('data-arsip', [PengajuanController::class, 'dataPengajuanArchice']);
 		# form
-		Route::get('form-pengajuan', [PengajuanController::class, 'formPengajuan']);
+		Route::get('laboratorium/form-pengajuan-pinjam/{id}', [PengajuanController::class, 'formPengajuan']);
 		Route::get('form-pengajuan-labtest', [PengajuanController::class, 'formPengajuanLabTest']);
 		Route::get('form-laporan/{id}', [PengajuanController::class, 'formLaporan']);
 		#action
 		Route::post('action-send-pengajuan', [PengajuanController::class, 'actionPengajuan'])->name('kirim_pengajuan');
+
+		Route::post('action-pengajuan-static-by-day', [PengajuanController::class, 'actionPengajuanStaticDay'])->name('action_pengajuan_static_by_day');
+		Route::post('action-pengajuan-static-by-tool', [PengajuanController::class, 'actionPengajuanStaticTool'])->name('action_pengajuan_static_by_tool');
+		Route::post('action-pengajuan-static-by-sample', [PengajuanController::class, 'actionPengajuanStaticSample'])->name('action_pengajuan_static_by_sample');
+		
 		Route::get('action-acc-kalab/{id}', [PengajuanController::class, 'actionAccA'])->name('act-pengajuan-a');
 		Route::post('update-acceptable-submission', [PengajuanController::class, 'actionAccA'])->name('update_acceptable_submission');
 		Route::post('update-technical-submission', [PengajuanController::class, 'actionSettechnical'])->name('update_technical_submission');

@@ -1121,7 +1121,7 @@ class DatatablesController extends Controller
 			$data = Laboratory::join('laboratory_technicians', 'laboratories.lab_id', '=', 'laboratory_technicians.lat_laboratory')
 			->leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
 			->where('lat_tech_id', $user->id)
-				->get();
+			->get();
 		} else {
 			$data = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
 			->get();
@@ -1161,7 +1161,50 @@ class DatatablesController extends Controller
 			->make(true);
 	}
 	/* Tags:... */
-	public function sourceDataLabFacility(Request $request)
+	public function sourceDataLabSub(Request $request)
+	{
+		$data = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+		->get();
+		return DataTables::of($data)
+			->addIndexColumn()
+			->addColumn('empty_str', function ($k) {
+				return '';
+			})
+			->addColumn('opsi', function ($data) {
+				if ($data->lab_status == 'tersedia') {
+					return '<a href="' . url('pengajuan/laboratorium/form-pengajuan-pinjam/' . $data->lab_id) . '">
+					<button class="btn btn-block btn-flat btn-default btn-xs " type="button" > <b>Pinjam Laboratorium</b></button></a>';
+				}else{
+					return '<a href="#">
+					<button class="btn btn-block btn-flat btn-default btn-xs " type="button" disabled> <b>Pinjam Laboratorium</b></button></a>';
+				}
+			})
+			->addColumn('name', function ($data) {
+				$res = $data->lab_name;
+				return $res;
+			})
+			->addColumn('head', function ($data) {
+				$res = $data->name;
+				return $res;
+			})
+			->addColumn('status', function ($data) {
+				if ($data->lab_status == 'tersedia') {
+					$res = '<div style="text-align:center;"><span class="badge bg-green">' . strLabStatus($data->lab_status) . '</span>';
+				} elseif ($data->lab_status == 'tidak_tersedia') {
+					$res = '<div style="text-align:center;"><span class="badge bg-yellow">' . strLabStatus($data->lab_status) . '</span>';
+				} else {
+					$res = '<div style="text-align:center;"><span class="badge bg-default">Not Set</span>';
+				}
+				return $res;
+			})
+			->addColumn('location', function ($data) {
+				$res = $data->lab_location;
+				return $res;
+			})
+			->rawColumns(['opsi', 'name', 'head', 'status', 'location'])
+			->make(true);
+	}
+	/* Tags:... */public function sourceDataLabFacility(Request $request)
 	{
 		$user = Auth::user();
 		if (rulesUser(['ADMIN_SYSTEM', 'ADMIN_MASTER', 'LAB_HEAD'])) {
@@ -1216,7 +1259,7 @@ class DatatablesController extends Controller
 	}
 	public function sourceDataFasilitas(Request $request)
 	{
-		$data = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
+		$data = Laboratory_facility::leftjoin('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
 		->where('laf_laboratorium', $request->lab_id)
 		->get();
 		return DataTables::of($data)

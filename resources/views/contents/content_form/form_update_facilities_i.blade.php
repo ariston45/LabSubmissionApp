@@ -78,6 +78,24 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_brand') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-4 control-label" >
+            <span style="padding-right: 30px;">
+              Dasar peminjaman
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-8">
+            <select name="inp_base" class="form-control" id="inp-base">
+              <option value="{{ null }}" @if($data_facility->laf_base == null) @endif >Pilih dasar peminjaman</option>
+              <option value="Hari" @if($data_facility->laf_base == 'Hari') selected @endif >Harian</option>
+              <option value="Minggu" @if($data_facility->laf_base == 'Minggu') selected @endif>Mingguan</option>
+              <option value="Bulan" @if($data_facility->laf_base == 'Bulan') selected @endif>Bulanan</option>
+            </select>
+            @if ($errors->has('inp_base'))
+						<span style="color: red;"><i>{{ $errors->first('inp_base') }}</i></span>
+						@endif
+          </div>
+        </div>
         <div class="form-group has-feedback {{ $errors->has('inp_cost') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
@@ -210,7 +228,7 @@ Lab management | Dashboard
 <script src="{{ url('/public/assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
 {{-- varibles --}}
 <script>
-  var select_kalab = new TomSelect("#inp-kalab",{
+  var select_base = new TomSelect("#inp-base",{
     create: false,			
 		valueField: 'id',
 		labelField: 'title',
@@ -220,7 +238,7 @@ Lab management | Dashboard
 				return '<div><span class="title">'+escape(data.title)+'</span></div>';
 			},
 			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+				return '<div id="select-inp-base">'+escape(data.title)+'</div>';
 			}
 		}
   });

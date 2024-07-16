@@ -30,6 +30,7 @@ class FacilityController extends Controller
 		->where('lab_id', $request->id)
 		->select('lab_name', 'name', 'lab_id')
 		->first();
+		// die();
 		return view('contents.content_datalist.data_facilities', compact('data_lab'));
 	}
 	/* Tags:... */
@@ -80,11 +81,10 @@ class FacilityController extends Controller
 	public function formUpdateLaboratoryFacility(Request $request)
 	{
 		$users = User::get();
-		$data_facility = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
+		$data_facility = Laboratory_facility::leftjoin('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
 		->leftJoin('laboratories', 'Laboratory_facilities.laf_laboratorium', '=', 'laboratories.lab_id')
 		->where('laf_id', $request->id)
 		->first();
-		// dd($data_facility);
 		return view('contents.content_form.form_update_facilities_i', compact('users', 'data_facility'));
 	}
 	public function actionUpdateLabFacilities(Request $request)

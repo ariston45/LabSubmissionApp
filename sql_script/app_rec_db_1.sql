@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : Local
+ Source Server         : LocalDb
  Source Server Type    : MariaDB
- Source Server Version : 100413 (10.4.13-MariaDB)
+ Source Server Version : 100427 (10.4.27-MariaDB)
  Source Host           : localhost:3306
  Source Schema         : app_rec_db
 
  Target Server Type    : MariaDB
- Target Server Version : 100413 (10.4.13-MariaDB)
+ Target Server Version : 100427 (10.4.27-MariaDB)
  File Encoding         : 65001
 
- Date: 15/07/2024 16:57:19
+ Date: 16/07/2024 08:32:29
 */
 
 SET NAMES utf8mb4;
@@ -178,6 +178,7 @@ CREATE TABLE `lab_sub_dates`  (
 -- ----------------------------
 -- Records of lab_sub_dates
 -- ----------------------------
+INSERT INTO `lab_sub_dates` VALUES (1, 1, '2024-07-19', 1, '2024-07-15 21:29:29', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_order_details
@@ -193,11 +194,12 @@ CREATE TABLE `lab_sub_order_details`  (
   `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lod_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 140 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 145 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_sub_order_details
 -- ----------------------------
+INSERT INTO `lab_sub_order_details` VALUES (144, 1, 0, '', 'Peminjaman tanggal 2024-07-19', 40000.00, '2024-07-15 21:29:29', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_orders
@@ -209,6 +211,7 @@ CREATE TABLE `lab_sub_orders`  (
   `los_invoice_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `los_date_order` datetime NULL DEFAULT NULL,
   `los_cost_total` decimal(10, 2) NULL DEFAULT NULL,
+  `los_cost_reduction_percent` decimal(10, 2) NULL DEFAULT NULL,
   `los_cost_reduction` decimal(10, 2) NULL DEFAULT NULL,
   `los_cost_after` decimal(10, 2) NULL DEFAULT NULL,
   `created_at` datetime NULL DEFAULT current_timestamp(),
@@ -219,6 +222,7 @@ CREATE TABLE `lab_sub_orders`  (
 -- ----------------------------
 -- Records of lab_sub_orders
 -- ----------------------------
+INSERT INTO `lab_sub_orders` VALUES (1, 1, NULL, '2024-07-15 21:29:29', 40000.00, 0.00, 0.00, 40000.00, '2024-07-15 21:29:29', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_times
@@ -231,11 +235,14 @@ CREATE TABLE `lab_sub_times`  (
   `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lstt_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 57 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 68 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_sub_times
 -- ----------------------------
+INSERT INTO `lab_sub_times` VALUES (65, 1, 0, '2024-07-15 21:29:29', NULL);
+INSERT INTO `lab_sub_times` VALUES (66, 1, 2, '2024-07-15 21:29:29', NULL);
+INSERT INTO `lab_sub_times` VALUES (67, 1, 1, '2024-07-15 21:29:29', NULL);
 
 -- ----------------------------
 -- Table structure for lab_submission_accs
@@ -308,6 +315,7 @@ CREATE TABLE `lab_submissions`  (
   `lsb_lab_id` int(11) NULL DEFAULT NULL,
   `lsb_title` varchar(600) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsb_type` enum('uji_lab','pinjam_lab') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lsb_purpose` varchar(600) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsb_activity` enum('tp_penelitian','tp_pelatihan','tp_pengabdian_masyarakat','tp_magang','tp_lain_lain','tp_penelitian_skripsi') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'tp_lain_lain',
   `lsb_date_start` datetime NULL DEFAULT NULL,
   `lsb_date_end` datetime NULL DEFAULT NULL,
@@ -331,6 +339,7 @@ CREATE TABLE `lab_submissions`  (
 -- ----------------------------
 -- Records of lab_submissions
 -- ----------------------------
+INSERT INTO `lab_submissions` VALUES (1, 1, 'Pe', 'pinjam_lab', '1213', 'tp_lain_lain', NULL, NULL, NULL, 184, '3', NULL, '11', NULL, NULL, NULL, NULL, 'menunggu', NULL, NULL, '2024-07-15 21:29:29', NULL);
 
 -- ----------------------------
 -- Table structure for lab_use_results
@@ -378,7 +387,7 @@ CREATE TABLE `laboratories`  (
 -- ----------------------------
 -- Records of laboratories
 -- ----------------------------
-INSERT INTO `laboratories` VALUES (1, 2, 'Lab. konversi energy listrik', NULL, 'tersedia', 11, 'Sarana penunjang pratikum teknik elektro', NULL, 'Prodi S1 Teknik Elektro dan Prodi S1 Pendidikan Teknik Elektro', NULL, NULL, 'by_sample', 40000.00, NULL, NULL, '2024-07-15 09:35:08');
+INSERT INTO `laboratories` VALUES (1, 2, 'Lab. konversi energy listrik', NULL, 'tersedia', 11, 'Sarana penunjang pratikum teknik elektro', NULL, 'Prodi S1 Teknik Elektro dan Prodi S1 Pendidikan Teknik Elektro', NULL, NULL, 'by_day', 40000.00, NULL, NULL, '2024-07-15 20:16:37');
 INSERT INTO `laboratories` VALUES (2, 2, 'Lab. Bengkel listrik', NULL, 'tersedia', 11, 'Sarana penunjang pratikum teknik elektro', NULL, 'Prodi S1 Teknik Elektro dan Prodi S1 Pendidikan Teknik Elektro', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:12');
 INSERT INTO `laboratories` VALUES (3, 2, 'Lab. pengukuran listrik ', NULL, 'tersedia', 12, NULL, NULL, 'Prodi S1 Teknik Elektro dan Prodi S1 Pendidikan Teknik Elektro', NULL, NULL, 'by_day', 500000.00, NULL, NULL, '2024-07-15 16:51:37');
 INSERT INTO `laboratories` VALUES (4, 2, 'Lab. elektronika analog dan digital', NULL, 'tersedia', 12, NULL, NULL, 'Prodi S1 Teknik Elektro dan Prodi S1 Pendidikan Teknik Elektro', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:22');
@@ -1086,7 +1095,7 @@ CREATE TABLE `users`  (
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (0, 0, 'Dr. Lutfiyah Hidayati, S.Pd., M.Pd.', '0', 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'arizluck@gmail.com', '0000-00-00 00:00:00', '0', '2024-05-29 08:24:59', '2024-07-12 09:17:39', 0);
+INSERT INTO `users` VALUES (0, 0, 'Dr. Lutfiyah Hidayati, S.Pd., M.Pd.', '0', 'active', 'LAB_HEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'arizluck@gmail.com', '0000-00-00 00:00:00', '0', '2024-05-29 08:24:59', '2024-07-15 20:25:08', 0);
 INSERT INTO `users` VALUES (1, 111, 'System', 'agus123', 'active', 'ADMIN_SYSTEM', '$2y$10$HS8EWaWAgNiho1AyetSIGeWKqQE63FrInMbc859BsAQwGJ4oKwqpy', 'master@webmaster.com', '2022-12-01 15:03:18', NULL, '2022-12-01 15:04:29', '2024-05-29 08:11:16', NULL);
 INSERT INTO `users` VALUES (2, 112, 'Admin', NULL, 'active', 'ADMIN_MASTER', '$2y$10$HS8EWaWAgNiho1AyetSIGeWKqQE63FrInMbc859BsAQwGJ4oKwqpy', 'admin@webmaster.com', NULL, NULL, '2022-12-23 15:33:58', '2024-05-29 08:11:18', NULL);
 INSERT INTO `users` VALUES (3, 113, 'Dr. Ir. H. Soeparno, M.T.', NULL, 'active', 'ADMIN_MASTER', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-01-25 15:25:02', '2024-07-12 09:17:36', NULL);

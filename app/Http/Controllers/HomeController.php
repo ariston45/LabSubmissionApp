@@ -19,6 +19,7 @@ class HomeController extends Controller
 	}
 	public function HomeSystem(Request $request)
 	{
+		// getDataStudents();
 		if (rulesUser(['LAB_HEAD','LAB_SUBHEAD', 'ADMIN_SYSTEM', 'ADMIN_MASTER','ADMIN_PRODI', 'LAB_TECHNICIAN'])) {
 			$sub_count_entry= Lab_submission::whereIn('lsb_status', ['menunggu'])
 			->count();

@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : LocalDb
+ Source Server         : Local
  Source Server Type    : MariaDB
- Source Server Version : 100427 (10.4.27-MariaDB)
+ Source Server Version : 100413 (10.4.13-MariaDB)
  Source Host           : localhost:3306
  Source Schema         : app_rec_db
 
  Target Server Type    : MariaDB
- Target Server Version : 100427 (10.4.27-MariaDB)
+ Target Server Version : 100413 (10.4.13-MariaDB)
  File Encoding         : 65001
 
- Date: 16/07/2024 08:32:29
+ Date: 17/07/2024 17:11:56
 */
 
 SET NAMES utf8mb4;
@@ -179,6 +179,10 @@ CREATE TABLE `lab_sub_dates`  (
 -- Records of lab_sub_dates
 -- ----------------------------
 INSERT INTO `lab_sub_dates` VALUES (1, 1, '2024-07-19', 1, '2024-07-15 21:29:29', NULL);
+INSERT INTO `lab_sub_dates` VALUES (2, 2, '2024-07-18', 58, '2024-07-16 15:19:50', NULL);
+INSERT INTO `lab_sub_dates` VALUES (3, 3, '2024-07-18', 58, '2024-07-16 16:27:40', NULL);
+INSERT INTO `lab_sub_dates` VALUES (4, 4, '2024-07-19', 58, '2024-07-17 10:37:30', NULL);
+INSERT INTO `lab_sub_dates` VALUES (5, 4, '2024-07-20', 58, '2024-07-17 10:37:30', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_order_details
@@ -194,19 +198,22 @@ CREATE TABLE `lab_sub_order_details`  (
   `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lod_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 145 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 148 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_sub_order_details
 -- ----------------------------
 INSERT INTO `lab_sub_order_details` VALUES (144, 1, 0, '', 'Peminjaman tanggal 2024-07-19', 40000.00, '2024-07-15 21:29:29', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (145, 2, 1, '', 'Peminjaman lab dengan jumlah sample 12', 1200000.00, '2024-07-16 15:19:50', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (146, 3, 1, '', 'Peminjaman lab dengan jumlah sample 12', 1200000.00, '2024-07-16 16:27:40', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (147, 4, 1, '', 'Peminjaman lab dengan jumlah sample 13', 1300000.00, '2024-07-17 10:37:30', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_orders
 -- ----------------------------
 DROP TABLE IF EXISTS `lab_sub_orders`;
 CREATE TABLE `lab_sub_orders`  (
-  `los_id` int(11) NOT NULL,
+  `los_id` int(11) UNSIGNED ZEROFILL NOT NULL,
   `los_lsb_id` int(11) NULL DEFAULT NULL,
   `los_invoice_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `los_date_order` datetime NULL DEFAULT NULL,
@@ -214,6 +221,8 @@ CREATE TABLE `lab_sub_orders`  (
   `los_cost_reduction_percent` decimal(10, 2) NULL DEFAULT NULL,
   `los_cost_reduction` decimal(10, 2) NULL DEFAULT NULL,
   `los_cost_after` decimal(10, 2) NULL DEFAULT NULL,
+  `los_payment` enum('true','false') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'false',
+  `los_confirm_payment` enum('true','false') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'false',
   `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`los_id`) USING BTREE
@@ -222,7 +231,10 @@ CREATE TABLE `lab_sub_orders`  (
 -- ----------------------------
 -- Records of lab_sub_orders
 -- ----------------------------
-INSERT INTO `lab_sub_orders` VALUES (1, 1, NULL, '2024-07-15 21:29:29', 40000.00, 0.00, 0.00, 40000.00, '2024-07-15 21:29:29', NULL);
+INSERT INTO `lab_sub_orders` VALUES (00000000001, 1, NULL, '2024-07-15 21:29:29', 40000.00, 30.00, 12000.00, 28000.00, 'true', 'true', '2024-07-15 21:29:29', '2024-07-16 15:29:19');
+INSERT INTO `lab_sub_orders` VALUES (00000000002, 2, NULL, '2024-07-16 15:19:50', 1200000.00, 0.00, 0.00, 1200000.00, 'false', 'false', '2024-07-16 15:19:50', NULL);
+INSERT INTO `lab_sub_orders` VALUES (00000000003, 3, NULL, '2024-07-16 16:27:40', 1200000.00, 0.00, 0.00, 1200000.00, 'false', 'false', '2024-07-16 16:27:40', NULL);
+INSERT INTO `lab_sub_orders` VALUES (00000000004, 4, NULL, '2024-07-17 10:37:30', 1300000.00, 0.00, 0.00, 1300000.00, 'false', 'false', '2024-07-17 10:37:30', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_times
@@ -235,7 +247,7 @@ CREATE TABLE `lab_sub_times`  (
   `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lstt_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 68 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 76 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_sub_times
@@ -243,6 +255,14 @@ CREATE TABLE `lab_sub_times`  (
 INSERT INTO `lab_sub_times` VALUES (65, 1, 0, '2024-07-15 21:29:29', NULL);
 INSERT INTO `lab_sub_times` VALUES (66, 1, 2, '2024-07-15 21:29:29', NULL);
 INSERT INTO `lab_sub_times` VALUES (67, 1, 1, '2024-07-15 21:29:29', NULL);
+INSERT INTO `lab_sub_times` VALUES (68, 2, 0, '2024-07-16 15:19:50', NULL);
+INSERT INTO `lab_sub_times` VALUES (69, 2, 1, '2024-07-16 15:19:50', NULL);
+INSERT INTO `lab_sub_times` VALUES (70, 3, 0, '2024-07-16 16:27:40', NULL);
+INSERT INTO `lab_sub_times` VALUES (71, 3, 1, '2024-07-16 16:27:40', NULL);
+INSERT INTO `lab_sub_times` VALUES (72, 4, 0, '2024-07-17 10:37:30', NULL);
+INSERT INTO `lab_sub_times` VALUES (73, 4, 1, '2024-07-17 10:37:30', NULL);
+INSERT INTO `lab_sub_times` VALUES (74, 5, 0, '2024-07-17 10:37:30', NULL);
+INSERT INTO `lab_sub_times` VALUES (75, 5, 1, '2024-07-17 10:37:30', NULL);
 
 -- ----------------------------
 -- Table structure for lab_submission_accs
@@ -259,11 +279,12 @@ CREATE TABLE `lab_submission_accs`  (
   `created_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`lsa_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 192 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 202 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_submission_accs
 -- ----------------------------
+INSERT INTO `lab_submission_accs` VALUES (192, '1', 'LAB_HEAD', '0', 'Dr. Lutfiyah Hidayati, S.Pd., M.Pd.', 'test', '2024-07-16 08:46:16', '2024-07-16 08:46:16', NULL);
 
 -- ----------------------------
 -- Table structure for lab_submission_advisers
@@ -339,7 +360,10 @@ CREATE TABLE `lab_submissions`  (
 -- ----------------------------
 -- Records of lab_submissions
 -- ----------------------------
-INSERT INTO `lab_submissions` VALUES (1, 1, 'Pe', 'pinjam_lab', '1213', 'tp_lain_lain', NULL, NULL, NULL, 184, '3', NULL, '11', NULL, NULL, NULL, NULL, 'menunggu', NULL, NULL, '2024-07-15 21:29:29', NULL);
+INSERT INTO `lab_submissions` VALUES (1, 1, 'Pe', 'pinjam_lab', '1213', 'tp_lain_lain', NULL, NULL, NULL, 184, '3', NULL, '11', NULL, '20240716_153109_trustopenmail@gmail.com.pdf', NULL, NULL, 'menunggu', NULL, NULL, '2024-07-16 15:31:10', '2024-07-16 15:31:10');
+INSERT INTO `lab_submissions` VALUES (2, 58, 'test', 'pinjam_lab', '1213', 'tp_lain_lain', NULL, NULL, NULL, 184, '3', NULL, '34', NULL, NULL, NULL, NULL, 'menunggu', NULL, NULL, '2024-07-16 15:19:50', NULL);
+INSERT INTO `lab_submissions` VALUES (3, 58, 'test', 'pinjam_lab', '1213', 'tp_lain_lain', NULL, NULL, NULL, 184, '3', NULL, '34', NULL, NULL, NULL, NULL, 'menunggu', NULL, NULL, '2024-07-16 16:27:40', NULL);
+INSERT INTO `lab_submissions` VALUES (4, 58, 'penelitian beton', 'pinjam_lab', 'penelitian beton', 'tp_lain_lain', NULL, NULL, NULL, 184, '3', NULL, '34', NULL, NULL, NULL, NULL, 'menunggu', NULL, NULL, '2024-07-17 10:37:30', NULL);
 
 -- ----------------------------
 -- Table structure for lab_use_results
@@ -444,7 +468,7 @@ INSERT INTO `laboratories` VALUES (54, 5, 'Ruang Baca', NULL, 'tersedia', 33, NU
 INSERT INTO `laboratories` VALUES (55, 5, 'Lab. Keairan', NULL, 'tersedia', 33, NULL, NULL, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:24');
 INSERT INTO `laboratories` VALUES (56, 5, 'Lab. Bahan ', NULL, 'tersedia', 34, NULL, NULL, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:24');
 INSERT INTO `laboratories` VALUES (57, 5, 'Lab. Transportasi', NULL, 'tersedia', 34, NULL, NULL, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:24');
-INSERT INTO `laboratories` VALUES (58, 5, 'Lab. Beton', NULL, 'tersedia', 34, '<p>\r\n\r\nDilengkapi dengan peralatan uji beton dan bahan\r\n\r\n<br></p>', '<p>\r\n\r\n</p><p>Dilengkapi dengan peralatan uji beton dan bahan, antara lain :</p><p></p><ul><li>universal testing machine (utm) 1000 ton, 200 ton, dan 50 ton.</li><li>Analisa gradasi material</li><li>Konsistensi beton,</li><li>Berat jenis bahan.</li></ul><p></p>\r\n\r\n<br><p></p>', 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', 100000.00, '20240516_081704_lab_beton.jpg', NULL, '2024-07-15 11:34:09');
+INSERT INTO `laboratories` VALUES (58, 5, 'Lab. Beton', NULL, 'tersedia', 34, '<p>\r\n\r\nDilengkapi dengan peralatan uji beton dan bahan\r\n\r\n<br></p>', '<p>\r\n\r\n</p><p>Dilengkapi dengan peralatan uji beton dan bahan, antara lain :</p><p></p><ul><li>universal testing machine (utm) 1000 ton, 200 ton, dan 50 ton.</li><li>Analisa gradasi material</li><li>Konsistensi beton,</li><li>Berat jenis bahan.</li></ul><p></p>\r\n\r\n<br><p></p>', 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_sample', 100000.00, '20240516_081704_lab_beton.jpg', NULL, '2024-07-16 14:23:13');
 INSERT INTO `laboratories` VALUES (59, 5, 'Lab. Mekanika Tanah', NULL, 'tersedia', 34, NULL, NULL, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:24');
 INSERT INTO `laboratories` VALUES (60, 5, 'Lab. Studio Gambar Manual', NULL, 'tersedia', 35, NULL, NULL, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:24');
 INSERT INTO `laboratories` VALUES (61, 5, 'Lab. Komputer', NULL, 'tersedia', 35, NULL, NULL, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:24');
@@ -507,16 +531,20 @@ CREATE TABLE `laboratory_facilities`  (
 -- ----------------------------
 -- Records of laboratory_facilities
 -- ----------------------------
-INSERT INTO `laboratory_facilities` VALUES (1, '58', 'Elle ADR 3000', 'Alat untuk test tekan beton', 'Elle ADR 3000', NULL, 100000.00, '2024-05-16 08:34:04', '2024-05-16 09:17:27', NULL, NULL);
-INSERT INTO `laboratory_facilities` VALUES (2, '62', 'Meter Laser', NULL, NULL, NULL, NULL, '2024-07-15 11:19:43', NULL, NULL, NULL);
-INSERT INTO `laboratory_facilities` VALUES (3, '62', 'Total Station', '-', '-', NULL, 7500000.00, '2024-07-15 13:40:16', NULL, NULL, NULL);
-INSERT INTO `laboratory_facilities` VALUES (4, '62', 'Thermometer Digital', NULL, NULL, NULL, 300000.00, '2024-07-15 13:41:06', NULL, NULL, NULL);
-INSERT INTO `laboratory_facilities` VALUES (5, '62', 'Theodolit TO', '-', '-', NULL, 650000.00, '2024-07-15 13:46:42', NULL, NULL, NULL);
-INSERT INTO `laboratory_facilities` VALUES (6, '62', 'Waterpass', '-', '-', NULL, 1100000.00, '2024-07-15 13:47:37', NULL, NULL, NULL);
-INSERT INTO `laboratory_facilities` VALUES (7, '62', 'Hand GPS', '-', '-', NULL, 900000.00, '2024-07-15 13:48:24', NULL, NULL, NULL);
-INSERT INTO `laboratory_facilities` VALUES (8, '62', 'GPS RTK', '-', '-', NULL, 700000.00, '2024-07-15 13:49:05', NULL, NULL, NULL);
-INSERT INTO `laboratory_facilities` VALUES (9, '62', 'ECO SOUNDER', '-', '-', NULL, 1500000.00, '2024-07-15 13:50:14', '2024-07-15 13:50:45', NULL, NULL);
-INSERT INTO `laboratory_facilities` VALUES (10, '62', 'Drone Tanpa Driver', '-', '-', NULL, 700000.00, '2024-07-15 13:51:31', NULL, NULL, NULL);
+INSERT INTO `laboratory_facilities` VALUES (1, '58', 'Elle ADR 3000', 'Alat untuk test tekan beton', 'Elle ADR 3000', 'Hari', 100000.00, '2024-05-16 08:34:04', '2024-05-16 09:17:27', NULL, NULL);
+INSERT INTO `laboratory_facilities` VALUES (2, '62', 'Meter Laser', NULL, NULL, 'Bulan', NULL, '2024-07-15 11:19:43', NULL, NULL, NULL);
+INSERT INTO `laboratory_facilities` VALUES (3, '62', 'Total Station', '-', '-', 'Minggu', 7500000.00, '2024-07-15 13:40:16', NULL, NULL, NULL);
+INSERT INTO `laboratory_facilities` VALUES (4, '62', 'Thermometer Digital', NULL, NULL, 'Bulan', 300000.00, '2024-07-15 13:41:06', NULL, NULL, NULL);
+INSERT INTO `laboratory_facilities` VALUES (5, '62', 'Theodolit TO', '-', '-', 'Bulan', 650000.00, '2024-07-15 13:46:42', NULL, NULL, NULL);
+INSERT INTO `laboratory_facilities` VALUES (6, '62', 'Waterpass', '-', '-', 'Bulan', 1100000.00, '2024-07-15 13:47:37', NULL, NULL, NULL);
+INSERT INTO `laboratory_facilities` VALUES (7, '62', 'Hand GPS', '-', '-', 'Bulan', 900000.00, '2024-07-15 13:48:24', NULL, NULL, NULL);
+INSERT INTO `laboratory_facilities` VALUES (8, '62', 'GPS RTK', '-', '-', 'Bulan', 700000.00, '2024-07-15 13:49:05', NULL, NULL, NULL);
+INSERT INTO `laboratory_facilities` VALUES (9, '62', 'ECO SOUNDER', '-', '-', 'Hari', 1500000.00, '2024-07-15 13:50:14', '2024-07-15 13:50:45', NULL, NULL);
+INSERT INTO `laboratory_facilities` VALUES (10, '62', 'Drone Tanpa Driver', '-', '-', 'Bulan', 700000.00, '2024-07-15 13:51:31', NULL, NULL, NULL);
+INSERT INTO `laboratory_facilities` VALUES (11, '62', 'Alat 1', 'Kegunaan alat', 'tipe1', 'Bulan', 50000.00, '2024-07-16 15:39:46', NULL, NULL, NULL);
+INSERT INTO `laboratory_facilities` VALUES (12, '62', 'Test alat', 'untuk mengetest', 'TestTool', 'Bulan', 700000.00, '2024-07-17 16:57:54', NULL, NULL, NULL);
+INSERT INTO `laboratory_facilities` VALUES (13, '62', 'Test alat', 'untuk mengetest', 'TestTool', 'Hari', 100000.00, '2024-07-17 16:59:19', NULL, NULL, NULL);
+INSERT INTO `laboratory_facilities` VALUES (14, '62', 'Test alat', 'untuk mengetest', 'TestTool', 'Hari', 700000.00, '2024-07-17 17:00:32', NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for laboratory_facility_count_statuses
@@ -548,6 +576,10 @@ INSERT INTO `laboratory_facility_count_statuses` VALUES (6, '7', NULL, NULL, NUL
 INSERT INTO `laboratory_facility_count_statuses` VALUES (7, '8', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-15 13:49:05');
 INSERT INTO `laboratory_facility_count_statuses` VALUES (8, '9', NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-15 13:50:45', '2024-07-15 13:50:14');
 INSERT INTO `laboratory_facility_count_statuses` VALUES (9, '10', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-15 13:51:31');
+INSERT INTO `laboratory_facility_count_statuses` VALUES (10, '11', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-16 15:39:46');
+INSERT INTO `laboratory_facility_count_statuses` VALUES (11, '12', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-17 16:57:55');
+INSERT INTO `laboratory_facility_count_statuses` VALUES (12, '13', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-17 16:59:19');
+INSERT INTO `laboratory_facility_count_statuses` VALUES (13, '14', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-17 17:00:32');
 
 -- ----------------------------
 -- Table structure for laboratory_groups

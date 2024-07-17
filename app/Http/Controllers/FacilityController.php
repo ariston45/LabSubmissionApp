@@ -54,6 +54,7 @@ class FacilityController extends Controller
 			'laf_name' => $request->inp_fasilitas,
 			'laf_utility' => $request->inp_utility,
 			'laf_brand' => $request->inp_brand,
+			'laf_base' => $request->inp_base,
 			'created_by' => null,
 		];
 		$data_lab_count_detail = [

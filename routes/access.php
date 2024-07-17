@@ -63,13 +63,14 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('search-users', [DataController::class, 'serchingDataUser'])->name('source-data-search-users');
 		Route::post('data-times-sch', [DataController::class, 'sourceTimeData'])->name('data-times-sch');
 		Route::match(['get', 'post'], 'source-data-month-ondashboard', [DataController::class, 'sourceMonthOnDashboard'])->name('source-data-month-ondashboard');
-		Route::match(['get', 'post'], 'source-check-skripsi', [DataController::class, 'checkDataStudent'])->name('source-check-skripsi');
+		Route::match(['get', 'post'], 'source-check-skripsi', [DataController::class, 'checkDataStudent'])->name('source_check_skripsi');
 		Route::match(['get', 'post'], 'source-data-cost-lab-tables', [DataController::class, 'viewLabCostTables'])->name('source-data-cost-lab-tables');
 		Route::match(['get', 'post'], 'source-data-cost-facility-tables', [DataController::class, 'viewFacilityCostTables'])->name('source-data-cost-facility-tables');
 		Route::match(['get', 'post'], 'source-data-check-sch', [DataController::class, 'viewCheckDataSch'])->name('source-data-check-sch');
 		Route::match(['get', 'post'], 'source-data-testlab', [DataController::class, 'sourceDataTestLab'])->name('source_data_testlab');
 		Route::match(['get', 'post'], 'source-data-cost-labtest-tables', [DataController::class, 'viewLabtestCostTables'])->name('source_data_cost_labtest_tables');
 		Route::match(['get', 'post'], 'source-check-lab', [DataController::class, 'checkLabDetail'])->name('source_check_lab');
+		Route::match(['get', 'post'], 'source-check-tool', [DataController::class, 'checkToolDetail'])->name('source_check_tool');
 
 	});
 	
@@ -93,6 +94,9 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('form-laporan/{id}', [PengajuanController::class, 'formLaporan']);
 		#action
 		Route::post('action-send-pengajuan', [PengajuanController::class, 'actionPengajuan'])->name('kirim_pengajuan');
+		Route::post('action-confirm-payment', [PengajuanController::class, 'actionConfirmPayment'])->name('confirm_payment');
+		Route::post('action-upload-bukti', [PengajuanController::class, 'actionUploadBukti'])->name('upload_bukti_pembayaran');
+		
 
 		Route::post('action-pengajuan-static-by-day', [PengajuanController::class, 'actionPengajuanStaticDay'])->name('action_pengajuan_static_by_day');
 		Route::post('action-pengajuan-static-by-tool', [PengajuanController::class, 'actionPengajuanStaticTool'])->name('action_pengajuan_static_by_tool');

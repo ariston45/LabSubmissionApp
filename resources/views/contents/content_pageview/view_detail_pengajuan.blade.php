@@ -16,6 +16,9 @@ Lab management | Dashboard
       <div class="pull-right">
         @if ($data_pengajuan->lsb_status == 'menunggu')
           @if (rulesUser(['LAB_HEAD','ADMIN_MASTER','ADMIN_MASTER']))
+            <a href="#" onclick="actionConfirmPayment();">
+              <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Konfirmasi Pembayaran</button>
+            </a>
             <a href="#" onclick="actionAccept();">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
             </a>
@@ -23,6 +26,9 @@ Lab management | Dashboard
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
             </a>
           @elseif (rulesUser(['STUDENT','LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
+            @if ($data_order->los_confirm_payment == 'true')
+              <button class="btn btn-flat btn-xs btn-default" onclick="actionUploadBukti()"><i class="ri-upload-2-line" style="margin-right: 4px;"></i> Upload Bukti Bayar</button>
+            @endif
             <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
             </a>
@@ -194,43 +200,47 @@ Lab management | Dashboard
           <tr>
             <td> <b>Detail Order</b></td>
             <td>
-              <table>
-                <tr>
-                  @if ($data_pengajuan->lab_costbase == 'by_day')
-                    <td colspan="2"><b>Daftar Hari :</b></td>
-                  @elseif ($data_pengajuan->lab_costbase == 'by_tool')
-                    <td colspan="2"><b>Daftar Alat dan Fasilitas :</b></td>
-                  @elseif ($data_pengajuan->lab_costbase == 'by_sample')
-                    <td colspan="2"><b>Jumlah sample : </b></td>
-                  @endif
-                </tr>
-                @foreach ($data_detail_order as $value)
+              @if ($data_order->los_confirm_payment == 'true')
+                <table>
                   <tr>
-                    <td style="padding: 2px 10px 2px 2px;">{{ $value->lod_item_name }}</td>
-                    <td style="padding: 2px 2px 2px 2px;">: {{ funCurrencyRupiah($value->lod_cost) }}</td>
+                    @if ($data_pengajuan->lab_costbase == 'by_day')
+                      <td colspan="2"><b>Daftar Hari :</b></td>
+                    @elseif ($data_pengajuan->lab_costbase == 'by_tool')
+                      <td colspan="2"><b>Daftar Alat dan Fasilitas :</b></td>
+                    @elseif ($data_pengajuan->lab_costbase == 'by_sample')
+                      <td colspan="2"><b>Jumlah sample : </b></td>
+                    @endif
                   </tr>
-                @endforeach
-                <tr>
-                  <td style="padding: 2px 10px 2px 2px;">Jumlah Biaya</td>
-                  <td style="padding: 2px 2px 2px 2px;">: ({{ funCurrencyRupiah($data_order->los_cost_reduction) }})</td>
-                </tr>
-                <tr>
-                  <td colspan="2"><b>Potongan biaya</b></td>
-                </tr>
-                <tr>
-                  <td style="padding: 2px 10px 2px 2px;">
-                    Potongan @if($data_order->los_cost_reduction_percent == null) [0%] @else [{{ $data_order->los_cost_reduction_percent }}%] @endif
-                  </td>
-                  <td style="padding: 2px 2px 2px 2px;">: - {{funCurrencyRupiah($data_order->los_cost_reduction)}}</td>
-                </tr>
-                <tr>
-                  <td colspan="2"><b>Total Biaya</b></td>
-                </tr>
-                <tr>
-                  <td style="padding: 2px 10px 2px 2px;">Total</td>
-                  <td style="padding: 2px 2px 2px 2px;">: {{ funCurrencyRupiah($data_order->los_cost_after) }}</td>
-                </tr>
-              </table>
+                  @foreach ($data_detail_order as $value)
+                    <tr>
+                      <td style="padding: 2px 10px 2px 2px;">{{ $value->lod_item_name }}</td>
+                      <td style="padding: 2px 2px 2px 2px;">: {{ funCurrencyRupiah($value->lod_cost) }}</td>
+                    </tr>
+                  @endforeach
+                  <tr>
+                    <td style="padding: 2px 10px 2px 2px;">Jumlah Biaya</td>
+                    <td style="padding: 2px 2px 2px 2px;">: ({{ funCurrencyRupiah($data_order->los_cost_total) }})</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2"><b>Potongan biaya</b></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 2px 10px 2px 2px;">
+                      Potongan @if($data_order->los_cost_reduction_percent == null) [0%] @else [{{ $data_order->los_cost_reduction_percent }}%] @endif
+                    </td>
+                    <td style="padding: 2px 2px 2px 2px;">: - {{funCurrencyRupiah($data_order->los_cost_reduction)}}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2"><b>Total Biaya</b></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 2px 10px 2px 2px;">Total</td>
+                    <td style="padding: 2px 2px 2px 2px;">: {{ funCurrencyRupiah($data_order->los_cost_after) }}</td>
+                  </tr>
+                </table>
+              @else
+                --
+              @endif
             </td>
           </tr>
           {!! $str_acc !!}
@@ -264,6 +274,64 @@ Lab management | Dashboard
       </table>
     </div>
   </div>
+</div>
+<div class="modal fade" id="modalUploadBukti" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Upload Bukti Pembayaran</h4>
+			</div>
+			<form action="{{ route('upload_bukti_pembayaran') }}" method="POST" enctype="multipart/form-data" autocomplete="new-password">
+				@csrf
+				<div class="modal-body">
+					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
+          <input type="hidden" name="lab_subhead" value="{{ $data_pengajuan->lab_head }}">
+          <div class="form-group has-feedback" style="margin-bottom: 12px;">
+						<div class="input-group">
+							<span class="input-group-btn">
+								<span id="btn-file-foto" class="btn btn-default btn-file btn-flat">
+									Buka Berkas <input type="file" id="id-upload" name="bukti_pembayaran" >
+								</span>
+							</span>
+              <input type="text" class="form-control" readonly="" name="image2">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
+					<button type="submit" class="btn btn-sm btn-primary btn-flat"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Kirim</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="modalPayment" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Konfirmasi Pembayaran</h4>
+			</div>
+			<form action="{{ route('confirm_payment') }}" method="POST" enctype="multipart/form-data" autocomplete="new-password">
+				@csrf
+				<div class="modal-body">
+					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
+          <input type="hidden" name="lab_subhead" value="{{ $data_pengajuan->lab_head }}">
+          <div class="form-group has-feedback" style="margin-bottom: 12px;">
+						<label>
+							Set Diskon
+						</label>
+						<input type="number" class="form-control" name="reduction">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
+					<button type="submit" class="btn btn-sm btn-primary btn-flat"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Kirim</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 <div class="modal fade" id="modalAcceptable" role="dialog">
 	<div class="modal-dialog modal-lg">
@@ -506,6 +574,12 @@ Lab management | Dashboard
 @endif
 {{-- function --}}
 <script>
+  function actionUploadBukti() {
+    $('#modalUploadBukti').modal('show');
+  };
+  function actionConfirmPayment() {
+    $('#modalPayment').modal('show');
+  };
   function actionAccept() {
     $('#modalAcceptable').modal('show');
   };

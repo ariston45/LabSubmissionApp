@@ -484,6 +484,8 @@ class DataController extends Controller
 	{
 		$id = $request->nim;
 		$data = getDataStudent($id);
+		
+		// die();
 		$data_lecture = getDataLectures();
 		$n1 = $data_lecture->where('nama', 'Octaverina Kecvara Pritasari, S.Pd., M.Farm.');
 		// foreach ($n1 as $key => $value) {
@@ -994,6 +996,16 @@ class DataController extends Controller
 				'costbase' => $data_lab->lab_costbase
 			];
 		}
+		return $data;
+	}
+	/* Tags:... */
+	public function checkToolDetail(Request $request)
+	{
+		$data_tool = Laboratory_facility::where('laf_id',$request->laf_id)->first();
+		$data = [
+			"laf_name" => $data_tool->laf_name,
+			"laf_base" => $data_tool->laf_base
+		];
 		return $data;
 	}
 }

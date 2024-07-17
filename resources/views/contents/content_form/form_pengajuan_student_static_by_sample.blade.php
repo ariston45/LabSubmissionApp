@@ -13,20 +13,20 @@ Lab management | Dashboard
 <div class="col-md-12">
   <div class="box box-primary">
     <div class="box-header with-border">
-      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan {{$lab_data->lab_name}}</h3>
+      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan</h3>
       <div class="pull-right">
         <a href="{{ url('pengajuan') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
     </div>
-    <form class="form-horizontal" action="{{ route('action_pengajuan_static_by_day') }}" method="POST" enctype="multipart/form-data">
+    <form class="form-horizontal" action="{{ route('action_pengajuan_static_by_sample') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="box-body">
         {{-- !! --}}
         <input type="hidden" name="app_level" value="{{ $user_data->level }}">
         {{-- !! --}}
-        <input type="hidden" id="inp-lab" name="inp_lab" value="{{$lab_data->lab_id}}">
+        <input type="hidden" id="inp-lab" name="inp_lab" value="{{ $lab_data->lab_id }}" >
         <input type="hidden" id="inp-nama" name="inp_nama" value="{{ $user_data->name }}" >
         <input type="hidden" id="inp-id" name="inp_id" value="{{ $user_data->no_id }}" >
         <input type="hidden" id="inp-program-studi" name="inp_program_studi" value="{{ $user_data->usd_prodi }}">
@@ -89,55 +89,26 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        
         {{-- ~ --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_sample') ? ' has-error' : '' }}" id="fm-inp-sample">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Jumlah Sampel
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <input type="text" id="inp-sample" class="form-control" name="inp_sampel" value="{{ old('inp_sampel') }}" placeholder="Inputkan jumlah sampel...">
+            @if ($errors->has('inp_sampel'))
+						<span style="color: red;"><i>{{ $errors->first('inp_sampel') }}</i></span>
+						@endif
+          </div>
+        </div>
         {{-- ~ --}}
         @php
           $idx_tool = 0;
         @endphp
-        {{-- <div class="col-md-offset-3 col-md-9 act-datetime act-tool" >
-          <div class="divider">Fasilitas & Alat</div>
-        </div>
-        <div class="form-group act-tool {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}" id="fm-inp-tool" >
-          <label class="col-sm-12 col-md-3 control-label">
-            <span style="padding-right: 30px;">
-              Fasilitas/Alat
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-9">
-
-            <div class="row" style="margin-bottom: 10px;">
-              <div class="col-sm-11">
-                <div style="margin-bottom: 5px;">
-                  <select id="inp-fasilitas-{{$idx_tool}}" class="form-control" name="inp_fasilitas[]" >
-                    <option value="{{ null }}">Pilih fasilitas/alat..</option>
-                  </select>
-                </div>
-                <div class="input-group inp-split-cst date" style="margin-bottom: 6px;">
-									<div class="input-group-addon">
-										Satuan
-									</div>
-									<input type="text" name="inp_tool_[{{ $idx_tool }}]" value="{{ old('inp_tool_'.$idx_tool) }}" class="form-control pull-right" placeholder="">
-                  <div class="input-group-addon">
-										...
-									</div>
-								</div>
-              </div>
-              <div class="col-sm-1">
-                <button type="button" id="btn-add-input" class="btn btn-flat btn-default">
-                  <i class="fa fa-plus" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div>
-
-            
-            @if ($errors->has('inp_fasilitas'))
-						<span style="color: red;"><i>{{ $errors->first('inp_fasilitas') }}</i></span>
-						@endif
-            @if ($errors->has('tool_err'))
-						<span style="color: red;"><i>{{ $errors->first('tool_err') }}</i></span>
-						@endif
-          </div>
-        </div> --}}
+        
         {{-- !!  --}}
         @php
           $idx_time = 0;
@@ -145,10 +116,10 @@ Lab management | Dashboard
         <div class="col-md-offset-3 col-md-9 act-datetime">
           <div class="divider">Jadwal Kegiatan</div>
         </div>
-        <div class="form-group has-feedback act-datetime {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}" style="margin-bottom: 0px;">
+        <div class="form-group has-feedback act-datetime {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Jadwal
+              Jadwal Mulai
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
@@ -179,7 +150,8 @@ Lab management | Dashboard
 						@endif
           </div> 
         </div>
-        {{-- ~ --}}        
+        {{-- ~ --}}
+        
         {{-- !!  --}}
         {{-- <div class="col-md-offset-3 col-md-9">
           <div class="divider">Pembayaran</div>
@@ -295,23 +267,6 @@ Lab management | Dashboard
 			}
 		}
   });
-  /*
-  var select_facility = new TomSelect("#inp-fasilitas-0",{
-    create: false,
-    maxItem: 20,			
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-fasilitas">'+escape(data.title)+'</div>';
-			}
-		}
-  });
-  */
   var select_time = new TomSelect(".inp-time-cls",{
     create: false,
     maxItem: 20,			

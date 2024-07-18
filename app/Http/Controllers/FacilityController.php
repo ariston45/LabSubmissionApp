@@ -98,6 +98,7 @@ class FacilityController extends Controller
 			'laf_name' => $request->inp_fasilitas,
 			'laf_utility' => $request->inp_utility,
 			'laf_brand' => $request->inp_brand,
+			'laf_base' => $request->inp_base,
 			'laf_value' => funFormatCurToDecimal($request->inp_cost),
 			'created_by' => null,
 		];

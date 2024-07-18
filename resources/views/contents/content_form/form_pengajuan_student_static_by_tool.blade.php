@@ -20,12 +20,13 @@ Lab management | Dashboard
         </a>
       </div>
     </div>
-    <form class="form-horizontal" action="{{ route('kirim_pengajuan') }}" method="POST" enctype="multipart/form-data">
+    <form class="form-horizontal" action="{{ route('action_pengajuan_static_by_tool') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="box-body">
         {{-- !! --}}
         <input type="hidden" name="app_level" value="{{ $user_data->level }}">
         {{-- !! --}}
+        <input type="hidden" id="inp-lab" name="inp_lab" value="{{ $lab_data->lab_id }}" >
         <input type="hidden" id="inp-nama" name="inp_nama" value="{{ $user_data->name }}" >
         <input type="hidden" id="inp-id" name="inp_id" value="{{ $user_data->no_id }}" >
         <input type="hidden" id="inp-program-studi" name="inp_program_studi" value="{{ $user_data->usd_prodi }}">
@@ -256,6 +257,7 @@ Lab management | Dashboard
 			}
 		}
   });
+  
 </script>
 {{-- function --}}
 <script>
@@ -384,7 +386,7 @@ Lab management | Dashboard
         +'<div class="input-group-addon">Satuan</div>'
         +'<input type="text" name="inp_satuan['+new_idx_tool+']" class="form-control pull-right" placeholder="">'
         +'<div class="input-group-addon"><div id="inp-satuan-'+new_idx_tool+'">...</div></div></div></div>'
-        +'<div class="col-sm-1"><button type="button" id="btn-add-input-tool" class="btn btn-flat btn-default rm-inp-tool">'
+        +'<div class="col-sm-1"><button type="button" class="btn btn-flat btn-default rm-inp-tool">'
         +'<i class="fa fa-times" aria-hidden="true"></i></button></div></div>'
       );
     });
@@ -392,4 +394,5 @@ Lab management | Dashboard
       $(this).closest('.inp-dt-group').remove();
     });
   });
+</script>
 @endpush

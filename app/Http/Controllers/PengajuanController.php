@@ -717,7 +717,144 @@ class PengajuanController extends Controller
 	/* Tags:... */
 	public function actionPengajuanStaticTool(Request $request)
 	{
-		#code...
+		$user = DataAuth();
+		$id = genIdPengajuan();
+		$data_pembimbing_filter = [];
+		if (rulesUser(['STUDENT'])) {
+			$data_pembimbing = [
+				'pembimbing' => [
+					'las_user_no_id' => $request->inp_pembimbing_no_id,
+					'las_nip' => $request->inp_pembimbing_nip,
+					'las_fullname' => $request->inp_pembimbing,
+				],
+				'promotor' => [
+					'las_user_no_id' => $request->inp_promotor_no_id,
+					'las_nip' => $request->inp_promotor,
+					'las_fullname' => $request->inp_promotor_nip,
+				],
+				'kopromotor' => [
+					'las_user_no_id' => $request->inp_kopromotor_no_id,
+					'las_nip' => $request->inp_kopromotor,
+					'las_fullname' => $request->inp_kopromotor_nip,
+				],
+			];
+			foreach ($data_pembimbing as $key => $value) {
+				if ($value['las_nip'] != null) {
+					$data_pembimbing_filter[$key] = [
+						'las_lbs_id' => $id,
+						'las_byname' => Str::title($key),
+						'las_user_no_id' => $value['las_user_no_id'],
+						'las_nip' => $value['las_nip'],
+						'las_fullname' => $value['las_fullname'],
+					];
+				}
+			}
+		}
+		$data_lab = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+		->where('lab_id', $request->inp_lab)
+		->select('lab_id', 'lab_name', 'lab_head', 'id', 'lab_costbase', 'lab_rent_cost as cost')
+		->first();
+		if ($request->app_level == 'STUDENT') {
+			$lecture = null;
+			$lecture_id = null;
+			$send_to = 'Kepala Laboratorium';
+		} else {
+			$lecture = null;
+			$lecture_id = null;
+			$send_to = 'Kepala Laboratorium';
+		}
+		if ($request->inp_kegiatan == 'tp_penelitian') {
+			$act = 'Penelitian';
+		} else if ($request->inp_kegiatan == 'tp_pelatihan') {
+			$act = 'Pelatihan';
+		} else if ($request->inp_kegiatan == 'tp_pengabdian_masyarakat') {
+			$act = 'Pengapdian Masyarakat';
+		} else if ($request->inp_kegiatan == 'tp_magang') {
+			$act = 'Magang';
+		} else if ($request->inp_kegiatan == 'tp_lain_lain') {
+			$act = 'Lain-lain*';
+		} else {
+			$act = null;
+		}
+		#data input
+		$dt_pengajuan = [
+			'lsb_id' => $id,
+			'lsb_title' => $request->inp_judul,
+			'lsb_activity' => $request->inp_kegiatan,
+			'lsb_purpose' => $request->inp_tujuan,
+			'lsb_user_id' => $user->id,
+			'lsb_user_head' => 3,
+			'lsb_user_subhead' => $data_lab->id,
+			'lsb_user_tech' => null,
+			'lsb_lab_id' => $request->inp_lab,
+			'lsb_date_start' => null,
+			'lsb_date_end' => null,
+			'lsb_period' => null,
+			'lsb_file_1' => null,
+			'lsb_type' => $request->inp_type_sub,
+		];
+		$data_applicant = [
+			'lsb_id' => $id,
+			'inp_nama' => $request->inp_nama,
+			'inp_id' => $request->inp_id,
+			'inp_program_studi' => $request->inp_program_studi,
+			'inp_fakultas' => $request->inp_fakultas,
+			'inp_institusi' => $request->inp_institusi,
+			'inp_address' => $request->inp_address,
+			'no_contact' => $request->inp_nomor_kontak,
+			'title' => $request->inp_judul,
+			'time' => null,
+			'lab' => $data_lab->lab_name,
+			'lecture' => $lecture,
+			'lecture_id' => $lecture_id,
+			'act' => $act,
+			'tujuan' => $request->inp_tujuan,
+			'send_to' => $send_to,
+			'dates' => null,
+			'datetimes' => null,
+		];
+		$id_order = getIdOrder();
+		$no = 1;
+		foreach ($request->inp_fasilitas as $key => $value) {
+			$data_tool[$key] = Laboratory_facility::where('laf_id',$value)->first();
+			$cost_item[$key] = $request->inp_satuan[$key] * $data_tool[$key]->laf_value;
+			$order_detail[$key] = [
+				'lod_los_id' => $id_order,
+				'lod_item_id' => $no,
+				'lod_item_type' => 'tool',
+				'lod_item_name' => $data_tool[$key]->laf_name,
+				'lod_cost' => $cost_item[$key],
+				'laf_note_order' => 'Biaya berdasarkan lama pinjam '. $request->inp_satuan[$key].' '. $data_tool[$key]->laf_base. ' dengan biaya '. funCurrencyRupiah($data_tool[$key]->laf_value).'/'. $data_tool[$key]->laf_base,
+			];
+			$no++;
+		}
+		$c_coast = array_sum($cost_item);
+		if ($request->inp_kegiatan == 'tp_penelitian_skripsi') {
+			$reduction = 100;
+			$reduction_val = ($reduction / 100) * $c_coast;
+			$cost_after = $c_coast - $reduction_val;
+		} else {
+			$reduction = 0;
+			$reduction_val = 0;
+			$cost_after = $c_coast;
+		}
+		$data_order = [
+			'los_id' => $id_order,
+			'los_lsb_id' => $id,
+			'los_invoice_code' => null,
+			'los_date_order' => date('Y-m-d H:i:s'),
+			'los_cost_total' => $c_coast,
+			'los_cost_reduction_percent' => $reduction,
+			'los_cost_reduction' => $reduction_val,
+			'los_cost_after' => $cost_after,
+		];
+		Lab_sub_date::insert($data_date);
+		Lab_sub_time::insert($data_time);
+		Lab_sub_order::insert($data_order);
+		Lab_sub_order_detail::insert($order_detail);
+		Lab_submission::insert($dt_pengajuan);
+		Lab_submission_adviser::insert($data_pembimbing_filter);
+
 	}
 	public function actionPengajuanStaticSample(Request $request)
 	{
@@ -725,9 +862,6 @@ class PengajuanController extends Controller
 		$user = DataAuth();
 		$id = genIdPengajuan();
 		$id_date = genIdDate();
-		// $data = $request->inp_time[0];
-		// sort($data);
-		// dd($data); die();
 		$datetimes = [];
 		if (count($request->inp_time) == 0) {
 			return redirect()->back()->withErrors(['sch_err' => 'Harap inputkan tanggal']);

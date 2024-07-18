@@ -59,9 +59,32 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        <div class="form-group has-feedback {{ $errors->has('dok_laporan_test_bending') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Upload Tes Bending
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <div class="input-group">
+							<span class="input-group-btn">
+								<span id="btn-file-foto-1" class="btn btn-default btn-file btn-flat">
+									Buka Berkas <input type="file" id="id-upload-ii" name="dok_test_bending" >
+								</span>
+							</span>
+              <input type="text" class="form-control" readonly="" name="image3">
+						</div>
+            @if ($errors->has('file_err'))
+						<span style="color: red;"><i>{{ $errors->first('file_err') }}</i></span>
+						@endif
+            @if ($errors->has('file_err_filesize'))
+						<span style="color: red;"><i>{{ $errors->first('file_err_filesize') }}</i></span>
+						@endif
+          </div>
+        </div>
       </div>
       <div class="box-footer">
-        <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
+        <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Unggah</button>
         <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
       </div>
     </form>
@@ -123,6 +146,17 @@ Lab management | Dashboard
       input.trigger('fileselect', [label]);
     });
     $('#btn-file-foto :file').on('fileselect', function(event, label) {
+      var input = $(this).parents('.input-group').find(':text'),log = label;
+      input.val(log);
+    });
+  });
+  $(document).ready( function() {
+    $(document).on('change', '#btn-file-foto-1 :file', function() {
+      var input = $(this),
+        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+      input.trigger('fileselect', [label]);
+    });
+    $('#btn-file-foto-1 :file').on('fileselect', function(event, label) {
       var input = $(this).parents('.input-group').find(':text'),log = label;
       input.val(log);
     });

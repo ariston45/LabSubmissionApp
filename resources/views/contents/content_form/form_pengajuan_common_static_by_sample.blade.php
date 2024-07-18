@@ -13,28 +13,141 @@ Lab management | Dashboard
 <div class="col-md-12">
   <div class="box box-primary">
     <div class="box-header with-border">
-      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan {{$lab_data->lab_name}}</h3>
+      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan</h3>
       <div class="pull-right">
         <a href="{{ url('pengajuan') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
     </div>
-    <form class="form-horizontal" action="{{ route('action_pengajuan_static_by_day') }}" method="POST" enctype="multipart/form-data">
+    <form class="form-horizontal" action="{{ route('action_pengajuan_static_by_sample') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="box-body">
         {{-- !! --}}
         <input type="hidden" name="app_level" value="{{ $user_data->level }}">
         {{-- !! --}}
-        <input type="hidden" id="inp-lab" name="inp_lab" value="{{$lab_data->lab_id}}">
-        <input type="hidden" id="inp-nama" name="inp_nama" value="{{ $user_data->name }}" >
+        <input type="hidden" id="inp-lab" name="inp_lab" value="{{ $lab_data->lab_id }}" >
+        {{-- <input type="hidden" id="inp-nama" name="inp_nama" value="{{ $user_data->name }}" >
         <input type="hidden" id="inp-id" name="inp_id" value="{{ $user_data->no_id }}" >
         <input type="hidden" id="inp-program-studi" name="inp_program_studi" value="{{ $user_data->usd_prodi }}">
         <input type="hidden" id="inp-fakultas" name="inp_fakultas" value="{{ $user_data->usd_fakultas }}">
         <input type="hidden" id="inp-institusi" name="inp_institusi" value="{{ $user_data->usd_universitas }}">
         <input type="hidden" id="inp-nomor-kontak" name="inp_nomor_kontak" value="{{ $user_data->usd_phone }}">
         <input type="hidden" id="inp-nomor-kontak" name="inp_address" value="{{ $user_data->usd_address }}">
-        <input type="hidden" name="inp_type_sub" value="pinjam_lab">
+        <input type="hidden" name="inp_type_sub" value="pinjam_lab"> --}}
+        {{-- !! --}}
+        <div class="col-sm-offset-3 col-sm-9">
+          <div class="divider">Data Pemohon</div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_nama') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Nama Lengkap <span style="color: red;">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <input type="text" id="inp-nama" class="form-control" name="inp_nama" value="{{ $user_data->name }}" placeholder="Input nama.." required>
+            @if ($errors->has('inp_nama'))
+						<span style="color: red;"><i>{{ $errors->first('inp_nama') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_id') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              NIM/No.ID <span style="color: red;">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            @if ($user_data->no_id != null)
+            <input type="text" id="inp-id" class="form-control" name="inp_id" value="{{ $user_data->no_id }}" placeholder="Input no id..">
+            @else
+            <input type="text" id="inp-id" class="form-control" name="inp_id" value="{{ old('inp_id') }}" placeholder="Input no id..">
+            @endif
+            @if ($errors->has('inp_id'))
+						<span style="color: red;"><i>{{ $errors->first('inp_id') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_program_studi') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Program Studi
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_prodi != null)
+            <input type="text" id="inp-program-studi" class="form-control" name="inp_program_studi" value="{{ $user_data->usd_prodi }}" placeholder="Input program studi..">
+            @else
+            <input type="text" id="inp-program-studi" class="form-control" name="inp_program_studi" value="{{ old('inp_program_studi') }}" placeholder="Input program studi..">
+            @endif
+            @if ($errors->has('inp_program_studi'))
+						<span style="color: red;"><i>{{ $errors->first('inp_program_studi') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_fakultas') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Fakultas
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_fakultas != null)
+            <input type="text" id="inp-fakultas" class="form-control" name="inp_fakultas" value="{{ $user_data->usd_fakultas }}" placeholder="Input fakultas">  
+            @else
+            <input type="text" id="inp-fakultas" class="form-control" name="inp_fakultas" value="{{ old('inp_fakultas') }}" placeholder="Input fakultas">
+            @endif
+            @if ($errors->has('inp_fakulas'))
+						<span style="color: red;"><i>{{ $errors->first('inp_fakultas') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_institusi') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Universitas / Institusi <span style="color: red;">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_universitas != null)
+            <input type="text" id="inp-institusi" class="form-control" name="inp_institusi" value="{{ $user_data->usd_universitas }}" placeholder="Input universitas/institusi.." required>  
+            @else
+            <input type="text" id="inp-institusi" class="form-control" name="inp_institusi" value="{{ old('inp_institusi') }}" placeholder="Input universitas/institusi.." required>
+            @endif
+            @if ($errors->has('inp_institusi'))
+						<span style="color: red;"><i>{{ $errors->first('inp_institusi') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_nomor_kontak') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Nomor HP/Kontak <span style="color: red;">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_phone != null)
+            <input type="text" id="inp-nomor-kontak" class="form-control" name="inp_nomor_kontak" value="{{ $user_data->usd_phone }}" placeholder="Input no kontak..." required>
+            @else
+            <input type="text" id="inp-nomor-kontak" class="form-control" name="inp_nomor_kontak" value="{{ old('inp_nomor_kontak') }}" placeholder="Input no kontak..." required>
+            @endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_address') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Alamat <span style="color: red;">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_address != null)
+            <input type="text" id="inp-nomor-kontak" class="form-control" name="inp_address" value="{{ $user_data->usd_address }}" placeholder="Input alamat..." required>
+            @else
+            <input type="text" id="inp-nomor-kontak" class="form-control" name="inp_address" value="{{ old('inp_address') }}" placeholder="Input alamat..." required>
+            @endif
+          </div>
+        </div>
         {{-- !! --}}
         <div class="col-md-offset-3 col-md-9">
           <div class="divider">Kegiatan</div>
@@ -48,8 +161,11 @@ Lab management | Dashboard
           <div class="col-sm-12 col-md-9">
             <select id="inp-kegiatan" class="form-control" name="inp_kegiatan" onchange="actActivitySubs()">
               <option value="{{ null }}">Pilih kegiatan..</option>
-              <option value="tp_penelitian_skripsi" @if (old('inp_kegiatan') == 'tp_penelitian_skripsi') selected @endif >Penelitian Skripsi</option>
-              <option value="tp_lain_lain" @if (old('inp_kegiatan') == 'tp_lainnya') selected @endif >Lainnya</option>
+              <option value="tp_penelitian" @if (old('inp_kegiatan') == 'tp_penelitian') selected @endif >Penelitian</option>
+              <option value="tp_pelatihan" @if (old('inp_kegiatan') == 'tp_pelatihan') selected @endif >Pelatihan</option>
+              <option value="tp_pengabdian_masyarakat" @if (old('inp_kegiatan') == 'tp_pengabdian_masyarakat') selected @endif >Pengabdian Masyarakat</option>
+              <option value="tp_magang" @if (old('inp_kegiatan') == 'tp_magang') selected @endif >Magang</option>
+              <option value="tp_lain_lain" @if (old('inp_kegiatan') == 'tp_lain_lain') selected @endif >Lain-lain*</option>
             </select>
             <div id="data-loading" style="display: none;">
               <img src="{{ url('/public/assets/img/loading.gif') }}" class="img-loading" alt="">
@@ -89,55 +205,25 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        
         {{-- ~ --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_sample') ? ' has-error' : '' }}" id="fm-inp-sample">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Jumlah Sampel
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <input type="number" id="inp-sample" class="form-control" name="inp_sampel" value="{{ old('inp_sampel') }}" placeholder="Inputkan jumlah sampel...">
+            @if ($errors->has('inp_sampel'))
+						<span style="color: red;"><i>{{ $errors->first('inp_sampel') }}</i></span>
+						@endif
+          </div>
+        </div>
         {{-- ~ --}}
         @php
           $idx_tool = 0;
         @endphp
-        {{-- <div class="col-md-offset-3 col-md-9 act-datetime act-tool" >
-          <div class="divider">Fasilitas & Alat</div>
-        </div>
-        <div class="form-group act-tool {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}" id="fm-inp-tool" >
-          <label class="col-sm-12 col-md-3 control-label">
-            <span style="padding-right: 30px;">
-              Fasilitas/Alat
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-9">
-
-            <div class="row" style="margin-bottom: 10px;">
-              <div class="col-sm-11">
-                <div style="margin-bottom: 5px;">
-                  <select id="inp-fasilitas-{{$idx_tool}}" class="form-control" name="inp_fasilitas[]" >
-                    <option value="{{ null }}">Pilih fasilitas/alat..</option>
-                  </select>
-                </div>
-                <div class="input-group inp-split-cst date" style="margin-bottom: 6px;">
-									<div class="input-group-addon">
-										Satuan
-									</div>
-									<input type="text" name="inp_tool_[{{ $idx_tool }}]" value="{{ old('inp_tool_'.$idx_tool) }}" class="form-control pull-right" placeholder="">
-                  <div class="input-group-addon">
-										...
-									</div>
-								</div>
-              </div>
-              <div class="col-sm-1">
-                <button type="button" id="btn-add-input" class="btn btn-flat btn-default">
-                  <i class="fa fa-plus" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div>
-
-            
-            @if ($errors->has('inp_fasilitas'))
-						<span style="color: red;"><i>{{ $errors->first('inp_fasilitas') }}</i></span>
-						@endif
-            @if ($errors->has('tool_err'))
-						<span style="color: red;"><i>{{ $errors->first('tool_err') }}</i></span>
-						@endif
-          </div>
-        </div> --}}
         {{-- !!  --}}
         @php
           $idx_time = 0;
@@ -145,10 +231,10 @@ Lab management | Dashboard
         <div class="col-md-offset-3 col-md-9 act-datetime">
           <div class="divider">Jadwal Kegiatan</div>
         </div>
-        <div class="form-group has-feedback act-datetime {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}" style="margin-bottom: 0px;">
+        <div class="form-group has-feedback act-datetime {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Jadwal
+              Jadwal Mulai
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
@@ -158,7 +244,7 @@ Lab management | Dashboard
 									<div class="input-group-addon">
 										<i class="fa fa-calendar"></i>
 									</div>
-									<input type="text" name="inp_date[{{ $idx_time }}]"  value="{{ old('inp_date') }}" class="form-control countable inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
+									<input type="text" name="inp_date[{{ $idx_time }}]"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
 								</div>
                 <select name="inp_time[{{ $idx_time }}][]" id="inp-time" class="form-control inp-time-cls" multiple>
                   @foreach ($times as $item)
@@ -179,16 +265,14 @@ Lab management | Dashboard
 						@endif
           </div> 
         </div>
-        {{-- ~ --}}        
-        {{-- !!  --}}
-        
+        {{-- ~ --}}
         <div id="cost-tables" class="col-md-offset-3 col-md-9" style="padding: 0px;">
           <div id="test-id"></div>
         </div>
       </div>
       <div class="box-footer">
         <div class="col-md-offset-3 col-md-9">
-          <button type="button" class="btn btn-default btn-flat" onclick="actPrePayment()"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
+          <button type="button" class="btn btn-default btn-flat" onclick="actPrePayment();"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
           <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
           <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
         </div>
@@ -398,46 +482,9 @@ Lab management | Dashboard
       },
     });
   };
-  function actChangeLab() {
-    var lab_id = select_lab.getValue();
-    var check_lab = null;
-    $.ajaxSetup({
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      }
-    });
-    $.ajax({
-      type: 'POST',
-      url: "{{ route('source_check_lab') }}",
-      data: {
-        "lab_id":lab_id,
-      },
-      async: false,
-      success: function(result) {
-        console.log(result);
-        if (result.costbase == 'by_sample') {
-          $('#fm-inp-sample').fadeIn();
-          $('.act-datetime').fadeIn();
-          $('.act-tool').hide();
-        }else if(result.costbase == 'by_day'){
-          $('#fm-inp-sample').hide();
-          $('.act-datetime').fadeIn();
-          $('.act-tool').hide();
-        }else if(result.costbase == 'by_tool'){
-          $('#fm-inp-sample').hide();
-          $('.act-datetime').hide();
-          $('.act-tool').fadeIn();
-        }else{
-          $('#fm-inp-sample').hide();
-          $('.act-datetime').hide();
-          $('.act-tool').hide();
-        }
-      },
-    });
-  };
   function actPrePayment() {
     var lab_id = "{{$lab_data->lab_id}}";
-    var count_day = $('.countable').length;
+    var count_sample = $('#inp-sample').val();
     var activity = $('#inp-kegiatan').find(":selected").val();
     $.ajaxSetup({
       headers: {
@@ -450,7 +497,7 @@ Lab management | Dashboard
       data: {
         "lab_id":lab_id,
         "activity": activity,
-        "count":count_day,
+        "count":count_sample,
       },
       async: false,
       success: function(result) {
@@ -470,7 +517,7 @@ Lab management | Dashboard
         '<div class="row inp-dt-group" style="margin-bottom: 10px;"><div class="col-sm-11">'
         +'<div class="input-group inp-split-cst date" style="margin-bottom: 6px;">'
         +'<div class="input-group-addon"><i class="fa fa-calendar"></i></div>'
-        +'<input type="text" name="inp_date['+Idx_number+']"  value="{{ old('date_start') }}" class="form-control countable inp-date-s-'+Idx_number+' pull-right" placeholder="yyyy-mm-dd" readonly>'
+        +'<input type="text" name="inp_date['+Idx_number+']"  value="{{ old('date_start') }}" class="form-control inp-date-s-'+Idx_number+' pull-right" placeholder="yyyy-mm-dd" readonly>'
         +'</div>'
         +'<select name="inp_time['+Idx_number+'][]" id="inp-time-idx-'+Idx_number+'" class="form-control inp-time-cls" multiple>'
         +'@foreach ($times as $item)<option value="{{ $item->lti_id }}">{{ setTime($item->lti_start) }} - {{ setTime($item->lti_end) }}</option> @endforeach'
@@ -516,48 +563,7 @@ Lab management | Dashboard
         actViewCheckSch(par_a,par_b);
       }
     });
-    
-
   });
-  /*
-  $(document).ready( function() {
-    select_lab.on('change', function () {  
-      var data_facility = [];
-      var item_lab = select_lab.getValue();
-      $.ajaxSetup({
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-      });
-      $.ajax({
-        type: 'POST',
-        url: "{{ route('source-data-facilities') }}",
-        data: {
-          "lab_id":item_lab,
-        },
-        async: false,
-        success: function(result) {
-          console.log(result);
-          select_facility.clear();
-          select_facility.clearOptions();
-          var dataLabOption = JSON.parse(result);
-          for (let index = 0; index < dataLabOption.length; index++) {
-            data_facility.push({
-              id:dataLabOption[index].id,
-              title:dataLabOption[index].title,
-            });
-          }
-          select_facility.addOptions(data_facility);
-        },
-      });
-      actViewLabCost(item_lab);
-    });
-    select_facility.on('change',function () {
-      var dd = select_facility.getValue();
-      actViewFacilityCost(dd)
-    });
-  });
-  */
   $(document).ready( function() {
     $(document).on('change', '#btn-file-foto :file', function() {
       var input = $(this),

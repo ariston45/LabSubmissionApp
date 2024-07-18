@@ -209,19 +209,6 @@ function getDataStudent($value_id){
   $url = 'https://simontasiplus.unesa.ac.id/api_mhs_unesa/36a169ac-4080-419e-a6c0-3538feb71089';
   $client = new Client();
   $response = $client->request('GET', $url);
-  
-  // $ch = curl_init($url);
-  // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  // curl_setopt($ch, CURLOPT_HEADER, false);
-  // $response = curl_exec($ch);
-  // curl_errno($ch);
-  // $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-  // dd($ch);
-  // echo $response;
-  // dd($response);
-  // $response = $client->request('GET', 'https://simontasiplus.unesa.ac.id/api_mhs_simontasi/36a169ac-4080-419e-a6c0-3538feb71089');
-  // dd($response);
-  die();
   $laravelcollection = collect($response)->values();
   $data = $laravelcollection->where('nim', $value_id);
   if ($data == null) {
@@ -318,5 +305,11 @@ function dataGetDatetime($id){
     }
     $data[$date_key] = $data_time;
   }
+  return $data;
+}
+/* Tags:... */
+function cekLabData($id)
+{
+  $data = Laboratory::where('lab_id',$id)->first();
   return $data;
 }

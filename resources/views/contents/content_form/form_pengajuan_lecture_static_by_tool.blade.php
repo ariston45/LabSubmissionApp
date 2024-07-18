@@ -48,8 +48,11 @@ Lab management | Dashboard
           <div class="col-sm-12 col-md-9">
             <select id="inp-kegiatan" class="form-control" name="inp_kegiatan" onchange="actActivitySubs()">
               <option value="{{ null }}">Pilih kegiatan..</option>
-              <option value="tp_penelitian_skripsi" @if (old('inp_kegiatan') == 'tp_penelitian_skripsi') selected @endif >Penelitian Skripsi</option>
-              <option value="tp_lain_lain" @if (old('inp_kegiatan') == 'tp_lainnya') selected @endif >Lainnya</option>
+              <option value="tp_penelitian" @if (old('inp_kegiatan') == 'tp_penelitian') selected @endif >Penelitian</option>
+              <option value="tp_pelatihan" @if (old('inp_kegiatan') == 'tp_pelatihan') selected @endif >Pelatihan</option>
+              <option value="tp_pengabdian_masyarakat" @if (old('inp_kegiatan') == 'tp_pengabdian_masyarakat') selected @endif >Pengabdian Masyarakat</option>
+              <option value="tp_magang" @if (old('inp_kegiatan') == 'tp_magang') selected @endif >Magang</option>
+              <option value="tp_lain_lain" @if (old('inp_kegiatan') == 'tp_lain_lain') selected @endif >Lain-lain*</option>
             </select>
             <div id="data-loading" style="display: none;">
               <img src="{{ url('/public/assets/img/loading.gif') }}" class="img-loading" alt="">

@@ -5,40 +5,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Document</title>
-	{{-- <link rel="stylesheet" href="{{ url('assets/bootstrap/css/bootstrap.min.css') }}">
-	<link rel="stylesheet" href="{{ url('assets/plugins/font-awesome-4.7.0/css/font-awesome.min.css') }}">
-	<link rel="stylesheet" href="{{ url('assets/dist/css/AdminLTE.css') }}">
-	<link rel="stylesheet" href="{{ url('assets/customs/css/custom_layout.css') }}"> --}}
 	<style>
-		/* .table {
-      margin-bottom: 0px;
-    }
-    .table > tbody > tr > td{
-      border-top: none;
-      font-family: "Times New Roman", Times, serif;
-      font-size: 12pt;
-    }
-    .cst-paragraf{
-      line-height: 180%;
-    } */
-		
 	</style>
 </head>
 <body>
 	<table class="table" style="width:100%">
 		<tbody>
-			{{-- <tr>
-				<td class="" colspan="4"> <span class="pull-right">Blanko Mahasiswa Unesa/Letter Unesa</span> </td>
-			</tr>
-			<tr>
-				<td style="width: 4%;">Lampiran</td>
-				<td colspan="3">Alat & Bahan Laboratorium </td>
-			</tr>
-			<tr>
-				<td style="width: 4%;">Hal</td>
-				<td colspan="3">Permohonan Izin Penelitian di Laboratorium </td>
-			</tr> 
-			<tr><td colspan="4"></td></tr> --}}
 			<tr>
 				<td colspan="4">
 					Kepada, <br>

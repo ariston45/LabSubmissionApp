@@ -78,6 +78,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::prefix('download')->group(function () {
 		Route::get('bukti-bayar/{filename}', [DataController::class, 'downloadBuktiBayar'])->name('download_bukti_bayar');
 		Route::get('laporan/{filename}', [DataController::class, 'downloadLaporanKegiatan'])->name('download_result_report');
+		Route::get('laporan_ii/{filename}', [DataController::class, 'downloadLaporanKegiatan'])->name('download_result_report_ii');
 	});
 	/*************************************************************************************************************************************************/
 	Route::get('beranda', [HomeController::class, 'HomeSystem']);

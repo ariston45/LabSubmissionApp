@@ -83,7 +83,7 @@
 					<table>
 						@foreach ($data as $key => $value)
 							<tr>
-								- {{ strDateStart($key) }}
+								- {{ $key }}
 								@if (count($value) > 0)
 									<table>
 										@foreach ($value as $li)

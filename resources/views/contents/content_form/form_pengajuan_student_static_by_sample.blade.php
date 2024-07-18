@@ -98,7 +98,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-sample" class="form-control" name="inp_sampel" value="{{ old('inp_sampel') }}" placeholder="Inputkan jumlah sampel...">
+            <input type="number" id="inp-sample" class="form-control" name="inp_sampel" value="{{ old('inp_sampel') }}" placeholder="Inputkan jumlah sampel...">
             @if ($errors->has('inp_sampel'))
 						<span style="color: red;"><i>{{ $errors->first('inp_sampel') }}</i></span>
 						@endif
@@ -108,7 +108,6 @@ Lab management | Dashboard
         @php
           $idx_tool = 0;
         @endphp
-        
         {{-- !!  --}}
         @php
           $idx_time = 0;
@@ -151,38 +150,13 @@ Lab management | Dashboard
           </div> 
         </div>
         {{-- ~ --}}
-        
-        {{-- !!  --}}
-        {{-- <div class="col-md-offset-3 col-md-9">
-          <div class="divider">Pembayaran</div>
-        </div>
-        <div class="form-group has-feedback {{ $errors->has('bukti_pembayaran') ? ' has-error' : '' }}">
-          <label class="col-sm-12 col-md-3 control-label">
-            <span style="padding-right: 30px;">
-              Upload Bukti Pembayaran
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-9">
-            <div class="input-group">
-							<span class="input-group-btn">
-								<span id="btn-file-foto" class="btn btn-default btn-file btn-flat">
-									Buka Berkas <input type="file" id="id-upload" name="bukti_pembayaran" >
-								</span>
-							</span>
-              <input type="text" class="form-control" readonly="" name="image2">
-						</div>
-            <p><i>Pembayaran dapat dilakukan transfer via Bank, apabila pemohon sudah melakukan pembayaran silahkan bukti transaksi bisa di upload form diatas dalam format jpeg atau pdf. </i></p>
-            @if ($errors->has('bukti_pembayaran'))
-						<span style="color: red;"><i>{{ $errors->first('bukti_pembayaran') }}</i></span>
-						@endif
-          </div>
-        </div> --}}
-        <div id="cost-tables" class="col-md-offset-3 col-md-9">
+        <div id="cost-tables" class="col-md-offset-3 col-md-9" style="padding: 0px;">
+          <div id="test-id"></div>
         </div>
       </div>
       <div class="box-footer">
         <div class="col-md-offset-3 col-md-9">
-          <button type="button" class="btn btn-default btn-flat"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
+          <button type="button" class="btn btn-default btn-flat" onclick="actPrePayment();"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
           <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
           <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
         </div>
@@ -392,9 +366,10 @@ Lab management | Dashboard
       },
     });
   };
-  function actChangeLab() {
-    var lab_id = select_lab.getValue();
-    var check_lab = null;
+  function actPrePayment() {
+    var lab_id = "{{$lab_data->lab_id}}";
+    var count_sample = $('#inp-sample').val();
+    var activity = $('#inp-kegiatan').find(":selected").val();
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -402,42 +377,17 @@ Lab management | Dashboard
     });
     $.ajax({
       type: 'POST',
-      url: "{{ route('source_check_lab') }}",
+      url: "{{ route('source-data-cost-lab-tables') }}",
       data: {
         "lab_id":lab_id,
+        "activity": activity,
+        "count":count_sample,
       },
       async: false,
       success: function(result) {
-        console.log(result);
-        if (result.costbase == 'by_sample') {
-          $('#fm-inp-sample').fadeIn();
-          $('.act-datetime').fadeIn();
-          $('.act-tool').hide();
-        }else if(result.costbase == 'by_day'){
-          $('#fm-inp-sample').hide();
-          $('.act-datetime').fadeIn();
-          $('.act-tool').hide();
-        }else if(result.costbase == 'by_tool'){
-          $('#fm-inp-sample').hide();
-          $('.act-datetime').hide();
-          $('.act-tool').fadeIn();
-        }else{
-          $('#fm-inp-sample').hide();
-          $('.act-datetime').hide();
-          $('.act-tool').hide();
-        }
+        $('#test-id').html(result);
       },
     });
-  };
-  function actAddInputDatetime() {
-    // $('#input-dt-container').append(
-    //   '<div class="row"><div class="col-sm-11"><div class="input-group inp-split-cst date" style="margin-bottom: 6px;">
-		// 	+'<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-		// 	+'<input type="text" name="inp_date[]"  value="{{ old('date_start') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly></div>
-    //   +'<div class="input-group inp-split-cst date"><div class="input-group-addon"><i class="fa fa-clock-o"></i></div>
-    //   +'<input type="text" name="date_start"  value="{{ old('date_start') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly></div></div>
-    //   +'<div class="col-sm-1"> <button class="btn btn-flat btn-default">Remove</button></div></div>'
-    // );
   };
 </script>
 {{-- ready function --}}
@@ -497,48 +447,7 @@ Lab management | Dashboard
         actViewCheckSch(par_a,par_b);
       }
     });
-    
-
   });
-  /*
-  $(document).ready( function() {
-    select_lab.on('change', function () {  
-      var data_facility = [];
-      var item_lab = select_lab.getValue();
-      $.ajaxSetup({
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-      });
-      $.ajax({
-        type: 'POST',
-        url: "{{ route('source-data-facilities') }}",
-        data: {
-          "lab_id":item_lab,
-        },
-        async: false,
-        success: function(result) {
-          console.log(result);
-          select_facility.clear();
-          select_facility.clearOptions();
-          var dataLabOption = JSON.parse(result);
-          for (let index = 0; index < dataLabOption.length; index++) {
-            data_facility.push({
-              id:dataLabOption[index].id,
-              title:dataLabOption[index].title,
-            });
-          }
-          select_facility.addOptions(data_facility);
-        },
-      });
-      actViewLabCost(item_lab);
-    });
-    select_facility.on('change',function () {
-      var dd = select_facility.getValue();
-      actViewFacilityCost(dd)
-    });
-  });
-  */
   $(document).ready( function() {
     $(document).on('change', '#btn-file-foto :file', function() {
       var input = $(this),

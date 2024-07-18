@@ -203,6 +203,14 @@ class DataController extends Controller
 			return redirect()->back()->withErrors(['file_laporan_err' => 'File tidak tersedia.']);
 		}
 	}
+	public function downloadLaporanKegiatan_ii(Request $request)
+	{
+		try {
+			return Storage::download('public/data_laporan_bending/' . $request->filename);
+		} catch (\Throwable $th) {
+			return redirect()->back()->withErrors(['file_laporan_err' => 'File tidak tersedia.']);
+		}
+	}
 	/* Tags:... */
 	public function sourceDataAllLab(Request $request)
 	{
@@ -579,66 +587,99 @@ class DataController extends Controller
 		$activity = $request->activity;
 		$user = DataAuth();
 		$data_lab = Laboratory::where('lab_id',$request->lab_id)->first();
+		$data_reduce = Cost_reduction::where('reduction_usr_level', 'STUDENT')
+		->where('reduction_act_cat', $activity)
+		->first();
+		if ($activity == 'tp_penelitian_skripsi') {
+			$param_reduce = 100;
+		}else{
+			$param_reduce = 0;
+		}
+		if ($data_lab->lab_costbase == 'by_day') {
+			$total_cost = $request->count * $data_lab->lab_rent_cost;
+			$val_reduce = $total_cost * ($param_reduce/100);
+			$total_cost_after = $total_cost - $val_reduce;
+		}elseif ($data_lab->lab_costbase == 'by_sample') {
+			$total_cost = $request->count * $data_lab->lab_rent_cost;
+			$val_reduce = $total_cost * ($param_reduce / 100);
+			$total_cost_after = $total_cost - $val_reduce;
+		}else{
+
+		}
 		$web=null;
-		if ($user->level == 'STUDENT') {
-			$data_reduce = Cost_reduction::where('reduction_usr_level', 'STUDENT')
-			->where('reduction_act_cat', $activity)
-			->first();
-			if ($activity == 'tp_penelitian_skripsi') {
-			}else{
-				$data_reduce = null;
-			}
-			$web.='<table class="table-bordered tabel_custom" style="width: 100%;">
-				<thead>
-					<tr>
-						<th style="width: 5%; text-align: center;">No</th>
-						<th style="width: 65%; text-align: center;">Nama Laboratorium/Fasilitas/Alat</th>
-						<th style="width: 30%;text-align: center;">Biaya Pinjam</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td style="width: 5%; text-align: center;"></td>
-						<td colspan="2"><b>Laboratorium</b></td>
-					</tr>
-					<tr>
+		$web.='<table class="table-bordered tabel_custom" style="width: 100%;">
+			<thead>
+				<tr>
+					<th style="width: 5%; text-align: center;">No</th>
+					<th style="width: 65%; text-align: center;">Nama Laboratorium/Fasilitas/Alat</th>
+					<th style="width: 30%;text-align: center;">Biaya Pinjam</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="width: 5%; text-align: center;"></td>
+					<td colspan="2"><b>Laboratorium</b></td>
+				</tr>';
+				if ($data_lab->lab_costbase == 'by_day') {
+					$web.= '<tr>
 						<td style="width: 5%; text-align: center;">1</td>
-						<td>'.$data_lab->lab_name.'</td>
-						<td style="width: 5%; text-align: center;">'. funCurrencyRupiah($data_lab->lab_rent_cost). '</td>
-					</tr>
-					<tr>
-						<td style="width: 5%; text-align: center;"></td>
-						<td colspan="2"><b>Fasilitas Dan Alat</b></td>
-					</tr>
-					<tr>
-						<td style="width: 5%; text-align: center;">-</td>
-						<td>-</td>
-						<td style="width: 5%; text-align: center;">-</td>
-					</tr>
-					<tr>
-						<td style="width: 5%; text-align: center;"></td>
-						<td colspan="2"><b>Potongan Biaya</b></td>
+						<td>' . $data_lab->lab_name . '</td>
+						<td style="width: 5%; text-align: center;">' . funCurrencyRupiah($data_lab->lab_rent_cost) . ' / hari</td>
 					</tr>';
-					if ($activity == 'tp_penelitian_skripsi') {
-						$web='<tr>
-							<td style="width: 5%; text-align: center;">1</td>
-							<td>'.$data_reduce->reduction_name.'</td>
-							<td style="width: 5%; text-align: center;">'. $data_reduce->reduction_val.'</td>
-						</tr>';
-					}else{
-					$web='<tr>
-							<td style="width: 5%; text-align: center;">-</td>
-							<td>-</td>
-							<td style="width: 5%; text-align: center;">-</td>
-						</tr>';
-					}
-					$web ='<tr>
+					$web .= '<tr>
 						<td style="width: 5%; text-align: center;"></td>
-						<td> <b>Total Biaya</b> </td>
-						<td style="width: 5%; text-align: center;">' . funCurrencyRupiah($data_lab->lab_rent_cost) . '</td>
-					</tr>
-				</tbody>
-			</table>';
+						<td colspan="2"><b>Lama Pinjam</b></td>
+					</tr>';
+					$web .= '<tr>
+							<td style="width: 5%; text-align: center;">1</td>
+							<td>'.$request->count.' hari</td>
+							<td style="width: 5%; text-align: center;">'. funCurrencyRupiah($total_cost).'</td>
+						</tr>';
+					$web .= '<tr>
+							<td style="width: 5%; text-align: center;"></td>
+							<td colspan="2"><b>Potongan Biaya</b></td>
+						</tr>';
+					$web .= '<tr>
+							<td style="width: 5%; text-align: center;">1</td>
+							<td> Potongan ' . $param_reduce . ' %</td>
+							<td style="width: 5%; text-align: center;">(- ' . funCurrencyRupiah($val_reduce) . ')</td>
+						</tr>';
+				}else if($data_lab->lab_costbase == 'by_sample') {
+					$web .= '<tr>
+						<td style="width: 5%; text-align: center;">1</td>
+						<td>' . $data_lab->lab_name . '</td>
+						<td style="width: 5%; text-align: center;">' . funCurrencyRupiah($data_lab->lab_rent_cost) . ' / sample</td>
+					</tr>';
+					$web .= '<tr>
+						<td style="width: 5%; text-align: center;"></td>
+						<td colspan="2"><b>Jumlah Sample</b></td>
+					</tr>';
+					$web .= '<tr>
+							<td style="width: 5%; text-align: center;">1</td>
+							<td>' . $request->count . ' sample</td>
+							<td style="width: 5%; text-align: center;">' . funCurrencyRupiah($total_cost) . '</td>
+						</tr>';
+					$web .= '<tr>
+							<td style="width: 5%; text-align: center;"></td>
+							<td colspan="2"><b>Potongan Biaya</b></td>
+						</tr>';
+					$web .= '<tr>
+							<td style="width: 5%; text-align: center;">1</td>
+							<td> Potongan ' . $param_reduce . ' %</td>
+							<td style="width: 5%; text-align: center;">(- ' . funCurrencyRupiah($val_reduce) . ')</td>
+						</tr>';
+				}else{
+
+				}
+				$web.='<tr>
+					<td style="width: 5%; text-align: center;"></td>
+					<td> <b>Total Biaya</b> </td>
+					<td style="width: 5%; text-align: center;">' . funCurrencyRupiah($total_cost_after) . '</td>
+				</tr>
+			</tbody>
+		</table>';
+
+		if ($user->level == 'STUDENT') {
 		}
 		return $web;
 	}

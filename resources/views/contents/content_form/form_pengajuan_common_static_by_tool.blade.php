@@ -27,14 +27,127 @@ Lab management | Dashboard
         <input type="hidden" name="app_level" value="{{ $user_data->level }}">
         {{-- !! --}}
         <input type="hidden" id="inp-lab" name="inp_lab" value="{{ $lab_data->lab_id }}" >
-        <input type="hidden" id="inp-nama" name="inp_nama" value="{{ $user_data->name }}" >
+        {{-- <input type="hidden" id="inp-nama" name="inp_nama" value="{{ $user_data->name }}" >
         <input type="hidden" id="inp-id" name="inp_id" value="{{ $user_data->no_id }}" >
         <input type="hidden" id="inp-program-studi" name="inp_program_studi" value="{{ $user_data->usd_prodi }}">
         <input type="hidden" id="inp-fakultas" name="inp_fakultas" value="{{ $user_data->usd_fakultas }}">
         <input type="hidden" id="inp-institusi" name="inp_institusi" value="{{ $user_data->usd_universitas }}">
         <input type="hidden" id="inp-nomor-kontak" name="inp_nomor_kontak" value="{{ $user_data->usd_phone }}">
         <input type="hidden" id="inp-nomor-kontak" name="inp_address" value="{{ $user_data->usd_address }}">
-        <input type="hidden" name="inp_type_sub" value="pinjam_lab">
+        <input type="hidden" name="inp_type_sub" value="pinjam_lab"> --}}
+        {{-- !! --}}
+        <div class="col-sm-offset-3 col-sm-9">
+          <div class="divider">Data Pemohon</div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_nama') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Nama Lengkap <span style="color: red;">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <input type="text" id="inp-nama" class="form-control" name="inp_nama" value="{{ $user_data->name }}" placeholder="Input nama.." required>
+            @if ($errors->has('inp_nama'))
+						<span style="color: red;"><i>{{ $errors->first('inp_nama') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_id') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              NIM/No.ID <span style="color: red;">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            @if ($user_data->no_id != null)
+            <input type="text" id="inp-id" class="form-control" name="inp_id" value="{{ $user_data->no_id }}" placeholder="Input no id..">
+            @else
+            <input type="text" id="inp-id" class="form-control" name="inp_id" value="{{ old('inp_id') }}" placeholder="Input no id..">
+            @endif
+            @if ($errors->has('inp_id'))
+						<span style="color: red;"><i>{{ $errors->first('inp_id') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_program_studi') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Program Studi
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_prodi != null)
+            <input type="text" id="inp-program-studi" class="form-control" name="inp_program_studi" value="{{ $user_data->usd_prodi }}" placeholder="Input program studi..">
+            @else
+            <input type="text" id="inp-program-studi" class="form-control" name="inp_program_studi" value="{{ old('inp_program_studi') }}" placeholder="Input program studi..">
+            @endif
+            @if ($errors->has('inp_program_studi'))
+						<span style="color: red;"><i>{{ $errors->first('inp_program_studi') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_fakultas') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Fakultas
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_fakultas != null)
+            <input type="text" id="inp-fakultas" class="form-control" name="inp_fakultas" value="{{ $user_data->usd_fakultas }}" placeholder="Input fakultas">  
+            @else
+            <input type="text" id="inp-fakultas" class="form-control" name="inp_fakultas" value="{{ old('inp_fakultas') }}" placeholder="Input fakultas">
+            @endif
+            @if ($errors->has('inp_fakulas'))
+						<span style="color: red;"><i>{{ $errors->first('inp_fakultas') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_institusi') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Universitas / Institusi <span style="color: red;">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_universitas != null)
+            <input type="text" id="inp-institusi" class="form-control" name="inp_institusi" value="{{ $user_data->usd_universitas }}" placeholder="Input universitas/institusi.." required>  
+            @else
+            <input type="text" id="inp-institusi" class="form-control" name="inp_institusi" value="{{ old('inp_institusi') }}" placeholder="Input universitas/institusi.." required>
+            @endif
+            @if ($errors->has('inp_institusi'))
+						<span style="color: red;"><i>{{ $errors->first('inp_institusi') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_nomor_kontak') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Nomor HP/Kontak <span style="color: red;">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_phone != null)
+            <input type="text" id="inp-nomor-kontak" class="form-control" name="inp_nomor_kontak" value="{{ $user_data->usd_phone }}" placeholder="Input no kontak..." required>
+            @else
+            <input type="text" id="inp-nomor-kontak" class="form-control" name="inp_nomor_kontak" value="{{ old('inp_nomor_kontak') }}" placeholder="Input no kontak..." required>
+            @endif
+          </div>
+        </div>
+        <div class="form-group has-feedback {{ $errors->has('inp_address') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Alamat <span style="color: red;">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            @if ($user_data->usd_address != null)
+            <input type="text" id="inp-nomor-kontak" class="form-control" name="inp_address" value="{{ $user_data->usd_address }}" placeholder="Input alamat..." required>
+            @else
+            <input type="text" id="inp-nomor-kontak" class="form-control" name="inp_address" value="{{ old('inp_address') }}" placeholder="Input alamat..." required>
+            @endif
+          </div>
+        </div>
         {{-- !! --}}
         <div class="col-md-offset-3 col-md-9">
           <div class="divider">Kegiatan</div>
@@ -48,8 +161,11 @@ Lab management | Dashboard
           <div class="col-sm-12 col-md-9">
             <select id="inp-kegiatan" class="form-control" name="inp_kegiatan" onchange="actActivitySubs()">
               <option value="{{ null }}">Pilih kegiatan..</option>
-              <option value="tp_penelitian_skripsi" @if (old('inp_kegiatan') == 'tp_penelitian_skripsi') selected @endif >Penelitian Skripsi</option>
-              <option value="tp_lain_lain" @if (old('inp_kegiatan') == 'tp_lainnya') selected @endif >Lainnya</option>
+              <option value="tp_penelitian" @if (old('inp_kegiatan') == 'tp_penelitian') selected @endif >Penelitian</option>
+              <option value="tp_pelatihan" @if (old('inp_kegiatan') == 'tp_pelatihan') selected @endif >Pelatihan</option>
+              <option value="tp_pengabdian_masyarakat" @if (old('inp_kegiatan') == 'tp_pengabdian_masyarakat') selected @endif >Pengabdian Masyarakat</option>
+              <option value="tp_magang" @if (old('inp_kegiatan') == 'tp_magang') selected @endif >Magang</option>
+              <option value="tp_lain_lain" @if (old('inp_kegiatan') == 'tp_lain_lain') selected @endif >Lain-lain*</option>
             </select>
             <div id="data-loading" style="display: none;">
               <img src="{{ url('/public/assets/img/loading.gif') }}" class="img-loading" alt="">

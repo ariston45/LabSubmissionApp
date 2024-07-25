@@ -1,7 +1,6 @@
 
 @php
-  // echo request();
-  // die();
+  actionEliminateSubmission();
 @endphp
 <!DOCTYPE html>
 <html lang="en">

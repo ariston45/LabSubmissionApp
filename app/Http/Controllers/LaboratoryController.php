@@ -90,6 +90,7 @@ class LaboratoryController extends Controller
 			"lab_notes" => $request->inp_notes,
 			"lab_img" => $file_name,
 			"lab_rent_cost" => funFormatCurToDecimal($request->inp_cost),
+			"lab_costbase" => $request->inp_base,
 		];
 		$insLabData = Laboratory::insert($data_laboratorium);
 		// 
@@ -101,7 +102,7 @@ class LaboratoryController extends Controller
 			];
 			$insTechLabData = Laboratory_technician::insert($data_technicians[$key]);
 		}
-		// return redirect('laboratorium');
+		return redirect('laboratorium');
 	}
 	/* Tags:... */
 	public function actionUpdateLaboratory(LabPostRequest $request)
@@ -136,6 +137,7 @@ class LaboratoryController extends Controller
 			"lab_notes" => $request->inp_notes,
 			"lab_img" => $file_name,
 			"lab_rent_cost" => funFormatCurToDecimal($request->inp_cost),
+			"lab_costbase" => $request->inp_base,
 		];
 		$insLabData = Laboratory::where('lab_id',$lab_id)->update($data_laboratorium);
 		$delTechLap = Laboratory_technician::where('lat_laboratory',$lab_id)->delete();
@@ -224,8 +226,18 @@ class LaboratoryController extends Controller
 	/* Tags:... */
 	public function actionInputLabFacilities(LabFacilityPostRequest $request)
 	{
+		$user = Auth::user();
 		$lab_facility_id = genIdLabF();
 		$lab_fa_conunt_id = genIdLabFC();
+		#
+		$laf_name = Str::slug($request->inp_fasilitas, '_');
+		$getFile = $request->file('upload_url_img');
+		if ($getFile == true) {
+			$file_name = date('Ymd') . '_' . date('His') . '_' . $laf_name . '.' . $getFile->extension();
+			$filePath = $getFile->storeAs('public/image_facility', $file_name);
+		} else {
+			$file_name = null;
+		}
 		#
 		$data_lab = [
 			'laf_id' => $lab_facility_id,
@@ -235,7 +247,9 @@ class LaboratoryController extends Controller
 			'laf_brand' => $request->inp_brand,
 			'laf_base' => $request->inp_base,
 			'laf_value' => funFormatCurToDecimal($request->inp_cost),
-			'created_by' => null,
+			'laf_description' => $request->inp_diskripsi,
+			'laf_image' => $file_name,
+			'created_by' => $user->id,
 		];
 		$data_lab_count_detail = [
 			'lcs_id' => $lab_fa_conunt_id,
@@ -243,9 +257,7 @@ class LaboratoryController extends Controller
 			'lcs_count' => $request->inp_cn_facility,
 			'lcs_ready' => $request->inp_cn_ready,
 			'lcs_used' => $request->inp_cn_used,
-			'lcs_condition_good' => $request->inp_cn_good,
-			'lcs_condition_poor' => $request->inp_cn_poor,
-			'lcs_condition_unwearable' => $request->inp_cn_unwearable,
+			'lcs_unwearable' => $request->inp_cn_unwearable,
 		];
 		#
 		$storeFacility = Laboratory_facility::insert($data_lab);

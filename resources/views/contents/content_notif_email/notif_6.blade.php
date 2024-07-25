@@ -60,7 +60,7 @@
 					{{ $data_applicant['head_acc'] }}.
 					<br>
 					@endif
-					Dimohon untuk ketersediannya untuk mendampingi selama kegiatan yang ada di laboratorium. <br>
+					Dimohon untuk ketersediannya mendampingi selama kegiatan yang ada di laboratorium. <br>
 					Untuk informasi lebih lanjut silakan klik tombol <i>Detail Pengajuan</i> yang ada di bawah.
 				</td>
 			</tr>

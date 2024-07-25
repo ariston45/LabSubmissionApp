@@ -35,8 +35,10 @@ use App\Mail\NotifMailForHeadValidation;
 use App\Mail\NotifMailForTechnical;
 use App\Mail\NotifMailForApplicantPayConfirm;
 use App\Mail\NotifMailForHeadUpBukti;
+use App\Mail\NotifConfirmTech;
+
 use App\Models\Cost_reduction;
-use App\Models\Laboratory_working_time;
+use App\Models\Laboratory_facility_count_status;
 use App\Models\Lab_sch_date;
 use App\Models\Lab_sch_time;
 use App\Models\Lab_sub_date;
@@ -80,8 +82,11 @@ class PengajuanController extends Controller
 		$lab_data = Laboratory::where('lab_status','tersedia')
 		->where('lab_id',$request->id)
 		->first();
-		$lab_tool_data = Laboratory_facility::where('laf_laboratorium', $request->id)
+		$lab_tool_data = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
+		->where('laf_laboratorium', $request->id)
+		->where('lcs_ready', '!=', 0)
 		->get();
+		// dd($lab_tool_data);
 		$user_data = User::leftJoin('user_details','users.id','=','user_details.usd_user')
 		->where('id',$user->id)
 		->first();
@@ -92,9 +97,9 @@ class PengajuanController extends Controller
 			if ($user->level == 'STUDENT') {
 				return view('contents.content_form.form_pengajuan_student_static_by_day',compact('user_data', 'lab_data','times', 'lab_tool_data'));
 			}elseif ($user->level == 'LECTURE') {
-				return view('contents.content_form.form_pengajuan_lecture_static_by_day', compact('user_data', 'lab_data', 'times'));	
+				return view('contents.content_form.form_pengajuan_lecture_static_by_day', compact('user_data', 'lab_data','times', 'lab_tool_data'));	
 			}else{
-				return view('contents.content_form.form_pengajuan_common_static_by_day', compact('user_data', 'lab_data','times'));
+				return view('contents.content_form.form_pengajuan_common_static_by_day', compact('user_data', 'lab_data','times', 'lab_tool_data'));
 			}
 		}elseif ($lab_data->lab_costbase == 'by_tool') {
 			# code...
@@ -108,11 +113,11 @@ class PengajuanController extends Controller
 		}elseif ($lab_data->lab_costbase == 'by_sample') {
 			# code...
 			if ($user->level == 'STUDENT') {
-				return view('contents.content_form.form_pengajuan_student_static_by_sample', compact('user_data', 'lab_data', 'times'));
+				return view('contents.content_form.form_pengajuan_student_static_by_sample', compact('user_data', 'lab_data', 'times', 'lab_tool_data'));
 			} elseif ($user->level == 'LECTURE') {
-				return view('contents.content_form.form_pengajuan_lecture_static_by_sample', compact('user_data', 'lab_data', 'times'));
+				return view('contents.content_form.form_pengajuan_lecture_static_by_sample', compact('user_data', 'lab_data','times', 'lab_tool_data'));
 			} else {
-				return view('contents.content_form.form_pengajuan_common_static_by_sample', compact('user_data', 'lab_data', 'times'));
+				return view('contents.content_form.form_pengajuan_common_static_by_sample', compact('user_data', 'lab_data','times', 'lab_tool_data'));
 			}
 		}else{
 			return redirect()->back();
@@ -490,9 +495,11 @@ class PengajuanController extends Controller
 	/* Tags:... */
 	public function actionPengajuanStaticDay(Request $request)
 	{
+		$user_kalab = User::where('level', 'LAB_HEAD')->where('id',0)->first();
 		$user = DataAuth();
 		$id = genIdPengajuan();
 		$id_date = genIdDate();
+		$now = date('Y-m-d');
 		$datetimes = [];
 		if (count($request->inp_time) == 0) {
 			return redirect()->back()->withErrors(['sch_err' => 'Harap inputkan tanggal']);
@@ -501,6 +508,9 @@ class PengajuanController extends Controller
 				$nx = 0;
 				$p_dates = [];
 				foreach ($request->inp_date as $key => $list_date) {
+					if ($list_date < $now) {
+						return redirect()->back()->withErrors(['sch_konflik_err' => 'Harap inputkan tanggal dan jam peminjaman dengan benar.']);
+					}
 					$p_dates[$key] = $list_date;
 					$data_date[$key] = [
 						"lsd_id" => $id_date,
@@ -529,7 +539,59 @@ class PengajuanController extends Controller
 				return redirect()->back()->withErrors(['sch_err' => 'Harap inputkan tanggal dan jam peminjaman dengan benar.']);
 			}
 		}
+		// blok insepsi jadwal konflik
 		$b = 0;
+		foreach ($mkdate as $key => $value) {
+			$check_dt = Lab_sch_date::join('lab_sch_times', 'lab_sch_dates.lscd_id', '=', 'lab_sch_times.lsct_date_id')
+			->join('lab_schedules', 'lab_sch_dates.lscd_id', '=', 'lab_schedules.lbs_id')
+			->where('lbs_type', 'non_reguler')
+			->where('lbs_lab', $request->inp_lab)
+				->where('lscd_date', $key)
+				->select('lsct_date_id', 'lsct_time_id')
+				->get();
+			$id_time = [];
+			foreach ($check_dt as $skey => $svalue) {
+				$id_time[$b] = $svalue->lsct_time_id;
+				$b++;
+			}
+			$commonValues_nr[$key] = array_intersect($value, $id_time);
+		}
+		foreach ($mkdate as $key => $value) {
+			$day = date('l', strtotime($key));
+			$check_dt = Lab_sch_date::join('lab_sch_times', 'lab_sch_dates.lscd_id', '=', 'lab_sch_times.lsct_date_id')
+			->join('lab_schedules', 'lab_sch_dates.lscd_id', '=', 'lab_schedules.lbs_id')
+			->where('lbs_type', 'reguler')
+			->where('lbs_lab', $request->inp_lab)
+				->where('lscd_day', $day)
+				->select('lsct_date_id', 'lsct_time_id')
+				->get();
+			$id_time = [];
+			foreach ($check_dt as $skey => $svalue) {
+				$id_time[$b] = $svalue->lsct_time_id;
+				$b++;
+			}
+			$commonValues_r[$key] = array_intersect($value, $id_time);
+		}
+		$web_err_time = '';
+		foreach ($commonValues_nr as $key => $value) {
+			foreach ($value as $skey => $svalue) {
+				$dtime = Laboratory_time_option::where('lti_id', $svalue)->first();
+				$day = date('d-M-Y', strtotime($key));
+				$web_err_time .= 'Jadwal konflik pada ' . $day . ' jam ' . $dtime->lti_start . ' - ' . $dtime->lti_end . '<br>';
+			}
+		}
+		foreach ($commonValues_r as $key => $value) {
+			foreach ($value as $skey => $svalue) {
+				$dtime = Laboratory_time_option::where('lti_id', $svalue)->first();
+				$day = date('d-M-Y', strtotime($key));
+				$web_err_time .= 'Jadwal konflik pada ' . $day . ' jam ' . $dtime->lti_start . ' - ' . $dtime->lti_end . '<br>';
+			}
+		}
+		if ($web_err_time != '') {
+			return redirect()->back()->withErrors(['sch_konflik_err' => $web_err_time]);
+		}
+		// ====================================================================================================================
+		// die();
 		foreach ($mkdate as $key => $value) {
 			$check_dt = Lab_sch_date::join('lab_sch_times', 'lab_sch_dates.lscd_id', '=', 'lab_sch_times.lsct_date_id')
 			->join('lab_schedules', 'lab_sch_dates.lscd_id', '=', 'lab_schedules.lbs_id')
@@ -636,7 +698,7 @@ class PengajuanController extends Controller
 			'lsb_activity' => $request->inp_kegiatan,
 			'lsb_purpose' => $request->inp_tujuan,
 			'lsb_user_id' => $user->id,
-			'lsb_user_head' => 0,
+			'lsb_user_head' => $user_kalab->id,
 			'lsb_user_subhead' => $data_lab->id,
 			'lsb_user_tech' => null,
 			'lsb_lab_id' => $request->inp_lab,
@@ -667,6 +729,7 @@ class PengajuanController extends Controller
 			'dates' => implode(', ', $p_dates),
 			'datetimes' => $times_text,
 		];
+		// die();
 		#data order by date
 		$id_order = getIdOrder();
 		$no_deatil_order = 0;
@@ -692,7 +755,6 @@ class PengajuanController extends Controller
 			$reduction_val = 0;
 			$cost_after = $c_coast;
 		}
-		
 		$data_order = [
 			'los_id' => $id_order,
 			'los_lsb_id' => $id,
@@ -703,7 +765,24 @@ class PengajuanController extends Controller
 			'los_cost_reduction' => $reduction_val,
 			'los_cost_after' => $cost_after,
 		];
-		// dd($data_time);
+		# data alat(tool)
+		$tool_ids = [];
+		// foreach ($request->inp_fasilitas as $key => $value) {
+		// 	$tool_ids[$key] = $value;
+		// }
+		// die();
+		// $data_tools = Laboratory_facility::whereIn('laf_id', $tool_ids)->get();
+		// $lab_facility = [];
+		// foreach ($data_tools as $key => $value) {
+		// 	$lab_facility[$key] = [
+		// 		'lsf_submission' => $id,
+		// 		'lsf_lab' => $request->inp_lab,
+		// 		'lsf_start_dt' => null,
+		// 		'lsf_end_dt' => null,
+		// 		'lsf_facility_id' => $value->laf_id,
+		// 		'lsf_status' => null,
+		// 	];
+		// }
 		#storing
 		Lab_sub_date::insert($data_date);
 		Lab_sub_time::insert($data_time);
@@ -711,24 +790,108 @@ class PengajuanController extends Controller
 		Lab_sub_order_detail::insert($order_detail);
 		Lab_submission::insert($dt_pengajuan);
 		Lab_submission_adviser::insert($data_pembimbing_filter);
-
-		$data_head = User::where('level', 'LAB_HEAD')->first(); 
-		Mail::to($data_head->email)->send(new NotifMail($data_applicant));
+		// 
+		$usd = User_detail::where('usd_user', $user->id)->first();
+		if ($usd == null) {
+			$data_user_det = [
+				"usd_user" => $user->id,
+				"usd_phone" => $request->inp_nomor_kontak,
+				"usd_address" => $request->inp_address,
+				"usd_prodi" => $request->inp_program_studi,
+				"usd_fakultas" => $request->inp_fakultas,
+				"usd_universitas" => $request->inp_institusi,
+			];
+			$storeUserDetail = User_detail::insert($data_user_det);
+		} else {
+			$data_user_det = [
+				"usd_phone" => $request->inp_nomor_kontak,
+				"usd_address" => $request->inp_address,
+				"usd_prodi" => $request->inp_program_studi,
+				"usd_fakultas" => $request->inp_fakultas,
+				"usd_universitas" => $request->inp_institusi,
+			];
+			$updateUserDetail = User_detail::where('usd_user', $user->id)->update($data_user_det);
+		}
+		// Lab_facility::insert($lab_facility);
+		Mail::to($user_kalab->email)->send(new NotifMail($data_applicant));
 		return redirect()->route('detail_pengajuan', ['id' => $id]);
+
 	}
 	/* Tags:... */
 	public function actionPengajuanStaticTool(Request $request)
 	{
 		$user = DataAuth();
 		$id = genIdPengajuan();
-		$data_pembimbing_filter = [];
 		$id_date = genIdDate();
+		#part date
 		$data_date[0] = [
 			"lsd_id" => $id_date,
 			"lsd_lsb_id" => $id,
 			"lsd_date" => $request->inp_date,
 			"lsd_lab" =>  $request->inp_lab
 		];
+		$data_tool = [];
+		$lab_facility = [];
+		// $start_date = Carbon::createFromFormat('Y-m-d', $request->inp_date);
+		$start_date = date('Y-m-d', strtotime($request->inp_date));
+		// dd($request->inp_jml_unit);
+		foreach ($request->inp_fasilitas as $key => $value) {
+			if($value == null || $value == ""){ # check data null
+				return redirect()->back()->withErrors(['tool_err' => 'Harap inputkan alat yang dipinjam dengan benar']);
+			}else{
+				if($request->inp_satuan[$key] == null || $request->inp_satuan[$key] == ""){
+					return redirect()->back()->withErrors(['tool_err' => 'Harap inputkan lama pinjam alat yang dipinjam dengan benar']);
+				}
+				if ($request->inp_jml_unit[$key] == null || $request->inp_jml_unit[$key] == "") {
+					return redirect()->back()->withErrors(['tool_err' => 'Harap inputkan jumlah unit alat yang dipinjam dengan benar']);
+				}
+				$jumlah_pinjam[$key] = $request->inp_jml_unit[$key];
+				$lama_pinjam[$key] = $request->inp_satuan[$key];
+				$id_tool[$key] = $value;
+				$data_tool[$key] = Laboratory_facility::leftjoin('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
+				->leftJoin('laboratories', 'Laboratory_facilities.laf_laboratorium', '=', 'laboratories.lab_id')
+				->where('laf_id', $value)
+				->first();
+				if ($data_tool[$key]->lcs_ready < $jumlah_pinjam[$key]) {
+					return redirect()->back()->withErrors(['tool_err' => 'Jumlah alat yang tersedia tidak mencukupi dengan jumlah alat yang dipinjam.']);
+				}
+				if($data_tool[$key]->laf_base == 'Hari'){
+					$dt_end = date('Y-m-d',strtotime('+'. $lama_pinjam[$key].' day', strtotime($start_date)));
+				}else if ($data_tool[$key]->laf_base == 'Minggu'){
+					$dt_end = date('Y-m-d',strtotime('+'. $lama_pinjam[$key].' week', strtotime($start_date)));
+				}else if($data_tool[$key]->laf_base == 'Bulan'){
+					$dt_end = date('Y-m-d', strtotime('+' . $lama_pinjam[$key] . ' month', strtotime($start_date)));
+				}else{
+					$dt_end = date('Y-m-d');
+				}
+				$lab_facility[$key] = [
+					'lsf_submission' => $id,
+					'lsf_lab' => $request->inp_lab,
+					'lsf_start_dt' => $start_date,
+					'lsf_end_dt' => $dt_end,
+					'lsf_facility_id' => $value,
+					'lsf_cnt_unit' => $jumlah_pinjam[$key],
+					'lsf_status' => null,
+				];
+			}
+		}
+		#recek alat
+		$groupedTool = [];
+		foreach ($id_tool as $key => $value) {
+			if (!isset($groupedTool[$value])) {
+				$groupedTool[$value] = [];
+			}
+			$groupedTool[$value][] = $value;
+		}
+		foreach ($groupedTool as $key => $value) {
+			$lab_facility_cnt[$key] = Laboratory_facility_count_status::where('lcs_facility',$key)->first();
+			$cnt_group[$key] = count($value);
+			if($cnt_group[$key] > $lab_facility_cnt[$key]->lcs_ready){
+				return redirect()->back()->withErrors(['tool_err' => 'Jumlah alat yang tersedia tidak mencukupi dengan jumlah alat yang dipinjam.']);
+			}
+		}
+		#part time
+		$data_pembimbing_filter = [];
 		if (rulesUser(['STUDENT'])) {
 			$data_pembimbing = [
 				'pembimbing' => [
@@ -827,14 +990,14 @@ class PengajuanController extends Controller
 		$no = 1;
 		foreach ($request->inp_fasilitas as $key => $value) {
 			$data_tool[$key] = Laboratory_facility::where('laf_id',$value)->first();
-			$cost_item[$key] = $request->inp_satuan[$key] * $data_tool[$key]->laf_value;
+			$cost_item[$key] = $request->inp_jml_unit[$key] * $request->inp_satuan[$key] * $data_tool[$key]->laf_value;
 			$order_detail[$key] = [
 				'lod_los_id' => $id_order,
 				'lod_item_id' => $no,
 				'lod_item_type' => 'tool',
 				'lod_item_name' => $data_tool[$key]->laf_name,
 				'lod_cost' => $cost_item[$key],
-				'lod_note_order' => 'Biaya berdasarkan lama pinjam '. $request->inp_satuan[$key].' '. $data_tool[$key]->laf_base. ' dengan biaya '. funCurrencyRupiah($data_tool[$key]->laf_value).'/'. $data_tool[$key]->laf_base,
+				'lod_note_order' => 'Biaya berdasarkan jumlah unit '. $request->inp_jml_unit[$key].' x lama pinjam '. $request->inp_satuan[$key].' '. $data_tool[$key]->laf_base. ' dengan biaya '. funCurrencyRupiah($data_tool[$key]->laf_value).'/'. $data_tool[$key]->laf_base,
 			];
 			$no++;
 		}
@@ -865,6 +1028,7 @@ class PengajuanController extends Controller
 		Lab_sub_order_detail::insert($order_detail);
 		Lab_submission::insert($dt_pengajuan);
 		Lab_submission_adviser::insert($data_pembimbing_filter);
+		Lab_facility::insert($lab_facility);
 
 		$data_head = User::where('level', 'LAB_HEAD')->first();
 		Mail::to($data_head->email)->send(new NotifMail($data_applicant));
@@ -872,7 +1036,7 @@ class PengajuanController extends Controller
 	}
 	public function actionPengajuanStaticSample(Request $request)
 	{
-
+		$now = date('Y-m-d');
 		$user = DataAuth();
 		$id = genIdPengajuan();
 		$id_date = genIdDate();
@@ -884,6 +1048,9 @@ class PengajuanController extends Controller
 				$nx = 0;
 				$p_dates = [];
 				foreach ($request->inp_date as $key => $list_date) {
+					if ($list_date < $now) {
+						return redirect()->back()->withErrors(['sch_konflik_err' => 'Harap inputkan tanggal dan jam peminjaman dengan benar.']);
+					}
 					$p_dates[$key] = $list_date;
 					$data_date[$key] = [
 						"lsd_id" => $id_date,
@@ -893,7 +1060,7 @@ class PengajuanController extends Controller
 					];
 					$cv = 0;
 					$times_text[$list_date] = [];
-					sort($request->inp_time[$key]);
+					// sort($request->inp_time[$key]);
 					foreach ($request->inp_time[$key] as $sk => $list_time) {
 						$times = Laboratory_time_option::where('lti_id', $list_time)->first();
 						$times_text[$list_date][$sk] = date('H:i', strtotime($times->lti_start)) . ' - ' . date('H:i', strtotime($times->lti_end));
@@ -913,7 +1080,59 @@ class PengajuanController extends Controller
 				return redirect()->back()->withErrors(['sch_err' => 'Harap inputkan tanggal dan jam peminjaman dengan benar.']);
 			}
 		}
+		# blok insepsi jadwal konflik
 		$b = 0;
+		foreach ($mkdate as $key => $value) {
+			$check_dt = Lab_sch_date::join('lab_sch_times', 'lab_sch_dates.lscd_id', '=', 'lab_sch_times.lsct_date_id')
+			->join('lab_schedules', 'lab_sch_dates.lscd_id', '=', 'lab_schedules.lbs_id')
+			->where('lbs_type', 'non_reguler')
+			->where('lbs_lab', $request->inp_lab)
+			->where('lscd_date', $key)
+			->select('lsct_date_id', 'lsct_time_id')
+			->get();
+			$id_time = [];
+			foreach ($check_dt as $skey => $svalue) {
+				$id_time[$b] = $svalue->lsct_time_id;
+				$b++;
+			}
+			$commonValues_nr[$key] = array_intersect($value, $id_time);
+		}
+		foreach ($mkdate as $key => $value) {
+			$day = date('l', strtotime($key));
+			$check_dt = Lab_sch_date::join('lab_sch_times', 'lab_sch_dates.lscd_id', '=', 'lab_sch_times.lsct_date_id')
+			->join('lab_schedules', 'lab_sch_dates.lscd_id', '=', 'lab_schedules.lbs_id')
+			->where('lbs_type', 'reguler')
+			->where('lbs_lab', $request->inp_lab)
+			->where('lscd_day', $day)
+			->select('lsct_date_id', 'lsct_time_id')
+			->get();
+			$id_time = [];
+			foreach ($check_dt as $skey => $svalue) {
+				$id_time[$b] = $svalue->lsct_time_id;
+				$b++;
+			}
+			$commonValues_r[$key] = array_intersect($value, $id_time);
+		}
+		$web_err_time = '';
+		foreach ($commonValues_nr as $key => $value) {
+			foreach ($value as $skey => $svalue) {
+				$dtime = Laboratory_time_option::where('lti_id', $svalue)->first();
+				$day = date('d-M-Y', strtotime($key));
+				$web_err_time .= 'Jadwal konflik pada ' . $day . ' jam ' . $dtime->lti_start . ' - ' . $dtime->lti_end . '<br>';
+			}
+		}
+		foreach ($commonValues_r as $key => $value) {
+			foreach ($value as $skey => $svalue) {
+				$dtime = Laboratory_time_option::where('lti_id', $svalue)->first();
+				$day = date('d-M-Y', strtotime($key));
+				$web_err_time .= 'Jadwal konflik pada ' . $day . ' jam ' . $dtime->lti_start . ' - ' . $dtime->lti_end . '<br>';
+			}
+		}
+		if ($web_err_time != '') {
+			return redirect()->back()->withErrors(['sch_konflik_err' => $web_err_time]);
+		}
+		// ====================================================================================================================
+		// die();
 		foreach ($mkdate as $key => $value) {
 			$check_dt = Lab_sch_date::join('lab_sch_times', 'lab_sch_dates.lscd_id', '=', 'lab_sch_times.lsct_date_id')
 			->join('lab_schedules', 'lab_sch_dates.lscd_id', '=', 'lab_schedules.lbs_id')
@@ -1081,12 +1300,31 @@ class PengajuanController extends Controller
 			'los_cost_reduction' => $reduction_val,
 			'los_cost_after' => $cost_after,
 		];
+		# set alat
+		$tool_ids = [];
+		foreach ($request->inp_fasilitas as $key => $value) {
+			$tool_ids[$key] = $value;
+		}
+		$data_tools = Laboratory_facility::whereIn('laf_id', $tool_ids)->get();
+		$lab_facility = [];
+		foreach ($data_tools as $key => $value) {
+			$lab_facility[$key] = [
+				'lsf_submission' => $id,
+				'lsf_lab' => $request->inp_lab,
+				'lsf_start_dt' => null,
+				'lsf_end_dt' => null,
+				'lsf_facility_id' => $value->laf_id,
+				'lsf_status' => null,
+			];
+		}
+		# inserting datas
 		Lab_sub_date::insert($data_date);
 		Lab_sub_time::insert($data_time);
 		Lab_sub_order::insert($data_order);
 		Lab_sub_order_detail::insert($order_detail);
 		Lab_submission::insert($dt_pengajuan);
 		Lab_submission_adviser::insert($data_pembimbing_filter);
+		Lab_facility::insert($lab_facility);
 
 		$data_head = User::where('level', 'LAB_HEAD')->first();
 		Mail::to($data_head->email)->send(new NotifMail($data_applicant));
@@ -1243,6 +1481,7 @@ class PengajuanController extends Controller
 		->leftjoin('laboratories', 'lab_submissions.lsb_lab_id', '=', 'laboratories.lab_id')
 		->where('lsb_id', $request->id)
 		->first();
+		// dd($data);
 		if ($data->level == 'STUDENT') {
 			$acc_data_lecture = Lab_submission_adviser::where('las_lbs_id', $request->id)
 			->first();
@@ -1395,17 +1634,161 @@ class PengajuanController extends Controller
 		Mail::to($data_kalab->email)->send(new NotifMailForHeadUpBukti($data_applicant));
 		return redirect()->back();
 	}
+	/* Tags:... */
+	public function actionTechConfirm(Request $request)
+	{
+		$user = Auth::user();
+		$id_lab_sch = genIdLaSch();
+		$id_sch_date = genIdDateSch();
+		# Eksepsi
+		# Data pengajuan
+		$data_pengajuan = Lab_submission::leftjoin('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+		->leftjoin('user_details', 'lab_submissions.lsb_user_id', '=', 'user_details.usd_user')
+		->leftjoin('laboratories', 'lab_submissions.lsb_lab_id', '=', 'laboratories.lab_id')
+		->where('lsb_id', $request->lsb_id)
+		->first();
+		// dd($data_pengajuan);
+		# Eksespsi
+		# Jadwal pengajuan
+		$data_tanggal = Lab_sub_date::where('lsd_lsb_id', $request->lsb_id)->get();
+		$idx_time = 0;
+		$p_dates = [];
+		$inp_time = [];
+		foreach ($data_tanggal as $key => $value) {
+			$p_dates[$key] = $value->lsd_date;
+			$inp_date[$key] = [
+				"lscd_id" => $id_sch_date,
+				"lscd_sch" => $id_lab_sch,
+				"lscd_day" => date('l', strtotime($value->lsd_date)),
+				"lscd_date" => $value->lsd_date,
+				"lscd_status" => 'active',
+			];
+			$data_tanggal = Lab_sub_time::where('lstt_date_subs_id', $value->lsd_id)->get();
+			if ($data_tanggal != null) {
+				foreach ($data_tanggal as $skey => $value) {
+					$inp_time[$idx_time] = [
+						"lsct_date_id" => $value->lstt_date_subs_id,
+						"lsct_time_id" => $value->lstt_time_id,
+						"lsct_status" => 'active'
+					];
+					$idx_time++;
+				}
+			}
+			$id_sch_date++;
+		}
+		$data_kasublab = User::leftJoin('user_details', 'users.id', '=', 'user_details.usd_user')
+		->where('id', $data_pengajuan->lsb_user_subhead)
+		->select('name', 'usd_phone')
+		->first();
+		$data_adviser = Lab_submission_adviser::where('las_lbs_id', $request->lsb_id)->get();
+		$data_acc[0] = [
+			'lsa_submission' => $request->lsb_id,
+			'lsa_rule' => $user->level,
+			'lsa_user_id' => $user->id,
+			'las_username' => $user->name,
+			'las_note' => $request->inp_catatan,
+			'las_date_acc' => date('Y-m-d H:i:s')
+		];
+		$i = 1;
+		foreach ($data_adviser as $key => $value) {
+			$no_ids_adviser[$key] = $value->lsa_user_no_id;
+			$data_acc[$i] = [
+				'lsa_submission' => $request->lsb_id,
+				'lsa_rule' => 'LECTURE',
+				'lsa_user_no_id' => $value->lsa_user_no_id,
+				'las_username' => $value->las_fullname,
+				'las_note' => null,
+				'las_date_acc' => date('Y-m-d H:i:s')
+			];
+			$i++;
+		}
+		#
+		$data_a = [
+			'lbs_id' => $id_lab_sch,
+			'lbs_lab' => $data_pengajuan->lsb_lab_id,
+			'lbs_day' => null,
+			'lbs_date_start' => null,
+			'lbs_date_end' => null,
+			'lbs_time_start' => null,
+			'lbs_time_end' => null,
+			'lbs_dates_period' => null,
+			'lbs_type' => 'non_reguler',
+			'lbs_matkul' => $data_pengajuan->lsb_title,
+			'lbs_tenant_init' => $data_pengajuan->id,
+			'lbs_tenant_name' => $data_pengajuan->name,
+			'lbs_res_person' => null,
+			'lbs_submission' => $data_pengajuan->lsb_id,
+		];
+		if ($data_pengajuan->lsb_activity == 'tp_penelitian' || $data_pengajuan->lsb_activity == 'tp_penelitian_skripsi') {
+			$act = 'Penelitian';
+		} else if ($data_pengajuan->lsb_activity == 'tp_pelatihan') {
+			$act = 'Pelatihan';
+		} else if ($data_pengajuan->lsb_activity == 'tp_pengabdian_masyarakat') {
+			$act = 'Pengabdian Masyarakat';
+		} else if ($data_pengajuan->lsb_activity == 'tp_magang') {
+			$act = 'Magang';
+		} else if ($data_pengajuan->lsb_activity == 'tp_lain_lain') {
+			$act = 'Lain-lain*';
+		} else {
+			$act = null;
+		}
+		$data_applicant = [
+			'lsb_id' => $data_pengajuan->lsb_id,
+			'inp_nama' => $data_pengajuan->name,
+			'inp_id' => $data_pengajuan->no_id,
+			'inp_program_studi' => $data_pengajuan->usd_prodi,
+			'inp_fakultas' => $data_pengajuan->usd_fakultas,
+			'inp_institusi' => $data_pengajuan->usd_universitas,
+			'inp_address' => $data_pengajuan->usd_address,
+			'no_contact' => $data_pengajuan->usd_phone,
+			'name_subhead' => $data_kasublab->name,
+			'no_contact_subhead' => $data_kasublab->usd_phone,
+			'title' => $data_pengajuan->lsb_title,
+			'time' => strDateStart($data_pengajuan->lbs_date_start) . ' <b>s/d</b> ' . strDateEnd($data_pengajuan->lbs_date_end),
+			'lab_id' => $data_pengajuan->lsb_lab_id,
+			'lab' => $data_pengajuan->lab_name,
+			'act' => $act,
+			'dates' => implode(', ', $p_dates),
+		];
+		# set alat
+		$tool_loan = Lab_facility::where('lsf_submission', $data_pengajuan->lsb_id)->get();
+		foreach ($tool_loan as $key => $value) {
+			$lab_tool[$key] = Laboratory_facility_count_status::where('lcs_facility', $value->lsf_facility_id)->first();
+			if ($lab_tool[$key]->lcs_ready < $value->lsf_cnt_unit) {
+				return redirect()->back();
+			} else {
+				$data_status_tool[$key] = [
+					'lcs_ready' => $lab_tool[$key]->lcs_ready - $value->lsf_cnt_unit,
+					'lcs_used' => $lab_tool[$key]->lcs_used + $value->lsf_cnt_unit
+				];
+				Laboratory_facility_count_status::where('lcs_facility', $lab_tool[$key]->lcs_facility)->update($data_status_tool[$key]);
+			}
+		}
+		$data_user_subhead = User::where('id', $data_pengajuan->lsb_user_subhead)->select('email')->first();
+		Mail::to($data_user_subhead->email)->send(new NotifConfirmTech($data_applicant));
+		return redirect()->back();
+	}
 		/* Tags:... */
 	public function actionAccA(Request $request)
 	{
 		$user = Auth::user();
 		$id_lab_sch = genIdLaSch();
 		$id_sch_date = genIdDateSch();
+		# Eksepsi
+		if ($request->inp_acc == null OR $request->inp_acc == '') {
+			return redirect()->back()->withErrors(['file_acc_arr' => 'Harap pilih respon pengajuan disetujui atau ditolak']);
+		}
+		# Data pengajuan
 		$data_pengajuan = Lab_submission::leftjoin('users', 'lab_submissions.lsb_user_id','=','users.id')
 		->leftjoin('user_details', 'lab_submissions.lsb_user_id','=', 'user_details.usd_user')
 		->leftjoin('laboratories', 'lab_submissions.lsb_lab_id','=', 'laboratories.lab_id')
 		->where('lsb_id',$request->lsb_id)
 		->first();
+		# Eksespsi
+		if ($data_pengajuan->lsb_user_head != $user->id) {
+			return redirect()->back()->withErrors(['file_acc_arr' => 'Anda tidak memiliki akses.']);
+		}
+		# Jadwal pengajuan
 		$data_tanggal = Lab_sub_date::where('lsd_lsb_id',$request->lsb_id)->get();
 		$idx_time = 0;
 		$p_dates = [];
@@ -1506,6 +1889,21 @@ class PengajuanController extends Controller
 			'act' => $act,
 			'dates' => implode(', ', $p_dates), 
 		];
+		# set alat
+		$tool_loan = Lab_facility::where('lsf_submission', $data_pengajuan->lsb_id)->get();
+		foreach($tool_loan as $key => $value){
+			$lab_tool[$key] = Laboratory_facility_count_status::where('lcs_facility',$value->lsf_facility_id)->first();
+			if($lab_tool[$key]->lcs_ready < $value->lsf_cnt_unit){
+				return redirect()->back();
+			}else{
+				$data_status_tool[$key] = [
+					'lcs_ready' => $lab_tool[$key]->lcs_ready - $value->lsf_cnt_unit,
+					'lcs_used' => $lab_tool[$key]->lcs_used + $value->lsf_cnt_unit
+				];
+				Laboratory_facility_count_status::where('lcs_facility', $lab_tool[$key]->lcs_facility)->update($data_status_tool[$key]);
+			}
+		}
+		// dd($data_acc);
 		// die();
 		# acc submission
 		Lab_submission_acc::insert($data_acc);
@@ -1641,9 +2039,9 @@ class PengajuanController extends Controller
 			'act' => $act,
 			'dates' => $data_tanggal->implode('lsd_date',', '),
 		];
-		$data_user = User::where('id', $request->inp_teknisi)->first();
-		if ($data_user->email != null) {
-			Mail::to($data_user->email)->send(new NotifMailForTechnical($data_applicant));
+		$data_user_technical = User::where('id', $request->inp_teknisi)->first();
+		if ($data_user_technical->email != null) {
+			Mail::to($data_user_technical->email)->send(new NotifMailForTechnical($data_applicant));
 		}
 		if ($data_pengajuan->email != null) {
 			Mail::to($data_pengajuan->email)->send(new NotifMailForApplicant($data_applicant));
@@ -1702,7 +2100,7 @@ class PengajuanController extends Controller
 			$data = [
 				'lsr_lsb_id' => $request->lsb_id,
 				'lsr_filename' => $fileRename_a,
-				'lsr_filename_bending' => $fileRename_b,
+				'lsr_filename_legalitas' => $fileRename_b,
 				'lsr_user_validator' => null,
 				'lsr_status' => 'false',
 				'lsr_notes' => null,

@@ -8,7 +8,7 @@
 	{{ csrf_field() }}
 	<div class="form-group has-feedback {{ $errors->has('level') ? ' has-error' : '' }}">
 		<label>Pilih Status</label>
-		<select class="form-control" name="level" id="inp_level" onchange="inpLevel()">
+		<select class="form-control" name="level" id="inp_level" onchange="inpLevel()" required>
 			<option value="{{ null }}"></option>
 			{{-- <option value="STUDENT" @if (old('level') == 'STUDENT') selected @endif >Mahasiswa Fakultas Teknik</option> --}}
 			<option value="PUBLIC_MEMBER" @if (old('level') == 'PUBLIC_MEMBER') selected @endif>Umum Anggota Universitas</option>
@@ -20,33 +20,33 @@
 	</div>
 	<div class="form-group has-feedback {{ $errors->has('no_id') ? ' has-error' : '' }}">
 		<label>Nomor Identitas (NIK/NIM/ID)</label>
-		<input id="nomor-id" type="text" class="form-control" name="no_id" value="{{ old('no_id') }}" autocomplete="new-password">
+		<input id="nomor-id" type="text" class="form-control" name="no_id" value="{{ old('no_id') }}" autocomplete="new-password" required>
 		@if ($errors->has('no_id'))
 		<span style="color: red;"><i>{{ $errors->first('no_id') }}</i></span>
 		@endif
 	</div>
 	<div id="fd_nama" class="form-group has-feedback {{ $errors->has('name') ? ' has-error' : '' }}">
 		<label>Nama Lengkap</label>
-		<input id="name-id" type="text" class="form-control" name="name" value="{{ old('name') }}" autocomplete="new-password">
+		<input id="name-id" type="text" class="form-control" name="name" value="{{ old('name') }}" autocomplete="new-password" required>
 		@if ($errors->has('name'))
 		<span style="color: red;"><i>{{ $errors->first('name') }}</i></span>
 		@endif
 	</div>
 	<div id="fd_email" class="form-group has-feedback {{ $errors->has('name') ? ' has-error' : '' }}">
 		<label>Email</label>
-		<input id="email-id" type="email" class="form-control" name="email" value="{{ old('email') }}" autocomplete="new-password">
+		<input id="email-id" type="email" class="form-control" name="email" value="{{ old('email') }}" autocomplete="new-password" required>
 		@if ($errors->has('email'))
 		<span style="color: red;"><i>{{ $errors->first('email') }}</i></span>
 		@endif
 	</div>
 	<div id="" class="form-group has-feedback {{ $errors->has('password') ? ' has-error' : '' }}">
 		<label for="">Password</label>
-		<input id="password-id" type="password" class="form-control" name="password" autocomplete="new-password">
+		<input id="password-id" type="password" class="form-control" name="password" autocomplete="new-password" required>
 		@if ($errors->has('password'))
 		<span style="color: red;"><i>{{ $errors->first('password') }}</i></span>
 		@endif
 	</div>
-	<div class="form-group has-feedback {{ $errors->has('password_confirm') ? ' has-error' : '' }}" autocomplete="new-password">
+	<div class="form-group has-feedback {{ $errors->has('password_confirm') ? ' has-error' : '' }}" autocomplete="new-password" required>
 		<label for="">Konfirmasi Password</label>
 		<input id="retype-password-id" type="password" class="form-control" name="password_confirm" >
 		@if ($errors->has('password_confirm'))

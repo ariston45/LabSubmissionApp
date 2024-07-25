@@ -39,6 +39,21 @@ Lab management | Dashboard
             <input type="hidden" name="lcs_id" value="{{ $data_facility->lcs_id }}">
           </div>
         </div>
+        {{-- upload gambar --}}
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-8">
+            <img src="{{ url('public/assets/img/noimage.jpg') }}" id="wrap-img" class="img img-thumbnail" style="width: 30%"><br>
+            <input type="file" class="upload_url_img" id="upload_url_img" name="upload_url_img" />
+            <label for="upload_url_img">
+              <i class="fas fa-cloud-upload-alt"></i>
+              Tambah Foto
+            </label>
+            @if ($errors->has('upload_url_img'))
+						<span style="color: red;"><i>{{ $errors->first('upload_url_img') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{-- nama alat --}}
         <div class="form-group has-feedback {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
@@ -202,6 +217,45 @@ Lab management | Dashboard
     box-shadow: 0 0 0 0rem rgba(254, 255, 255, 0.25);
     outline: 0;
   }
+  .img-thumbnail{
+    border-radius: 0px;
+    border-color: #8a8a8a;
+  }
+  .upload_url_img, .upload_url_bg {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+  .upload_url_img + label, .upload_url_bg + label {
+    margin-top: 5px;
+    font-size: 11pt;
+    font-weight: 700;
+    color: white;
+    background-color: #333;
+    display: inline-block;
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 0px;
+    cursor: pointer;
+    width: 30%;
+  }
+  .upload_url_img:focus + label,
+  .upload_url_img + label:hover,
+  .upload_url_bg:focus + label,
+  .upload_url_bg + label:hover {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 0px;
+  }
+  .notes-input{
+    width: 100%; 
+    height: 360px; 
+    font-size: 14px;
+    line-height: 14px;
+    padding: 6px;
+  }
 </style>
 @endpush
 @push('scripts')
@@ -292,30 +346,19 @@ Lab management | Dashboard
       }
     });
   });
-</script>
-{{-- call by id or class --}}
-<script>
-  $('#date-pick-start').datepicker({
-    autoclose: true,
-    format: 'yyyy-mm-dd',
-    todayHighlight: true,
-    orientation:'bottom',
-  });
-  $('#date-pick-end').datepicker({
-    autoclose: true,
-    format: 'yyyy-mm-dd',
-    todayHighlight: true,
-    orientation:'bottom',
-  });
-  $('#time-pick-start').timepicker({
-    showInputs: false,
-    format: 'hh:mm',
-    showMeridian: false,
-  });
-  $('#time-pick-end').timepicker({
-    showInputs: false,
-    format: 'hh:mm',
-    showMeridian: false,
+  $(document).ready(function (){
+    $('#upload_url_img').change(function(){
+      var input = this;
+      var url = $(this).val();
+      var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+      if (input.files && input.files[0] && (ext == "gif" || ext == "png" || ext == "jpeg" || ext == "jpg")) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          $('#wrap-img').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    });
   });
 </script>
 @endpush

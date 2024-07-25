@@ -17,7 +17,7 @@ Lab management | Dashboard
         @if ($data_pengajuan->lsb_status == 'menunggu')
           @if (rulesUser(['LAB_HEAD','ADMIN_MASTER','ADMIN_MASTER']))
             <a href="#" onclick="actionConfirmPayment();">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Konfirmasi Pembayaran</button>
+              <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
             </a>
             <a href="#" onclick="actionAccept();">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
@@ -51,7 +51,7 @@ Lab management | Dashboard
             <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
             </a>
-          @elseif (rulesUser(['LAB_SUBHEAD','LAB_TECHNICIAN','ADMIN_MASTER','ADMIN_MASTER']))
+          @elseif (rulesUser(['LAB_SUBHEAD','ADMIN_MASTER','ADMIN_MASTER']))
             <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
             </a>
@@ -63,16 +63,21 @@ Lab management | Dashboard
                 <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Validasi Laporan</button>
               </a>
             @endif
+          @elseif (rulesUser(['LAB_TECHNICIAN']))
+            <a href="#" onclick="actionSetTechConfirm();">
+              <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Peminjaman Selesai</button>
+            </a>
+          {{--  --}}
           @elseif (rulesUser(['STUDENT','LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
             <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
             </a>
-            <a href="{{ url('/public/assets/docs/test_bending.xlsx') }}">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-article-line" style="margin-right: 4px;"></i> Download Test Bending</button>
+            <a href="{{ url('/public/assets/docs/form_legalitas.xlsx') }}">
+              <button class="btn btn-flat btn-xs btn-default"><i class="ri-article-line" style="margin-right: 4px;"></i> Download Form Legalitas</button>
             </a>
             @if ($data_result == null)
             <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-draft-line" style="margin-right: 4px;"></i> Laporan Kegiatan</button>
+              <button class="btn btn-flat btn-xs btn-primary"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
             </a>
             @endif
           @endif
@@ -155,7 +160,11 @@ Lab management | Dashboard
               --
             @else
               @foreach ($data_facility as $list)
-                - {{ $list->laf_name }}<br>
+                - {{ $list->laf_name }} <br>
+                @if ($list->lsf_end_dt != null)
+                  Pengembalian {{$list->lsf_end_dt}}
+                @endif
+                <br>
               @endforeach
             @endif
             </td>
@@ -174,12 +183,12 @@ Lab management | Dashboard
             </td>
           </tr>
           <tr>
-            <td style="width: 30%;"><b>Laporan Bending</b></td>
+            <td style="width: 30%;"><b>Laporan Legalitas</b></td>
             <td style="width: 70%;">
               @if ($data_result == null)
                 --
               @else
-                <a href="{{ route('download_result_report_ii',['filename'=> $data_result->lsr_filename_bending]) }}">{{ $data_result->lsr_filename_bending }}</a> 
+                <a href="{{ route('download_result_report_ii',['filename'=> $data_result->lsr_filename_legalitas]) }}">{{ $data_result->lsr_filename_legalitas }}</a> 
                 @if ($errors->has('file_laporan_err'))
                 <br> <span style="color: red;"><i>{{ $errors->first('file_laporan_err') }}</i></span>
                 @endif
@@ -292,6 +301,47 @@ Lab management | Dashboard
     </div>
   </div>
 </div>
+<div class="modal" id="modalTechConfirm" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Konfirmasi Peminjaman Laboratorium Selesai</h4>
+			</div>
+      <form action="{{ route('action_konfirmasi_tech') }}" method="POST" enctype="multipart/form-data" autocomplete="new-password">
+				@csrf
+				<div class="modal-body">
+					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
+          <input type="hidden" name="lab_subhead" value="{{ $data_pengajuan->lab_head }}">
+					Pemohon telah menyelesaikan peminjaman lab.
+				</div>
+				<div class="modal-footer">
+					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
+					<button type="submit" class="btn btn-sm btn-primary btn-flat"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Kirim</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="modal" id="err_acc_modal" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Respon Pengajuan Gagal</h4>
+			</div>
+      <div class="modal-body">
+        @if ($errors->has('file_acc_arr'))
+        <span style="color: red;"><i>{{ $errors->first('file_acc_arr') }}</i></span>
+        @endif
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
+      </div>
+		</div>
+	</div>
+</div>
+
 <div class="modal fade" id="modalUploadBukti" role="dialog">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
@@ -328,7 +378,7 @@ Lab management | Dashboard
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Konfirmasi Pembayaran</h4>
+				<h4 class="modal-title">Diskon Pembayaran </h4>
 			</div>
 			<form action="{{ route('confirm_payment') }}" method="POST" enctype="multipart/form-data" autocomplete="new-password">
 				@csrf
@@ -633,7 +683,10 @@ Lab management | Dashboard
   };
   function actValidationReport(params) {
     $('#modalValidationReport').modal('show');
-  }
+  };
+  function actionSetTechConfirm() {
+    $('#modalTechConfirm').modal('show');
+  };
 </script>
 {{-- call by id or class --}}
 <script>
@@ -654,4 +707,11 @@ Lab management | Dashboard
     });
   });
 </script>
+@if ($errors->has('file_acc_arr'))
+<script>
+  $(document).ready(function() {
+    $('#err_acc_modal').modal('show');
+  });
+</script>
+@endif
 @endpush

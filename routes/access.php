@@ -97,8 +97,8 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('action-send-pengajuan', [PengajuanController::class, 'actionPengajuan'])->name('kirim_pengajuan');
 		Route::post('action-confirm-payment', [PengajuanController::class, 'actionConfirmPayment'])->name('confirm_payment');
 		Route::post('action-upload-bukti', [PengajuanController::class, 'actionUploadBukti'])->name('upload_bukti_pembayaran');
+		Route::post('action-konfirmasi-tech', [PengajuanController::class, 'actionTechConfirm'])->name('action_konfirmasi_tech');
 		
-
 		Route::post('action-pengajuan-static-by-day', [PengajuanController::class, 'actionPengajuanStaticDay'])->name('action_pengajuan_static_by_day');
 		Route::post('action-pengajuan-static-by-tool', [PengajuanController::class, 'actionPengajuanStaticTool'])->name('action_pengajuan_static_by_tool');
 		Route::post('action-pengajuan-static-by-sample', [PengajuanController::class, 'actionPengajuanStaticSample'])->name('action_pengajuan_static_by_sample');
@@ -124,14 +124,14 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('{id}/fasilitas', [LaboratoryController::class, 'viewLabFacility'])->name('laboratorium_fasilitas');
 		Route::get('{id}/ujilab', [LaboratoryController::class, 'viewUjiLab'])->name('laboratorium_uji_lab');
 		Route::get('{id}/jadwal', [LaboratoryController::class, 'viewLabSchedule'])->name('laboratorium_schedule');
-		Route::get('detail-fasilitas/{id}', [LaboratoryController::class, 'viewLabFacilityDetail']);
+		// Route::get('detail-fasilitas/{id}', [LaboratoryController::class, 'viewLabFacilityDetail']);
 		Route::get('detail-ujilab/{id}', [LaboratoryController::class, 'viewLabTestDetail']);
 		# form
 		Route::get('{id}/update-lab', [LaboratoryController::class, 'formUpdateLab'])->name('update_lab');
 		Route::get('form-input-lab', [LaboratoryController::class, 'formLaboratory']);
 		Route::get('{id}/form-tambah-fasilitas', [LaboratoryController::class, 'formAddLaboratoryFacility']);
 		Route::get('{id}/form-tambah-ujilab', [LaboratoryController::class, 'formAddLaboratoryTest']);
-		Route::get('form-update-fasilitas/{id}', [LaboratoryController::class, 'formUpdateLaboratoryFacility']);
+		// Route::get('form-update-fasilitas/{id}', [LaboratoryController::class, 'formUpdateLaboratoryFacility']);
 		Route::get('form-update-ujilab/{id}', [LaboratoryController::class, 'formUpdateLaboratoryUji']);
 		Route::get('form-input-jadwal/{id}', [LaboratoryController::class, 'formInputLaboratorySch']);
 		Route::get('form-exclude-jadwal/{id}', [LaboratoryController::class, 'formExcludeLaboratorySch']);
@@ -142,7 +142,7 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('input-user-tech', [LaboratoryController::class, 'actionInputUserTech'])->name('input_user_tech');
 		Route::get('delete-teknisi/{id}', [LaboratoryController::class, 'actionDeleteTechnician']);
 		Route::post('input-fasilitas-laboratorium', [LaboratoryController::class, 'actionInputLabFacilities'])->name('input_fasilitas_laboratorium');
-		Route::post('update-fasilitas-laboratorium', [LaboratoryController::class, 'actionUpdateLabFacilities'])->name('update_fasilitas_laboratorium');
+		// Route::post('update-fasilitas-laboratorium', [LaboratoryController::class, 'actionUpdateLabFacilities'])->name('update_fasilitas_laboratorium');
 		Route::get('delete-facility-laboratorium/{id}', [LaboratoryController::class, 'actionDeleteLabFacilities']);
 		Route::post('input-sch-laboratorium', [LaboratoryController::class, 'actionInputLabSch'])->name('input_sch_laboratorium');
 		Route::post('update-sch-laboratorium', [LaboratoryController::class, 'actionUpdateLabSch'])->name('update_sch_laboratorium');
@@ -193,9 +193,11 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('form-input-user', [PengaturanController::class, 'formInputUser']);
 		Route::get('profil/form-update-profil/{id}', [PengaturanController::class, 'formUpdateProfil']);
 		Route::get('user-detail/form-update-user/{id}', [PengaturanController::class, 'formUpdateUser']);
+		Route::get('form-datasource', [PengaturanController::class, 'formPengaturanDatasource']);
 		# action
 		Route::post('input-data-user', [PengaturanController::class, 'actionInputUser'])->name('input-data-user');
 		Route::post('update-data-user', [PengaturanController::class, 'actionUpdateUser'])->name('update-data-user');
+		Route::post('update-datasource', [PengaturanController::class, 'actionUpdateDataSource'])->name('update_datasource');
 	});
 	Route::prefix('notif')->group(function () {
 		Route::get('send_email',function(){

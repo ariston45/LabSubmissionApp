@@ -23,51 +23,94 @@ Lab management | Dashboard
       </div>
     </div>
     <div class="box-body">
-      <table class="table table-bordered">
-        <tbody>
-          <tr>
-            <td style="width: 30%;"><b>Nama Alat/Fasilitas</b></td>
-            <td style="width: 70%;">{{ $data_fasilitas->laf_name }}</td>
-          </tr>
-          <tr>
-            <td style="width: 30%;"><b>Kegunaan Alat/Fasilitas</b></td>
-            <td style="width: 70%;">{{ $data_fasilitas->laf_brand }}</td>
-          </tr>
-          <tr>
-            <td style="width: 30%;"><b>Merk/Spesifikasi/Tipe</b></td>
-            <td style="width: 70%;">{{ $data_fasilitas->laf_brand }}</td>
-          </tr>
-          <tr>
-            <td style="width: 30%;"><b>Jumlah Alat/fasilitas</b></td>
-            <td style="width: 70%;">{{ $data_fasilitas->lcs_count }}</td>
-          </tr>
-          <tr>
-            <td style="width: 30%;"><b>Jumlah Alat/Fasilitas Tersedia</b></td>
-            <td style="width: 80%;">{{ $data_fasilitas->lcs_ready }}</td>
-          </tr>
-          <tr>
-            <td style="width: 30%;"><b>Jumlah Alat/Fasilitas Dipakai/Dipinjam</b></td>
-            <td style="width: 80%;">{{ $data_fasilitas->lcs_used }}</td>
-          </tr>
-          <tr>
-            <td style="width: 30%;"><b>Jumlah Alat/Fasilitas Kondisi Baik</b></td>
-            <td style="width: 70%;">{{ $data_fasilitas->lcs_condition_good }}</td>
-          </tr>
-          <tr>
-            <td style="width: 30%;"><b>Jumlah Alat/Fasilitas Kondisi Kurang Baik</b></td>
-            <td style="width: 70%;">{{ $data_fasilitas->lcs_condition_poor }}</td>
-          </tr>
-          <tr>
-            <td style="width: 30%;"><b>Jumlah Alat/Fasilitas Rusak/Tidak Bisa Dipakai</b></td>
-            <td style="width: 70%;">{{ $data_fasilitas->lcs_condition_unwearable }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="row">
+        <div class="col-md-3" style="text-align: center;">
+          <img src="{{ url('storage/image_facility/'. $data_fasilitas->laf_image) }}" id="wrap-img" class="img img-thumbnail" style="width: 80%">
+        </div>
+        <div class="col-md-9">
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td style="width: 30%;"><b>Nama Alat/Fasilitas</b></td>
+                <td style="width: 70%;">{{ $data_fasilitas->laf_name }}</td>
+              </tr>
+              <tr>
+                <td style="width: 30%;"><b>Kegunaan Alat/Fasilitas</b></td>
+                <td style="width: 70%;">{{ $data_fasilitas->laf_brand }}</td>
+              </tr>
+              <tr>
+                <td style="width: 30%;"><b>Merk/Spesifikasi/Tipe</b></td>
+                <td style="width: 70%;">{{ $data_fasilitas->laf_brand }}</td>
+              </tr>
+              <tr>
+                <td style="width: 30%;"><b>Diskripsi Alat/fasilitas</b></td>
+                <td style="width: 70%;">{{ $data_fasilitas->laf_description }}</td>
+              </tr>
+              <tr>
+                <td style="width: 30%;"><b>Biaya peminjaman</b></td>
+                <td style="width: 70%;">{{ funCurrencyRupiah($data_fasilitas->laf_value) }} / {{$data_fasilitas->laf_base}}</td>
+              </tr>
+              <tr>
+                <td style="width: 30%;"><b>Jumlah Alat/fasilitas</b></td>
+                <td style="width: 70%;">{{ $data_fasilitas->lcs_count }}</td>
+              </tr>
+              <tr>
+                <td style="width: 30%;"><b>Jumlah Alat/Fasilitas Tersedia</b></td>
+                <td style="width: 80%;">{{ $data_fasilitas->lcs_ready }}</td>
+              </tr>
+              <tr>
+                <td style="width: 30%;"><b>Jumlah Alat/Fasilitas Dipakai/Dipinjam</b></td>
+                <td style="width: 80%;">{{ $data_fasilitas->lcs_used }}</td>
+              </tr>
+              <tr>
+                <td style="width: 30%;"><b>Jumlah Alat/Fasilitas Rusak/Tidak Bisa Dipakai</b></td>
+                <td style="width: 70%;">{{ $data_fasilitas->lcs_unwearable }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 @endsection
 @push('css')
+<style>
+  .img-thumbnail{
+    border-radius: 0px;
+    border-color: #8a8a8a;
+  }
+  .upload_url_img, .upload_url_bg {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+
+  .upload_url_img + label, .upload_url_bg + label {
+    margin-top: 5px;
+    font-size: 11pt;
+    font-weight: 700;
+    color: white;
+    background-color: #333;
+    display: inline-block;
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 0px;
+    cursor: pointer;
+    width: 30%;
+  }
+
+  .upload_url_img:focus + label,
+  .upload_url_img + label:hover,
+  .upload_url_bg:focus + label,
+  .upload_url_bg + label:hover {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 0px;
+  }
+</style>
   
 @endpush
 @push('script')

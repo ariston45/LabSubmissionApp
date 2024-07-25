@@ -197,6 +197,16 @@ function funFormatCurToDecimal($value){
   return $val_replace_point;
 }
 
+function stringActivity($value){
+  $text = Str::replace('_', ' ', $value);
+  $text2 = Str::replace('tp','', $text);
+  if ($text2 == 'lain lain') {
+    $text2 = 'Lain-lain';
+  }
+  // die($text2);
+  $string = Str::of($text2)->title();
+  return $string;
+}
 /* Tags:... */
 function funCurrencyRupiah($value)
 {
@@ -206,10 +216,25 @@ function funCurrencyRupiah($value)
 }
 
 function getDataStudent($value_id){
+  // $url = 'https://simontasiplus.unesa.ac.id/api_mhs_unesa/36a169ac-4080-419e-a6c0-3538feb71089';
+  // $client = new Client();
+  // $response = $client->request('GET', $url);
+  // $laravelcollection = collect($response)->values();
+  // $data = $laravelcollection->where('nim', $value_id);
+  // if ($data == null) {
+  //   return 0;
+  // }else{
+  //   return $data;
+  // }
   $url = 'https://simontasiplus.unesa.ac.id/api_mhs_unesa/36a169ac-4080-419e-a6c0-3538feb71089';
   $client = new Client();
-  $response = $client->request('GET', $url);
-  $laravelcollection = collect($response)->values();
+  $response = $client->request('GET', $url, [
+    'headers' => [
+      'Accept' => 'application/json',
+    ],
+  ]);
+  $data = json_decode($response->getBody(), true);
+  $laravelcollection = collect($data)->values();
   $data = $laravelcollection->where('nim', $value_id);
   if ($data == null) {
     return 0;
@@ -225,9 +250,24 @@ function getDataStudents()
   return $laravelcollection;
 }
 function getDataLectures(){
-  $getjson = Http::acceptJson()->get('https://i-sdm.unesa.ac.id/api/dosen-ft-email')->throw()->json();
-  $laravelcollection = collect($getjson)->values();
-  return $laravelcollection;
+  // $getjson = Http::acceptJson()->get('https://i-sdm.unesa.ac.id/api/dosen-ft-email')->throw()->json();
+  // $laravelcollection = collect($getjson)->values();
+  // return $laravelcollection;
+  $url = 'https://i-sdm.unesa.ac.id/api/dosen-ft-email';
+  $client = new Client();
+  $response = $client->request('GET', $url, [
+    'headers' => [
+      'Accept' => 'application/json',
+    ],
+  ]);
+  dd($response);
+  $data = json_decode($response->getBody(), true);
+  $laravelcollection = collect($data)->values();
+  if ($laravelcollection == null) {
+    return 0;
+  } else {
+    return $laravelcollection;
+  }
 }
 /* Tags:... */
 function getIdOrder()
@@ -312,4 +352,16 @@ function cekLabData($id)
 {
   $data = Laboratory::where('lab_id',$id)->first();
   return $data;
+}
+function actionEliminateSubmission(){
+  $now = date('Y-m-d');
+  $cek_lab = Lab_submission::join('lab_sub_dates', 'lab_submissions.lsb_id','=', 'lab_sub_dates.lsd_lsb_id')
+  ->where('lsb_status', 'menunggu')
+  ->where('lsd_date','<',$now)
+  ->select('lsb_id')
+  ->groupBy('lsb_id')
+  ->get();
+  foreach ($cek_lab as $key => $value) {
+    Lab_submission::where('lsb_id',$value->lsb_id)->update(['lsb_status'=>'tidak_terpakai']);
+  }
 }

@@ -150,8 +150,8 @@ Lab management | Dashboard
               <option value="LAB_HEAD" @if (old('inp_level') == 'LAB_HEAD') selected @endif >LAB_HEAD</option>
               <option value="LAB_SUBHEAD" @if (old('inp_level') == 'LAB_SUBHEAD') selected @endif >LAB_SUBHEAD</option>
               <option value="LAB_TECHNICIAN" @if (old('inp_level') == 'LAB_TECHNICIAN') selected @endif >LAB_TECHNICIAN</option>
-              <option value="ADMIN_PRODI" @if (old('inp_level') == 'ADMIN_PRODI') selected @endif >ADMIN_PRODI</option>
-              <option value="ADMIN_MASTER" @if (old('inp_level') == 'ADMIN_MASTER') selected @endif >ADMIN_PRODI</option>
+              <option value="ADMIN_PRODI" @if (old('inp_level') == 'ADMIN_PRODI') selected @endif >ADMIN</option>
+              {{-- <option value="ADMIN_MASTER" @if (old('inp_level') == 'ADMIN_MASTER') selected @endif >ADMIN_MASTER</option> --}}
             </select>
             {{-- <input type="text" id="inp-institusi" class="form-control" name="inp_institusi" value="{{ old('inp_institusi') }}" placeholder="Input Universitas / Institusi.."> --}}
             @if ($errors->has('inp_level'))

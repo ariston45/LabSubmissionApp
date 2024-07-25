@@ -155,11 +155,11 @@ Lab management | Dashboard
         <div class="form-group {{ $errors->has('inp_kegiatan') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Keperluan Kegiatan
+              Keperluan Kegiatan <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select id="inp-kegiatan" class="form-control" name="inp_kegiatan" onchange="actActivitySubs()">
+            <select id="inp-kegiatan" class="form-control" name="inp_kegiatan" onchange="actActivitySubs()" required>
               <option value="{{ null }}">Pilih kegiatan..</option>
               <option value="tp_penelitian" @if (old('inp_kegiatan') == 'tp_penelitian') selected @endif >Penelitian</option>
               <option value="tp_pelatihan" @if (old('inp_kegiatan') == 'tp_pelatihan') selected @endif >Pelatihan</option>
@@ -181,10 +181,10 @@ Lab management | Dashboard
         @endif
         {{--  --}}
         {{-- Opsi untuk pilihan lain-lain --}}
-        <div class="form-group has-feedback {{ $errors->has('inp_opsi_lainnya') ? ' has-error' : '' }}" id="fm-opsi" style="display: none;">
+        <div class="form-group has-feedback {{ $errors->has('inp_opsi_lainnya') ? ' has-error' : '' }}" id="fm-opsi" >
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Tujuan
+              Tujuan 
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
@@ -192,14 +192,14 @@ Lab management | Dashboard
           </div>
         </div>
         {{-- --- --}}
-        <div class="form-group has-feedback {{ $errors->has('inp_judul') ? ' has-error' : '' }}" id="fm-judul" style="display: none;">
+        <div class="form-group has-feedback {{ $errors->has('inp_judul') ? ' has-error' : '' }}" id="fm-judul" >
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Judul
+              Judul <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-judul-ii" class="form-control" name="inp_judul" value="{{ old('inp_judul') }}" placeholder="Judul kegiatan/ Judul Penelitian/ Judul pelatihan/ ...">
+            <input type="text" id="inp-judul-ii" class="form-control" name="inp_judul" value="{{ old('inp_judul') }}" placeholder="Judul kegiatan/ Judul Penelitian/ Judul pelatihan/ ..." required>
             @if ($errors->has('inp_judul'))
 						<span style="color: red;"><i>{{ $errors->first('inp_judul') }}</i></span>
 						@endif
@@ -210,17 +210,18 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_sample') ? ' has-error' : '' }}" id="fm-inp-sample">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Jumlah Sampel
+              Jumlah Sampel <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="number" id="inp-sample" class="form-control" name="inp_sampel" value="{{ old('inp_sampel') }}" placeholder="Inputkan jumlah sampel...">
+            <input type="number" id="inp-sample" class="form-control" name="inp_sampel" value="{{ old('inp_sampel') }}" placeholder="Inputkan jumlah sampel..." required>
             @if ($errors->has('inp_sampel'))
 						<span style="color: red;"><i>{{ $errors->first('inp_sampel') }}</i></span>
 						@endif
           </div>
         </div>
         {{-- ~ --}}
+
         @php
           $idx_tool = 0;
         @endphp
@@ -228,13 +229,42 @@ Lab management | Dashboard
         @php
           $idx_time = 0;
         @endphp
+        <div class="col-md-offset-3 col-md-9 act-datetime act-tool" >
+          <div class="divider">Fasilitas & Alat</div>
+        </div>
+        <div class="form-group act-tool {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}" id="fm-inp-tool">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Fasilitas/Alat
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <div class="row">
+              <div class="col-sm-12">
+                <select id="inp-fasilitas" class="form-control" name="inp_fasilitas[]" multiple>
+                  <option value="{{ null }}">Pilih fasilitas/alat..</option>
+                  @foreach ($lab_tool_data as $list)
+                    <option value="{{$list->laf_id}}">{{$list->laf_name}}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            @if ($errors->has('inp_fasilitas'))
+						<span style="color: red;"><i>{{ $errors->first('inp_fasilitas') }}</i></span>
+						@endif
+            @if ($errors->has('tool_err'))
+						<span style="color: red;"><i>{{ $errors->first('tool_err') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{--  --}}
         <div class="col-md-offset-3 col-md-9 act-datetime">
           <div class="divider">Jadwal Kegiatan</div>
         </div>
         <div class="form-group has-feedback act-datetime {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Jadwal Mulai
+              Jadwal Mulai <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
@@ -244,7 +274,7 @@ Lab management | Dashboard
 									<div class="input-group-addon">
 										<i class="fa fa-calendar"></i>
 									</div>
-									<input type="text" name="inp_date[{{ $idx_time }}]"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
+									<input type="text" name="inp_date[{{ $idx_time }}]"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly required>
 								</div>
                 <select name="inp_time[{{ $idx_time }}][]" id="inp-time" class="form-control inp-time-cls" multiple>
                   @foreach ($times as $item)
@@ -264,6 +294,7 @@ Lab management | Dashboard
 						<span style="color: red;"><i>{!! $errors->first('sch_konflik_err') !!}</i></span>
 						@endif
           </div> 
+          
         </div>
         {{-- ~ --}}
         <div id="cost-tables" class="col-md-offset-3 col-md-9" style="padding: 0px;">
@@ -271,7 +302,12 @@ Lab management | Dashboard
         </div>
       </div>
       <div class="box-footer">
-        <div class="col-md-offset-3 col-md-9">
+        <div class="col-md-3">
+          <i>
+            Tanda ( <span style="color: red;">*</span> ) wajib diisi
+          </i>
+        </div>
+        <div class="col-md-9">
           <button type="button" class="btn btn-default btn-flat" onclick="actPrePayment();"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
           <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
           <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>

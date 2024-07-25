@@ -17,7 +17,7 @@ Lab management | Dashboard
     <div class="box-header with-border">
       <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i>Form Update Alat/Fasilitas Laboratorium</h3>
       <div class="pull-right">
-        <a href="{{ url('fasilitas_lab/'.$data_facility->laf_laboratorium) }}">
+        <a href="{{ url('laboratorium') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
@@ -39,6 +39,34 @@ Lab management | Dashboard
             <input type="hidden" name="lcs_id" value="{{ $data_facility->lcs_id }}">
           </div>
         </div>
+        {{-- upload gambar --}}
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-8">
+            @if ($data_facility->laf_image == null)
+              <img src="{{ url('public/assets/img/noimage.jpg') }}" id="wrap-img" class="img img-thumbnail" style="width: 30%"><br>
+              <input type="file" class="upload_url_img" id="upload_url_img" name="upload_url_img" />
+              <label for="upload_url_img">
+                <i class="fas fa-cloud-upload-alt"></i>
+                Tambah Foto
+              </label>
+              @if ($errors->has('upload_url_img'))
+              <span style="color: red;"><i>{{ $errors->first('upload_url_img') }}</i></span>
+              @endif
+            @else
+              <img src="{{ url('storage/image_facility/'.$data_facility->laf_image) }}" id="wrap-img" class="img img-thumbnail" style="width: 30%">
+              <img src="{{ url('public/assets/img/noimage.jpg') }}" id="wrap-img-new" class="img img-thumbnail" style="width: 30%;display: none;">
+              <button type="button" id="btn-delete-picture" class="btn btn-sm btn-default" onclick="actRemoveImage()">
+                <i class="ri-delete-bin-5-line"></i>
+              </button>
+              <input type="hidden" id="param-upload-url-img" name="param_upload_url_img" />
+              <input type="file" class="upload_url_img" id="upload_url_img" name="upload_url_img" />
+              <label for="upload_url_img">
+                Ganti Foto
+              </label>
+            @endif
+          </div>
+        </div>
+        {{-- nama alat --}}
         <div class="form-group has-feedback {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
@@ -52,6 +80,7 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        {{-- kegunaan alat --}}
         <div class="form-group has-feedback {{ $errors->has('inp_utility') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
@@ -65,6 +94,7 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        {{-- Merk spesifikasi --}}
         <div class="form-group has-feedback {{ $errors->has('inp_brand') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
@@ -78,6 +108,21 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        {{-- diskripsi produk --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_diskripsi') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-4 control-label" >
+            <span style="padding-right: 30px;">
+              Diskripsi alat/fasilitas
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-8">
+            <input type="text" id="inp-diskripsi" class="form-control" name="inp_diskripsi" value="{{ $data_facility->laf_description }}" placeholder="Input diskripsi produk">
+            @if ($errors->has('inp_diskripsi'))
+						<span style="color: red;"><i>{{ $errors->first('inp_diskripsi') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{-- dasar peminjaman --}}
         <div class="form-group has-feedback {{ $errors->has('inp_brand') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
@@ -86,16 +131,16 @@ Lab management | Dashboard
           </label>
           <div class="col-sm-12 col-md-8">
             <select name="inp_base" class="form-control" id="inp-base">
-              <option value="{{ null }}" @if($data_facility->laf_base == null) @endif >Pilih dasar peminjaman</option>
               <option value="Hari" @if($data_facility->laf_base == 'Hari') selected @endif >Harian</option>
-              <option value="Minggu" @if($data_facility->laf_base == 'Minggu') selected @endif>Mingguan</option>
-              <option value="Bulan" @if($data_facility->laf_base == 'Bulan') selected @endif>Bulanan</option>
+              <option value="Minggu" @if($data_facility->laf_base == 'Minggu') selected @endif >Mingguan</option>
+              <option value="Bulan" @if($data_facility->laf_base == 'Bulan') selected @endif >Bulanan</option>
             </select>
             @if ($errors->has('inp_base'))
 						<span style="color: red;"><i>{{ $errors->first('inp_base') }}</i></span>
 						@endif
           </div>
         </div>
+        {{-- biaya pinjam --}}
         <div class="form-group has-feedback {{ $errors->has('inp_cost') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
@@ -109,72 +154,49 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-
-        {{-- <div class="form-group has-feedback {{ $errors->has('inp_cn_facility') ? ' has-error' : '' }}">
+        {{-- jumlah alat --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_cn_facility') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Jumlah Alat/fasilitas
+              Jumlah Alat / fasilitas
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
             <input type="text" id="inp-cn-facility" class="form-control" name="inp_cn_facility" value="{{ $data_facility->lcs_count }}" placeholder="Input jumlah alat/fasilitas..">
-            @if ($errors->has('inp_cn_facility'))ld('i
+            @if ($errors->has('inp_cn_facility'))
 						<span style="color: red;"><i>{{ $errors->first('inp_cn_facility') }}</i></span>
 						@endif
           </div>
         </div>
+        {{-- jumlah alat yang siap dipinjamkan --}}
         <div class="form-group has-feedback {{ $errors->has('inp_cn_ready') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Jumlah Alat/Fasilitas Tersedia
+              Jumlah Alat / Fasilitas siap dipinjamkan
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-ready" class="form-control" name="inp_cn_ready" value="{{ $data_facility->lcs_ready }}" placeholder="Input jumlah alat/fasilitas yang tersedia untuk dipakai..">
+            <input type="text" id="inp-cn-ready" class="form-control" name="inp_cn_ready" value="{{$data_facility->lcs_ready}}" placeholder="Input jumlah alat/fasilitas yang tersedia untuk dipakai..">
             @if ($errors->has('inp_cn_ready'))
 						<span style="color: red;"><i>{{ $errors->first('inp_cn_ready') }}</i></span>
 						@endif
           </div>
         </div>
+        {{-- jumlah alat yang dipinjamkan --}}
         <div class="form-group has-feedback {{ $errors->has('inp_cn_used') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Jumlah Alat/Fasilitas Dipakai/Dipinjam
+              Jumlah Alat/Fasilitas Dipakai / Dipinjamkan
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-used" class="form-control" name="inp_cn_used" value="{{ $data_facility->lcs_used }}" placeholder="Input jumlah alat/fasilitas yang dipakai atau dipinjam..">
+            <input type="text" id="inp-cn-used" class="form-control" name="inp_cn_used" value="{{$data_facility->lcs_used}}"  placeholder="Input jumlah alat/fasilitas yang dipakai atau dipinjam..">
             @if ($errors->has('inp_cn_used'))
 						<span style="color: red;"><i>{{ $errors->first('inp_cn_used') }}</i></span>
 						@endif
           </div>
         </div>
-        <div class="form-group has-feedback {{ $errors->has('inp_cn_good') ? ' has-error' : '' }}">
-          <label class="col-sm-12 col-md-4 control-label" >
-            <span style="padding-right: 30px;">
-              Jumlah Alat/Fasilitas Kondisi Baik
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-used" class="form-control" name="inp_cn_good" value="{{ $data_facility->lcs_condition_good }}" placeholder="Input jumlah alat/fasilitas yang kondisi baik..">
-            @if ($errors->has('inp_cn_good'))
-						<span style="color: red;"><i>{{ $errors->first('inp_cn_good') }}</i></span>
-						@endif
-          </div>
-        </div>
-        <div class="form-group has-feedback {{ $errors->has('inp_cn_poor') ? ' has-error' : '' }}">
-          <label class="col-sm-12 col-md-4 control-label" >
-            <span style="padding-right: 30px;">
-              Jumlah Alat/Fasilitas Kondisi Kurang Baik
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-poor" class="form-control" name="inp_cn_poor" value="{{ $data_facility->lcs_condition_poor }}" placeholder="Input jumlah alat/fasilitas yang kondisi kurang baik..">
-            @if ($errors->has('inp_cn_poor'))
-						<span style="color: red;"><i>{{ $errors->first('inp_cn_poor') }}</i></span>
-						@endif
-          </div>
-        </div>
+        {{-- jumlah lat yang rusak atau tidak dapt dipakai --}}
         <div class="form-group has-feedback {{ $errors->has('inp_cn_unwearable') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
@@ -182,12 +204,13 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-unwearable" class="form-control" name="inp_cn_unwearable" value="{{ $data_facility->lcs_condition_unwearable }}" placeholder="Input jumlah alat/fasilitas yang kondisi rusak/tidak bisa dipakai..">
+            <input type="text" id="inp-cn-unwearable" class="form-control" name="inp_cn_unwearable" value=" {{$data_facility->lcs_unwearable}}" placeholder="Input jumlah alat/fasilitas yang kondisi rusak/tidak bisa dipakai..">
             @if ($errors->has('inp_cn_unwearable'))
 						<span style="color: red;"><i>{{ $errors->first('inp_cn_unwearable') }}</i></span>
 						@endif
           </div>
-        </div> --}}
+        </div>
+        
       </div>
       <div class="box-footer">
         <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Simpan</button>
@@ -220,6 +243,51 @@ Lab management | Dashboard
     box-shadow: 0 0 0 0rem rgba(254, 255, 255, 0.25);
     outline: 0;
   }
+  .img-thumbnail{
+    border-radius: 0px;
+    border-color: #8a8a8a;
+  }
+  .upload_url_img, .upload_url_bg {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+
+  .upload_url_img + label, .upload_url_bg + label {
+    margin-top: 5px;
+    font-size: 11pt;
+    font-weight: 700;
+    color: white;
+    background-color: #333;
+    display: inline-block;
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 0px;
+    cursor: pointer;
+    width: 30%;
+  }
+
+  .upload_url_img:focus + label,
+  .upload_url_img + label:hover,
+  .upload_url_bg:focus + label,
+  .upload_url_bg + label:hover {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 0px;
+  }
+  .notes-input{
+    width: 100%; 
+    height: 360px; 
+    font-size: 14px;
+    line-height: 14px;
+    padding: 6px;
+  }
+  #btn-delete-picture{
+    position: absolute;
+    margin-left: 5px;
+  }
 </style>
 @endpush
 @push('scripts')
@@ -228,49 +296,6 @@ Lab management | Dashboard
 <script src="{{ url('/public/assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
 {{-- varibles --}}
 <script>
-  var select_base = new TomSelect("#inp-base",{
-    create: false,			
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-inp-base">'+escape(data.title)+'</div>';
-			}
-		}
-  });
-  var select_technician = new TomSelect("#inp-teknisi",{
-    create: false,
-    maxItems: 10,
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
-			}
-		}
-  });
-  var select_status = new TomSelect("#inp-status",{
-    create: false,
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
-			}
-		}
-  });
 </script>
 {{-- function --}}
 <script>
@@ -291,6 +316,12 @@ Lab management | Dashboard
     rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
     return prefix == undefined ? rupiah : (rupiah ? 'Rp ' + rupiah : '');
   };
+  function actRemoveImage() {
+    $('#param-upload-url-img').val('delete');
+    $('#wrap-img').hide();
+    $('#wrap-img-new').show();
+    $('#btn-delete-picture').hide();
+  };
 </script>
 {{-- ready function --}}
 <script>
@@ -310,30 +341,19 @@ Lab management | Dashboard
       }
     });
   });
-</script>
-{{-- call by id or class --}}
-<script>
-  $('#date-pick-start').datepicker({
-    autoclose: true,
-    format: 'yyyy-mm-dd',
-    todayHighlight: true,
-    orientation:'bottom',
-  });
-  $('#date-pick-end').datepicker({
-    autoclose: true,
-    format: 'yyyy-mm-dd',
-    todayHighlight: true,
-    orientation:'bottom',
-  });
-  $('#time-pick-start').timepicker({
-    showInputs: false,
-    format: 'hh:mm',
-    showMeridian: false,
-  });
-  $('#time-pick-end').timepicker({
-    showInputs: false,
-    format: 'hh:mm',
-    showMeridian: false,
+  $(document).ready(function (){
+    $('#upload_url_img').change(function(){
+      var input = this;
+      var url = $(this).val();
+      var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+      if (input.files && input.files[0] && (ext == "gif" || ext == "png" || ext == "jpeg" || ext == "jpg")) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          $('#wrap-img').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    });
   });
 </script>
 @endpush

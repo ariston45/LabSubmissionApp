@@ -44,7 +44,7 @@ Lab management | Dashboard
 			</div>
 		</div>
 		<div class="box-body">
-			@if (rulesUser(['LECTURE']))
+			@if (rulesUser(['UNSET']))
 			<div class="row" style="margin-bottom: 10px;">
 				<div class="col-md-12">
 					<a href="{{ url('pengajuan') }}">
@@ -117,8 +117,9 @@ Lab management | Dashboard
 						<th style="width: 5%">No</th>
 						<th style="width: 15%">Pemohon</th>
 						<th style="width: 30%">Judul</th>
-						<th style="width: 20%">Waktu Pelaksanaan</th>
+						<th style="width: 10%">Waktu Pelaksanaan</th>
 						<th style="width: 11%;text-align:center;">Persetujuan</th>
+						<th style="width: 10%;text-align:center;">Teknisi</th>
 						<th style="width: 11%;text-align:center;">Status</th>
 						<th style="width: 8%;text-align:center;">Opsi</th>
 					</tr>
@@ -212,6 +213,7 @@ Lab management | Dashboard
 				{data: 'judul', name: 'judul', orderable: true, searchable: true },
 				{data: 'waktu', name: 'waktu', orderable: false, searchable: true },
 				{data: 'acc', name: 'acc', orderable: false, searchable: true },
+				{data: 'tech', name: 'tech', orderable: false, searchable: true },
 				{data: 'status', name: 'status', orderable: false, searchable: true },
 				{data: 'opsi', name: 'opsi', orderable: false, searchable: false},
 			]

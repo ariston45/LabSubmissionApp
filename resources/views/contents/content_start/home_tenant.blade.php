@@ -60,7 +60,7 @@ Lab management | Dashboard
 <div class="col-md-12">
   <div class="row">
     <div class="col-lg-3 col-xs-6">
-      <a href="{{ url('pengajuan/form-pengajuan') }}">
+      <a href="{{ url('pengajuan/laboratorium') }}">
         {{-- <div class="small-box bg-aqua">
           <div class="inner">
             <span id="font-title">Buat Pengajuan</span>

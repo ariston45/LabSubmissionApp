@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\ApiUnesaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LaboratoryController;
 use App\Http\Controllers\LandController;
 use App\Http\Controllers\DataController;
+use App\Http\Controllers\TestController;
+
 // use Artisan;
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +40,13 @@ Route::post('source-data-lab-test', [DataController::class, 'sourceDataLabTest']
 Route::post('source-data-filter-lab', [DataController::class, 'sourceDataFilterLab'])->name('source-data-filter-lab');
 Route::post('source-data-sch-lab-open', [LaboratoryController::class, 'sourceDataScheduleLabJson'])->name('source_data_sch_lab_open');
 #eksternal data
+Route::prefix('unesa_api')->group(function () {
+  Route::get('skripsi_mahasiswa',[ApiUnesaController::class, 'DataSkripsiMahasiswa'])->name('data_api_skripsi_mahasiswa');
+  Route::get('skripsi_mahasiswa/{id}', [ApiUnesaController::class, 'DataSkripsiMahasiswaTunggal'])->name('data_api_skripsi_mahasiswa_tunggal');
+  #
+  Route::get('datasource_mhs_skripsi', [ApiUnesaController::class, 'datasourceMhsSkripsi'])->name('datasource_skripsi_mahasiswa');
+});
+
 Route::prefix('data_api_student')->group(function () {
   Route::get('/', [DataController::class, 'sourceDataStudent']);
 });
@@ -64,7 +74,7 @@ Route::get('reset-success', [AuthController::class, 'viewResetSuccess'])->name('
 # Captcha
 Route::get('reload-captcha', [AuthController::class, 'reloadCaptcha'])->name('reload_captcha');
 # Test
-Route::get('test', [LandController::class, 'test'])->name('test');
+Route::get('test', [TestController::class, 'UnitTest'])->name('test');
 Route::get('/foo', function () {
   echo 'test';
   Artisan::call('storage:link');

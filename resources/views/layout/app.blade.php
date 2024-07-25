@@ -2,6 +2,7 @@
   use App\Http\Controllers\ProfileController;
 	$user = ProfileController::IdenUser();
 	$menus = ProfileController::IdenMenu();
+  actionEliminateSubmission();
 @endphp
 <!DOCTYPE html>
 <html>

@@ -68,7 +68,7 @@ Lab management | Dashboard
         @endif
         {{--  --}}
         {{-- Opsi untuk pilihan lain-lain --}}
-        <div class="form-group has-feedback {{ $errors->has('inp_opsi_lainnya') ? ' has-error' : '' }}" id="fm-opsi" style="display: none;">
+        <div class="form-group has-feedback {{ $errors->has('inp_opsi_lainnya') ? ' has-error' : '' }}" id="fm-opsi" >
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
               Tujuan
@@ -79,7 +79,7 @@ Lab management | Dashboard
           </div>
         </div>
         {{-- --- --}}
-        <div class="form-group has-feedback {{ $errors->has('inp_judul') ? ' has-error' : '' }}" id="fm-judul" style="display: none;">
+        <div class="form-group has-feedback {{ $errors->has('inp_judul') ? ' has-error' : '' }}" id="fm-judul">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
               Judul
@@ -110,7 +110,7 @@ Lab management | Dashboard
             <div class="row" style="margin-bottom: 10px;">
               <div class="col-sm-11">
                 <div style="margin-bottom: 5px;">
-                  <select id="inp-tool-{{$idx_tool}}" class="form-control" name="inp_fasilitas[{{$idx_tool}}]" onchange="actGetSatuan(0)">
+                  <select id="inp-tool-{{$idx_tool}}" class="form-control init-tool" name="inp_fasilitas[{{$idx_tool}}]" onchange="actGetSatuan(0)">
                     <option value="{{ null }}">Pilih fasilitas/alat..</option>
                     @foreach ( $lab_tool_data as $list)
                     <option value="{{ $list->laf_id }}">{{$list->laf_name}}</option>
@@ -119,12 +119,18 @@ Lab management | Dashboard
                 </div>
                 <div class="input-group inp-split-cst date" style="margin-bottom: 6px;">
 									<div class="input-group-addon">
-										Satuan
+										Lama Pinjam
 									</div>
-									<input type="text" name="inp_satuan[{{$idx_tool}}]" value="" class="form-control pull-right" placeholder="">
+									<input type="text" name="inp_satuan[{{$idx_tool}}]" value="" class="form-control init-satuan pull-right" placeholder="">
                   <div class="input-group-addon">
 										<div id="inp-satuan-{{$idx_tool}}">...</div>
 									</div>
+								</div>
+                <div class="input-group inp-split-cst date" style="margin-bottom: 6px;">
+									<div class="input-group-addon">
+                    Jumlah Unit
+									</div>
+									<input type="text" name="inp_jml_unit[{{$idx_tool}}]" value="" class="form-control init-jml-unit pull-right" placeholder="">
 								</div>
               </div>
               <div class="col-sm-1">
@@ -166,11 +172,12 @@ Lab management | Dashboard
         {{-- ~ --}}
         {{-- !!  --}}
         <div id="cost-tables" class="col-md-offset-3 col-md-9">
+          <div id="test-id"></div>
         </div>
       </div>
       <div class="box-footer">
         <div class="col-md-offset-3 col-md-9">
-          <button type="button" class="btn btn-default btn-flat"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
+          <button type="button" class="btn btn-default btn-flat" onclick="cekCost()"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
           <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
           <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
         </div>
@@ -364,6 +371,44 @@ Lab management | Dashboard
       },
     });
   };
+  function cekCost() {
+    let id_tooL_selects = document.querySelectorAll('.init-tool');
+    let id_satuan_selects = document.querySelectorAll('.init-satuan');
+    let id_unit_selects = document.querySelectorAll('.init-jml-unit');
+    let selectedValtool = [];
+    let selectedValsatuan = [];
+    let selectedValunit = [];
+    // Iterasi melalui elemen-elemen select dan ambil nilai yang dipilih
+    id_tooL_selects.forEach(select => {
+      selectedValtool.push(select.value);
+    });
+    id_satuan_selects.forEach(select => {
+      selectedValsatuan.push(select.value);
+    });
+    id_unit_selects.forEach(select => {
+      selectedValunit.push(select.value);
+    });
+    let lab_id = "{{$lab_data->lab_id}}";
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    $.ajax({
+      type: 'POST',
+      url: "{{ route('source-data-cost-lab-tables') }}",
+      data: {
+        "lab_id":lab_id,
+        "tool": selectedValtool,
+        "count":selectedValsatuan,
+        "unit":selectedValunit
+      },
+      async: false,
+      success: function(result) {
+        $('#test-id').html(result);
+      },
+    });
+  };
 </script>
 {{-- ready function --}}
 <script>
@@ -375,15 +420,19 @@ Lab management | Dashboard
       $('#add-tool').append(
         '<div class="row inp-dt-group" style="margin-bottom: 10px;"><div class="col-sm-11">'
         +'<div style="margin-bottom: 5px;">'
-        +'<select id="inp-tool-'+new_idx_tool+'" class="form-control" name="inp_fasilitas['+new_idx_tool+']" onchange="actGetSatuan('+new_idx_tool+')">'
+        +'<select id="inp-tool-'+new_idx_tool+'" class="form-control init-tool" name="inp_fasilitas['+new_idx_tool+']" onchange="actGetSatuan('+new_idx_tool+')">'
         +'<option value="{{ null }}">Pilih fasilitas/alat..</option>'
         +'@foreach ( $lab_tool_data as $list)'
         +'<option value="{{ $list->laf_id }}">{{$list->laf_name}}</option>'
         +'@endforeach</select></div>'
         +'<div class="input-group inp-split-cst date" style="margin-bottom: 6px;">'
-        +'<div class="input-group-addon">Satuan</div>'
-        +'<input type="text" name="inp_satuan['+new_idx_tool+']" class="form-control pull-right" placeholder="">'
-        +'<div class="input-group-addon"><div id="inp-satuan-'+new_idx_tool+'">...</div></div></div></div>'
+        +'<div class="input-group-addon">Lama Pinjam</div>'
+        +'<input type="text" name="inp_satuan['+new_idx_tool+']" class="form-control init-satuan pull-right" placeholder="">'
+        +'<div class="input-group-addon"><div id="inp-satuan-'+new_idx_tool+'">...</div></div></div>'
+        +'<div class="input-group inp-split-cst date" style="margin-bottom: 6px;">'
+				+'<div class="input-group-addon">Jumlah Unit</div>'
+				+'<input type="text" name="inp_jml_unit['+new_idx_tool+']" value="" class="form-control init-jml-unit pull-right" placeholder="">'
+				+'</div></div>'
         +'<div class="col-sm-1"><button type="button" class="btn btn-flat btn-default rm-inp-tool">'
         +'<i class="fa fa-times" aria-hidden="true"></i></button></div></div>'
       );

@@ -26,9 +26,10 @@ Lab management | Dashboard
 					<tr>
 						<th style="width: 5%">No</th>
 						<th style="width: 30%">Nama</th>
-						<th style="width: 20%">No Kontak</th>
+						<th style="width: 20%">ID</th>
 						<th style="width: 15%">Email</th>
-            <th style="width: 30%">Level</th>
+            <th style="width: 15%">Level</th>
+						<th style="width: 15%">Status</th>
 						<th style="width: 10%;text-align:center;">Opsi</th>
 					</tr>
 				</thead>
@@ -81,6 +82,7 @@ Lab management | Dashboard
 				{data: 'no_id', name: 'no_id', orderable: true, searchable: true },
 				{data: 'email', name: 'email', orderable: true, searchable: true },
 				{data: 'level', name: 'level', orderable: true, searchable: true },
+				{data: 'status', name: 'status', orderable: true, searchable: true },
 				{data: 'opsi', name: 'opsi', orderable: false, searchable: false},
 			]
 		});

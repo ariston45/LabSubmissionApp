@@ -234,30 +234,6 @@ Lab management | Dashboard
         <div id="check-sch" class="col-sm-offset-3 col-sm-9">
         </div> --}}
         {{--  --}}
-        <div class="col-sm-offset-3 col-sm-9">
-          <div class="divider">Pembayaran</div>
-        </div>
-        <div class="form-group has-feedback {{ $errors->has('bukti_pembayaran') ? ' has-error' : '' }}">
-          <label class="col-sm-12 col-md-3 control-label">
-            <span style="padding-right: 30px;">
-              Upload Bukti Pembayaran
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-9">
-            <div class="input-group">
-							<span class="input-group-btn">
-								<span id="btn-file-foto" class="btn btn-default btn-file btn-flat">
-									Buka Berkas <input type="file" id="id-upload" name="bukti_pembayaran" >
-								</span>
-							</span>
-              <input type="text" class="form-control" readonly="" name="image2">
-						</div>
-            <p><i>Pembayaran dapat dilakukan transfer via Bank, apabila pemohon sudah melakukan pembayaran silahkan bukti transaksi bisa di upload form diatas dalam format jpeg atau pdf. </i></p>
-            @if ($errors->has('bukti_pembayaran'))
-						<span style="color: red;"><i>{{ $errors->first('bukti_pembayaran') }}</i></span>
-						@endif
-          </div>
-        </div>
       </div>
       <div class="box-footer">
         <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
@@ -379,43 +355,7 @@ Lab management | Dashboard
 @endif
 {{-- function --}}
 <script>
-  function callDataStudent() {
-    $.ajaxSetup({
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      }
-    });
-    $.ajax({
-      type: 'POST',
-      url: "{{ route('source-check-skripsi') }}",
-      data: {
-        "nim":"{{ $user_data->no_id }}",
-      },
-      async: false,
-      success: function(result) {
-        $('#data-simontasi').html(result);
-      },
-      complete: function() {
-        $('#data-loading').hide();
-      },
-    });
-  };
-  function actActivitySubs() {
-    var val_activity = $('#inp-kegiatan').find(":selected").val();
-    if (val_activity == 'tp_penelitian_skripsi') {
-      $("#fm-judul").hide();
-      $("#inp-judul-ii").prop('disabled', true);
-      $('#data-loading').show();
-      setTimeout(function() {
-        callDataStudent();
-      }, 2000);
-    }else{
-      $("#fm-judul").fadeIn();
-      $("#inp-judul-ii").prop('disabled', false);
-      $('#data-loading').hide();
-      $(".dinamic-data-inp-1").remove();
-    }
-  };
+  
   function actViewLabCost(id) {
     $.ajaxSetup({
       headers: {

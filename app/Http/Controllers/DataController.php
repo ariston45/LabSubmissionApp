@@ -492,13 +492,7 @@ class DataController extends Controller
 	{
 		$id = $request->nim;
 		$data = getDataStudent($id);
-		
-		// die();
 		$data_lecture = getDataLectures();
-		$n1 = $data_lecture->where('nama', 'Octaverina Kecvara Pritasari, S.Pd., M.Farm.');
-		// foreach ($n1 as $key => $value) {
-		// 	$nidn1 = $value['nidn'].'<br>';
-		// }
 		$web=null;
 		if (count($data) == 0) {
 			$web.= '<div class="col-md-offset-3 col-md-9 col-sm-12 dinamic-data-inp-1" style="color:red;"> Data simontasi belum tersedia.</div>';
@@ -584,6 +578,7 @@ class DataController extends Controller
 	/* Tags:... */
 	public function viewLabCostTables(Request $request)
 	{
+		// ===========================================
 		$activity = $request->activity;
 		$user = DataAuth();
 		$data_lab = Laboratory::where('lab_id',$request->lab_id)->first();
@@ -604,7 +599,21 @@ class DataController extends Controller
 			$val_reduce = $total_cost * ($param_reduce / 100);
 			$total_cost_after = $total_cost - $val_reduce;
 		}else{
-
+			foreach ($request->tool as $key => $value) {
+				$data_tool[$key] = Laboratory_facility::where('laf_laboratorium',$request->lab_id)->where('laf_id',$value)->first();
+				$cost_per_tool[$key] = $data_tool[$key]->laf_value * $request->count[$key] * $request->unit[$key];
+				$data_tools[$key] = [
+					'name' => $data_tool[$key]->laf_name,
+					'lama_pinjam' => $request->count[$key],
+					'jumlah_unit' => $request->unit[$key],
+					'base' => $data_tool[$key]->laf_base,
+					'unit_cost' => $data_tool[$key]->laf_value,
+					'total_cost' => $cost_per_tool[$key]
+				];
+			}
+			$total_cost = array_sum($cost_per_tool);
+			$val_reduce = $total_cost * ($param_reduce / 100);
+			$total_cost_after = $total_cost - $val_reduce;
 		}
 		$web=null;
 		$web.='<table class="table-bordered tabel_custom" style="width: 100%;">
@@ -669,7 +678,33 @@ class DataController extends Controller
 							<td style="width: 5%; text-align: center;">(- ' . funCurrencyRupiah($val_reduce) . ')</td>
 						</tr>';
 				}else{
-
+					$web .= '<tr>
+								<td style="width: 5%; text-align: center;">1</td>
+								<td colspan="2">' . $data_lab->lab_name . '</td>
+							</tr>';
+					$web .= '<tr>
+								<td style="width: 5%; text-align: center;"></td>
+								<td colspan="2"><b>Alat dan Fasilitas</b></td>
+							</tr>';
+					$no = 1;
+					foreach ($data_tools as $key => $value) {
+						# code...
+						$web .= '<tr>
+										<td style="width: 5%; text-align: center;">'.$no.'</td>
+										<td>' . $value['name'] . ' ('. funCurrencyRupiah($value['unit_cost']).' * '. $value['jumlah_unit'].' unit * '. $value['lama_pinjam'].' '. $value['base'].' ) </td>
+										<td style="width: 5%; text-align: center;">' . funCurrencyRupiah($value['total_cost']) . '</td>
+										</tr>';
+										$no++;
+					}
+					$web .= '<tr>
+									<td style="width: 5%; text-align: center;"></td>
+									<td colspan="2"><b>Potongan Biaya</b></td>
+								</tr>';
+					$web .= '<tr>
+									<td style="width: 5%; text-align: center;">1</td>
+									<td> Potongan ' . $param_reduce . ' %</td>
+									<td style="width: 5%; text-align: center;">(- ' . funCurrencyRupiah($val_reduce) . ')</td>
+								</tr>';
 				}
 				$web.='<tr>
 					<td style="width: 5%; text-align: center;"></td>
@@ -678,9 +713,6 @@ class DataController extends Controller
 				</tr>
 			</tbody>
 		</table>';
-
-		if ($user->level == 'STUDENT') {
-		}
 		return $web;
 	}
 	public function viewFacilityCostTables(Request $request)

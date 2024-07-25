@@ -59,7 +59,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-laboratorium" class="form-control" name="inp_laboratorium" value="{{ $data_lab->lab_name }}" placeholder="Input nama laboratorium..">
+            <input type="text" id="inp-laboratorium" class="form-control" name="inp_laboratorium" value="{{ $data_lab->lab_name }}" placeholder="Input nama laboratorium.." required>
             @if ($errors->has('inp_laboratorium'))
 						<span style="color: red;"><i>{{ $errors->first('inp_laboratorium') }}</i></span>
 						@endif
@@ -72,7 +72,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select id="inp-rumpun" class="form-control" name="inp_rumpun" placeholder="Input Rumpun..">
+            <select id="inp-rumpun" class="form-control" name="inp_rumpun" placeholder="Input Rumpun.." required>
               @foreach ($data_rumpun as $list)
               <option value="{{ $list->lag_id }}" @if ($data_lab->lab_group == $list->lag_id) selected @endif >{{ $list->lag_name }}</option>  
               @endforeach
@@ -89,7 +89,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select type="text" class="form-control" name="inp_kalab" id="inp-kalab" value="" placeholder="Pilih user..">
+            <select type="text" class="form-control" name="inp_kalab" id="inp-kalab" value="" placeholder="Pilih user.." required>
               <option value=""></option>
               @foreach ($data_kasublab as $list)
               <option value="{{ $list->id }}" @if ( $list->id == $data_lab->lab_head) selected @endif>{{ $list->name }}</option>
@@ -107,7 +107,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select type="text" class="form-control" name="inp_teknisi[]" id="inp-teknisi" multiple value="" placeholder="Pilih user..">
+            <select type="text" class="form-control" name="inp_teknisi[]" id="inp-teknisi" multiple value="" placeholder="Pilih user.." required>
               <option value=""></option>
               @foreach ($data_all_tech as $list)
                 @if (in_array($list->id,$data_tech)  )
@@ -187,13 +187,31 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select id="inp-status" class="form-control" name="inp_status" placeholder="Input lokasi lab..">>
+            <select id="inp-status" class="form-control" name="inp_status" placeholder="Input lokasi lab.." required>
               <option value="{{ null }}"></option>
               <option value="tersedia" @if ($data_lab->lab_status == 'tersedia') selected @endif >Tersedia</option>
               <option value="tidak_tersedia" @if ($data_lab->lab_status == 'tidak_tersedia') selected @endif >Tidak Tersedia</option>
             </select>
             @if ($errors->has('inp_status'))
 						<span style="color: red;"><i>{{ $errors->first('inp_status') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group {{ $errors->has('inp_status') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Dasar Biaya Peminjaman
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <select id="inp-base" class="form-control" name="inp_base" placeholder="Input lokasi lab.." required>
+              <option value="{{ null }}"></option>
+              <option value="by_day" @if ($data_lab->lab_costbase == 'by_day') selected @endif >Berdasarkan Hari</option>
+              <option value="by_sample" @if ($data_lab->lab_costbase == 'by_sample') selected @endif >Berdasrkan Jumlah Sampel</option>
+              <option value="by_tool" @if ($data_lab->lab_costbase == 'by_tool') selected @endif >Berdasarkan Alat</option>
+            </select>
+            @if ($errors->has('inp_status'))
+						<span style="color: red;"><i>{{ $errors->first('inp_base') }}</i></span>
 						@endif
           </div>
         </div>

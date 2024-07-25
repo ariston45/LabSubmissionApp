@@ -84,7 +84,7 @@ Lab management | Dashboard
           </div>
           @if (checkUser(['LECTURE','STUDENT','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']) == true)
           <div class="align-items-center d-grid gap-2">
-            <a href="{{ url('pengajuan/form-pengajuan') }}">
+            <a href="{{ url('pengajuan/laboratorium/form-pengajuan-pinjam/'.$data_lab->lab_id) }}">
               <button type="button" class="btn btn-success" style="width: 100%;">Ajukan Peminjaman</button>
             </a>
           </div>
@@ -123,7 +123,7 @@ Lab management | Dashboard
             <div class="tab-pane active show" id="tab-0">
               <div class="row">
                 <div class="col-lg-12 details order-2 order-lg-1">
-                  <h3 style="color: #0b4d70;">Jadwal laboratorium</h3>
+                  <h3 style="color: #0b4d70;">Jadwal Penggunaan laboratorium</h3>
                   <div id="field-calender" style="margin: 0px 0px 10px 0px;display:block;">
                     <div id="calender" style="width: 100%;"></div>
                   </div>

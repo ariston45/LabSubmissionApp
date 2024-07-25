@@ -26,13 +26,13 @@
 <body>
   <table class="table" style="width:100%">
     <tbody>
-      <tr>
+      {{-- <tr>
         <td class="" colspan="4"> <span class="pull-right">Blanko Mahasiswa Unesa/Letter Unesa</span> </td>
-      </tr>
-      <tr>
+      </tr> --}}
+      {{-- <tr>
         <td style="padding-top: 0px;padding-bottom: 0px;width: 4%;">Lampiran</td>
         <td colspan="3" style="padding-top: 2px;padding-bottom: 2px;">: Alat & Bahan Laboratorium </td>
-      </tr>
+      </tr> --}}
       <tr>
         <td style="padding-top: 0px;padding-bottom: 0px;width: 4%;">Hal</td>
         <td colspan="3" style="padding-top: 2px;padding-bottom: 2px;">: Permohonan Izin Penelitian di Laboratorium </td>
@@ -63,10 +63,10 @@
     <tbody>
       <tr>
         <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;width:25%;">Nama<span class="pull-right">:</span></td>
-        <td style="padding-top: 0px;padding-bottom: 0px;">{{ $data->name }}</td>
+        <td style="padding-top: 0px;padding-bottom: 0px;"> @if ($data->name == true) {{ $data->name }} @else - @endif </td>
       </tr>
       <tr>
-        <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;">NIM<span class="pull-right">:</span></td>
+        <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;">NIM / ID<span class="pull-right">:</span></td>
         <td style="padding-top: 0px;padding-bottom: 0px;">{{ $data->no_id }}</td>
       </tr>
       <tr>
@@ -78,7 +78,7 @@
         <td style="padding-top: 0px;padding-bottom: 0px;">{{ $data->usd_fakultas }}</td>
       </tr>
       <tr>
-        <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;">Universitas<span class="pull-right">:</span></td>
+        <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;">Institusi<span class="pull-right">:</span></td>
         <td style="padding-top: 0px;padding-bottom: 0px;">{{ $data->usd_universitas }}</td>
       </tr>
       <tr>
@@ -92,8 +92,7 @@
       <tr>
         <td colspan="2">
           <div class="cst-paragraf">
-            Memohon izin pemakaian laboratorium dan fasilitas untuk keperluan kegitan, <b>Penelitian/Pelatihan/Pengapdian
-            Masyarakat/Magang/Lain-lain* , dengan Judul: </b>
+            Memohon izin pemakaian laboratorium dan fasilitas untuk keperluan kegiatan <b>{{ stringActivity($data->lsb_activity) }}</b> , dengan Judul: 
           </div>
         </td>
       </tr>
@@ -109,7 +108,19 @@
       </tr>
       <tr>
         <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;"> Hari/Tanggal<span class="pull-right">:</span></td>
-        <td style="padding-top: 2px;padding-bottom: 2px;">{{ strDateStart($data->lsb_date_start) }} <b>s/d</b> {{ strDateEnd($data->lsb_date_end) }}</td>
+        <td style="padding-top: 2px;padding-bottom: 2px;">
+          @php
+						$data_i = dataGetDatetime($data->lsb_id);
+					@endphp
+						@foreach ($data_i as $key => $value)
+            - {{ $key }}
+              @if (count($value) > 0)
+                @foreach ($value as $li)
+                  <br>&nbsp;&nbsp;&nbsp;{{$li}}
+                @endforeach
+              @endif
+            @endforeach
+        </td>
       </tr>
       <tr>
         <td style="padding-left: 40px;padding-top: 2px;padding-bottom: 2px;"> Di Laboratorium<span class="pull-right">:</span></td>
@@ -118,11 +129,11 @@
       <tr>
         <td colspan="2">
           <div class="cst-paragraf">
-            Fasilitas laboratorium yang digunakan terlampir. 
-            <br>
+            {{-- Fasilitas laboratorium yang digunakan terlampir. 
+            <br> --}}
             Demikian permohonan ini saya buat dan saya menyatakan akan bertanggungjawab sepenuhnya apabila terjadi kerusakan
-            atau kehilangan atas alat terlampir selama saya pakai/pinjam.
-            Atas perhatian dan bantuannya saya sampaikan terimaksih.
+            atau kehilangan atas alat yangc saya pakai/pinjam.
+            Atas perhatian dan bantuannya saya sampaikan terimakasih.
           </div>
         </td>
       </tr>
@@ -131,36 +142,25 @@
   <table class="table" style="width: 100%;">
     <tbody>
       <tr>
-        @if ($data->level == 'STUDENT')
-        <td style="width: 50%; text-align: center;">
-          {{-- Mengetahui,
-          Dosen Pembimbing,
-          <br><br><br><br>
-          ( {{ $acc_data_lecture->name }} )
-          <br>
-          NIP: {{ $acc_data_lecture->no_id }} --}}
-        </td>
-        <td style="width: 50%; text-align: center;">
-          Pemohon,
-          <br><br><br><br>
-          ( {{ $data->name }} )
-          <br>
-          NIM: {{ $data->no_id }}
-        </td>
-        @else
-        <td style="width: 50%; text-align: center;">
+        <td style="width: 30%; text-align: center;">
           Pemohon,
           <br><br><br><br>
           ( {{ $data->name }} )
           <br>
           No.ID: {{ $data->no_id }}
         </td>
-        @endif
+        <td style="width: 40%; text-align: center;">
+        </td>
+        <td style="width: 30%; text-align: center;">
+        </td>
       </tr>
     </tbody>
   </table>
 </body>
 </html>
+{{-- @php
+  die();
+@endphp --}}
 
 
 

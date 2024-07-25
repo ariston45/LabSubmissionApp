@@ -39,15 +39,17 @@ Lab management | Dashboard
         <b>Visi Fakultas Teknik Universitas Negeri Surabaya</b> <br>
         Fakultas Yang Tangguh, Adaptif, dan Inovatif Dalam Keilmuan Bidang Teknologi dan Pendidikan Kejuruan Berorientasi Kewirausahaan.
       </p>
-      <b>Misi Fakultas Teknik Universitas Negeri Surabaya </b> <br>
-      <ul style="color:#0b4d70;">
-        <li>Menyelenggarakan kualitas pendidikan di bidang teknologi dan pendidikan kejuruan yang berkarakter tangguh, adaptif, dan inovatif.</li>
-        <li>Mengembangkan penelitian di bidang teknologi dan pendidikan kejuruan menuju hilirisasi produk inovasi dan berorientasi kewirausahaan.</li>
-        <li>Mengembangkan pengabdian kepada masyarakat dengan menyebarluaskan inovasi di bidang teknologi dan pendidikan kejuruan berorientasi kewirausahaan bagi kesejahteraan masyarakat.</li>
-        <li>Meningkatkan kegiatan tridharma perguruan tinggi melalui sistem multikampus secara sinergi, terintegrasi, harmonis, dan berkelanjutan dengan memperhatikan keunggulan UNESA dan Fakultas.</li>
-        <li>Meningkatkan tata kelola yang efektif, efisien, transparan, dan akuntabel yang menjamin mutu secara berkelanjutan</li>
-        <li>Meningkatkan kerja sama nasional dan internasional yang produktif dalam bidang teknologi dan pendidikan kejuruan untuk meningkatkan rekognisi kegiatan tridharma.</li>
-      </ul>
+      <p style="color:#0b4d70;">
+        <b>Misi Fakultas Teknik Universitas Negeri Surabaya </b> <br>
+        <ul style="color:#0b4d70;">
+          <li>Menyelenggarakan kualitas pendidikan di bidang teknologi dan pendidikan kejuruan yang berkarakter tangguh, adaptif, dan inovatif.</li>
+          <li>Mengembangkan penelitian di bidang teknologi dan pendidikan kejuruan menuju hilirisasi produk inovasi dan berorientasi kewirausahaan.</li>
+          <li>Mengembangkan pengabdian kepada masyarakat dengan menyebarluaskan inovasi di bidang teknologi dan pendidikan kejuruan berorientasi kewirausahaan bagi kesejahteraan masyarakat.</li>
+          <li>Meningkatkan kegiatan tridharma perguruan tinggi melalui sistem multikampus secara sinergi, terintegrasi, harmonis, dan berkelanjutan dengan memperhatikan keunggulan UNESA dan Fakultas.</li>
+          <li>Meningkatkan tata kelola yang efektif, efisien, transparan, dan akuntabel yang menjamin mutu secara berkelanjutan</li>
+          <li>Meningkatkan kerja sama nasional dan internasional yang produktif dalam bidang teknologi dan pendidikan kejuruan untuk meningkatkan rekognisi kegiatan tridharma.</li>
+        </ul>
+      </p>
       <p style="color:#0b4d70;">
         <b>Tujuan Fakultas Teknik Universitas Negeri Surabaya</b> <br>
         <ul style="color:#0b4d70;">

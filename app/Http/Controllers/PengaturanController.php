@@ -7,10 +7,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserPostRequest;
 use App\Http\Requests\UserPostUpdateRequest;
-
+use App\Models\Unesa_data;
 use App\Models\User;
 use App\Models\User_detail;
 use Auth;
+use Storage;
 
 class PengaturanController extends Controller
 {
@@ -141,5 +142,84 @@ class PengaturanController extends Controller
 		->first();
 		// dd($data_user);
 		return view('contents.content_form.form_update_user', compact('data_user'));
+	}
+	public function formPengaturanDatasource(Request $request)
+	{
+		$dataset_skripsi = Unesa_data::where('api_code_name', 'data_source_skripsi')->first();
+		$dataset_mhs = Unesa_data::where('api_code_name', 'data_source_mahasiswa_ft')->first();
+		$dataset_dosen = Unesa_data::where('api_code_name', 'data_dosen')->first();
+		// dd($data_user);
+		return view('contents.content_form.form_pengaturan_datasource', compact('dataset_skripsi', 'dataset_mhs', 'dataset_dosen'));
+	}
+	/* Tags:... */
+	public function actionUpdateDataSource(Request $request)
+	{
+		$getFile_a = $request->file('file_data_a');
+		// dd($getFile_a->extension());
+		if ($getFile_a != null) {
+			if ($getFile_a->extension() != 'json') {
+				return redirect()->back()->withErrors(['file_err' => 'Format file data_source_skripsi tidak mendukung, harap inputkan file berformat json']);
+			}
+			$fileRename_a =  'data_source_skripsi.' . $getFile_a->extension();
+			if (Storage::exists('public/data_source/' . $fileRename_a)) {
+				Storage::delete('public/data_source/' . $fileRename_a);
+			}
+			$filePath_a = $getFile_a->storeAs('public/data_source/', $fileRename_a);
+		} else {
+			$dataset_skripsi = Unesa_data::where('api_code_name', 'data_source_skripsi')->first();
+			$fileRename_a = $dataset_skripsi->api_code_name;
+		}
+		$getFile_b = $request->file('file_data_b');
+		// dd($getFile_b->extension());
+		if ($getFile_b != null) {
+			if ($getFile_b->extension() != 'json') {
+				return redirect()->back()->withErrors(['file_err' => 'Format file  tidak mendukung, harap inputkan file berformat json']);
+			}
+			$fileRename_b =  'data_source_mhs_ft.' . $getFile_b->extension();
+			if (Storage::exists('public/data_source/' . $fileRename_b)) {
+				Storage::delete('public/data_source/' . $fileRename_b);
+			}
+			$filePath_b = $getFile_b->storeAs('public/data_source/', $fileRename_b);
+		}else{
+			$dataset_mhs = Unesa_data::where('api_code_name', 'data_source_mahasiswa_ft')->first();
+			$fileRename_b = $dataset_mhs->api_code_name;
+		}
+
+		$getFile_c = $request->file('file_data_c');
+		if ($getFile_c != null) {
+			if ($getFile_c->extension() != 'json') {
+				return redirect()->back()->withErrors(['file_err' => 'Format file tidak mendukung, harap inputkan file berformat json']);
+			}
+			$fileRename_c =  'data_source_skripsi.' . $getFile_c->extension();
+			if (Storage::exists('public/data_source/' . $fileRename_c)) {
+				Storage::delete('public/data_source/' . $fileRename_c);
+			}
+			$filePath_c = $getFile_c->storeAs('public/data_source/', $fileRename_c);
+		} else {
+			$dataset_dosen = Unesa_data::where('api_code_name', 'data_dosen')->first();
+			$fileRename_c = $dataset_dosen->api_code_name;
+		}
+		$dataset_skripsi_a = [
+			"api_name" => $request->nama_a,
+			"api_url_status" => $request->url_status_a,
+			"api_url" => $request->url_a,
+			"api_file_data" => $fileRename_a
+		];
+		Unesa_data::where('api_code_name', 'data_source_dosen')->update($dataset_skripsi_a);
+		$dataset_skripsi_b = [
+			"api_name" => $request->nama_b,
+			"api_url_status" => $request->url_status_b,
+			"api_url" => $request->url_b,
+			"api_file_data" => $fileRename_b
+		];
+		Unesa_data::where('api_code_name', 'data_source_mahasiswa_ft')->update($dataset_skripsi_b);
+		$dataset_skripsi_c = [
+			"api_name" => $request->nama_c,
+			"api_url_status" => $request->url_status_c,
+			"api_url" => $request->url_c,
+			"api_file_data" => $fileRename_c
+		];
+		Unesa_data::where('api_code_name', 'data_dosen')->update($dataset_skripsi_c);
+		return redirect()->back();
 	}
 }

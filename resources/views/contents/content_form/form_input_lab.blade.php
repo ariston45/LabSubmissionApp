@@ -166,13 +166,31 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select id="inp-status" class="form-control" name="inp_status" placeholder="Input lokasi lab..">>
+            <select id="inp-status" class="form-control" name="inp_status" required>
               <option value="{{ null }}"></option>
               <option value="tersedia" @if (old('inp_status') == 'tersedia') selected @endif >Tersedia</option>
               <option value="tidak_tersedia" @if (old('inp_status') == 'tidak_tersedia') selected @endif >Tidak Tersedia</option>
             </select>
             @if ($errors->has('inp_status'))
 						<span style="color: red;"><i>{{ $errors->first('inp_status') }}</i></span>
+						@endif
+          </div>
+        </div>
+        <div class="form-group {{ $errors->has('inp_status') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Dasar Biaya Peminjaman
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <select id="inp-base" class="form-control" name="inp_base" placeholder="" required>
+              <option value="{{ null }}"></option>
+              <option value="by_day" @if (old('inp_base') == 'by_day') selected @endif >Berdasarkan Hari</option>
+              <option value="by_sample" @if (old('inp_base') == 'by_sample') selected @endif >Berdasrkan Jumlah Sampel</option>
+              <option value="by_tool" @if (old('inp_base') == 'by_tool') selected @endif >Berdasrkan Alat</option>
+            </select>
+            @if ($errors->has('inp_status'))
+						<span style="color: red;"><i>{{ $errors->first('inp_base') }}</i></span>
 						@endif
           </div>
         </div>
@@ -298,6 +316,20 @@ Lab management | Dashboard
 			},
 			item: function(data, escape) {
 				return '<div id="select-status">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+  var select_status = new TomSelect("#inp-base",{
+    create: false,
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-base">'+escape(data.title)+'</div>';
 			}
 		}
   });

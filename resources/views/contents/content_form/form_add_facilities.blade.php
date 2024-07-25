@@ -26,64 +26,97 @@ Lab management | Dashboard
       @csrf
       <div class="box-body">
         {{-- !! --}}
+        {{-- nama laboratorium --}}
         <div class="form-group">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Nama Laboratorium
+              Nama Laboratorium 
             </span>
           </label>
           <div class="col-sm-12 col-md-8 control-label" style="text-align: left;">
             <b>{{ $data_lab->lab_name }}</b>
-            <input type="hidden" name="lab_id" value="{{ $data_lab->lab_id }}">
+            <input type="hidden" name="lab_id" value="{{ $data_lab->lab_id }}" required>
           </div>
         </div>
+        {{-- upload gambar --}}
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-8">
+            <img src="{{ url('public/assets/img/noimage.jpg') }}" id="wrap-img" class="img img-thumbnail" style="width: 30%"><br>
+            <input type="file" class="upload_url_img" id="upload_url_img" name="upload_url_img" />
+            <label for="upload_url_img">
+              <i class="fas fa-cloud-upload-alt"></i>
+              Tambah Foto
+            </label>
+            @if ($errors->has('upload_url_img'))
+						<span style="color: red;"><i>{{ $errors->first('upload_url_img') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{-- nama fasilitas --}}
         <div class="form-group has-feedback {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Nama Alat/Fasilitas
+              Nama Alat/Fasilitas <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-fasilitas" class="form-control" name="inp_fasilitas" value="{{ old('inp_fasilitas') }}" placeholder="Input nama alat/fasilitas..">
+            <input type="text" id="inp-fasilitas" class="form-control" name="inp_fasilitas" value="{{ old('inp_fasilitas') }}" placeholder="Input nama alat/fasilitas.." required>
             @if ($errors->has('inp_fasilitas'))
 						<span style="color: red;"><i>{{ $errors->first('inp_fasilitas') }}</i></span>
 						@endif
           </div>
         </div>
+        {{-- keguanaan alat --}}
         <div class="form-group has-feedback {{ $errors->has('inp_utility') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Kegunaan Alat/Fasilitas
+              Kegunaan Alat/Fasilitas <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-utility" class="form-control" name="inp_utility" value="{{ old('inp_utility') }}" placeholder="Input kegunaan alat/fasilitas..">
+            <input type="text" id="inp-utility" class="form-control" name="inp_utility" value="{{ old('inp_utility') }}" placeholder="Input kegunaan alat/fasilitas.." required>
             @if ($errors->has('inp_utility'))
 						<span style="color: red;"><i>{{ $errors->first('inp_utility') }}</i></span>
 						@endif
           </div>
         </div>
+        {{-- merek atau spesifikasi --}}
         <div class="form-group has-feedback {{ $errors->has('inp_brand') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Merk/Spesifikasi/Tipe
+              Merk/Spesifikasi/Tipe <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-brand" class="form-control" name="inp_brand" value="{{ old('inp_brand') }}" placeholder="Input merk/spesifikasi/tipe..">
+            <input type="text" id="inp-brand" class="form-control" name="inp_brand" value="{{ old('inp_brand') }}" placeholder="Input merk/spesifikasi/tipe.." required>
             @if ($errors->has('inp_brand'))
 						<span style="color: red;"><i>{{ $errors->first('inp_brand') }}</i></span>
 						@endif
           </div>
         </div>
-        <div class="form-group has-feedback {{ $errors->has('inp_brand') ? ' has-error' : '' }}">
+        {{-- diskripsi produk --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_diskripsi') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Dasar peminjaman
+              Diskripsi alat/fasilitas
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <select name="inp_base" class="form-control" id="inp-base">
+            <input type="text" id="inp-diskripsi" class="form-control" name="inp_diskripsi" value="{{ old('inp_diskripsi') }}" placeholder="Input diskripsi produk">
+            @if ($errors->has('inp_diskripsi'))
+						<span style="color: red;"><i>{{ $errors->first('inp_diskripsi') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{-- dasar peminjaman --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_brand') ? ' has-error' : '' }}" >
+          <label class="col-sm-12 col-md-4 control-label" >
+            <span style="padding-right: 30px;">
+              Dasar peminjaman <span style="color: red;">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-8">
+            <select name="inp_base" class="form-control" id="inp-base" required>
               <option value="{{ null }}">Pilih dasar peminjaman</option>
               <option value="Hari">Harian</option>
               <option value="Minggu">Mingguan</option>
@@ -94,97 +127,77 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        {{-- biaya peminjaman --}}
         <div class="form-group has-feedback {{ $errors->has('inp_brand') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Biaya Pinjam
+              Biaya Pinjam <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cost" class="form-control" name="inp_cost" value="{{ old('inp_cost') }}" oninput="fcurrencyInput('inp-cost')" placeholder="Rp 0.00">
+            <input type="text" id="inp-cost" class="form-control" name="inp_cost" value="{{ old('inp_cost') }}" oninput="fcurrencyInput('inp-cost')" placeholder="Rp 0.00" required>
             @if ($errors->has('inp_brand'))
 						<span style="color: red;"><i>{{ $errors->first('inp_brand') }}</i></span>
 						@endif
           </div>
         </div>
-        {{-- <div class="form-group has-feedback {{ $errors->has('inp_cn_facility') ? ' has-error' : '' }}">
+        {{-- jumlah alat --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_cn_facility') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Jumlah Alat/fasilitas
+              Jumlah Alat / fasilitas <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-facility" class="form-control" name="inp_cn_facility" value="{{ old('inp_cn_facility') }}" placeholder="Input jumlah alat/fasilitas..">
+            <input type="number" id="inp-cn-facility" class="form-control" name="inp_cn_facility" value="{{ old('inp_cn_facility') }}" oninput="actCntTool()" placeholder="Input jumlah alat/fasilitas.." required>
             @if ($errors->has('inp_cn_facility'))
 						<span style="color: red;"><i>{{ $errors->first('inp_cn_facility') }}</i></span>
 						@endif
           </div>
         </div>
+        {{-- jumlah alat yang siap dipinjamkan --}}
         <div class="form-group has-feedback {{ $errors->has('inp_cn_ready') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Jumlah Alat/Fasilitas Tersedia
+              Jumlah Alat / Fasilitas siap dipinjamkan <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-ready" class="form-control" name="inp_cn_ready" value="{{ old('inp_cn_ready') }}" placeholder="Input jumlah alat/fasilitas yang tersedia untuk dipakai..">
+            <input type="number" id="inp-cn-ready" class="form-control" name="inp_cn_ready" value="{{ old('inp_cn_ready') }}" oninput="actCntToolReady()" placeholder="Input jumlah alat/fasilitas yang tersedia untuk dipakai.." required readonly>
             @if ($errors->has('inp_cn_ready'))
 						<span style="color: red;"><i>{{ $errors->first('inp_cn_ready') }}</i></span>
 						@endif
           </div>
         </div>
+        {{-- jumlah alat yang dipinjamkan --}}
         <div class="form-group has-feedback {{ $errors->has('inp_cn_used') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Jumlah Alat/Fasilitas Dipakai/Dipinjam
+              Jumlah Alat/Fasilitas Dipakai / Dipinjamkan <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-used" class="form-control" name="inp_cn_used" value="{{ old('inp_cn_used') }}" placeholder="Input jumlah alat/fasilitas yang dipakai atau dipinjam..">
+            <input type="number" id="inp-cn-used" class="form-control" name="inp_cn_used" value="{{ old('inp_cn_used') }}" placeholder="Input jumlah alat/fasilitas yang dipakai atau dipinjam.." readonly>
             @if ($errors->has('inp_cn_used'))
 						<span style="color: red;"><i>{{ $errors->first('inp_cn_used') }}</i></span>
 						@endif
           </div>
         </div>
-        <div class="form-group has-feedback {{ $errors->has('inp_cn_good') ? ' has-error' : '' }}">
-          <label class="col-sm-12 col-md-4 control-label" >
-            <span style="padding-right: 30px;">
-              Jumlah Alat/Fasilitas Kondisi Baik
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-used" class="form-control" name="inp_cn_good" value="{{ old('inp_cn_good') }}" placeholder="Input jumlah alat/fasilitas yang kondisi baik..">
-            @if ($errors->has('inp_cn_good'))
-						<span style="color: red;"><i>{{ $errors->first('inp_cn_good') }}</i></span>
-						@endif
-          </div>
-        </div>
-        <div class="form-group has-feedback {{ $errors->has('inp_cn_poor') ? ' has-error' : '' }}">
-          <label class="col-sm-12 col-md-4 control-label" >
-            <span style="padding-right: 30px;">
-              Jumlah Alat/Fasilitas Kondisi Kurang Baik
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-poor" class="form-control" name="inp_cn_poor" value="{{ old('inp_cn_poor') }}" placeholder="Input jumlah alat/fasilitas yang kondisi kurang baik..">
-            @if ($errors->has('inp_cn_poor'))
-						<span style="color: red;"><i>{{ $errors->first('inp_cn_poor') }}</i></span>
-						@endif
-          </div>
-        </div>
+        {{-- jumlah lat yang rusak atau tidak dapt dipakai --}}
         <div class="form-group has-feedback {{ $errors->has('inp_cn_unwearable') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Jumlah Alat/Fasilitas Rusak/Tidak Bisa Dipakai
+              Jumlah Alat/Fasilitas Rusak/Tidak Bisa Dipakai <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-unwearable" class="form-control" name="inp_cn_unwearable" value="{{ old('inp_cn_unwearable') }}" placeholder="Input jumlah alat/fasilitas yang kondisi rusak/tidak bisa dipakai..">
+            <input type="number" id="inp-cn-unwearable" class="form-control" name="inp_cn_unwearable" value="{{ old('inp_cn_unwearable') }}" oninput="actCntToolUnwear()"
+            placeholder="Input jumlah alat/fasilitas yang kondisi rusak/tidak bisa dipakai.." required readonly>
             @if ($errors->has('inp_cn_unwearable'))
 						<span style="color: red;"><i>{{ $errors->first('inp_cn_unwearable') }}</i></span>
 						@endif
           </div>
-        </div> --}}
+        </div>
       </div>
       <div class="box-footer">
         <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Simpan</button>
@@ -217,6 +230,45 @@ Lab management | Dashboard
     box-shadow: 0 0 0 0rem rgba(254, 255, 255, 0.25);
     outline: 0;
   }
+  .img-thumbnail{
+    border-radius: 0px;
+    border-color: #8a8a8a;
+  }
+  .upload_url_img, .upload_url_bg {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+  .upload_url_img + label, .upload_url_bg + label {
+    margin-top: 5px;
+    font-size: 11pt;
+    font-weight: 700;
+    color: white;
+    background-color: #333;
+    display: inline-block;
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 0px;
+    cursor: pointer;
+    width: 30%;
+  }
+  .upload_url_img:focus + label,
+  .upload_url_img + label:hover,
+  .upload_url_bg:focus + label,
+  .upload_url_bg + label:hover {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 0px;
+  }
+  .notes-input{
+    width: 100%; 
+    height: 360px; 
+    font-size: 14px;
+    line-height: 14px;
+    padding: 6px;
+  }
 </style>
 @endpush
 @push('scripts')
@@ -236,21 +288,6 @@ Lab management | Dashboard
 			},
 			item: function(data, escape) {
 				return '<div id="select-base">'+escape(data.title)+'</div>';
-			}
-		}
-  });
-  var select_technician = new TomSelect("#inp-teknisi",{
-    create: false,
-    maxItems: 10,
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
 			}
 		}
   });
@@ -288,6 +325,36 @@ Lab management | Dashboard
     rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
     return prefix == undefined ? rupiah : (rupiah ? 'Rp ' + rupiah : '');
   };
+  function actCntTool() {
+    var cnt_tool = $('#inp-cn-facility').val();
+    /* change atribut*/
+    $('#inp-cn-ready').removeAttr('readonly');
+    $('#inp-cn-unwearable').removeAttr('readonly');
+    /* set value */
+    $('#inp-cn-ready').val(cnt_tool);
+    $('#inp-cn-used').val(0);
+    $('#inp-cn-unwearable').val(0);
+  };
+  function actCntToolReady() {
+    var cnt_tool = $('#inp-cn-facility').val();
+    var cnt_used = $('#inp-cn-used').val();
+    var cnt_unwear = $('#inp-cn-unwearable').val();
+    var cnt_ready = $('#inp-cn-ready').val();
+    var total_tool = cnt_tool - (cnt_used+cnt_unwear);
+    if (total_tool < cnt_ready) {
+      $('#inp-cn-ready').val(total_tool);
+    }
+  };
+  function actCntToolUnwear() {
+    var cnt_tool = $('#inp-cn-facility').val();
+    var cnt_used = $('#inp-cn-used').val();
+    var cnt_unwear = $('#inp-cn-unwearable').val();
+    var cnt_ready = $('#inp-cn-ready').val();
+    var total_tool = cnt_tool - (cnt_used+cnt_ready);
+    if (total_tool < cnt_unwear) {
+      $('#inp-cn-unwearable').val(total_tool);
+    }
+  };
 </script>
 {{-- ready function --}}
 <script>
@@ -304,6 +371,20 @@ Lab management | Dashboard
         input.val(log);
       } else {
         if( log ) alert(log);
+      }
+    });
+  });
+  $(document).ready(function (){
+    $('#upload_url_img').change(function(){
+      var input = this;
+      var url = $(this).val();
+      var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+      if (input.files && input.files[0] && (ext == "gif" || ext == "png" || ext == "jpeg" || ext == "jpg")) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          $('#wrap-img').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
       }
     });
   });

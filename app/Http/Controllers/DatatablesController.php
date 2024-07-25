@@ -182,13 +182,13 @@ class DatatablesController extends Controller
 				if ($request->status == null) {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					->whereIn('lsb_status', $status)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 					->get();
 				}else{
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					->whereIn('lsb_status', $status)
 					->where('lsb_status',$request->status)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 					->get();
 				}
 			} elseif($request->dt_start != null && $request->dt_end != null) {
@@ -200,7 +200,7 @@ class DatatablesController extends Controller
 						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 						->whereIn('lsb_status', $status)
 						->where('lsb_period','like','%'. $date_perform.'%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -213,7 +213,7 @@ class DatatablesController extends Controller
 						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 						->whereIn('lsb_status', $status)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -228,13 +228,13 @@ class DatatablesController extends Controller
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					->whereIn('lsb_status', $status)
 					->where('lsb_user_subhead', $user->id)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 					->get();
 				} else {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					->whereIn('lsb_status', $status)
 					->where('lsb_user_subhead', $user->id)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 					->get();
 				}
 			} elseif ($request->dt_start != null && $request->dt_end != null) {
@@ -247,7 +247,7 @@ class DatatablesController extends Controller
 						->whereIn('lsb_status', $status)
 						->where('lsb_user_subhead', $user->id)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -261,7 +261,7 @@ class DatatablesController extends Controller
 						->whereIn('lsb_status', $status)
 						->where('lsb_user_subhead', $user->id)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -276,13 +276,13 @@ class DatatablesController extends Controller
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					->whereIn('lsb_status', $status)
 					->where('lsb_user_tech', $user->id)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 					->get();
 				} else {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					->whereIn('lsb_status', $status)
 					->where('lsb_user_tech', $user->id)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 					->get();
 				}
 			} elseif ($request->dt_start != null && $request->dt_end != null) {
@@ -295,7 +295,7 @@ class DatatablesController extends Controller
 						->whereIn('lsb_status', $status)
 						->where('lsb_user_tech', $user->id)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -309,7 +309,7 @@ class DatatablesController extends Controller
 						->whereIn('lsb_status', $status)
 						->where('lsb_user_tech', $user->id)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -318,11 +318,6 @@ class DatatablesController extends Controller
 			} else {
 				// 
 			}
-			// $data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
-			// ->whereIn('lsb_status',$status)
-			// ->where('lsb_user_tech', $user->id)
-			// ->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
-			// ->get();
 		}elseif (rulesUser(['LECTURE'])) {
 			$set_id = $user->no_id;
 			$lsb_ids = Lab_submission_adviser::where('las_user_no_id', $set_id)->select('las_lbs_id')->get();
@@ -334,19 +329,27 @@ class DatatablesController extends Controller
 			if ($request->dt_start == null && $request->dt_end == null) {
 				if ($request->status == null) {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
-					->whereIn('lsb_id', $lids)
+					// ->whereIn('lsb_id', $lids)
+					->where('lsb_user_id', $user->id)
 					->whereIn('lsb_status', $status)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 					->get();
 				} else {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					// ->where('lsb_user_lecture', $user->id)
-					->whereIn('lsb_id', $lids)
+					// ->whereIn('lsb_id', $lids)
+					->where('lsb_user_id', $user->id)
 					->whereIn('lsb_status', $status)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 					->get();
 				}
 			} elseif ($request->dt_start != null && $request->dt_end != null) {
+				$dt_s = date('Y-m-d', strtotime($request->dt_start));
+				$dt_e = date('Y-m-d', strtotime($request->dt_end));
+				$sub_filter = Lab_sub_date::whereBetween('lsd_date', [$dt_s, $dt_e])->select('lsd_lsb_id')->get();
+				foreach ($sub_filter as $key => $value) {
+					$ids[$value->lsd_lsb_id] = $value->lsd_lsb_id;
+				}
 				if ($request->status == null) {
 					$colData = collect();
 					$period = CarbonPeriod::create($request->dt_start, $request->dt_end);
@@ -354,10 +357,11 @@ class DatatablesController extends Controller
 						$date_perform = date('Y-m-d', strtotime($value));
 						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 						// ->where('lsb_user_lecture', $user->id)
-						->whereIn('lsb_id', $lids)
+						// ->whereIn('lsb_id', $lids)
+						->where('lsb_user_id', $user->id)
 						->whereIn('lsb_status', $status)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -369,10 +373,11 @@ class DatatablesController extends Controller
 						$date_perform = date('Y-m-d', strtotime($value));
 						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 						// ->where('lsb_user_lecture', $user->id)
-						->where('lsb_id', $lids)
+						// ->where('lsb_id', $lids)
+						->where('lsb_user_id', $user->id)
 						->whereIn('lsb_status', $status)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -381,37 +386,38 @@ class DatatablesController extends Controller
 			} else {
 				// 
 			}
-			// $data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
-			// ->whereIn('lsb_status',$status)
-			// ->where('lsb_user_lecture', $user->id)
-			// ->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
-			// ->get();
 		}elseif(rulesUser(['STUDENT', 'PUBLIC_MEMBER', 'PUBLIC_NON_MEMBER'])){
 			if ($request->dt_start == null && $request->dt_end == null) {
 				if ($request->status == null) {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					->whereIn('lsb_status', $status)
 					->where('lsb_user_id', $user->id)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 					->get();
 				} else {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					->whereIn('lsb_status', $status)
 					->where('lsb_user_id', $user->id)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 					->get();
 				}
 			} elseif ($request->dt_start != null && $request->dt_end != null) {
+				$dt_s = date('Y-m-d', strtotime($request->dt_start));
+				$dt_e = date('Y-m-d', strtotime($request->dt_end));
+				$sub_filter = Lab_sub_date::whereBetween('lsd_date',[$dt_s, $dt_e])->select('lsd_lsb_id')->get();
+				foreach ($sub_filter as $key => $value) {
+					$ids[$value->lsd_lsb_id] = $value->lsd_lsb_id;
+				}
 				if ($request->status == null) {
 					$colData = collect();
 					$period = CarbonPeriod::create($request->dt_start, $request->dt_end);
 					foreach ($period as $key => $value) {
 						$date_perform = date('Y-m-d', strtotime($value));
 						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+						->whereIn('lsb_id', $ids)
 						->whereIn('lsb_status', $status)
 						->where('lsb_user_id', $user->id)
-						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -422,10 +428,10 @@ class DatatablesController extends Controller
 					foreach ($period as $key => $value) {
 						$date_perform = date('Y-m-d', strtotime($value));
 						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+						->whereIn('lsb_id', $ids)
 						->whereIn('lsb_status', $status)
 						->where('lsb_user_id', $user->id)
-						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -434,11 +440,6 @@ class DatatablesController extends Controller
 			} else {
 				// 
 			}
-			// $data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
-			// ->whereIn('lsb_status',$status)
-			// ->where('lsb_user_id', $user->id)
-			// ->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end')
-			// ->get();
 		}
 		$data = $data->sortBy(function ($item) {
 			return array_search($item->lsb_status, ['menunggu','disetujui','selesai','ditolak']);
@@ -504,7 +505,15 @@ class DatatablesController extends Controller
 			}
 			return '<div style="text-align:center;">' . $res . '</div>';
 		})
-		->rawColumns(['opsi', 'kegiatan', 'judul','acc' , 'status', 'waktu', 'pemohon', 'waktu_pengajuan'])
+		->addColumn('tech',function ($data) {
+			$user = User::where('id', $data->lsb_user_tech)->first();
+			if ($user == null) {
+				return '<div style="text-align:center;">-</div>';
+			}else{
+				return '<div style="text-align:center;">'. $user->name.'</div>';
+			}
+		})
+		->rawColumns(['opsi', 'kegiatan', 'judul','acc' , 'status', 'waktu', 'pemohon', 'waktu_pengajuan','tech'])
 		->make(true);
 	}
 	public function sourceDataPengajuanArchive(Request $request)
@@ -695,11 +704,11 @@ class DatatablesController extends Controller
 	}
 	public function sourceDataFasilitasLab(Request $request)
 	{
-		// $data = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
-		// ->where('laf_laboratorium',$request->lab_id)
-		// ->get();
-		$data = Laboratory_facility::where('laf_laboratorium',$request->lab_id)
+		$data = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
+		->where('laf_laboratorium',$request->lab_id)
 		->get();
+		// $data = Laboratory_facility::where('laf_laboratorium',$request->lab_id)
+		// ->get();
 		return DataTables::of($data)
 		->addIndexColumn()
 		->addColumn('empty_str', function ($k) {
@@ -1292,7 +1301,15 @@ class DatatablesController extends Controller
 				$res = $data->laf_utility;
 				return $res;
 			})
-			->rawColumns(['opsi', 'name', 'brand', 'utility'])
+			->addColumn('biaya', function ($data) {
+				$res = funCurrencyRupiah($data->laf_value).' / '. $data->laf_base;
+				return $res;
+			})
+			->addColumn('cnttool', function ($data) {
+				$res = $data->lcs_count;
+				return $res;
+			})
+			->rawColumns(['opsi', 'name', 'brand', 'utility','biaya', 'cnttool'])
 			->make(true);
 	}
 	/* Tags:... */
@@ -1334,7 +1351,16 @@ class DatatablesController extends Controller
 			$res = $data->level;
 			return $res;
 		})
-		->rawColumns(['opsi', 'name', 'no_id', 'email','level'])
+		->addColumn('status', function ($data) {
+			$res = $data->status;
+			if ($data->status == 'active') {
+				$res = '<small class="label label-success">active</small>';
+			}else{
+				$res = '<small class="label label-default">non-active</small>';
+			}
+			return $res;
+		})
+		->rawColumns(['opsi', 'name', 'no_id', 'email','level','status'])
 		->make(true);
 	}
 }

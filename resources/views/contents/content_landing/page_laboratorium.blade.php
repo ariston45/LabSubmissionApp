@@ -11,7 +11,7 @@ Lab management | Dashboard
         <div class="row d-flex justify-content-center text-center">
           <div class="col-lg-8">
             <h1>Laboratorium</h1>
-            <p class="mb-0">Laboratorium Fakultas Teknik Universitas Negeri Surabaya merupan sarana dan prasan untuk menunjang kegiatan akademisi universitas maupun kegitan dari pihak umum yang membutuhkan uji lab. </p>
+            <p class="mb-0">Laboratorium Fakultas Teknik Universitas Negeri Surabaya merupakan sarana dan prasarana untuk menunjang kegiatan akademisi universitas maupun kegiatan dari pihak umum yang membutuhkan uji lab. </p>
           </div>
         </div>
       </div>

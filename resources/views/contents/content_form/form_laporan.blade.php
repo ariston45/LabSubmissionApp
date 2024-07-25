@@ -15,7 +15,7 @@ Lab management | Dashboard
     <div class="box-header with-border">
       <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan</h3>
       <div class="pull-right">
-        <a href="{{ url('pengajuan') }}">
+        <a href="{{ url('pengajuan/detail-pengajuan/'.$data_submission->lsb_id) }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
@@ -62,7 +62,7 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('dok_laporan_test_bending') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Upload Tes Bending
+              Upload Form Legalitas
             </span>
           </label>
           <div class="col-sm-12 col-md-9">

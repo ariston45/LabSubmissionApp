@@ -13,9 +13,9 @@ Lab management | Dashboard
 <div class="col-md-12">
   <div class="box box-primary">
     <div class="box-header with-border">
-      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan</h3>
+      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan {{$lab_data->lab_name}}</h3>
       <div class="pull-right">
-        <a href="{{ url('pengajuan') }}">
+        <a href="{{ url('pengajuan/laboratorium') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
@@ -89,8 +89,11 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        
+        {{--  --}}
         {{-- ~ --}}
+        <div class="col-md-offset-3 col-md-9 act-datetime act-tool">
+          <div class="divider">Jumlah Sampel</div>
+        </div>
         <div class="form-group has-feedback {{ $errors->has('inp_sample') ? ' has-error' : '' }}" id="fm-inp-sample">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -112,6 +115,35 @@ Lab management | Dashboard
         @php
           $idx_time = 0;
         @endphp
+        <div class="col-md-offset-3 col-md-9 act-datetime act-tool">
+          <div class="divider">Fasilitas & Alat</div>
+        </div>
+        <div class="form-group act-tool {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}" id="fm-inp-tool">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Fasilitas/Alat
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <div class="row">
+              <div class="col-sm-12">
+                <select id="inp-fasilitas" class="form-control" name="inp_fasilitas[]" multiple>
+                  <option value="{{ null }}">Pilih fasilitas/alat..</option>
+                  @foreach ($lab_tool_data as $list)
+                    <option value="{{$list->laf_id}}">{{$list->laf_name}}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            @if ($errors->has('inp_fasilitas'))
+						<span style="color: red;"><i>{{ $errors->first('inp_fasilitas') }}</i></span>
+						@endif
+            @if ($errors->has('tool_err'))
+						<span style="color: red;"><i>{{ $errors->first('tool_err') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{-- ~ --}}
         <div class="col-md-offset-3 col-md-9 act-datetime">
           <div class="divider">Jadwal Kegiatan</div>
         </div>
@@ -157,6 +189,9 @@ Lab management | Dashboard
       <div class="box-footer">
         <div class="col-md-offset-3 col-md-9">
           <button type="button" class="btn btn-default btn-flat" onclick="actPrePayment();"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
+          <a href="{{ url('jadwal_lab/'.$lab_data->lab_id) }}" target="_blank">
+            <button type="button" class="btn btn-default btn-flat"><i class="ri-calendar-schedule-line" style="margin-right: 5px;"></i>Cek Jadwal</button>
+          </a>
           <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
           <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
         </div>
@@ -242,6 +277,21 @@ Lab management | Dashboard
 		}
   });
   var select_time = new TomSelect(".inp-time-cls",{
+    create: false,
+    maxItem: 20,			
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-time">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+  var select_tool = new TomSelect("#inp-fasilitas",{
     create: false,
     maxItem: 20,			
 		valueField: 'id',

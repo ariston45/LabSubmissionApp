@@ -43,10 +43,12 @@ Lab management | Dashboard
 				<thead>
 					<tr>
 						<th style="width: 5%">No</th>
-						<th style="width: 30%">Nama Alat/Fasiltas</th>
+						<th style="width: 20%">Nama Alat/Fasiltas</th>
 						<th style="width: 20%">Merk/Spesifikasi</th>
-						<th style="width: 30%">Fungsi/Kegunaan</th>
-						<th style="width: 15%;text-align:center;">Opsi</th>
+						<th style="width: 20%">Fungsi/Kegunaan</th>
+						<th style="width: 10%">Biaya Peminjaman</th>
+						<th style="width: 10%">Jumlah Alat</th>
+						<th style="width: 5%;text-align:center;">Opsi</th>
 					</tr>
 				</thead>
 			</table>
@@ -169,6 +171,8 @@ Lab management | Dashboard
 			{data: 'name', name: 'name', orderable: true, searchable: true },
 			{data: 'brand', name: 'brand', orderable: true, searchable: true },
 			{data: 'utility', name: 'utility', orderable: true, searchable: true },
+			{data: 'biaya', name: 'biaya', orderable: true, searchable: true },
+			{data: 'cnttool', name: 'cnttool', orderable: true, searchable: true },
 			{data: 'opsi', name: 'opsi', orderable: false, searchable: false},
 		]
 	});

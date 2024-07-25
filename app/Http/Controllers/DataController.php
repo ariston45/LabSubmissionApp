@@ -448,7 +448,6 @@ class DataController extends Controller
 		}
 		return $res;
 	}
-
 	/* Tags:... */
 	public function sourceDataStudent(Request $request)
 	{
@@ -707,6 +706,86 @@ class DataController extends Controller
 								</tr>';
 				}
 				$web.='<tr>
+					<td style="width: 5%; text-align: center;"></td>
+					<td> <b>Total Biaya</b> </td>
+					<td style="width: 5%; text-align: center;">' . funCurrencyRupiah($total_cost_after) . '</td>
+				</tr>
+			</tbody>
+		</table>';
+		return $web;
+	}
+	/* Tags:... */
+	public function checkCostTool(Request $request)
+	{
+		$user = DataAuth();
+		$activity = $request->activity;
+		$data_lab = Laboratory::where('lab_id', $request->lab_id)->first();
+		if ($activity == 'tp_penelitian_skripsi') {
+			$param_reduce = 100;
+		} else {
+			$param_reduce = 0;
+		}
+		$startDate = Carbon::parse($request->dts);
+		$endDate = Carbon::parse($request->dte);
+		$jumlahHari = $startDate->diffInDays($endDate);
+		
+		foreach ($request->tool as $key => $value) {
+			$data_tool[$key] = Laboratory_facility::where('laf_laboratorium', $request->lab_id)->where('laf_id', $value)->first();
+			$cost_per_tool[$key] = $data_tool[$key]->laf_value * $request->unit[$key] * $jumlahHari;
+			$data_tools[$key] = [
+				'name' => $data_tool[$key]->laf_name,
+				'lama_pinjam' => $jumlahHari,
+				'jumlah_unit' => $request->unit[$key],
+				'base' => $data_tool[$key]->laf_base,
+				'unit_cost' => $data_tool[$key]->laf_value,
+				'total_cost' => $cost_per_tool[$key]
+			];
+		}
+		$total_cost = array_sum($cost_per_tool);
+		$val_reduce = $total_cost * ($param_reduce / 100);
+		$total_cost_after = $total_cost - $val_reduce;
+		$web ="";
+		$web .= '<table class="table-bordered tabel_custom" style="width: 100%;">
+			<thead>
+				<tr>
+					<th style="width: 5%; text-align: center;">No</th>
+					<th style="width: 65%; text-align: center;">Nama Laboratorium/Fasilitas/Alat</th>
+					<th style="width: 30%;text-align: center;">Biaya Pinjam</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="width: 5%; text-align: center;"></td>
+					<td colspan="2"><b>Laboratorium</b></td>
+				</tr>';
+		$web .= '<tr>
+							<td style="width: 5%; text-align: center;">1</td>
+							<td colspan="2">' . $data_lab->lab_name . '</td>
+						</tr>';
+		$web .= '<tr>
+							<td style="width: 5%; text-align: center;"></td>
+							<td colspan="2"><b>Alat dan Fasilitas</b></td>
+						</tr>';
+		$no = 1;
+		foreach ($data_tools as $key => $value) {
+			# code...
+			$web .= '<tr>
+									<td style="width: 5%; text-align: center;">' . $no . '</td>
+									<td>' . $value['name'] . ' (' . funCurrencyRupiah($value['unit_cost']) . ' * ' . $value['jumlah_unit'] . ' unit * ' . $value['lama_pinjam'] . ' hari ) </td>
+									<td style="width: 5%; text-align: center;">' . funCurrencyRupiah($value['total_cost']) . '</td>
+									</tr>';
+			$no++;
+		}
+		$web .= '<tr>
+								<td style="width: 5%; text-align: center;"></td>
+								<td colspan="2"><b>Potongan Biaya</b></td>
+							</tr>';
+		$web .= '<tr>
+								<td style="width: 5%; text-align: center;">1</td>
+								<td> Potongan ' . $param_reduce . ' %</td>
+								<td style="width: 5%; text-align: center;">(- ' . funCurrencyRupiah($val_reduce) . ')</td>
+							</tr>';
+		$web .= '<tr>
 					<td style="width: 5%; text-align: center;"></td>
 					<td> <b>Total Biaya</b> </td>
 					<td style="width: 5%; text-align: center;">' . funCurrencyRupiah($total_cost_after) . '</td>

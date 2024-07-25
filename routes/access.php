@@ -72,6 +72,9 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::match(['get', 'post'], 'source-check-lab', [DataController::class, 'checkLabDetail'])->name('source_check_lab');
 		Route::match(['get', 'post'], 'source-check-tool', [DataController::class, 'checkToolDetail'])->name('source_check_tool');
 
+		#cek estimasi biaya
+		Route::match(['get', 'post'], 'source-check-cost-tool', [DataController::class, 'checkCostTool'])->name('source_check_cost_tool');
+
 	});
 	
 	/*************************************************************************************************************************************************/
@@ -87,10 +90,15 @@ Route::group(['middleware' => ['auth']], function () {
 		# first
 		Route::get('/', [PengajuanController::class, 'dataPengajuan']);
 		Route::get('laboratorium', [PengajuanController::class, 'dataLabPengajuan']);
-		Route::get('additional', [PengajuanController::class, 'dataPengajuanAdditional']);
-		Route::get('data-arsip', [PengajuanController::class, 'dataPengajuanArchice']);
+		Route::get('uji_laboratorium', [PengajuanController::class, 'dataLabPengajuan']);
+		// Route::get('additional', [PengajuanController::class, 'dataPengajuanAdditional']);
+		// Route::get('data-arsip', [PengajuanController::class, 'dataPengajuanArchice']);
+
 		# form
-		Route::get('laboratorium/form-pengajuan-pinjam/{id}', [PengajuanController::class, 'formPengajuan']);
+		Route::get('laboratorium/form-pengajuan-pinjam/{id}', [PengajuanController::class, 'formLabRental']);
+		Route::get('laboratorium/form-pengajuan-sewa/{id}', [PengajuanController::class, 'formToolRental']);
+		Route::get('uji_laboratorium/form-pengajuan-ujilab/{id}', [PengajuanController::class, 'formLabTest']);
+		
 		Route::get('form-pengajuan-labtest', [PengajuanController::class, 'formPengajuanLabTest']);
 		Route::get('form-laporan/{id}', [PengajuanController::class, 'formLaporan']);
 		#action

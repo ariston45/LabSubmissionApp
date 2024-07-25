@@ -86,7 +86,6 @@ class PengajuanController extends Controller
 		->where('laf_laboratorium', $request->id)
 		->where('lcs_ready', '!=', 0)
 		->get();
-		// dd($lab_tool_data);
 		$user_data = User::leftJoin('user_details','users.id','=','user_details.usd_user')
 		->where('id',$user->id)
 		->first();
@@ -124,7 +123,52 @@ class PengajuanController extends Controller
 		}
 	}
 	/* Tags:... */
-	public function formPengajuanLabTest(Request $request)
+	public function formLabRental(Request $request)
+	{
+		$user = Auth::user();
+		$lab_data = Laboratory::where('lab_status', 'tersedia')
+		->where('lab_id', $request->id)
+		->first();
+		$lab_tool_data = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
+		->where('laf_laboratorium', $request->id)
+		->where('lcs_ready', '!=', 0)
+		->get();
+		$user_data = User::leftJoin('user_details', 'users.id', '=', 'user_details.usd_user')
+		->where('id', $user->id)
+		->first();
+		$times = Laboratory_time_option::get();
+		if ($user->level == 'STUDENT') {
+			return view('contents.content_form.form_pengajuan_student_static_rent_lab', compact('user_data', 'lab_data', 'times', 'lab_tool_data'));
+		} elseif ($user->level == 'LECTURE') {
+			return view('contents.content_form.form_pengajuan_lecture_static_rent_lab', compact('user_data', 'lab_data', 'times', 'lab_tool_data'));
+		} else {
+			return view('contents.content_form.form_pengajuan_common_static_rent_lab', compact('user_data', 'lab_data', 'times', 'lab_tool_data'));
+		}
+	}
+	public function formToolRental(Request $request)
+	{
+		$user = Auth::user();
+		$lab_data = Laboratory::where('lab_status', 'tersedia')
+		->where('lab_id', $request->id)
+			->first();
+		$lab_tool_data = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
+		->where('laf_laboratorium', $request->id)
+			->where('lcs_ready', '!=', 0)
+			->get();
+		$user_data = User::leftJoin('user_details', 'users.id', '=', 'user_details.usd_user')
+		->where('id', $user->id)
+			->first();
+		$times = Laboratory_time_option::get();
+		if ($user->level == 'STUDENT') {
+			return view('contents.content_form.form_pengajuan_student_static_rent_tool', compact('user_data', 'lab_data', 'times', 'lab_tool_data'));
+		} elseif ($user->level == 'LECTURE') {
+			return view('contents.content_form.form_pengajuan_lecture_static_rent_tool', compact('user_data', 'lab_data', 'times', 'lab_tool_data'));
+		} else {
+			return view('contents.content_form.form_pengajuan_common_static_rent_tool', compact('user_data', 'lab_data', 'times', 'lab_tool_data'));
+		}
+	}
+	/* Tags:... */
+	public function formLabTest(Request $request)
 	{
 		$user = Auth::user();
 		$user_data = User::leftJoin('user_details', 'users.id', '=', 'user_details.usd_user')
@@ -135,6 +179,7 @@ class PengajuanController extends Controller
 		$times = Laboratory_time_option::get();
 		return view('contents.content_form.form_pengajuan_labtest', compact('user_data', 'lab_data','times'));
 	}
+
 	public function formLaporan(Request $request)
 	{
 		// die();

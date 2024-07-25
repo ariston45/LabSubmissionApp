@@ -14,9 +14,9 @@ Lab management | Dashboard
 		<div class="box-header with-border">
 			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Laboratorium</h3>
 			<div class="pull-right">
-				{{-- <a href="{{ url('laboratorium/form-input-lab') }}">
-					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah Jadwal</button>
-				</a> --}}
+				<a href="{{ url('pengajuan') }}">
+					<button class="btn btn-flat btn-xs btn-danger"><i class="ri-close-circle-line" style="margin-right: 4px;"></i> Tutup</button>
+				</a>
 			</div>
 		</div>
 		<div class="box-body">
@@ -25,9 +25,9 @@ Lab management | Dashboard
 				<thead>
 					<tr>
 						<th style="width: 5%">No</th>
-						<th style="width: 60%">Nama Laboratorium</th>
-						<th style="width: 10%;text-align:center;">Status</th>
-						<th style="width: 25%;text-align:center;">Opsi</th>
+						<th style="width: 50%">Nama Laboratorium</th>
+						<th style="width: 15%;text-align:center;">Status</th>
+						<th style="width: 30%;text-align:center;">Opsi</th>
 						{{-- <th style="width: 20%">Kepala Lab</th>
 						<th style="width: 15%">Status</th>
             <th style="width: 30%">Lokasi</th> --}}

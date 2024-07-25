@@ -15,7 +15,7 @@ Lab management | Dashboard
     <div class="box-header with-border">
       <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan</h3>
       <div class="pull-right">
-        <a href="{{ url('pengajuan') }}">
+        <a href="{{ url('pengajuan/laboratorium') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
@@ -116,15 +116,6 @@ Lab management | Dashboard
                 </div>
                 <div class="input-group inp-split-cst date" style="margin-bottom: 6px;">
 									<div class="input-group-addon">
-										Lama Pinjam
-									</div>
-									<input type="text" name="inp_satuan[{{$idx_tool}}]" value="" class="form-control init-satuan pull-right" placeholder="">
-                  <div class="input-group-addon">
-										<div id="inp-satuan-{{$idx_tool}}">...</div>
-									</div>
-								</div>
-                <div class="input-group inp-split-cst date" style="margin-bottom: 6px;">
-									<div class="input-group-addon">
                     Jumlah Unit
 									</div>
 									<input type="text" name="inp_jml_unit[{{$idx_tool}}]" value="" class="form-control init-jml-unit pull-right" placeholder="">
@@ -146,14 +137,28 @@ Lab management | Dashboard
           <div class="col-md-offset-3 col-sm-12 col-md-9" id="add-tool">
           </div>
         </div>
+        <div class="form-group act-tool {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}" id="fm-inp-tool" style="margin-bottom: 5px;">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Opsional Fasilitas/Alat lainnya 
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <div style="margin-bottom: 5px;">
+              <select id="inp-tool-opsional" class="form-control" multiple name="inp_fasilitas_opsional">
+                <option value="{{ null }}">Pilih fasilitas/alat..</option>
+              </select>
+            </div>
+          </div>
+        </div>
         {{--  --}}
         <div class="col-md-offset-3 col-md-9 act-datetime">
-          <div class="divider">Jadwal Kegiatan</div>
+          <div class="divider">Jadwal Sewa</div>
         </div>
-        <div class="form-group has-feedback {{ $errors->has('inp_opsi_lainnya') ? ' has-error' : '' }}">
+        <div class="form-group has-feedback {{ $errors->has('inp_opsi_lainnya') ? ' has-error' : '' }}" style="margin-bottom: 5px;">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Tanggal Mulai Pinjam
+              Tanggal Mulai Sewa
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
@@ -161,12 +166,25 @@ Lab management | Dashboard
               <div class="input-group-addon">
                 <i class="fa fa-calendar"></i>
               </div>
-              <input type="text" name="inp_date"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
+              <input type="text" id="inp-start" name="inp_date_start"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
             </div>
           </div>
         </div>
-        {{-- !!  --}}
-        {{-- ~ --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_opsi_lainnya') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Tanggal Akhir Sewa
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <div class="input-group inp-split-cst date">
+              <div class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+              </div>
+              <input type="text" id="inp-end" name="inp_date_end"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
+            </div>
+          </div>
+        </div>
         {{-- !!  --}}
         <div id="cost-tables" class="col-md-offset-3 col-md-9">
           <div id="test-id"></div>
@@ -259,20 +277,21 @@ Lab management | Dashboard
 			}
 		}
   });
-  // var select_tool = new TomSelect("#inp-tool-0",{
-  //   create: false,			
-	// 	valueField: 'id',
-	// 	labelField: 'title',
-	// 	searchField: 'title',
-	// 	render: {
-	// 		option: function(data, escape) {
-	// 			return '<div><span class="title">'+escape(data.title)+'</span></div>';
-	// 		},
-	// 		item: function(data, escape) {
-	// 			return '<div id="select-kegitan">'+escape(data.title)+'</div>';
-	// 		}
-	// 	}
-  // });
+  var select_tool = new TomSelect("#inp-tool-opsional",{
+    maxItem:20,
+    create: true,			
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-opsional">'+escape(data.title)+'</div>';
+			}
+		}
+  });
 </script>
 {{-- function --}}
 <script>
@@ -383,22 +402,19 @@ Lab management | Dashboard
   };
   function cekCost() {
     let id_tooL_selects = document.querySelectorAll('.init-tool');
-    let id_satuan_selects = document.querySelectorAll('.init-satuan');
     let id_unit_selects = document.querySelectorAll('.init-jml-unit');
     let selectedValtool = [];
-    let selectedValsatuan = [];
     let selectedValunit = [];
     // Iterasi melalui elemen-elemen select dan ambil nilai yang dipilih
     id_tooL_selects.forEach(select => {
       selectedValtool.push(select.value);
     });
-    id_satuan_selects.forEach(select => {
-      selectedValsatuan.push(select.value);
-    });
     id_unit_selects.forEach(select => {
       selectedValunit.push(select.value);
     });
     let lab_id = "{{$lab_data->lab_id}}";
+    let dt_start = $('#inp-start').val();
+    let dt_end = $('#inp-end').val();
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -406,12 +422,13 @@ Lab management | Dashboard
     });
     $.ajax({
       type: 'POST',
-      url: "{{ route('source-data-cost-lab-tables') }}",
+      url: "{{ route('source_check_cost_tool') }}",
       data: {
         "lab_id":lab_id,
         "tool": selectedValtool,
-        "count":selectedValsatuan,
-        "unit":selectedValunit
+        "unit":selectedValunit,
+        "dts":dt_start,
+        "dte":dt_end, 
       },
       async: false,
       success: function(result) {
@@ -435,10 +452,6 @@ Lab management | Dashboard
         +'@foreach ( $lab_tool_data as $list)'
         +'<option value="{{ $list->laf_id }}">{{$list->laf_name}}</option>'
         +'@endforeach</select></div>'
-        +'<div class="input-group inp-split-cst date" style="margin-bottom: 6px;">'
-        +'<div class="input-group-addon">Lama Pinjam</div>'
-        +'<input type="text" name="inp_satuan['+new_idx_tool+']" class="form-control init-satuan pull-right" placeholder="">'
-        +'<div class="input-group-addon"><div id="inp-satuan-'+new_idx_tool+'">...</div></div></div>'
         +'<div class="input-group inp-split-cst date" style="margin-bottom: 6px;">'
 				+'<div class="input-group-addon">Jumlah Unit</div>'
 				+'<input type="text" name="inp_jml_unit['+new_idx_tool+']" value="" class="form-control init-jml-unit pull-right" placeholder="">'

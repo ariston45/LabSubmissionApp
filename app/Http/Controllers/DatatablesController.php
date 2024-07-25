@@ -1172,7 +1172,7 @@ class DatatablesController extends Controller
 	/* Tags:... */
 	public function sourceDataLabSub(Request $request)
 	{
-		$data = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+		$data = Laboratory::leftjoin('laboratory_options', 'laboratories.lab_id', '=', 'laboratory_options.lop_lab_id')
 		->get();
 		return DataTables::of($data)
 			->addIndexColumn()
@@ -1180,13 +1180,19 @@ class DatatablesController extends Controller
 				return '';
 			})
 			->addColumn('opsi', function ($data) {
+				$web ='';
 				if ($data->lab_status == 'tersedia') {
-					return '<a href="' . url('pengajuan/laboratorium/form-pengajuan-pinjam/' . $data->lab_id) . '">
-					<button class="btn btn-block btn-flat btn-default btn-xs " type="button" > <b>Pinjam Laboratorium</b></button></a>';
+					$web.='<a href="' . url('pengajuan/laboratorium/form-pengajuan-pinjam/' . $data->lab_id) . '">
+					<button class="btn btn-flat btn-default btn-xs " type="button" > <b>Pinjam Laboratorium</b></button></a>';
+					$web.='<a href="' . url('pengajuan/laboratorium/form-pengajuan-sewa/' . $data->lab_id) . '">
+					<button class="btn btn-flat btn-default btn-xs " type="button" > <b>Sewa Alat Laboratorium</b></button></a>';
 				}else{
-					return '<a href="#">
-					<button class="btn btn-block btn-flat btn-default btn-xs " type="button" disabled> <b>Pinjam Laboratorium</b></button></a>';
+					$web.='<a href="#">
+					<button class="btn btn-flat btn-default btn-xs " type="button" disabled> <b>Pinjam Laboratorium</b></button></a>';
+					$web .= '<a href="#">
+					<button class="btn btn-flat btn-default btn-xs " type="button" disabled> <b>Sewa Alat Laboratorium</b></button></a>';
 				}
+				return $web;
 			})
 			->addColumn('name', function ($data) {
 				$res = $data->lab_name;
@@ -1213,7 +1219,8 @@ class DatatablesController extends Controller
 			->rawColumns(['opsi', 'name', 'head', 'status', 'location'])
 			->make(true);
 	}
-	/* Tags:... */public function sourceDataLabFacility(Request $request)
+	/* Tags:... */
+	public function sourceDataLabFacility(Request $request)
 	{
 		$user = Auth::user();
 		if (rulesUser(['ADMIN_SYSTEM', 'ADMIN_MASTER', 'LAB_HEAD'])) {

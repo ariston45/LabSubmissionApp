@@ -16,20 +16,12 @@ Lab management | Dashboard
 			<div class="row">
 				<div class="col-sm-12">
 					@if (rulesUser(['STUDENT','LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
-					<a href="{{ url('pengajuan/laboratorium') }}" class="btn btn-app bg-blue" style="min-width: 90px;">
-						<i class="fa fa-building"></i> Pinjam Lab
+					<a href="{{ url('pengajuan/laboratorium') }}" class="btn btn-app bg-blue" style="min-width: 120px;">
+						<i class="fa fa-building"></i> Permohonan Lab
 					</a>
-					{{-- <a href="{{ url('pengajuan/form-pengajuan') }}" class="btn btn-app bg-blue" style="min-width: 90px;">
-						<i class="fa fa-building"></i> Pinjam Lab
-					</a> --}}
-					@endif
-					@if (rulesUser(['LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
-					<a href="{{ url('pengajuan/form-pengajuan-labtest') }}" class="btn btn-app bg-blue" style="min-width: 90px;">
+					<a href="{{ url('pengajuan/form-pengajuan-labtest') }}" class="btn btn-app bg-blue" style="min-width: 120px;">
 						<i class="fa fa-flask"></i> Uji Lab
 					</a>
-					{{-- <a href="{{ url('pengajuan/form-pengajuan-labtest') }}" class="btn btn-app bg-blue" style="min-width: 90px;">
-						<i class="fa fa-flask"></i> Uji Lab
-					</a> --}}
 					@endif
 				</div>
 			</div>

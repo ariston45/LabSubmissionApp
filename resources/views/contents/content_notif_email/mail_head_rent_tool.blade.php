@@ -70,7 +70,7 @@
 			<tr>
 				<td colspan="2" style="padding-left: 40px;padding-top: 0px;padding-bottom: 0px;"> Hari/Tanggal </td>
 				<td>
-					{{ $data_applicant['datetimes'] }}
+					: {!! $data_applicant['datetimes'] !!}
 				</td>
 			</tr>
 			<tr>

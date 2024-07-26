@@ -278,7 +278,6 @@ Lab management | Dashboard
 		}
   });
   var select_tool = new TomSelect("#inp-tool-opsional",{
-    maxItem:20,
     create: true,			
 		valueField: 'id',
 		labelField: 'title',

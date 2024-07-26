@@ -60,7 +60,12 @@ function strDateEnd($val)
   return $date_end;
 }
 
-function setDate($val)
+function strDate($val)
+{
+  $date_start = Carbon::parse($val)->isoFormat('dddd, D MMMM Y');
+  return $date_start;
+}
+function strDatetimes($val)
 {
   $date_end = Carbon::parse($val)->isoFormat('dddd, D MMMM Y, HH:mm');
   return $date_end;

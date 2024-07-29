@@ -54,6 +54,7 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('source-datatables-pengajuan', [DatatablesController::class, 'sourceDataPengajuan'])->name('source-datatables-pengajuan');
 		Route::post('source-datatables-pengajuan-archieve', [DatatablesController::class, 'sourceDataPengajuanArchive'])->name('source-datatables-pengajuan-archieve');
 		Route::post('source-datatables-pengajuan-additional', [DatatablesController::class, 'sourceDataPengajuanAdditional'])->name('source-datatables-pengajuan-additional');
+		Route::match(['get', 'post'], 'source-data-labtest', [DatatablesController::class, 'sourceDataUjilab'])->name('source_data_labtest');
 		#Other
 		Route::post('source-data-sch-lab', [LaboratoryController::class, 'sourceDataScheduleLabJson'])->name('source_data_sch_lab');
 		Route::post('users', [DataController::class, 'sourceDataUser'])->name('source-data-users');
@@ -71,7 +72,6 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::match(['get', 'post'], 'source-data-cost-labtest-tables', [DataController::class, 'viewLabtestCostTables'])->name('source_data_cost_labtest_tables');
 		Route::match(['get', 'post'], 'source-check-lab', [DataController::class, 'checkLabDetail'])->name('source_check_lab');
 		Route::match(['get', 'post'], 'source-check-tool', [DataController::class, 'checkToolDetail'])->name('source_check_tool');
-
 		#cek estimasi biaya
 		Route::match(['get', 'post'], 'source-check-cost-tool', [DataController::class, 'checkCostTool'])->name('source_check_cost_tool');
 
@@ -133,7 +133,7 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('{id}/ujilab', [LaboratoryController::class, 'viewUjiLab'])->name('laboratorium_uji_lab');
 		Route::get('{id}/jadwal', [LaboratoryController::class, 'viewLabSchedule'])->name('laboratorium_schedule');
 		// Route::get('detail-fasilitas/{id}', [LaboratoryController::class, 'viewLabFacilityDetail']);
-		Route::get('detail-ujilab/{id}', [LaboratoryController::class, 'viewLabTestDetail']);
+		
 		# form
 		Route::get('{id}/update-lab', [LaboratoryController::class, 'formUpdateLab'])->name('update_lab');
 		Route::get('form-input-lab', [LaboratoryController::class, 'formLaboratory']);
@@ -184,6 +184,12 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('form-update-fasilitas/{id}', [FacilityController::class, 'formUpdateLaboratoryFacility']);
 		Route::post('update-fasilitas-laboratorium', [FacilityController::class, 'actionUpdateLabFacilities'])->name('update_fasilitas_laboratorium');
 	});
+	/*************************************************************************************************************************************************/
+	Route::prefix('uji_laboratorium')->group(function () {
+		Route::get('/', [LaboratoryController::class, 'dataUjiLabs']);
+		Route::get('detail-ujilab/{id}', [LaboratoryController::class, 'viewLabTestDetail']);
+	});
+	/*************************************************************************************************************************************************/
 	Route::prefix('laporan')->group(function () {
 		Route::get('/', [ReportController::class, 'viewReportSubmission']);
 		Route::get('laboratorium', [ReportController::class, 'viewReportLab']);
@@ -191,6 +197,7 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('report-order', [ReportController::class, 'actionReportOrder'])->name('report_order');
 		Route::post('download-income-excel', [ReportController::class, 'actionExcelIncome'])->name('download_income_excel');
 	});
+	/*************************************************************************************************************************************************/
 	Route::prefix('pengaturan')->group(function () {
 		# view
 		Route::get('profil', [PengaturanController::class, 'viewDetailProfile']);
@@ -207,6 +214,7 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('update-data-user', [PengaturanController::class, 'actionUpdateUser'])->name('update-data-user');
 		Route::post('update-datasource', [PengaturanController::class, 'actionUpdateDataSource'])->name('update_datasource');
 	});
+	/*************************************************************************************************************************************************/
 	Route::prefix('notif')->group(function () {
 		Route::get('send_email',function(){
 			$data = [

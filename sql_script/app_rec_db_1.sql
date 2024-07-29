@@ -11,7 +11,7 @@
  Target Server Version : 100413 (10.4.13-MariaDB)
  File Encoding         : 65001
 
- Date: 26/07/2024 22:37:11
+ Date: 29/07/2024 17:07:01
 */
 
 SET NAMES utf8mb4;
@@ -78,16 +78,13 @@ CREATE TABLE `lab_facilities`  (
   `created_by` bigint(20) NULL DEFAULT NULL,
   `updated_by` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`lsf_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 127 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 131 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_facilities
 -- ----------------------------
-INSERT INTO `lab_facilities` VALUES (122, 1, '1', '2024-07-31', '2024-08-01', NULL, NULL, 'unlisted', 'Test', NULL, '2024-07-26 14:55:05', NULL, NULL, NULL);
-INSERT INTO `lab_facilities` VALUES (123, 1, '1', '2024-07-31', '2024-08-01', NULL, NULL, 'unlisted', 'test1', NULL, '2024-07-26 14:55:05', NULL, NULL, NULL);
-INSERT INTO `lab_facilities` VALUES (124, 2, '1', '2024-07-26', '2024-07-27', NULL, NULL, 'unlisted', '214324', NULL, '2024-07-26 15:49:40', NULL, NULL, NULL);
-INSERT INTO `lab_facilities` VALUES (125, 3, '1', '2024-08-01', '2024-08-07', NULL, 11, 'listed', 'Amperemeter AC', 2, '2024-07-26 16:28:19', NULL, NULL, NULL);
-INSERT INTO `lab_facilities` VALUES (126, 3, '1', '2024-08-01', '2024-08-07', NULL, NULL, 'unlisted', '2', NULL, '2024-07-26 16:28:19', NULL, NULL, NULL);
+INSERT INTO `lab_facilities` VALUES (129, 1, '1', NULL, NULL, NULL, 11, 'listed', 'Amperemeter AC', 1, '2024-07-29 09:47:36', NULL, NULL, NULL);
+INSERT INTO `lab_facilities` VALUES (130, 1, '1', NULL, NULL, NULL, NULL, 'unlisted', '12', 1, '2024-07-29 09:47:36', NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for lab_labtests
@@ -124,6 +121,8 @@ CREATE TABLE `lab_sch_dates`  (
 -- ----------------------------
 -- Records of lab_sch_dates
 -- ----------------------------
+INSERT INTO `lab_sch_dates` VALUES (1, '1', 'Tuesday', '2024-07-30', 'active', '2024-07-29 13:51:28', NULL);
+INSERT INTO `lab_sch_dates` VALUES (2, '1', 'Wednesday', '2024-07-31', 'active', '2024-07-29 13:51:28', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sch_times
@@ -137,11 +136,13 @@ CREATE TABLE `lab_sch_times`  (
   `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lsct_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 136 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 138 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_sch_times
 -- ----------------------------
+INSERT INTO `lab_sch_times` VALUES (136, 2, 0, 'active', '2024-07-29 13:51:28', NULL);
+INSERT INTO `lab_sch_times` VALUES (137, 2, 1, 'active', '2024-07-29 13:51:28', NULL);
 
 -- ----------------------------
 -- Table structure for lab_schedules
@@ -172,6 +173,7 @@ CREATE TABLE `lab_schedules`  (
 -- ----------------------------
 -- Records of lab_schedules
 -- ----------------------------
+INSERT INTO `lab_schedules` VALUES (1, 1, 1, 'non_reguler', 186, NULL, 'Rudi', 'Test penenelitian', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-07-29 13:51:28', NULL, '2024-07-29 13:51:28');
 
 -- ----------------------------
 -- Table structure for lab_sub_dates
@@ -190,10 +192,8 @@ CREATE TABLE `lab_sub_dates`  (
 -- ----------------------------
 -- Records of lab_sub_dates
 -- ----------------------------
-INSERT INTO `lab_sub_dates` VALUES (1, 1, NULL, 1, '2024-07-26 14:55:05', NULL);
-INSERT INTO `lab_sub_dates` VALUES (2, 2, NULL, 1, '2024-07-26 15:49:39', NULL);
-INSERT INTO `lab_sub_dates` VALUES (3, 3, '2024-08-01', 1, '2024-07-26 16:28:19', NULL);
-INSERT INTO `lab_sub_dates` VALUES (4, 3, '2024-08-07', 1, '2024-07-26 16:28:19', NULL);
+INSERT INTO `lab_sub_dates` VALUES (1, 1, '2024-07-30', 1, '2024-07-29 09:47:36', NULL);
+INSERT INTO `lab_sub_dates` VALUES (2, 1, '2024-07-31', 1, '2024-07-29 09:47:36', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_order_details
@@ -211,12 +211,13 @@ CREATE TABLE `lab_sub_order_details`  (
   `lod_note_order` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lod_note_return` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`lod_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 202 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 206 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_sub_order_details
 -- ----------------------------
-INSERT INTO `lab_sub_order_details` VALUES (201, 2, 1, 'tool', 'Amperemeter AC', 120000.00, '2024-07-26 16:28:19', NULL, 'Biaya berdasarkan jumlah unit 2 x lama pinjam 6 Hari, dengan biaya Rp 10.000,00/hari', NULL);
+INSERT INTO `lab_sub_order_details` VALUES (204, 1, 0, '', 'Peminjaman tanggal 2024-07-30', 40000.00, '2024-07-29 09:47:36', NULL, NULL, NULL);
+INSERT INTO `lab_sub_order_details` VALUES (205, 1, 1, '', 'Peminjaman tanggal 2024-07-31', 40000.00, '2024-07-29 09:47:36', NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_orders
@@ -240,8 +241,7 @@ CREATE TABLE `lab_sub_orders`  (
 -- ----------------------------
 -- Records of lab_sub_orders
 -- ----------------------------
-INSERT INTO `lab_sub_orders` VALUES (1, 2, NULL, '2024-07-26 15:49:39', 0.00, 0.00, 'false', 0.00, 0.00, '2024-07-26 15:49:40', NULL);
-INSERT INTO `lab_sub_orders` VALUES (2, 3, NULL, '2024-07-26 16:28:19', 120000.00, 0.00, 'false', 0.00, 120000.00, '2024-07-26 16:28:19', NULL);
+INSERT INTO `lab_sub_orders` VALUES (1, 1, NULL, '2024-07-29 09:47:36', 80000.00, 0.00, 'false', 0.00, 80000.00, '2024-07-29 09:47:36', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_times
@@ -254,11 +254,15 @@ CREATE TABLE `lab_sub_times`  (
   `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lstt_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 218 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 226 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_sub_times
 -- ----------------------------
+INSERT INTO `lab_sub_times` VALUES (222, 1, 0, '2024-07-29 09:47:36', NULL);
+INSERT INTO `lab_sub_times` VALUES (223, 1, 1, '2024-07-29 09:47:36', NULL);
+INSERT INTO `lab_sub_times` VALUES (224, 2, 0, '2024-07-29 09:47:36', NULL);
+INSERT INTO `lab_sub_times` VALUES (225, 2, 1, '2024-07-29 09:47:36', NULL);
 
 -- ----------------------------
 -- Table structure for lab_submission_accs
@@ -275,11 +279,17 @@ CREATE TABLE `lab_submission_accs`  (
   `created_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`lsa_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 217 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 227 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_submission_accs
 -- ----------------------------
+INSERT INTO `lab_submission_accs` VALUES (221, '1', 'LAB_HEAD', '0', 'Dr. Lutfiyah Hidayati, S.Pd., M.Pd.', NULL, '2024-07-29 09:49:25', '2024-07-29 09:49:25', NULL);
+INSERT INTO `lab_submission_accs` VALUES (222, '1', 'LAB_HEAD', '0', 'Dr. Lutfiyah Hidayati, S.Pd., M.Pd.', NULL, '2024-07-29 12:40:31', '2024-07-29 12:40:31', NULL);
+INSERT INTO `lab_submission_accs` VALUES (223, '1', 'LAB_HEAD', '0', 'Dr. Lutfiyah Hidayati, S.Pd., M.Pd.', NULL, '2024-07-29 13:01:25', '2024-07-29 13:01:25', NULL);
+INSERT INTO `lab_submission_accs` VALUES (224, '1', 'LAB_HEAD', '0', 'Dr. Lutfiyah Hidayati, S.Pd., M.Pd.', NULL, '2024-07-29 13:02:11', '2024-07-29 13:02:11', NULL);
+INSERT INTO `lab_submission_accs` VALUES (225, '1', 'LAB_HEAD', '0', 'Dr. Lutfiyah Hidayati, S.Pd., M.Pd.', NULL, '2024-07-29 13:11:02', '2024-07-29 13:11:02', NULL);
+INSERT INTO `lab_submission_accs` VALUES (226, '1', 'LAB_HEAD', '0', 'Dr. Lutfiyah Hidayati, S.Pd., M.Pd.', NULL, '2024-07-29 13:51:28', '2024-07-29 13:51:28', NULL);
 
 -- ----------------------------
 -- Table structure for lab_submission_advisers
@@ -355,9 +365,7 @@ CREATE TABLE `lab_submissions`  (
 -- ----------------------------
 -- Records of lab_submissions
 -- ----------------------------
-INSERT INTO `lab_submissions` VALUES (1, 1, 'Test penenelitian', NULL, 'Pelatihan untuk meningkatkan kesejahteraan msyarakat', 'tp_pelatihan', '2024-07-31 00:00:00', '2024-08-01 00:00:00', 186, '0', NULL, '11', NULL, NULL, NULL, NULL, 'menunggu', NULL, NULL, '2024-07-26 14:55:05', NULL);
-INSERT INTO `lab_submissions` VALUES (2, 1, 'Test penenelitian', NULL, 'Pelatihan untuk meningkatkan kesejahteraan msyarakat', 'tp_penelitian', '2024-07-26 00:00:00', '2024-07-27 00:00:00', 186, '0', NULL, '11', NULL, NULL, NULL, NULL, 'menunggu', NULL, NULL, '2024-07-26 15:49:39', NULL);
-INSERT INTO `lab_submissions` VALUES (3, 1, 'Test penenelitian', 'rental', 'Pelatihan untuk meningkatkan kesejahteraan msyarakat', 'tp_penelitian', '2024-08-01 00:00:00', '2024-08-07 00:00:00', 186, '0', NULL, '11', NULL, NULL, NULL, NULL, 'menunggu', NULL, NULL, '2024-07-26 16:28:19', NULL);
+INSERT INTO `lab_submissions` VALUES (1, 1, 'Test penenelitian', 'borrowing', 'Pelatihan untuk meningkatkan kesejahteraan msyarakat', 'tp_penelitian', NULL, NULL, 186, '0', NULL, '11', NULL, NULL, NULL, NULL, 'disetujui', NULL, NULL, '2024-07-29 13:51:28', '2024-07-29 13:51:28');
 
 -- ----------------------------
 -- Table structure for lab_use_results
@@ -589,7 +597,7 @@ INSERT INTO `laboratory_facility_count_statuses` VALUES (6, '7', 2, 1, 1, 0, '20
 INSERT INTO `laboratory_facility_count_statuses` VALUES (7, '8', 2, 2, 0, 0, '2024-07-21 23:26:46', '2024-07-15 13:49:05');
 INSERT INTO `laboratory_facility_count_statuses` VALUES (8, '9', 2, 2, 0, 0, '2024-07-21 23:26:46', '2024-07-15 13:50:14');
 INSERT INTO `laboratory_facility_count_statuses` VALUES (9, '10', 2, 2, 0, 0, '2024-07-21 23:26:46', '2024-07-15 13:51:31');
-INSERT INTO `laboratory_facility_count_statuses` VALUES (10, '11', 5, 5, 0, 0, '2024-07-21 00:18:38', '2024-07-20 21:42:28');
+INSERT INTO `laboratory_facility_count_statuses` VALUES (10, '11', 5, 0, 5, 0, '2024-07-29 09:49:25', '2024-07-20 21:42:28');
 INSERT INTO `laboratory_facility_count_statuses` VALUES (11, '1', 1, 1, 0, 0, '2024-07-24 09:57:30', '2024-07-21 22:02:45');
 INSERT INTO `laboratory_facility_count_statuses` VALUES (12, '12', 2, 2, 0, 0, '2024-07-23 09:53:25', '2024-07-22 16:11:00');
 INSERT INTO `laboratory_facility_count_statuses` VALUES (13, '13', 2, 3, 0, 0, '2024-07-23 09:52:37', '2024-07-22 16:12:07');
@@ -652,19 +660,21 @@ DROP TABLE IF EXISTS `laboratory_labtests`;
 CREATE TABLE `laboratory_labtests`  (
   `lsv_id` int(11) NOT NULL,
   `lsv_lab_id` int(11) NULL DEFAULT NULL,
+  `lsv_status` enum('tersedia','tidak_tersedia') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsv_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsv_price` decimal(10, 2) NULL DEFAULT NULL,
   `lsv_notes_short` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsv_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsv_img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `updated_at` datetime NULL DEFAULT NULL,
+  `created_at` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`lsv_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of laboratory_labtests
 -- ----------------------------
-INSERT INTO `laboratory_labtests` VALUES (1, 58, 'Menguji kekuatan beton', 150000.00, 'Sarana untuk menguji listrik', 'Sarana untuk menguji listrik', '', '2024-05-06 15:09:13');
+INSERT INTO `laboratory_labtests` VALUES (1, 58, NULL, 'Menguji kekuatan beton', 150000.00, 'Sarana untuk menguji listrik', 'Sarana untuk menguji listrik', '', '2024-05-06 15:09:13', NULL);
 
 -- ----------------------------
 -- Table structure for laboratory_options
@@ -953,84 +963,87 @@ INSERT INTO `laboratory_working_times` VALUES (1, NULL, NULL, NULL, NULL, NULL, 
 -- ----------------------------
 DROP TABLE IF EXISTS `menus`;
 CREATE TABLE `menus`  (
-  `id_menu` int(10) NULL DEFAULT NULL,
+  `id_menu` int(10) NOT NULL,
   `mn_level_user` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `mn_parent_id` int(11) NULL DEFAULT NULL,
   `mn_icon_code` varchar(90) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `mn_title` varchar(90) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `mn_slug` varchar(90) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL
+  `mn_slug` varchar(90) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id_menu`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of menus
 -- ----------------------------
-INSERT INTO `menus` VALUES (1, 'ADMIN_SYSTEM', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (2, 'ADMIN_SYSTEM', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (3, 'ADMIN_SYSTEM', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
-INSERT INTO `menus` VALUES (4, 'ADMIN_SYSTEM', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (5, 'ADMIN_SYSTEM', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
-INSERT INTO `menus` VALUES (6, 'ADMIN_SYSTEM', 0, 'ri-survey-fill', 'Laporan', 'laporan');
-INSERT INTO `menus` VALUES (7, 'ADMIN_SYSTEM', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (8, 'ADMIN_SYSTEM', 7, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (9, 'ADMIN_SYSTEM', 7, 'ri-subtract-fill', 'SMTP Mail', 'pengaturan/email');
-INSERT INTO `menus` VALUES (10, 'ADMIN_SYSTEM', 7, 'ri-subtract-fill', 'Data Semua User', 'pengaturan/user');
-INSERT INTO `menus` VALUES (11, 'ADMIN_MASTER', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (12, 'ADMIN_MASTER', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (13, 'ADMIN_MASTER', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
-INSERT INTO `menus` VALUES (14, 'ADMIN_MASTER', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (15, 'ADMIN_MASTER', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
-INSERT INTO `menus` VALUES (16, 'ADMIN_MASTER', 0, 'ri-survey-fill', 'Laporan', 'laporan');
-INSERT INTO `menus` VALUES (17, 'ADMIN_MASTER', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (18, 'ADMIN_MASTER', 17, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (19, 'ADMIN_MASTER', 17, 'ri-subtract-fill', 'Data Semua User', 'pengaturan/user');
-INSERT INTO `menus` VALUES (20, 'LAB_HEAD', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (21, 'LAB_HEAD', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (22, 'LAB_HEAD', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
-INSERT INTO `menus` VALUES (23, 'LAB_HEAD', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (24, 'LAB_HEAD', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
-INSERT INTO `menus` VALUES (25, 'LAB_HEAD', 0, 'ri-survey-fill', 'Laporan', 'laporan');
-INSERT INTO `menus` VALUES (26, 'LAB_HEAD', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (27, 'LAB_HEAD', 26, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (28, 'LAB_SUBHEAD', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (29, 'LAB_SUBHEAD', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (30, 'LAB_SUBHEAD', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
-INSERT INTO `menus` VALUES (31, 'LAB_SUBHEAD', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (32, 'LAB_SUBHEAD', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
-INSERT INTO `menus` VALUES (33, 'LAB_SUBHEAD', 0, 'ri-survey-fill', 'Laporan', 'laporan');
-INSERT INTO `menus` VALUES (34, 'LAB_SUBHEAD', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (35, 'LAB_SUBHEAD', 34, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (36, 'LAB_TECHNICIAN', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (37, 'LAB_TECHNICIAN', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (38, 'LAB_TECHNICIAN', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
-INSERT INTO `menus` VALUES (39, 'LAB_TECHNICIAN', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
-INSERT INTO `menus` VALUES (40, 'LAB_TECHNICIAN', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (41, 'LAB_TECHNICIAN', 40, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (42, 'ADMIN_PRODI', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (43, 'ADMIN_PRODI', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (44, 'ADMIN_PRODI', 43, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (45, 'LECTURE', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (46, 'LECTURE', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (47, 'LECTURE', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (48, 'LECTURE', 0, 'ri-survey-fill', 'Laporan', 'laporan');
-INSERT INTO `menus` VALUES (49, 'LECTURE', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (50, 'LECTURE', 49, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (51, 'STUDENT', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (52, 'STUDENT', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (53, 'STUDENT', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (54, 'STUDENT', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (55, 'STUDENT', 54, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (56, 'PUBLIC_MEMBER', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (57, 'PUBLIC_MEMBER', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (58, 'PUBLIC_MEMBER', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (59, 'PUBLIC_MEMBER', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (60, 'PUBLIC_MEMBER', 59, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (61, 'PUBLIC_NON_MEMBER', 0, 'ri-home-fill', 'Beranda', 'beranda');
-INSERT INTO `menus` VALUES (62, 'PUBLIC_NON_MEMBER', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
-INSERT INTO `menus` VALUES (63, 'PUBLIC_NON_MEMBER', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
-INSERT INTO `menus` VALUES (64, 'PUBLIC_NON_MEMBER', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
-INSERT INTO `menus` VALUES (65, 'PUBLIC_NON_MEMBER', 64, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
-INSERT INTO `menus` VALUES (66, 'ADMIN_MASTER', 17, 'ri-subtract-fill', 'Data Source', 'pengaturan/form-datasource');
-INSERT INTO `menus` VALUES (67, 'LAB_HEAD', 26, 'ri-subtract-fill', 'Data User', 'pengaturan/user');
+INSERT INTO `menus` VALUES (101, 'ADMIN_SYSTEM', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (102, 'ADMIN_SYSTEM', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (103, 'ADMIN_SYSTEM', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
+INSERT INTO `menus` VALUES (104, 'ADMIN_SYSTEM', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (105, 'ADMIN_SYSTEM', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
+INSERT INTO `menus` VALUES (106, 'ADMIN_SYSTEM', 0, 'ri-survey-fill', 'Laporan', 'laporan');
+INSERT INTO `menus` VALUES (107, 'ADMIN_SYSTEM', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (108, 'ADMIN_SYSTEM', 107, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (109, 'ADMIN_SYSTEM', 107, 'ri-subtract-fill', 'SMTP Mail', 'pengaturan/email');
+INSERT INTO `menus` VALUES (110, 'ADMIN_SYSTEM', 107, 'ri-subtract-fill', 'Data Semua User', 'pengaturan/user');
+INSERT INTO `menus` VALUES (201, 'ADMIN_MASTER', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (202, 'ADMIN_MASTER', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (203, 'ADMIN_MASTER', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
+INSERT INTO `menus` VALUES (204, 'ADMIN_MASTER', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (205, 'ADMIN_MASTER', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
+INSERT INTO `menus` VALUES (206, 'ADMIN_MASTER', 0, 'ri-survey-fill', 'Laporan', 'laporan');
+INSERT INTO `menus` VALUES (207, 'ADMIN_MASTER', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (208, 'ADMIN_MASTER', 207, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (209, 'ADMIN_MASTER', 207, 'ri-subtract-fill', 'Data Semua User', 'pengaturan/user');
+INSERT INTO `menus` VALUES (210, 'ADMIN_MASTER', 207, 'ri-subtract-fill', 'Data Source', 'pengaturan/form-datasource');
+INSERT INTO `menus` VALUES (301, 'LAB_HEAD', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (302, 'LAB_HEAD', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (303, 'LAB_HEAD', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
+INSERT INTO `menus` VALUES (304, 'LAB_HEAD', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (305, 'LAB_HEAD', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
+INSERT INTO `menus` VALUES (306, 'LAB_HEAD', 0, 'ri-flask-fill', 'Uji Lab', 'uji_laboratorium');
+INSERT INTO `menus` VALUES (307, 'LAB_HEAD', 0, 'ri-survey-fill', 'Laporan', 'laporan');
+INSERT INTO `menus` VALUES (308, 'LAB_HEAD', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (309, 'LAB_HEAD', 308, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (310, 'LAB_HEAD', 308, 'ri-subtract-fill', 'Data User', 'pengaturan/user');
+INSERT INTO `menus` VALUES (401, 'LAB_SUBHEAD', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (402, 'LAB_SUBHEAD', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (403, 'LAB_SUBHEAD', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
+INSERT INTO `menus` VALUES (404, 'LAB_SUBHEAD', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (405, 'LAB_SUBHEAD', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
+INSERT INTO `menus` VALUES (406, 'LAB_SUBHEAD', 0, 'ri-flask-fill', 'Uji Lab', 'uji_laboratorium');
+INSERT INTO `menus` VALUES (407, 'LAB_SUBHEAD', 0, 'ri-survey-fill', 'Laporan', 'laporan');
+INSERT INTO `menus` VALUES (408, 'LAB_SUBHEAD', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (409, 'LAB_SUBHEAD', 408, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (501, 'LAB_TECHNICIAN', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (502, 'LAB_TECHNICIAN', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (503, 'LAB_TECHNICIAN', 0, 'ri-building-4-fill', 'Laboratorium', 'laboratorium');
+INSERT INTO `menus` VALUES (504, 'LAB_TECHNICIAN', 0, 'ri-pencil-ruler-2-fill', 'Fasilitas Lab', 'fasilitas_lab');
+INSERT INTO `menus` VALUES (505, 'LAB_TECHNICIAN', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (506, 'LAB_TECHNICIAN', 505, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (601, 'ADMIN_PRODI', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (602, 'ADMIN_PRODI', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (603, 'ADMIN_PRODI', NULL, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (701, 'LECTURE', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (702, 'LECTURE', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (703, 'LECTURE', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (704, 'LECTURE', 0, 'ri-survey-fill', 'Laporan', 'laporan');
+INSERT INTO `menus` VALUES (705, 'LECTURE', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (706, 'LECTURE', 705, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (801, 'STUDENT', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (802, 'STUDENT', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (803, 'STUDENT', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (804, 'STUDENT', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (805, 'STUDENT', 804, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (901, 'PUBLIC_MEMBER', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (902, 'PUBLIC_MEMBER', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (903, 'PUBLIC_MEMBER', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (904, 'PUBLIC_MEMBER', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (905, 'PUBLIC_MEMBER', 59, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
+INSERT INTO `menus` VALUES (1001, 'PUBLIC_NON_MEMBER', 0, 'ri-home-fill', 'Beranda', 'beranda');
+INSERT INTO `menus` VALUES (1002, 'PUBLIC_NON_MEMBER', 0, 'ri-article-line', 'Pengajuan', 'pengajuan');
+INSERT INTO `menus` VALUES (1003, 'PUBLIC_NON_MEMBER', 0, 'ri-calendar-schedule-fill', 'Jadwal Lab', 'jadwal_lab');
+INSERT INTO `menus` VALUES (1004, 'PUBLIC_NON_MEMBER', 0, 'ri-settings-2-fill', 'Pengaturan', 'pengaturan');
+INSERT INTO `menus` VALUES (1005, 'PUBLIC_NON_MEMBER', 64, 'ri-subtract-fill', 'Profil', 'pengaturan/profil');
 
 -- ----------------------------
 -- Table structure for migrations
@@ -1273,14 +1286,14 @@ INSERT INTO `user_details` VALUES (129, 182, '085799004533', NULL, 'S1 Pendidika
 INSERT INTO `user_details` VALUES (130, 183, '085799004533', NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', '2024-07-10 09:24:32', NULL, NULL);
 INSERT INTO `user_details` VALUES (131, 184, '085799004533', 'SIMOREJO SARI B-8/22-A Kota Surabaya Prov. Jawa Timur 60181 RT. 4 RW. 7', 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 13:03:19', '2024-07-24 14:24:51', NULL, NULL);
 INSERT INTO `user_details` VALUES (132, 185, '085799004533', 'Sukolilo', NULL, NULL, 'PT TRUST', '2024-06-13 16:19:11', '2024-07-24 14:25:03', NULL, NULL);
-INSERT INTO `user_details` VALUES (133, 186, '085799004533', 'alamat', 'Teknik Elektro', 'Teknik', 'UNESA', '2024-06-13 16:22:44', '2024-07-26 16:28:19', NULL, NULL);
+INSERT INTO `user_details` VALUES (133, 186, '085799004533', 'alamat', 'Teknik Elektro', 'Teknik', 'UNESA', '2024-06-13 16:22:44', '2024-07-29 09:47:36', NULL, NULL);
 INSERT INTO `user_details` VALUES (134, 185, '085799004533', 'Sukolilo', NULL, NULL, 'PT TRUST', '2024-07-09 10:45:40', '2024-07-24 14:25:03', NULL, NULL);
 INSERT INTO `user_details` VALUES (135, 73, '085399004433', NULL, NULL, NULL, NULL, '2024-07-10 09:50:39', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (136, 186, NULL, NULL, NULL, NULL, NULL, '2024-07-19 15:03:20', NULL, NULL, NULL);
-INSERT INTO `user_details` VALUES (137, 186, NULL, NULL, NULL, NULL, NULL, '2024-07-19 15:10:17', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (136, 186, '085799004533', 'alamat', 'Teknik Elektro', 'Teknik', 'UNESA', '2024-07-19 15:03:20', '2024-07-29 09:47:36', NULL, NULL);
+INSERT INTO `user_details` VALUES (137, 186, '085799004533', 'alamat', 'Teknik Elektro', 'Teknik', 'UNESA', '2024-07-19 15:10:17', '2024-07-29 09:47:36', NULL, NULL);
 INSERT INTO `user_details` VALUES (138, 187, NULL, NULL, 'TEKNIK SIPIL', NULL, NULL, '2024-07-23 14:17:44', '2024-07-24 13:48:43', NULL, NULL);
 INSERT INTO `user_details` VALUES (139, 185, '085799004533', 'Sukolilo', NULL, NULL, 'PT TRUST', '2024-07-24 10:45:45', '2024-07-24 14:25:03', NULL, NULL);
-INSERT INTO `user_details` VALUES (140, 186, NULL, NULL, NULL, NULL, NULL, '2024-07-24 11:42:23', NULL, NULL, NULL);
+INSERT INTO `user_details` VALUES (140, 186, '085799004533', 'alamat', 'Teknik Elektro', 'Teknik', 'UNESA', '2024-07-24 11:42:23', '2024-07-29 09:47:36', NULL, NULL);
 INSERT INTO `user_details` VALUES (142, 188, '0', NULL, 'TEKNIK MESIN', NULL, NULL, '2024-07-24 13:37:21', '2024-07-24 13:43:39', NULL, NULL);
 INSERT INTO `user_details` VALUES (143, 189, '0', NULL, 'TEKNIK INFORMATIKA', NULL, NULL, '2024-07-24 13:43:00', NULL, NULL, NULL);
 INSERT INTO `user_details` VALUES (144, 190, '0', NULL, 'TEKNIK ELEKTRO', NULL, NULL, '2024-07-24 13:44:41', NULL, NULL, NULL);
@@ -1320,7 +1333,7 @@ INSERT INTO `users` VALUES (4, 114, 'Kasublab', NULL, 'active', 'LAB_SUBHEAD', '
 INSERT INTO `users` VALUES (5, 115, 'Teknisi', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-03-15 15:16:59', '2024-05-29 08:15:53', NULL);
 INSERT INTO `users` VALUES (6, 116, 'Admina', NULL, 'active', 'ADMIN_PRODI', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'zacebox02@gmail.com', NULL, NULL, '2024-03-15 15:42:42', '2024-07-24 09:09:26', NULL);
 INSERT INTO `users` VALUES (7, 117, 'Dosen', NULL, 'active', 'LECTURE', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, '2024-03-19 12:42:44', '2024-05-29 08:15:36', NULL);
-INSERT INTO `users` VALUES (11, 196502171990021001, 'Prof. Dr. Joko, M.Pd., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:03', NULL);
+INSERT INTO `users` VALUES (11, 196502171990021001, 'Prof. Dr. Joko, M.Pd., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'splashtrick@gmail.com', NULL, NULL, NULL, '2024-07-29 09:12:30', NULL);
 INSERT INTO `users` VALUES (12, 196103251987011001, 'Prof. Dr. Bambang Suprianto, M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'bambangsuprianto@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 09:56:36', NULL);
 INSERT INTO `users` VALUES (13, 197107061999031001, 'Prof. Dr. IGP. Asto Buditjahjanto, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, NULL, NULL, '2024-05-28 09:06:03', NULL);
 INSERT INTO `users` VALUES (14, 199007032019032023, 'L. Endah Cahya Ningrum, S.Pd., M.Pd.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'endahningrum@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 09:58:02', NULL);
@@ -1343,7 +1356,7 @@ INSERT INTO `users` VALUES (30, 197803272008012016, 'Novi Sukma Drastiawati, S.T
 INSERT INTO `users` VALUES (31, 197012041999031003, 'Prof. Dr. Agus Wiyono, S.Pd., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'aguswiyono@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 09:52:04', NULL);
 INSERT INTO `users` VALUES (32, 196206291998021001, 'Drs. Djoni Irianto, M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'djoniirianto@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:19:40', NULL);
 INSERT INTO `users` VALUES (33, 198905102018032001, 'Danayanti Azmi Dewi Nusantara, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'danayantinusantara@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:39:14', NULL);
-INSERT INTO `users` VALUES (34, 201405003, 'Muhammad Imaduddin, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'splashtrick@gmail.com', NULL, NULL, NULL, '2024-06-12 12:46:57', NULL);
+INSERT INTO `users` VALUES (34, 201405003, 'Muhammad Imaduddin, S.T., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', '', NULL, NULL, NULL, '2024-07-29 09:12:27', NULL);
 INSERT INTO `users` VALUES (35, 197110072005012001, 'Krisna Dwi Handayani, S.T., M.MT., M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'krisnahandayani@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:35:48', NULL);
 INSERT INTO `users` VALUES (36, 196003201999032001, 'Ir. Nurhayati Aritonang, M.T.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'zacedev@gmail.com', NULL, NULL, NULL, '2024-07-23 10:37:29', NULL);
 INSERT INTO `users` VALUES (37, 195707311987122001, 'Prof. Dr. Marniati, S.E., M.M.', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 'marniati@unesa.ac.id', NULL, NULL, NULL, '2024-06-12 10:21:37', NULL);

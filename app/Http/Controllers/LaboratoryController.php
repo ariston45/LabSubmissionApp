@@ -151,8 +151,6 @@ class LaboratoryController extends Controller
 		}
 		return redirect('laboratorium');
 	}
-	
-	
 	/* Tags:... */
 	public function viewLabTechnicians(Request $request)
 	{
@@ -168,7 +166,6 @@ class LaboratoryController extends Controller
 		$delLabTech = Laboratory_technician::where('lat_id',$request->id)->delete();
 		return redirect()->back();
 	}
-
 	/* Tags:... */
 	public function actionInputUserTech(Request $request)
 	{
@@ -678,5 +675,10 @@ class LaboratoryController extends Controller
 			$tools[$key] = $value->laf_id;
 		}
 		return view('contents.content_form.form_update_labtest', compact('users', 'data_lab', 'data_utility', 'tools'));
+	}
+	/* Tags:... */
+	public function dataUjiLabs(Request $request)
+	{
+		return view('contents.content_datalist.data_uji_lab');
 	}
 }

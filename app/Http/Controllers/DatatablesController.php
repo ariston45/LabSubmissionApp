@@ -745,9 +745,6 @@ class DatatablesController extends Controller
 	/* Tags:... */
 	public function sourceDataTestLab(Request $request)
 	{
-		// $data = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
-		// ->where('laf_laboratorium', $request->lab_id)
-		// ->get();
 		$data = Laboratory_labtest::where('lsv_lab_id',$request->lab_id)->get();
 		return DataTables::of($data)
 		->addIndexColumn()
@@ -1369,5 +1366,65 @@ class DatatablesController extends Controller
 		})
 		->rawColumns(['opsi', 'name', 'no_id', 'email','level','status'])
 		->make(true);
+	}
+	public function sourceDataUjilab(Request $request)
+	{
+		$user = DataAuth();
+		if($user->level == 'LAB_SUBHEAD'){
+			$data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id','=', 'laboratories.lab_id')
+			->where('lab_head',$user->id)
+			->get();
+		}elseif($user->level == 'LAB_TECHNICIAN'){
+			$lab_ar = Laboratory_technician::where('lat_tech_id',$user->id)->get();
+			$lab_ids = [];
+			foreach ($lab_ar as $key => $value) {
+				$lab_ids[$key] = $value->lat_laboratory;
+			}
+			$data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id', '=', 'laboratories.lab_id')
+			->whereIn('lab_id',$lab_ids)
+			->get();
+		}else{
+			$data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id', '=', 'laboratories.lab_id')->get();
+		}
+		return DataTables::of($data)
+			->addIndexColumn()
+			->addColumn('empty_str', function ($k) {
+				return '';
+			})
+			->addColumn('opsi', function ($data) {
+				return ' <a href="'.url('uji_laboratorium/detail-ujilab/'.$data->lsv_id).'">
+				<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button"> Detail Uji Lab</button></a>';
+			})
+			->addColumn('name', function ($data) {
+				$res = $data->lsv_name;
+				return $res;
+			})
+			->addColumn('lab', function ($data) {
+				$res = $data->lab_name;
+				return $res;
+			})
+			->addColumn('status', function ($data) {
+				$res = $data->lab_name;
+				return $res;
+			})
+			->addColumn('notes', function ($data) {
+				$res = $data->lsv_notes;
+				return $res;
+			})
+			->addColumn('utility', function ($data) {
+				$data_utlity = Laboratory_labtest_facility::join('laboratory_facilities', 'laboratory_labtest_facilities.lst_facility', '=', 'laboratory_facilities.laf_id')
+				->where('lst_lsv_id', $data->lsv_id)->select('laf_name')->get();
+				$res = '';
+				foreach ($data_utlity as $key => $value) {
+					$res .= '- ' . $value->laf_name . '<br>';
+				}
+				return $res;
+			})
+			->addColumn('price', function ($data) {
+				$res = $data->lsv_price;
+				return $res;
+			})
+			->rawColumns(['opsi', 'name', 'notes', 'utility', 'price','lab','status'])
+			->make(true);
 	}
 }

@@ -14,7 +14,8 @@ use DataTables;
 use Storage;
 
 use App\Http\Controllers\SendingController;
-
+use App\Mail\Mail_head_acc;
+use App\Mail\Mail_head_reject;
 use App\Models\Lab_facility;
 use App\Models\Lab_submission;
 use App\Models\Laboratory;
@@ -1525,7 +1526,7 @@ class PengajuanController extends Controller
 		$web_date = '';
 		if($data_pengajuan->lsb_type == 'rental'){
 			$web_date.=strDate($data_pengajuan->lsb_date_start).' - '. strDate($data_pengajuan->lsb_date_end);
-		}else{
+		}elseif($data_pengajuan->lsb_type == 'borrowing'){
 			foreach($data_date as $key => $list){
 				$web_date.= 'Tanggal: '. strDateStart($list->lsd_date).'<br>';
 				$data_time = Lab_sub_time::join('laboratory_time_options', 'lab_sub_times.lstt_time_id','=', 'laboratory_time_options.lti_id')
@@ -1538,6 +1539,8 @@ class PengajuanController extends Controller
 					$web_date.= '<li>-</li>';
 				}
 			}
+		}else{
+			$web_date .= "";
 		}
 		# user kasub lab
 		$user_kasublab = User::leftJoin('user_details','users.id','=','user_details.usd_user')
@@ -1576,8 +1579,6 @@ class PengajuanController extends Controller
 		$data_facility_unlisted = Lab_facility::where('lsf_submission', $request->id)
 		->where('lsf_facility_status','unlisted')
 		->get();
-		// dd($data_facility_unlisted);
-		// die();
 		# Data Order
 		$data_order = Lab_sub_order::where('los_lsb_id', $request->id)
 		->first();
@@ -1972,9 +1973,10 @@ class PengajuanController extends Controller
 		if ($data_pengajuan->lsb_user_head != $user->id) {
 			return redirect()->back()->withErrors(['file_acc_arr' => 'Anda tidak memiliki akses.']);
 		}
-		# Jadwal pengajuan
+
+		# trans data Jadwal pengajuan
 		$data_tanggal = Lab_sub_date::where('lsd_lsb_id',$request->lsb_id)->get();
-		$idx_time = 0;
+		
 		$p_dates = [];
 		$inp_time = [];
 		foreach ($data_tanggal as $key => $value) {
@@ -1986,9 +1988,10 @@ class PengajuanController extends Controller
 				"lscd_date" => $value->lsd_date,
 				"lscd_status" => 'active',
 			];
-			$data_tanggal= Lab_sub_time::where('lstt_date_subs_id',$value->lsd_id)->get();
-			if ($data_tanggal != null) {
-				foreach ($data_tanggal as $skey => $value) {
+			$data_jam[$key] = Lab_sub_time::where('lstt_date_subs_id',$value->lsd_id)->get();
+			if ($data_jam[$key] != null) {
+				$idx_time = 0;
+				foreach ($data_jam[$key] as $skey => $value) {
 					$inp_time[$idx_time] = [
 						"lsct_date_id" => $value->lstt_date_subs_id,
 						"lsct_time_id" => $value->lstt_time_id,
@@ -1999,10 +2002,38 @@ class PengajuanController extends Controller
 			}
 			$id_sch_date++;
 		}
+		# data jadwal
+		$web_date ='';
+		if($data_pengajuan->lsb_type == 'rental'){
+			$web_date.='<table>';
+			$web_date.='<tr><td>' . strDate($data_pengajuan->lsb_date_start) . ' - ' . strDate($data_pengajuan->lsb_date_end).'</td></tr>';
+			$web_date.='</table>';
+		} elseif($data_pengajuan->lsb_type == 'borrowing'){
+			$web_date .= '<table>';
+			foreach ($data_tanggal as $key => $list) {
+				$web_date .= '<tr><th>' . strDateStart($list->lsd_date) . '</th><tr>';
+				$data_time = Lab_sub_time::join('laboratory_time_options', 'lab_sub_times.lstt_time_id', '=', 'laboratory_time_options.lti_id')
+				->where('lstt_date_subs_id', $list->lsd_id)->get();
+				if ($data_time->count() > 0) {
+					foreach ($data_time as $key => $value) {
+						$web_date .= '<tr><td> &nbsp; - ' . setTime($value->lti_start) . ' <b>-</b> ' . setTime($value->lti_end) . '</td></tr>';
+					}
+				} else {
+					$web_date .= '<tr><td> -- </td></tr>';
+				}
+			}
+			$web_date .= '</table>';
+		}else{
+			$web_date .= '<table>';
+			$web_date .= '<tr><td> -- </td></tr>';
+			$web_date .= '</table>';
+		}
+		# data kasublab
 		$data_kasublab = User::leftJoin('user_details','users.id','=', 'user_details.usd_user')
 		->where('id', $data_pengajuan->lsb_user_subhead)
 		->select('name', 'usd_phone','email')
 		->first();
+		#data pembimbing
 		$data_adviser = Lab_submission_adviser::where('las_lbs_id', $request->lsb_id)->get();
 		$data_acc[0] = [
 			'lsa_submission' => $request->lsb_id,
@@ -2071,7 +2102,7 @@ class PengajuanController extends Controller
 			'lab_id' => $data_pengajuan->lsb_lab_id,
 			'lab' => $data_pengajuan->lab_name,
 			'act' => $act,
-			'dates' => implode(', ', $p_dates), 
+			'datetimes' => $web_date, 
 		];
 		# set alat
 		$tool_loan = Lab_facility::where('lsf_submission', $data_pengajuan->lsb_id)->get();
@@ -2079,7 +2110,7 @@ class PengajuanController extends Controller
 			if ($value->lsf_facility_status == 'listed') {
 				$lab_tool[$key] = Laboratory_facility_count_status::where('lcs_facility',$value->lsf_facility_id)->first();
 				if($lab_tool[$key]->lcs_ready < $value->lsf_cnt_unit){
-					return redirect()->back();
+					// return redirect()->back();
 				}else{
 					$data_status_tool[$key] = [
 						'lcs_ready' => $lab_tool[$key]->lcs_ready - $value->lsf_cnt_unit,
@@ -2106,72 +2137,20 @@ class PengajuanController extends Controller
 			$storeSchDate = Lab_sch_date::insert($inp_date);
 			$storeSctTime = Lab_sch_time::insert($inp_time);
 			if ($data_kasublab->email != null) {
-				Mail::to($data_kasublab->email)->send(new NotifMailForSubHead($data_applicant));
+				Mail::to($data_kasublab->email)->send(new Mail_head_acc($data_applicant));
 			}
 		}else if($request->inp_acc == 'ditolak'){
 			#pengajuan ditolak
+			$data_rejecting = [
+				'head_acc' => $data_user_head->name . ', pada ' . strDatetimes(date('Y-m-d H:i:s')),
+			];
+			$data_applicant = array_merge($data_applicant, $data_rejecting);
 			$udateStatus = Lab_submission::where('lsb_id', $request->lsb_id)->update(['lsb_status' => 'ditolak', 'lsb_notes' => $request->inp_catatan]);
 			if ($data_pengajuan->email != null) {
-				Mail::to($data_pengajuan->email)->send(new NotifMailForApplicantReject($data_applicant));
+				Mail::to($data_pengajuan->email)->send(new Mail_head_reject($data_applicant));
 			}
 		}else{
 			return redirect()->back();
-		}
-		if ($data_pengajuan->level == 'STUDENT') {
-			if ($request->inp_acc == 'disetujui') {
-				
-				
-				$data_user_subhead = User::where('id', $data_pengajuan->lsb_user_subhead)->select('email')->first();
-				
-				#Mail to subhead
-				
-				#Mail to adviser
-				#Mail to student
-				// if ($data_pengajuan->email != null) {
-				// 	Mail::to($data_pengajuan->email)->send(new NotifMailForApplicant($data_applicant));
-				// }
-			}elseif($request->inp_acc == 'ditolak'){
-				$udateStatus = Lab_submission::where('lsb_id', $request->lsb_id)->update(['lsb_status' => 'ditolak']);
-				$data_rejecting = [
-					'head_acc' => $data_user_head->name . ', pada ' . strDatetimes(date('Y-m-d H:i:s')),
-				];
-				$data_applicant = array_merge($data_applicant, $data_rejecting);
-				#Mail to adviser
-				#Mail to student
-				if ($data_pengajuan->email != null) {
-					Mail::to($data_pengajuan->email)->send(new NotifMailForApplicantReject($data_applicant));
-				}
-			}
-		}else{
-			if ($request->inp_acc == 'disetujui') {
-				$udateStatus = Lab_submission::where('lsb_id', $request->lsb_id)->update(['lsb_status' => 'disetujui']);
-				$storeSchedule = Lab_schedule::insert($data_a);
-				$storeSchDate = Lab_sch_date::insert($inp_date);
-				$storeSctTime = Lab_sch_time::insert($inp_time);
-				$data_user_subhead = User::where('id', $data_pengajuan->lsb_user_subhead)->select('email')->first();
-				$data_accepting = [
-					'head_acc' => $data_user_head->name . ', pada ' . strDatetimes(date('Y-m-d H:i:s')),
-				];
-				$data_applicant = array_merge($data_applicant, $data_accepting);
-				#Mail to subhead
-				if ($data_user_subhead->email != null) {
-					Mail::to($data_user_subhead->email)->send(new NotifMailForSubHead($data_applicant));
-				}
-				#Mail to tenant
-				// if ($data_pengajuan->email != null) {
-				// 	Mail::to($data_pengajuan->email)->send(new NotifMailForApplicant($data_applicant));
-				// }
-			} elseif ($request->inp_acc == 'ditolak') {
-				$udateStatus = Lab_submission::where('lsb_id', $request->lsb_id)->update(['lsb_status' => 'ditolak']);
-				$data_rejecting = [
-					'head_acc' => $data_user_head->name . ', pada ' . strDatetimes(date('Y-m-d H:i:s')),
-				];
-				$data_applicant = array_merge($data_applicant, $data_rejecting);
-				#mail to applicant
-				if ($data_pengajuan->email != null) {
-					Mail::to($data_pengajuan->email)->send(new NotifMailForApplicantReject($data_applicant));
-				}
-			}
 		}
 		return redirect()->back();
 	}

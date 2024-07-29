@@ -54,7 +54,7 @@
 			</tr>
 			<tr>
 				<td colspan="4">
-					Memohon izin pemakaian fasilitas untuk keperluan kegiatan <b>{{ $data_applicant['act'] }}</b>, dengan Judul: 
+					Memohon izin pemakaian laboratorium dan fasilitas untuk keperluan kegiatan <b>{{ $data_applicant['act'] }}</b>, dengan Judul: 
 				</td>
 			</tr>
 			<tr>
@@ -70,7 +70,18 @@
 			<tr>
 				<td colspan="2" style="padding-left: 40px;padding-top: 0px;padding-bottom: 0px;"> Hari/Tanggal </td>
 				<td>
-					: {!! $data_applicant['datetimes'] !!}
+					<table>
+						@foreach ($data_applicant['datetimes'] as $key => $value)
+							<tr>
+								<th style="text-align: left;">{{ strDate($key) }}</th>
+							</tr>
+							@foreach ($value as $skey => $svalue )
+								<tr>
+									<td> &nbsp; - {{ $svalue }}</td>
+								</tr>
+							@endforeach
+						@endforeach
+					</table>
 				</td>
 			</tr>
 			<tr>

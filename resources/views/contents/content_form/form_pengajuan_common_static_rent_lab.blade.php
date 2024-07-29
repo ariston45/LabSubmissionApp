@@ -13,7 +13,7 @@ Lab management | Dashboard
 <div class="col-md-12">
   <div class="box box-primary">
     <div class="box-header with-border">
-      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan {{$lab_data->lab_name}}</h3>
+      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan Pinjam {{$lab_data->lab_name}}</h3>
       <div class="pull-right">
         <a href="{{ url('pengajuan') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
@@ -27,14 +27,6 @@ Lab management | Dashboard
         <input type="hidden" name="app_level" value="{{ $user_data->level }}">
         {{-- !! --}}
         <input type="hidden" id="inp-lab" name="inp_lab" value="{{$lab_data->lab_id}}">
-        {{-- <input type="hidden" id="inp-nama" name="inp_nama" value="{{ $user_data->name }}" >
-        <input type="hidden" id="inp-id" name="inp_id" value="{{ $user_data->no_id }}" >
-        <input type="hidden" id="inp-program-studi" name="inp_program_studi" value="{{ $user_data->usd_prodi }}">
-        <input type="hidden" id="inp-fakultas" name="inp_fakultas" value="{{ $user_data->usd_fakultas }}">
-        <input type="hidden" id="inp-institusi" name="inp_institusi" value="{{ $user_data->usd_universitas }}">
-        <input type="hidden" id="inp-nomor-kontak" name="inp_nomor_kontak" value="{{ $user_data->usd_phone }}">
-        <input type="hidden" id="inp-nomor-kontak" name="inp_address" value="{{ $user_data->usd_address }}">
-        <input type="hidden" name="inp_type_sub" value="pinjam_lab"> --}}
         {{-- !! --}}
         <div class="col-sm-offset-3 col-sm-9">
           <div class="divider">Data Pemohon</div>
@@ -106,7 +98,7 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_institusi') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Universitas / Institusi <span style="color: red;">*</span>
+              Institusi <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
@@ -175,11 +167,11 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        {{--  --}}
+        {{-- !! --}}
         @if (rulesUser(['STUDENT']))
         <div id="data-simontasi"></div>
         @endif
-        {{--  --}}
+        {{-- !! --}}
         {{-- Opsi untuk pilihan lain-lain --}}
         <div class="form-group has-feedback {{ $errors->has('inp_opsi_lainnya') ? ' has-error' : '' }}" id="fm-opsi" >
           <label class="col-sm-12 col-md-3 control-label" >
@@ -191,7 +183,7 @@ Lab management | Dashboard
             <input type="text" id="inp-tujuan" class="form-control" name="inp_tujuan" value="{{ old('inp_tujuan') }}" placeholder="Inputkan tujuan">
           </div>
         </div>
-        {{-- --- --}}
+        {{-- !! --}}
         <div class="form-group has-feedback {{ $errors->has('inp_judul') ? ' has-error' : '' }}" id="fm-judul" >
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -205,12 +197,11 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        {{-- ~ --}}
-        {{-- ~ --}}
+        {{-- !! --}}
+        {{-- !! --}}
         @php
           $idx_tool = 0;
         @endphp
-        
         @php
           $idx_time = 0;
         @endphp
@@ -237,12 +228,28 @@ Lab management | Dashboard
             @if ($errors->has('inp_fasilitas'))
 						<span style="color: red;"><i>{{ $errors->first('inp_fasilitas') }}</i></span>
 						@endif
-            @if ($errors->has('tool_err'))
-						<span style="color: red;"><i>{{ $errors->first('tool_err') }}</i></span>
-						@endif
           </div>
         </div>
-        {{--  --}}
+        <div class="form-group act-tool {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}" id="fm-inp-tool" style="margin-bottom: 5px;">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Opsional Fasilitas/Alat lainnya 
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <div style="margin-bottom: 5px;">
+              <select id="inp-tool-opsional" class="form-control" multiple name="inp_fasilitas_opsional[]">
+                <option value="{{ null }}">Pilih fasilitas/alat..</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        @if ($errors->has('tool_err'))
+        <div class="col-md-offset-3 col-md-9 act-datetime" >
+          <span style="color: red;"><i>{{ $errors->first('tool_err') }}</i></span>
+        </div>
+        @endif
+        {{-- !! --}}
         <div class="col-md-offset-3 col-md-9 act-datetime">
           <div class="divider">Jadwal Kegiatan</div>
         </div>
@@ -279,20 +286,21 @@ Lab management | Dashboard
 						<span style="color: red;"><i>{!! $errors->first('sch_konflik_err') !!}</i></span>
 						@endif
           </div> 
-        </div>
-        {{-- ~ --}}        
-        {{-- !!  --}}
-        
+        </div>       
+        {{-- !!  --}}  
         <div id="cost-tables" class="col-md-offset-3 col-md-9" style="padding: 0px;">
           <div id="test-id"></div>
         </div>
       </div>
       <div class="box-footer">
         <div class="col-md-3">
-
+          <i> Tanda ( <span style="color: red;">*</span> ) wajib diisi </i>
         </div>
         <div class="col-md-9">
           <button type="button" class="btn btn-default btn-flat" onclick="actPrePayment()"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
+          <a href="#">
+            <button type="button" class="btn btn-default btn-flat"><i class="ri-calendar-2-line" style="margin-right: 5px;"></i>Cek Jadwal</button>
+          </a>
           <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
           <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
         </div>
@@ -350,10 +358,9 @@ Lab management | Dashboard
     animation: spin 1s linear infinite;
     z-index: 9999;
 }
-
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
 @endpush
@@ -404,6 +411,21 @@ Lab management | Dashboard
 			},
 			item: function(data, escape) {
 				return '<div id="select-time">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+  var select_tool = new TomSelect("#inp-tool-opsional",{
+    maxItem:20,
+    create: true,			
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-opsional">'+escape(data.title)+'</div>';
 			}
 		}
   });

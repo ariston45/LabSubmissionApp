@@ -15,7 +15,7 @@ Lab management | Dashboard
 <div class="col-md-12">
   <div class="box box-primary">
     <div class="box-header with-border">
-      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan</h3>
+      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan Sewa Alat {{ $lab_data->lab_name }}</h3>
       <div class="pull-right">
         <a href="{{ url('pengajuan') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
@@ -258,7 +258,9 @@ Lab management | Dashboard
           </div>
         </div>
         @if ($errors->has('tool_err'))
-        <span style="color: red;"><i>{{ $errors->first('tool_err') }}</i></span>
+        <div class="col-md-offset-3 col-md-9 act-datetime" >
+          <span style="color: red;"><i>{{ $errors->first('tool_err') }}</i></span>
+        </div>
         @endif
         {{--  --}}
         <div class="col-md-offset-3 col-md-9 act-datetime">
@@ -302,9 +304,7 @@ Lab management | Dashboard
       </div>
       <div class="box-footer">
         <div class="col-md-3">
-          <i>
-            Tanda ( <span style="color: red;">*</span> ) wajib diisi
-          </i>
+          <i> Tanda ( <span style="color: red;">*</span> ) wajib diisi </i>
         </div>
         <div class="col-md-9">
           <button type="button" class="btn btn-default btn-flat" onclick="cekCost()"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>

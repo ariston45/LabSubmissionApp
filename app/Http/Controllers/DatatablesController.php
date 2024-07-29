@@ -1182,15 +1182,15 @@ class DatatablesController extends Controller
 			->addColumn('opsi', function ($data) {
 				$web ='';
 				if ($data->lab_status == 'tersedia') {
-					$web.='<a href="' . url('pengajuan/laboratorium/form-pengajuan-pinjam/' . $data->lab_id) . '">
+					$web.='<div style="text-align:center;"><a href="' . url('pengajuan/laboratorium/form-pengajuan-pinjam/' . $data->lab_id) . '">
 					<button class="btn btn-flat btn-default btn-xs " type="button" > <b>Pinjam Laboratorium</b></button></a>';
 					$web.='<a href="' . url('pengajuan/laboratorium/form-pengajuan-sewa/' . $data->lab_id) . '">
-					<button class="btn btn-flat btn-default btn-xs " type="button" > <b>Sewa Alat Laboratorium</b></button></a>';
+					<button class="btn btn-flat btn-default btn-xs " type="button" > <b>Sewa Alat Laboratorium</b></button></a></div>';
 				}else{
-					$web.='<a href="#">
+					$web.= '<div style="text-align:center;"><a href="#">
 					<button class="btn btn-flat btn-default btn-xs " type="button" disabled> <b>Pinjam Laboratorium</b></button></a>';
 					$web .= '<a href="#">
-					<button class="btn btn-flat btn-default btn-xs " type="button" disabled> <b>Sewa Alat Laboratorium</b></button></a>';
+					<button class="btn btn-flat btn-default btn-xs " type="button" disabled> <b>Sewa Alat Laboratorium</b></button></a></div>';
 				}
 				return $web;
 			})

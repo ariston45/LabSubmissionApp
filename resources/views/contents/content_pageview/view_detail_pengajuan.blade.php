@@ -98,7 +98,7 @@ Lab management | Dashboard
             <td style="width: 70%;">{{ $data_pengajuan->name }}</td>
           </tr>
           <tr>
-            <td style="width: 30%;"><b>NIM/No.ID/ID Lainnya</b></td>
+            <td style="width: 30%;"><b>NIM / No.ID</b></td>
             <td style="width: 70%;">{{ $data_pengajuan->no_id }}</td>
           </tr>
           <tr>
@@ -146,7 +146,6 @@ Lab management | Dashboard
           @endforeach
           <tr>
             <td style="width: 30%;"><b>Hari/Tanggal Pelaksanaan</b></td>
-            {{-- <td style="width: 70%;">{{ strDateStart($data_pengajuan->lsb_date_start) }} <b>s/d</b> {{ strDateEnd($data_pengajuan->lsb_date_end) }}</td> --}}
             <td style="width: 70%;">{!! $web_date !!}</td>
           </tr>
           <tr>
@@ -156,17 +155,36 @@ Lab management | Dashboard
           <tr>
             <td style="width: 30%;"><b>Fasilitas Laboratorium</b></td>
             <td style="width: 70%;">
-            @if ($data_facility->count() == 0)
-              --
-            @else
-              @foreach ($data_facility as $list)
-                - {{ $list->laf_name }} <br>
-                @if ($list->lsf_end_dt != null)
-                  Pengembalian {{$list->lsf_end_dt}}
+              <table>
+                <tr>
+                  <th>Daftar fasilitas terdaftar</th>
+                </tr>
+                @if ($data_facility_listed->count() == 0)
+                  <tr><td>--</td></tr>
+                @else
+                  @foreach ($data_facility_listed as $list)
+                    <tr>
+                      <td>
+                        <b>-</b> {{ $list->laf_name }} <i>[Jumlah Unit : {{ $list->lsf_cnt_unit }}]</i>
+                      </td>
+                    </tr>
+                  @endforeach
                 @endif
-                <br>
-              @endforeach
-            @endif
+                <tr>
+                  <th>Daftar fasilitas tidak terdaftar terdaftar</th>
+                </tr>
+                @if ($data_facility_unlisted->count() == 0)
+                  <tr><td>--</td></tr>
+                @else
+                  @foreach ($data_facility_unlisted as $list)
+                    <tr>
+                      <td>
+                        <b>-</b> {{ $list->lsf_facility_name }} 
+                      </td>
+                    </tr>
+                  @endforeach
+                @endif
+              </table>
             </td>
           </tr>
           <tr>
@@ -288,7 +306,7 @@ Lab management | Dashboard
           <tr>
             <td style="width: 30%;"><b>Teknikal Lab</b></td>
             <td style="width: 70%;">
-            @if ($user_technical == null)
+            @if ($user_technical->count() == 0)
               --
             @else
               {{ strJudul($user_technical->name) }} 
@@ -455,7 +473,7 @@ Lab management | Dashboard
 						<select type="text" class="form-control" name="inp_teknisi" id="inp-teknisi-i" value="" placeholder="Pilih user..">
               <option value="{{ null }}">Pilih teknikal pendamping</option>
               @foreach ( $user_technical_lab as $list)
-              <option value="{{ $list->id }}" @if ($user_technical != null) @if ($user_technical->id == $list->id) selected @endif @endif>{{ $list->name }}</option>
+              {{-- <option value="{{ $list->id }}" @if ($user_technical != null) @if ($user_technical->id == $list->id) selected @endif @endif>{{ $list->name }}</option> --}}
               @endforeach
             </select>
 					</div>

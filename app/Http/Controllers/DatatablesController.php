@@ -1372,6 +1372,7 @@ class DatatablesController extends Controller
 		$user = DataAuth();
 		if($user->level == 'LAB_SUBHEAD'){
 			$data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id','=', 'laboratories.lab_id')
+			->join('users', 'laboratories.lab_head', '=', 'users.id')
 			->where('lab_head',$user->id)
 			->get();
 		}elseif($user->level == 'LAB_TECHNICIAN'){
@@ -1381,10 +1382,13 @@ class DatatablesController extends Controller
 				$lab_ids[$key] = $value->lat_laboratory;
 			}
 			$data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id', '=', 'laboratories.lab_id')
+			->join('users', 'laboratories.lab_head', '=', 'users.id')
 			->whereIn('lab_id',$lab_ids)
 			->get();
 		}else{
-			$data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id', '=', 'laboratories.lab_id')->get();
+			$data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id', '=', 'laboratories.lab_id')
+			->join('users', 'laboratories.lab_head','=','users.id')
+			->get();
 		}
 		return DataTables::of($data)
 			->addIndexColumn()
@@ -1393,10 +1397,14 @@ class DatatablesController extends Controller
 			})
 			->addColumn('opsi', function ($data) {
 				return ' <a href="'.url('uji_laboratorium/detail-ujilab/'.$data->lsv_id).'">
-				<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button"> Detail Uji Lab</button></a>';
+				<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button"> Detail</button></a>';
 			})
 			->addColumn('name', function ($data) {
 				$res = $data->lsv_name;
+				return $res;
+			})
+			->addColumn('name_kasublab', function ($data) {
+				$res = $data->name;
 				return $res;
 			})
 			->addColumn('lab', function ($data) {
@@ -1404,7 +1412,7 @@ class DatatablesController extends Controller
 				return $res;
 			})
 			->addColumn('status', function ($data) {
-				$res = $data->lab_name;
+				$res = $data->lab_status;
 				return $res;
 			})
 			->addColumn('notes', function ($data) {
@@ -1424,7 +1432,65 @@ class DatatablesController extends Controller
 				$res = $data->lsv_price;
 				return $res;
 			})
-			->rawColumns(['opsi', 'name', 'notes', 'utility', 'price','lab','status'])
+			->rawColumns(['opsi', 'name', 'notes', 'utility', 'price','lab','status', 'name_kasublab'])
+			->make(true);
+	}
+	/* Tags:... */
+	public function sourceDataPengajuanUjilab(Request $request)
+	{
+		$data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id', '=', 'laboratories.lab_id')
+		->join('users', 'laboratories.lab_head', '=', 'users.id')
+		->get();
+		return DataTables::of($data)
+			->addIndexColumn()
+			->addColumn('empty_str', function ($k) {
+				return '';
+			})
+			->addColumn('opsi', function ($data) {
+				$web='';
+				if ($data->lab_status == 'tersedia') {
+					$web.='<div style="text-align:center;"><a href="' . url('pengajuan/uji_laboratorium/form-pengajuan-ujilab/' . $data->lsv_id) . '">
+					<button class="btn btn-flat btn-default btn-xs" type="button">Ajukan Pengujian</button></a></div>';
+				}else{
+					$web .= '<div style="text-align:center;"><a href="#">
+					<button class="btn btn-flat btn-default btn-xs" type="button" disabled >Ajukan Pengujian</button></a></div>';
+				}
+				return $web;
+			})
+			->addColumn('name', function ($data) {
+				$res = $data->lsv_name;
+				return $res;
+			})
+			->addColumn('name_kasublab', function ($data) {
+				$res = $data->name;
+				return $res;
+			})
+			->addColumn('lab', function ($data) {
+				$res = $data->lab_name;
+				return $res;
+			})
+			->addColumn('status', function ($data) {
+				$res = $data->lab_status;
+				return $res;
+			})
+			->addColumn('notes', function ($data) {
+				$res = $data->lsv_notes;
+				return $res;
+			})
+			->addColumn('utility', function ($data) {
+				$data_utlity = Laboratory_labtest_facility::join('laboratory_facilities', 'laboratory_labtest_facilities.lst_facility', '=', 'laboratory_facilities.laf_id')
+				->where('lst_lsv_id', $data->lsv_id)->select('laf_name')->get();
+				$res = '';
+				foreach ($data_utlity as $key => $value) {
+					$res .= '- ' . $value->laf_name . '<br>';
+				}
+				return $res;
+			})
+			->addColumn('price', function ($data) {
+				$res = $data->lsv_price;
+				return $res;
+			})
+			->rawColumns(['opsi', 'name', 'notes', 'utility', 'price', 'lab', 'status', 'name_kasublab'])
 			->make(true);
 	}
 }

@@ -13,20 +13,21 @@ Lab management | Dashboard
 <div class="col-md-12">
   <div class="box box-primary">
     <div class="box-header with-border">
-      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan {{$lab_data->lab_name}}</h3>
+      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan {{$lab_test_data->lsv_name}}</h3>
       <div class="pull-right">
-        <a href="{{ url('pengajuan/laboratorium') }}">
+        <a href="{{ url('pengajuan/uji_laboratorium') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
     </div>
-    <form class="form-horizontal" action="{{ route('action_pengajuan_static_by_sample') }}" method="POST" enctype="multipart/form-data">
+    <form class="form-horizontal" action="{{ route('action_pengajuan_static_labtest') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="box-body">
         {{-- !! --}}
         <input type="hidden" name="app_level" value="{{ $user_data->level }}">
         {{-- !! --}}
-        <input type="hidden" id="inp-lab" name="inp_lab" value="{{ $lab_data->lab_id }}" >
+        <input type="hidden" id="inp-lsv" name="inp_lsv" value="{{ $lsv_id }}" >
+        <input type="hidden" id="inp-lab" name="inp_lab" value="{{ $lab_test_data->lab_id }}" >
         <input type="hidden" id="inp-nama" name="inp_nama" value="{{ $user_data->name }}" >
         <input type="hidden" id="inp-id" name="inp_id" value="{{ $user_data->no_id }}" >
         <input type="hidden" id="inp-program-studi" name="inp_program_studi" value="{{ $user_data->usd_prodi }}">
@@ -59,11 +60,10 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        {{--  --}}
+        {{-- !! --}}
         @if (rulesUser(['STUDENT']))
         <div id="data-simontasi"></div>
         @endif
-        {{--  --}}
         {{-- Opsi untuk pilihan lain-lain --}}
         <div class="form-group has-feedback {{ $errors->has('inp_opsi_lainnya') ? ' has-error' : '' }}" id="fm-opsi" style="display: none;">
           <label class="col-sm-12 col-md-3 control-label" >
@@ -89,8 +89,7 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        {{--  --}}
-        {{-- ~ --}}
+        {{-- !! --}}
         <div class="col-md-offset-3 col-md-9 act-datetime act-tool">
           <div class="divider">Jumlah Sampel</div>
         </div>
@@ -107,43 +106,7 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        {{-- ~ --}}
-        @php
-          $idx_tool = 0;
-        @endphp
-        {{-- !!  --}}
-        @php
-          $idx_time = 0;
-        @endphp
-        <div class="col-md-offset-3 col-md-9 act-datetime act-tool">
-          <div class="divider">Fasilitas & Alat</div>
-        </div>
-        <div class="form-group act-tool {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}" id="fm-inp-tool">
-          <label class="col-sm-12 col-md-3 control-label">
-            <span style="padding-right: 30px;">
-              Fasilitas/Alat
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-9">
-            <div class="row">
-              <div class="col-sm-12">
-                <select id="inp-fasilitas" class="form-control" name="inp_fasilitas[]" multiple>
-                  <option value="{{ null }}">Pilih fasilitas/alat..</option>
-                  @foreach ($lab_tool_data as $list)
-                    <option value="{{$list->laf_id}}">{{$list->laf_name}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-            @if ($errors->has('inp_fasilitas'))
-						<span style="color: red;"><i>{{ $errors->first('inp_fasilitas') }}</i></span>
-						@endif
-            @if ($errors->has('tool_err'))
-						<span style="color: red;"><i>{{ $errors->first('tool_err') }}</i></span>
-						@endif
-          </div>
-        </div>
-        {{-- ~ --}}
+        {{-- !! --}}
         <div class="col-md-offset-3 col-md-9 act-datetime">
           <div class="divider">Jadwal Kegiatan</div>
         </div>
@@ -154,14 +117,14 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <div class="row" style="margin-bottom: 10px;">
+            <div class="input-group inp-split-cst date" style="margin-bottom: 6px;">
+              <div class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+              </div>
+              <input type="text" name="inp_date[{{ $idx_time }}]"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
+            </div>
+            {{-- <div class="row" style="margin-bottom: 10px;">
               <div class="col-sm-11">
-                <div class="input-group inp-split-cst date" style="margin-bottom: 6px;">
-									<div class="input-group-addon">
-										<i class="fa fa-calendar"></i>
-									</div>
-									<input type="text" name="inp_date[{{ $idx_time }}]"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
-								</div>
                 <select name="inp_time[{{ $idx_time }}][]" id="inp-time" class="form-control inp-time-cls" multiple>
                   @foreach ($times as $item)
                     <option value="{{ $item->lti_id }}">{{ setTime($item->lti_start) }} - {{ setTime($item->lti_end) }}</option>
@@ -173,7 +136,7 @@ Lab management | Dashboard
                   <i class="fa fa-plus" aria-hidden="true"></i>
                 </button>
               </div>
-            </div>
+            </div> --}}
             <div id="input-dt-container">
             </div>
             @if ($errors->has('sch_konflik_err'))
@@ -189,9 +152,9 @@ Lab management | Dashboard
       <div class="box-footer">
         <div class="col-md-offset-3 col-md-9">
           <button type="button" class="btn btn-default btn-flat" onclick="actPrePayment();"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
-          <a href="{{ url('jadwal_lab/'.$lab_data->lab_id) }}" target="_blank">
+          {{-- <a href="{{ url('jadwal_lab/'.$lab_data->lab_id) }}" target="_blank">
             <button type="button" class="btn btn-default btn-flat"><i class="ri-calendar-schedule-line" style="margin-right: 5px;"></i>Cek Jadwal</button>
-          </a>
+          </a> --}}
           <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
           <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
         </div>
@@ -276,6 +239,7 @@ Lab management | Dashboard
 			}
 		}
   });
+  /*
   var select_time = new TomSelect(".inp-time-cls",{
     create: false,
     maxItem: 20,			
@@ -306,6 +270,7 @@ Lab management | Dashboard
 			}
 		}
   });
+  */
 </script>
 {{-- function --}}
 <script>
@@ -417,7 +382,7 @@ Lab management | Dashboard
     });
   };
   function actPrePayment() {
-    var lab_id = "{{$lab_data->lab_id}}";
+    var lab_id = "{{ $lab_test_data->lab_id }}";
     var count_sample = $('#inp-sample').val();
     var activity = $('#inp-kegiatan').find(":selected").val();
     $.ajaxSetup({
@@ -442,78 +407,6 @@ Lab management | Dashboard
 </script>
 {{-- ready function --}}
 <script>
-  /**/
-  $(document).ready(function(){
-    var Idx_number = {{ $idx_time }};
-    $('#btn-add-input-datetime').click(function(){
-      Idx_number++;
-      $('#input-dt-container').append(
-        '<div class="row inp-dt-group" style="margin-bottom: 10px;"><div class="col-sm-11">'
-        +'<div class="input-group inp-split-cst date" style="margin-bottom: 6px;">'
-        +'<div class="input-group-addon"><i class="fa fa-calendar"></i></div>'
-        +'<input type="text" name="inp_date['+Idx_number+']"  value="{{ old('date_start') }}" class="form-control inp-date-s-'+Idx_number+' pull-right" placeholder="yyyy-mm-dd" readonly>'
-        +'</div>'
-        +'<select name="inp_time['+Idx_number+'][]" id="inp-time-idx-'+Idx_number+'" class="form-control inp-time-cls" multiple>'
-        +'@foreach ($times as $item)<option value="{{ $item->lti_id }}">{{ setTime($item->lti_start) }} - {{ setTime($item->lti_end) }}</option> @endforeach'
-        +'</select>'
-        +'</div>'
-        +'<div class="col-sm-1">'
-        +'<button type="button" id="btn-add-input-datetime" class="btn btn-flat btn-default rm-inp-dt"><i class="fa fa-times" aria-hidden="true"></i></button>'
-        +'</div></div>'
-      );
-      /**/
-      var dateScriptContent = '$(".inp-date-s-'+Idx_number+'").datepicker({autoclose: true,format: "yyyy-mm-dd",todayHighlight: true, orientation:"bottom"});';
-      var newDateScript = document.createElement('script');
-      newDateScript.textContent = dateScriptContent;
-      document.body.appendChild(newDateScript);
-      /**/
-      var newScriptContent = 'new TomSelect("#inp-time-idx-'+Idx_number+'",{create: false,maxItem: 20,valueField: "id",labelField: "title",searchField: "title"});';
-      var newScript = document.createElement('script');
-      newScript.textContent = newScriptContent;
-      document.body.appendChild(newScript);
-    });
-    $('#input-dt-container').on('click', '.rm-inp-dt', function(){
-      $(this).closest('.inp-dt-group').remove();
-    });
-  });
-  /**/
-  $(document).ready( function() {
-    $('.date-pick-start').on('change',function () {
-      var par_a = $('input[name=date_start]').val();
-      var par_b = $('input[name=date_end]').val();
-      actViewCheckSch(par_a,par_b);
-    });
-    $('#date-pick-end').on('change',function () {
-      var par_a = $('input[name=date_start]').val();
-      var par_b = $('input[name=date_end]').val();
-      actViewCheckSch(par_a,par_b);
-    });
-    $('#inp-lab').on('change',function () {
-      var par_a = $('input[name=date_start]').val();
-      var par_b = $('input[name=date_end]').val();
-      if (par_a == "" && par_b == "") {
-        $('#check-sch').html("");
-      } else {
-        actViewCheckSch(par_a,par_b);
-      }
-    });
-  });
-  $(document).ready( function() {
-    $(document).on('change', '#btn-file-foto :file', function() {
-      var input = $(this),
-      label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-      input.trigger('fileselect', [label]);
-    });
-    $('#btn-file-foto :file').on('fileselect', function(event, label) {
-      var input = $(this).parents('.input-group').find(':text'),
-      log = label;
-      if( input.length ) {
-        input.val(log);
-      } else {
-        if( log ) alert(log);
-      }
-    });
-  });
 </script>
 {{-- call by id or class --}}
 <script>

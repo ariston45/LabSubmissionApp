@@ -97,7 +97,6 @@ Lab management | Dashboard
         <div class="col-md-offset-3 col-md-9 act-datetime act-tool" >
           <div class="divider">Fasilitas & Alat</div>
         </div>
-        
         <div class="form-group act-tool {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}" id="fm-inp-tool">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
@@ -121,6 +120,20 @@ Lab management | Dashboard
             @if ($errors->has('tool_err'))
 						<span style="color: red;"><i>{{ $errors->first('tool_err') }}</i></span>
 						@endif
+          </div>
+        </div>
+        <div class="form-group act-tool {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}" id="fm-inp-tool" style="margin-bottom: 5px;">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Opsional Fasilitas/Alat lainnya 
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <div style="margin-bottom: 5px;">
+              <select id="inp-tool-opsional" class="form-control" multiple name="inp_fasilitas_opsional">
+                <option value="{{ null }}">Pilih fasilitas/alat..</option>
+              </select>
+            </div>
           </div>
         </div>
         {{-- !!  --}}
@@ -285,6 +298,20 @@ Lab management | Dashboard
 			},
 			item: function(data, escape) {
 				return '<div id="select-time">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+  var select_tool_opsional = new TomSelect("#inp-tool-opsional",{
+    create: true,			
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-opsional">'+escape(data.title)+'</div>';
 			}
 		}
   });

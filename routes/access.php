@@ -55,6 +55,7 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('source-datatables-pengajuan-archieve', [DatatablesController::class, 'sourceDataPengajuanArchive'])->name('source-datatables-pengajuan-archieve');
 		Route::post('source-datatables-pengajuan-additional', [DatatablesController::class, 'sourceDataPengajuanAdditional'])->name('source-datatables-pengajuan-additional');
 		Route::match(['get', 'post'], 'source-data-labtest', [DatatablesController::class, 'sourceDataUjilab'])->name('source_data_labtest');
+		Route::match(['get', 'post'], 'source-data-labtest-pengajuan', [DatatablesController::class, 'sourceDataPengajuanUjilab'])->name('source_data_labtest_pengajuan');
 		#Other
 		Route::post('source-data-sch-lab', [LaboratoryController::class, 'sourceDataScheduleLabJson'])->name('source_data_sch_lab');
 		Route::post('users', [DataController::class, 'sourceDataUser'])->name('source-data-users');
@@ -74,7 +75,6 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::match(['get', 'post'], 'source-check-tool', [DataController::class, 'checkToolDetail'])->name('source_check_tool');
 		#cek estimasi biaya
 		Route::match(['get', 'post'], 'source-check-cost-tool', [DataController::class, 'checkCostTool'])->name('source_check_cost_tool');
-
 	});
 	
 	/*************************************************************************************************************************************************/
@@ -90,10 +90,9 @@ Route::group(['middleware' => ['auth']], function () {
 		# first
 		Route::get('/', [PengajuanController::class, 'dataPengajuan']);
 		Route::get('laboratorium', [PengajuanController::class, 'dataLabPengajuan']);
-		Route::get('uji_laboratorium', [PengajuanController::class, 'dataLabPengajuan']);
+		Route::get('uji_laboratorium', [PengajuanController::class, 'dataUjiLab']);
 		// Route::get('additional', [PengajuanController::class, 'dataPengajuanAdditional']);
 		// Route::get('data-arsip', [PengajuanController::class, 'dataPengajuanArchice']);
-
 		# form
 		Route::get('laboratorium/form-pengajuan-pinjam/{id}', [PengajuanController::class, 'formLabRental']);
 		Route::get('laboratorium/form-pengajuan-sewa/{id}', [PengajuanController::class, 'formToolRental']);
@@ -109,7 +108,7 @@ Route::group(['middleware' => ['auth']], function () {
 		
 		Route::post('action-pengajuan-static-by-day', [PengajuanController::class, 'actionPengajuanStaticDay'])->name('action_pengajuan_static_by_day');
 		Route::post('action-pengajuan-static-by-tool', [PengajuanController::class, 'actionPengajuanStaticTool'])->name('action_pengajuan_static_by_tool');
-		Route::post('action-pengajuan-static-by-sample', [PengajuanController::class, 'actionPengajuanStaticSample'])->name('action_pengajuan_static_by_sample');
+		Route::post('action-pengajuan-static-by-labtest', [PengajuanController::class, 'actionPengajuanStaticLabtest'])->name('action_pengajuan_static_labtest');
 		
 		Route::get('action-acc-kalab/{id}', [PengajuanController::class, 'actionAccA'])->name('act-pengajuan-a');
 		Route::post('update-acceptable-submission', [PengajuanController::class, 'actionAccA'])->name('update_acceptable_submission');
@@ -140,7 +139,7 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('{id}/form-tambah-fasilitas', [LaboratoryController::class, 'formAddLaboratoryFacility']);
 		Route::get('{id}/form-tambah-ujilab', [LaboratoryController::class, 'formAddLaboratoryTest']);
 		// Route::get('form-update-fasilitas/{id}', [LaboratoryController::class, 'formUpdateLaboratoryFacility']);
-		Route::get('form-update-ujilab/{id}', [LaboratoryController::class, 'formUpdateLaboratoryUji']);
+		
 		Route::get('form-input-jadwal/{id}', [LaboratoryController::class, 'formInputLaboratorySch']);
 		Route::get('form-exclude-jadwal/{id}', [LaboratoryController::class, 'formExcludeLaboratorySch']);
 		Route::get('update-jadwal-lab/{id_lab}/{id_sch_lab}', [LaboratoryController::class, 'formUpdateLaboratorySch']);
@@ -188,6 +187,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::prefix('uji_laboratorium')->group(function () {
 		Route::get('/', [LaboratoryController::class, 'dataUjiLabs']);
 		Route::get('detail-ujilab/{id}', [LaboratoryController::class, 'viewLabTestDetail']);
+		Route::get('form-update-ujilab/{id}', [LaboratoryController::class, 'formUpdateLaboratoryUji']);
 	});
 	/*************************************************************************************************************************************************/
 	Route::prefix('laporan')->group(function () {

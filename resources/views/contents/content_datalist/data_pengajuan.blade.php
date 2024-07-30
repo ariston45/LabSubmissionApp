@@ -19,7 +19,7 @@ Lab management | Dashboard
 					<a href="{{ url('pengajuan/laboratorium') }}" class="btn btn-app bg-blue" style="min-width: 120px;">
 						<i class="fa fa-building"></i> Permohonan Lab
 					</a>
-					<a href="{{ url('pengajuan/form-pengajuan-labtest') }}" class="btn btn-app bg-blue" style="min-width: 120px;">
+					<a href="{{ url('pengajuan/uji_laboratorium') }}" class="btn btn-app bg-blue" style="min-width: 120px;">
 						<i class="fa fa-flask"></i> Uji Lab
 					</a>
 					@endif

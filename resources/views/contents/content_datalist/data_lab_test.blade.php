@@ -3,7 +3,7 @@
 Lab management | Dashboard
 @endsection
 @section('breadcrumb')
-<h4>Laboratorium</h4>
+<h4>Pengajuan</h4>
 <ol class="breadcrumb">
 	<li><a href="#"><i class="fa fa-home"></i> Uji Laboratorium</a></li>
 </ol>
@@ -14,12 +14,10 @@ Lab management | Dashboard
 		<div class="box-header with-border">
 			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Uji Laboratorium</h3>
 			<div class="pull-right">
-				@if (rulesUser(['ADMIN_SYSTEM','ADMIN_MASTER','LAB_HEAD']))
-				<a href="{{ url('laboratorium/form-input-lab') }}">
-					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah Uji Laboratorium</button>
-				</a>
-				@endif
-			</div>
+        <a href="{{ url('pengajuan') }}">
+          <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
+        </a>
+      </div>
 		</div>
 		<div class="box-body">
 			<div class="clearfix"></div>
@@ -27,10 +25,10 @@ Lab management | Dashboard
 				<thead>
 					<tr>
 						<th style="width: 5%">No</th>
-						<th style="width: 30%">Nama Uji Lab</th>
-						<th style="width: 30%">Laboratorium</th>
-						<th style="width: 20%">Kepala Lab</th>
-						<th style="width: 15%">Status</th>
+						<th style="width: 25%">Nama Uji Lab</th>
+						<th style="width: 25%">Laboratorium</th>
+						<th style="width: 25%">Kepala Lab</th>
+						<th style="width: 10%">Status</th>
 						<th style="width: 10%;text-align:center;">Opsi</th>
 					</tr>
 				</thead>
@@ -74,7 +72,7 @@ Lab management | Dashboard
 			responsive: true,
 			lengthChange: true,
 			ajax: {
-				"url" : "{!! route('source_data_labtest') !!}",
+				"url" : "{!! route('source_data_labtest_pengajuan') !!}",
 				"type" : "POST",
 			},
 			columns: [

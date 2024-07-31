@@ -113,7 +113,7 @@ Lab management | Dashboard
         <div class="form-group has-feedback act-datetime {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Jadwal Pengambilan Hasil
+              Jadwal Pengamnilan Hasil
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
@@ -121,14 +121,8 @@ Lab management | Dashboard
               <div class="input-group-addon">
                 <i class="fa fa-calendar"></i>
               </div>
-              <input type="text" id="inp-date" name="inp_date"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" onchange="actSetDate()" readonly>
+              <input type="text" name="inp_date"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
             </div>
-            @if ($user_kasublab != null)
-            <div>
-              <i>Catatan: untuk cek jadwal keluar hasil pengujian anda juga bisa menghubungi kasublab <b>{{$user_kasublab->name}}</b> nomor kontak <b>{{$user_kasublab->usd_phone}}</b> </i>
-            </div>
-            @endif
-            <div id="info-date"></div>
             {{-- <div class="row" style="margin-bottom: 10px;">
               <div class="col-sm-11">
                 <select name="inp_time[{{ $idx_time }}][]" id="inp-time" class="form-control inp-time-cls" multiple>
@@ -161,8 +155,8 @@ Lab management | Dashboard
           {{-- <a href="{{ url('jadwal_lab/'.$lab_data->lab_id) }}" target="_blank">
             <button type="button" class="btn btn-default btn-flat"><i class="ri-calendar-schedule-line" style="margin-right: 5px;"></i>Cek Jadwal</button>
           </a> --}}
-          <button type="submit" id="btn-submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
-          <button type="reset" id="btn-reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
+          <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
+          <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
         </div>
       </div>
     </form>
@@ -407,30 +401,6 @@ Lab management | Dashboard
       async: false,
       success: function(result) {
         $('#test-id').html(result);
-      },
-    });
-  };
-  function actSetDate() {
-    var inp_date = $('#inp-date').val();
-    $.ajaxSetup({
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      }
-    });
-    $.ajax({
-      type: 'POST',
-      url: "{{ route('check_date_hasil_ujilab') }}",
-      data: {
-        "inp_date":inp_date,
-      },
-      async: false,
-      success: function(result) {
-        if (result.param == 0) {
-          $('#info-date').html('<div style="color:red;"><i>Perhatian inputkan tanggal minimal '+result.tanggal+'.</i></div>');
-          $('#btn-submit').prop('disabled', true);
-        } else {
-          $('#btn-submit').prop('disabled', false);
-        }
       },
     });
   };

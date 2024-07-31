@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\Mail_user_laptest_approval;
 use Illuminate\Http\Request;
 use App\Http\Requests\PengajuanPostRequest;
 use App\Http\Requests\TechReportPostRequest;
@@ -30,6 +31,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\Mail_head_rent_tool;
 use App\Mail\Mail_head_borrowing_lab;
 use App\Mail\Mail_head_labtest;
+use App\Mail\Mail_user_pay_confirm_for_labtest;
 // use App\Mail\NotifMail;
 use App\Mail\NotifMailForApplicant;
 use App\Mail\NotifMailForSubhead;
@@ -180,38 +182,25 @@ class PengajuanController extends Controller
 	/* Tags:... */
 	public function formLabTest(Request $request)
 	{
-		// $user = Auth::user();
-		// $user_data = User::leftJoin('user_details', 'users.id', '=', 'user_details.usd_user')
-		// ->where('id', $user->id)
-		// ->first();
-		// $lab_data = Laboratory::where('lab_status', 'tersedia')
-		// ->get();
-		// $times = Laboratory_time_option::get();
-		// return view('contents.content_form.form_pengajuan_labtest', compact('user_data', 'lab_data','times'));
-		// dd($lab_test_data);
-		// $lab_data = Laboratory::where('lab_status', 'tersedia')
-		// ->where('lab_id', $request->id)
-		// ->first();
-		// $lab_tool_data = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
-		// ->where('laf_laboratorium', $request->id)
-		// ->where('lcs_ready', '!=', 0)
-		// ->get();
 		$lsv_id = $request->id;
 		$user = Auth::user();
 		$lab_test_data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id','=' ,'laboratories.lab_id')
 		->where('lsv_id', $lsv_id)
-		->select('lab_id', 'lsv_name')
+		->select('lab_id', 'lsv_name', 'lab_head')
 		->first();
 		$user_data = User::leftJoin('user_details', 'users.id', '=', 'user_details.usd_user')
 		->where('id', $user->id)
 		->first();
+		$user_kasublab = User::leftJoin('user_details', 'users.id', '=', 'user_details.usd_user')
+		->where('id', $lab_test_data->lab_head)
+		->first();
 		$times = Laboratory_time_option::get();
 		if ($user->level == 'STUDENT') {
-			return view('contents.content_form.form_pengajuan_student_static_lab_test', compact('lsv_id','user_data', 'lab_test_data'));
+			return view('contents.content_form.form_pengajuan_student_static_lab_test', compact('lsv_id','user_data', 'lab_test_data', 'user_kasublab'));
 		} elseif ($user->level == 'LECTURE') {
-			return view('contents.content_form.form_pengajuan_lecture_static_lab_test', compact('lsv_id', 'user_data', 'lab_test_data'));
+			return view('contents.content_form.form_pengajuan_lecture_static_lab_test', compact('lsv_id', 'user_data', 'lab_test_data', 'user_kasublab'));
 		} else {
-			return view('contents.content_form.form_pengajuan_common_static_lab_test', compact('lsv_id', 'user_data', 'lab_test_data'));
+			return view('contents.content_form.form_pengajuan_common_static_lab_test', compact('lsv_id', 'user_data', 'lab_test_data', 'user_kasublab'));
 		}
 	}
 
@@ -220,7 +209,12 @@ class PengajuanController extends Controller
 		$data_submission = Lab_submission::leftjoin('users','lab_submissions.lsb_user_id','=','users.id')
 		->where('lsb_id',$request->id)
 		->first();
-		return view('contents.content_form.form_laporan', compact('data_submission'));
+		if (rulesUser(['STUDENT'])) {
+			return view('contents.content_form.form_laporan_student', compact('data_submission'));
+		} else {
+			return view('contents.content_form.form_laporan', compact('data_submission'));
+		}
+		
 	}
 	/* Tags:... */
 	public function actionPengajuan(Request $request)
@@ -1334,7 +1328,7 @@ class PengajuanController extends Controller
 			'lsb_date_start' => $start_date,
 			'lsb_date_end' => null,
 			'lsb_file_1' => null,
-			'lsb_type' => $request->inp_type_sub,
+			'lsb_type' => 'testing',
 		];
 		$data_applicant = [
 			'lsb_id' => $id,
@@ -1682,8 +1676,12 @@ class PengajuanController extends Controller
 		]);
 		$data_order = Lab_sub_order::where('los_lsb_id', $request->lsb_id)->first();
 		####
-		// dd($data_pengajuan->email);
-		Mail::to($data_pengajuan->email)->send(new NotifMailForApplicantPayConfirm($data_applicant));
+		// dd($data_pengajuan);
+		if($data_pengajuan->lsb_type == 'testing'){
+			Mail::to($data_pengajuan->email)->send(new Mail_user_pay_confirm_for_labtest($data_applicant));
+		}else{
+			Mail::to($data_pengajuan->email)->send(new NotifMailForApplicantPayConfirm($data_applicant));
+		}
 		return redirect()->back();
 	}
 	/* Tags:... */
@@ -1894,6 +1892,9 @@ class PengajuanController extends Controller
 		$id_lab_sch = genIdLaSch();
 		$id_sch_date = genIdDateSch();
 		# Eksepsi
+		if (rulesUser(['LAB_HEAD', 'LAB_SUBHEAD'])) {
+			return redirect()->back()->withErrors(['file_acc_arr' => 'Anda tidak memiliki akses.']);
+		}
 		if ($request->inp_acc == null OR $request->inp_acc == '') {
 			return redirect()->back()->withErrors(['file_acc_arr' => 'Harap pilih respon pengajuan disetujui atau ditolak']);
 		}
@@ -1903,11 +1904,6 @@ class PengajuanController extends Controller
 		->leftjoin('laboratories', 'lab_submissions.lsb_lab_id','=', 'laboratories.lab_id')
 		->where('lsb_id',$request->lsb_id)
 		->first();
-		# Eksespsi
-		if ($data_pengajuan->lsb_user_head != $user->id) {
-			return redirect()->back()->withErrors(['file_acc_arr' => 'Anda tidak memiliki akses.']);
-		}
-
 		# trans data Jadwal pengajuan
 		$data_tanggal = Lab_sub_date::where('lsd_lsb_id',$request->lsb_id)->get();
 		
@@ -2089,9 +2085,94 @@ class PengajuanController extends Controller
 		return redirect()->back();
 	}
 	/* Tags:... */
+	public function actionAccB(Request $request)
+	{
+		$user = DataAuth();
+		$data_acc = Lab_submission_acc::where('lsa_submission', $request->lsb_id)->get();
+		$acc_kalab = $data_acc->where('lsa_rule', 'LAB_HEAD');
+		if ($acc_kalab == null || $acc_kalab == "") {
+			return redirect()->back()->withErrors(['file_acc_arr' => 'Harap pengajuan di-approve oleh kalab terlebih dahulu.']);
+		}
+		if ($request->inp_acc == null or $request->inp_acc == '') {
+			return redirect()->back()->withErrors(['file_acc_arr' => 'Harap pilih respon pengajuan disetujui atau ditolak']);
+		}
+		$data_pengajuan = Lab_submission::leftjoin('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+		->leftjoin('user_details', 'lab_submissions.lsb_user_id', '=', 'user_details.usd_user')
+		->leftjoin('laboratories', 'lab_submissions.lsb_lab_id', '=', 'laboratories.lab_id')
+		->where('lsb_id', $request->lsb_id)
+		->first();
+		$data_acc = [
+			'lsa_submission' => $request->lsb_id,
+			'lsa_rule' => $user->level,
+			'lsa_user_id' => $user->id,
+			'las_username' => $user->name,
+			'las_note' => $request->inp_catatan,
+			'las_date_acc' => date('Y-m-d H:i:s')
+		];
+		$data_tanggal = Lab_sub_date::where('lsd_lsb_id', $request->lsb_id)
+		->get();
+		$data_kasublab = User::leftJoin('user_details', 'users.id', '=', 'user_details.usd_user')
+		->where('id', $data_pengajuan->lsb_user_subhead)
+		->select('name', 'usd_phone')
+		->first();
+		$data_tech = User::leftJoin('user_details', 'users.id', '=', 'user_details.usd_user')
+		->where('id', $data_pengajuan->lsb_user_tech)
+		->select('name', 'usd_phone')
+		->first();
+		$data_head = User::leftJoin('user_details', 'users.id', '=', 'user_details.usd_user')
+		->where('id', $data_pengajuan->lsb_user_head)
+		->select('name', 'usd_phone')
+		->first();
+		$date_acc = Lab_submission_acc::where('lsa_submission', $data_pengajuan->lsb_id)->where('lsa_rule', 'LAB_HEAD')->select('created_at as created')->first();
+		if ($data_pengajuan->lsb_activity == 'tp_penelitian' || $data_pengajuan->lsb_activity == 'tp_penelitian_skripsi') {
+			$act = 'Penelitian';
+		} else if ($data_pengajuan->lsb_activity == 'tp_pelatihan') {
+			$act = 'Pelatihan';
+		} else if ($data_pengajuan->lsb_activity == 'tp_pengabdian_masyarakat') {
+			$act = 'Pengabdian Masyarakat';
+		} else if ($data_pengajuan->lsb_activity == 'tp_magang') {
+			$act = 'Magang';
+		} else if ($data_pengajuan->lsb_activity == 'tp_lain_lain') {
+			$act = 'Lain-lain*';
+		} else {
+			$act = null;
+		}
+		$data_applicant = [
+			'lsb_id' => $data_pengajuan->lsb_id,
+			'inp_nama' => $data_pengajuan->name,
+			'inp_id' => $data_pengajuan->no_id,
+			'inp_program_studi' => $data_pengajuan->usd_prodi,
+			'inp_fakultas' => $data_pengajuan->usd_fakultas,
+			'inp_institusi' => $data_pengajuan->usd_universitas,
+			'inp_address' => $data_pengajuan->usd_address,
+			'no_contact' => $data_pengajuan->usd_phone,
+			'title' => $data_pengajuan->lsb_title,
+			'lab_name' => $data_pengajuan->lab_name,
+			'name_subhead' => $data_kasublab->name,
+			'no_contact_subhead' => $data_kasublab->usd_phone,
+			'name_tech' => null,
+			'no_contact_tech' => null,
+			'head_acc' => $data_head->name . ' pada ' . strDateStart($date_acc->created),
+			'subhead_acc' => $data_kasublab->name . ' pada ' . strDateStart(date('Y-m-d H:i:s')),
+			'lab_id' => $data_pengajuan->lsb_lab_id,
+			'lab' => $data_pengajuan->lab_name,
+			'act' => $act,
+			'dates' => $data_tanggal->implode('lsd_date', ', '),
+		];
+		Mail::to($data_pengajuan->email)->send(new Mail_user_laptest_approval($data_applicant));
+		// Mail::to($data_pengajuan->email)->send(new NotifMailForApplicant($data_applicant));
+		dd($data_applicant);
+		if($request->inp_acc == 'disetujui'){
+			Lab_submission_acc::insert($data_acc);
+			Lab_submission::where('lsb_id', $request->lsb_id)->update(['lsb_status'=> 'disetujui']);
+		}else{
+			Lab_submission_acc::insert($data_acc);
+			Lab_submission::where('lsb_id', $request->lsb_id)->update(['lsb_status' => 'ditolak']);
+		}
+	}
+	/* Tags:... */
 	public function actionSettechnical(Request $request)
 	{
-		// dd($request->inp_teknisi);
 		if ($request->inp_teknisi == null) {
 			return redirect()->back()->withErrors(['tech_err' => 'Teknisi lab belum di-set']);
 		} else {

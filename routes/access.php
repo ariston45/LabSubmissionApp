@@ -75,6 +75,8 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::match(['get', 'post'], 'source-check-tool', [DataController::class, 'checkToolDetail'])->name('source_check_tool');
 		#cek estimasi biaya
 		Route::match(['get', 'post'], 'source-check-cost-tool', [DataController::class, 'checkCostTool'])->name('source_check_cost_tool');
+		Route::match(['get', 'post'], 'check-date-hasil-ujilab', [DataController::class, 'checkDateHasil'])->name('check_date_hasil_ujilab');
+		
 	});
 	
 	/*************************************************************************************************************************************************/
@@ -109,9 +111,9 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('action-pengajuan-static-by-day', [PengajuanController::class, 'actionPengajuanStaticDay'])->name('action_pengajuan_static_by_day');
 		Route::post('action-pengajuan-static-by-tool', [PengajuanController::class, 'actionPengajuanStaticTool'])->name('action_pengajuan_static_by_tool');
 		Route::post('action-pengajuan-static-by-labtest', [PengajuanController::class, 'actionPengajuanStaticLabtest'])->name('action_pengajuan_static_labtest');
-		
-		Route::get('action-acc-kalab/{id}', [PengajuanController::class, 'actionAccA'])->name('act-pengajuan-a');
+		// Route::get('action-acc-kalab/{id}', [PengajuanController::class, 'actionAccA'])->name('act-pengajuan-a');
 		Route::post('update-acceptable-submission', [PengajuanController::class, 'actionAccA'])->name('update_acceptable_submission');
+		Route::post('update-acceptable-submission-kasublab', [PengajuanController::class, 'actionAccB'])->name('update_acceptable_submission_kasublab');
 		Route::post('update-technical-submission', [PengajuanController::class, 'actionSettechnical'])->name('update_technical_submission');
 		Route::post('update-technical-report-submission', [PengajuanController::class, 'actionTechReport'])->name('update_technical_report_submission');
 		Route::post('action-upload-laporan', [PengajuanController::class, 'actionUploadLaporan'])->name('upload_laporan');

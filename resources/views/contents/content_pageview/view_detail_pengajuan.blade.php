@@ -55,9 +55,15 @@ Lab management | Dashboard
             <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
             </a>
+            @if ($data_pengajuan->lsb_type == 'testing')
+            <a href="#" onclick="actionResponKasublab();">
+              <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Uji Laboratorium</button>
+            </a>
+            @else
             <a href="#" onclick="actionSetTech();">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Set Teknikal Pendamping</button>
             </a>
+            @endif
             @if ($data_pengajuan->level == 'PUBLIC_MEMBER' || $data_pengajuan->level == 'PUBLIC_NON_MEMBER')
             <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
               <button class="btn btn-flat btn-xs btn-primary"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
@@ -77,9 +83,6 @@ Lab management | Dashboard
           @elseif (rulesUser(['STUDENT']))
             <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
-            </a>
-            <a href="{{ url('/public/assets/docs/form_legalitas.xlsx') }}">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-article-line" style="margin-right: 4px;"></i> Download Form Legalitas</button>
             </a>
             @if ($data_result == null)
             <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
@@ -135,8 +138,30 @@ Lab management | Dashboard
             <td style="width: 70%;">{{ strActivity($data_pengajuan->lsb_activity) }}</td>
           </tr>
           <tr>
+            <td style="width: 30%;"><b>Tujuan</b></td>
+            <td style="width: 70%;">
+              @if ($data_pengajuan->lsb_purpose == null || $data_pengajuan->lsb_purpose == "")
+                --
+              @else
+                {{$data_pengajuan->lsb_purpose}}
+              @endif
+            </td>
+          </tr>
+          <tr>
             <td style="width: 30%;"><b>Judul</b></td>
             <td style="width: 70%;">{{ strJudul($data_pengajuan->lsb_title) }}</td>
+          </tr>
+          <tr>
+            <td style="width: 30%;"><b>Kategori Pengajuan</b></td>
+            <td style="width: 70%;">
+              @if ($data_pengajuan->lsb_type == 'borrowing')
+                <b>Peminjaman Laboratorium</b>
+              @elseif ($data_pengajuan->lsb_type == 'rental')
+                <b>Sewa Alat Laboratorium</b>
+              @else
+                <b>Pengujian Sampel</b>
+              @endif
+            </td>
           </tr>
           @foreach ( $data_adviser as $value)
             <tr>
@@ -154,7 +179,14 @@ Lab management | Dashboard
             </tr>
           @endforeach
           <tr>
-            <td style="width: 30%;"><b>Hari/Tanggal Pelaksanaan</b></td>
+            <td style="width: 30%;">
+              <b>Hari/Tanggal </b>
+              @if ($data_pengajuan->lsb_type == 'testing')
+                <b>Keluar Hasil</b>
+              @else
+                <b>Pelaksanaan</b>
+              @endif
+            </td>
             <td style="width: 70%;">{!! $web_date !!}</td>
           </tr>
           <tr>
@@ -297,7 +329,6 @@ Lab management | Dashboard
             </td>
           </tr>
           {!! $str_acc !!}
-         
           <tr>
             <td style="width: 30%;"><b>Kepala Sub Lab</b></td>
             <td style="width: 70%;">
@@ -314,15 +345,15 @@ Lab management | Dashboard
             </td>
           </tr>
           <tr>
-            <td style="width: 30%;"><b>Teknikal Lab</b></td>
+            <td style="width: 30%;"><b>Teknisi Lab</b></td>
             <td style="width: 70%;">
-            {{-- @if ($user_technical->count() == 0)
+            @if ($data_pengajuan->lsb_user_tech == null || $data_pengajuan->lsb_user_tech == '')
               --
             @else
               {{ strJudul($user_technical->name) }} 
               <br> <i>No. Kontak: {{ $user_technical->usd_phone }}</i>
             @endif
-               --}}
+              
             </td>
           </tr>
         </tbody>
@@ -446,7 +477,7 @@ Lab management | Dashboard
 							Respon
 						</label>
 						<select name="inp_acc" id="inp-persetujuan" class="form-control" placeholder="">
-							<option value=""></option>
+							<option value="{{ null }}">Pilih Respon</option>
               <option value="disetujui">Disetujui</option>
               <option value="ditolak">Ditolak</option>
 						</select>
@@ -487,6 +518,42 @@ Lab management | Dashboard
               <option value="{{ $list->id }}" >{{ $list->name }}</option>
               @endforeach
             </select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
+					<button type="submit" class="btn btn-sm btn-primary btn-flat"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Kirim</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="modalResponPengajuanLabtest" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Respon Pengajuan</h4>
+			</div>
+			<form action="{{ route('update_acceptable_submission_kasublab') }}" method="POST" enctype="multipart/form-data" autocomplete="new-password">
+				@csrf
+				<div class="modal-body">
+					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
+					<div class="form-group has-feedback" style="margin-bottom: 12px;">
+						<label>
+							Respon
+						</label>
+						<select type="text" class="form-control" name="inp_acc" id="inp-acc" value="">
+              <option value="{{ null }}">Pilih Respon</option>
+              <option value="disetujui">Disetujui</option>
+              <option value="ditolak">Ditolak</option>
+            </select>
+					</div>
+          <div class="form-group has-feedback" style="margin-bottom: 0px;">
+						<label>
+							Catatan
+						</label>
+						<textarea name="inp_catatan" class="form-control" id="" cols="30" rows="5"></textarea>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -715,6 +782,9 @@ Lab management | Dashboard
   };
   function actionSetTechConfirm() {
     $('#modalTechConfirm').modal('show');
+  };
+  function actionResponKasublab() {
+    $('#modalResponPengajuanLabtest').modal('show');
   };
 </script>
 {{-- call by id or class --}}

@@ -40,7 +40,7 @@ function getDataStudents()
     $data = json_decode($response->getBody(), true);
     $dataCollection = collect($data);
   } else {
-    dd($data);
+    // dd($data);
     $path = Storage::url('data_source/' . $data->api_file_data);
     $url = url($path);
     $client = new Client();

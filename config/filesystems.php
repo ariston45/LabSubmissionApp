@@ -71,6 +71,8 @@ return [
         public_path('storage/image_lab') => storage_path('app/public/image_lab'),
         public_path('storage/bukti_bayar') => storage_path('app/public/bukti_bayar'),
         public_path('storage/image_lab_test') => storage_path('app/public/image_lab_test'),
+        public_path('storage/data_source') => storage_path('app/public/data_source'),
+        public_path('storage/data_laporan') => storage_path('app/public/data_laporan'),
     ],
 
 ];

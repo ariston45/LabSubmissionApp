@@ -1234,4 +1234,25 @@ class DataController extends Controller
 		];
 		return $data;
 	}
+	/* Tags:... */
+	public function checkDateHasil(Request $request)
+	{
+		$date = Carbon::now();
+		$newDate = $date->addDays(5);
+		$minDate = $newDate->format('Y-m-d');
+		$setDate = Carbon::createFromFormat('Y-m-d', $request->inp_date);
+		$setDate = $setDate->format('Y-m-d');
+		if ($setDate < $minDate) {
+			$data = [
+				"param" => 0,
+				"tanggal" => $minDate
+			];
+		}else{
+			$data = [
+				"param" => 1,
+				"tanggal" => $minDate
+			];
+		}
+		return $data;
+	}
 }

@@ -860,10 +860,10 @@ class PengajuanController extends Controller
 		foreach ($request->inp_fasilitas as $key => $value) {
 			$tool_ids[$key] = $value;
 		}
-		foreach ($request->inp_fasilitas_opsional as $key => $value) {
-			$tool_ids_oposional[$key] = $value;
-		}
 		if (count($tool_ids) > 0) {
+			foreach ($request->inp_fasilitas as $key => $value) {
+				$tool_ids[$key] = $value;
+			}
 			$data_tool = Laboratory_facility::leftjoin('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
 			->leftJoin('laboratories', 'Laboratory_facilities.laf_laboratorium', '=', 'laboratories.lab_id')
 			->whereIn('laf_id', $tool_ids)
@@ -884,6 +884,9 @@ class PengajuanController extends Controller
 			}
 		}
 		if (count($tool_ids_oposional) > 0) {
+			foreach ($request->inp_fasilitas_opsional as $key => $value) {
+				$tool_ids_oposional[$key] = $value;
+			}
 			foreach ($tool_ids_oposional as $key => $value) {
 				$lab_facility[$index_tool] = [
 					'lsf_submission' => $id,
@@ -1482,9 +1485,10 @@ class PengajuanController extends Controller
 		->where('lat_laboratory',$data_pengajuan->lsb_lab_id)
 		->select('id', 'name', 'usd_phone', 'email')
 		->get();
+		// dd($user_technical_lab);
 		# user teknichian pendamping
 		$user_technical = $user_technical_lab->where('id', $data_pengajuan->lsb_user_tech);
-	
+		// dd($user_technical);
 		# Data pembimbing
 		$data_adviser = Lab_submission_adviser::where('las_lbs_id', $request->id)->get();
 		# data Hasil
@@ -1568,10 +1572,11 @@ class PengajuanController extends Controller
 			<td style="width: 80%;">' . $acc_head . '</td>
 			</tr>';
 		}
-		
+		// die();
 		# return data
 		return view('contents.content_pageview.view_detail_pengajuan', compact('data_pengajuan', 'data_facility_listed','data_facility_unlisted', 'str_acc', 'acc_data_head','data_name_reduction',
 		'user_kasublab', 'user_technical', 'data_adviser','data_result','data_detail_order','data_detail_order_reduction','data_detail_order_total','user_technical_lab','web_date',
+			'user_technical',
 			'data_order'));
 
 	}

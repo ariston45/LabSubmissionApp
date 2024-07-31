@@ -58,17 +58,23 @@ Lab management | Dashboard
             <a href="#" onclick="actionSetTech();">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Set Teknikal Pendamping</button>
             </a>
-            @if ($data_result != null)
-              <a href="#" onclick="actValidationReport()">
-                <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Validasi Laporan</button>
-              </a>
+            @if ($data_pengajuan->level == 'PUBLIC_MEMBER' || $data_pengajuan->level == 'PUBLIC_NON_MEMBER')
+            <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
+              <button class="btn btn-flat btn-xs btn-primary"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
+            </a>
+            @else
+              @if ($data_result != null)
+                <a href="#" onclick="actValidationReport()">
+                  <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Validasi Laporan</button>
+                </a>
+              @endif
             @endif
           @elseif (rulesUser(['LAB_TECHNICIAN']))
             <a href="#" onclick="actionSetTechConfirm();">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Peminjaman Selesai</button>
             </a>
           {{--  --}}
-          @elseif (rulesUser(['STUDENT','LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
+          @elseif (rulesUser(['STUDENT']))
             <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
             </a>
@@ -80,9 +86,12 @@ Lab management | Dashboard
               <button class="btn btn-flat btn-xs btn-primary"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
             </a>
             @endif
+          @elseif (rulesUser(['LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
+            <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
+              <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
+            </a>
           @endif
         @elseif ($data_pengajuan->lsb_status == 'selesai')
-
         @endif
         <a href="{{ url('pengajuan') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
@@ -171,7 +180,7 @@ Lab management | Dashboard
                   @endforeach
                 @endif
                 <tr>
-                  <th>Daftar fasilitas tidak terdaftar terdaftar</th>
+                  <th>Daftar fasilitas tidak terdaftar</th>
                 </tr>
                 @if ($data_facility_unlisted->count() == 0)
                   <tr><td>--</td></tr>
@@ -288,6 +297,7 @@ Lab management | Dashboard
             </td>
           </tr>
           {!! $str_acc !!}
+         
           <tr>
             <td style="width: 30%;"><b>Kepala Sub Lab</b></td>
             <td style="width: 70%;">
@@ -306,12 +316,13 @@ Lab management | Dashboard
           <tr>
             <td style="width: 30%;"><b>Teknikal Lab</b></td>
             <td style="width: 70%;">
-            @if ($user_technical->count() == 0)
+            {{-- @if ($user_technical->count() == 0)
               --
             @else
               {{ strJudul($user_technical->name) }} 
               <br> <i>No. Kontak: {{ $user_technical->usd_phone }}</i>
             @endif
+               --}}
             </td>
           </tr>
         </tbody>
@@ -473,7 +484,7 @@ Lab management | Dashboard
 						<select type="text" class="form-control" name="inp_teknisi" id="inp-teknisi-i" value="" placeholder="Pilih user..">
               <option value="{{ null }}">Pilih teknikal pendamping</option>
               @foreach ( $user_technical_lab as $list)
-              {{-- <option value="{{ $list->id }}" @if ($user_technical != null) @if ($user_technical->id == $list->id) selected @endif @endif>{{ $list->name }}</option> --}}
+              <option value="{{ $list->id }}" >{{ $list->name }}</option>
               @endforeach
             </select>
 					</div>

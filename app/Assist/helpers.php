@@ -20,7 +20,71 @@ use App\Models\Lab_sub_order;
 use App\Models\Lab_sub_time;
 use App\Models\Laboratory_labtest;
 use App\Models\Laboratory_labtest_facility;
+use App\Models\Unesa_data;
 
+# API Helper
+# ================================================================================================================================================================================== #
+# Data all students skripsi
+function getDataStudents()
+{
+  $data = Unesa_data::where('api_code_name', 'data_source_skripsi')->first();
+  if ($data->api_url_status == 'aktif') {
+    $url = 'https://simontasiplus.unesa.ac.id/api_mhs_simontasi/36a169ac-4080-419e-a6c0-3538feb71089';
+    $client = new Client();
+    $response = $client->request('GET', $url, [
+      'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept' => 'application/json',
+      ],
+    ]);
+    $data = json_decode($response->getBody(), true);
+    $dataCollection = collect($data);
+  } else {
+    $path = Storage::url('data_source/' . $data->api_file_data);
+    $url = url($path);
+    $client = new Client();
+    $response = $client->request('GET', $url, [
+      'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept' => 'application/json',
+      ],
+    ]);
+    $data = json_decode($response->getBody(), true);
+    $dataCollection = collect($data)->values();
+  }
+  return $dataCollection;
+}
+# data initial students skripsic
+function getDataStudent($value_id)
+{
+  $data = Unesa_data::where('api_code_name', 'data_source_skripsi')->first();
+  if ($data->api_url_status == 'aktif') {
+    $url = 'https://simontasiplus.unesa.ac.id/api_mhs_simontasi/36a169ac-4080-419e-a6c0-3538feb71089';
+    $client = new Client();
+    $response = $client->request('GET', $url, [
+      'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept' => 'application/json',
+      ],
+    ]);
+    $data = json_decode($response->getBody(), true);
+    $dataCollection = collect($data);
+  } else {
+    $path = Storage::url('data_source/' . $data->api_file_data);
+    $url = url($path);
+    $client = new Client();
+    $response = $client->request('GET', $url, [
+      'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept' => 'application/json',
+      ],
+    ]);
+    $data = json_decode($response->getBody(), true);
+    $dataCollection = collect($data);
+  }
+  return $dataCollection->where('nim', $value_id);
+}
+# ================================================================================================================================================================================== #
 function genIdUser(){
   $max_id_user = User::max('id');
   $new_id = $max_id_user + 1 ;
@@ -220,40 +284,9 @@ function funCurrencyRupiah($value)
   return $res;
 }
 
-function getDataStudent($value_id){
-  // $url = 'https://simontasiplus.unesa.ac.id/api_mhs_unesa/36a169ac-4080-419e-a6c0-3538feb71089';
-  // $client = new Client();
-  // $response = $client->request('GET', $url);
-  // $laravelcollection = collect($response)->values();
-  // $data = $laravelcollection->where('nim', $value_id);
-  // if ($data == null) {
-  //   return 0;
-  // }else{
-  //   return $data;
-  // }
-  $url = 'https://simontasiplus.unesa.ac.id/api_mhs_unesa/36a169ac-4080-419e-a6c0-3538feb71089';
-  $client = new Client();
-  $response = $client->request('GET', $url, [
-    'headers' => [
-      'Accept' => 'application/json',
-    ],
-  ]);
-  $data = json_decode($response->getBody(), true);
-  $laravelcollection = collect($data)->values();
-  $data = $laravelcollection->where('nim', $value_id);
-  if ($data == null) {
-    return 0;
-  }else{
-    return $data;
-  }
-}
 
-function getDataStudents()
-{
-  $getjson = Http::acceptJson()->get('https://simontasiplus.unesa.ac.id/api_mhs_simontasi/36a169ac-4080-419e-a6c0-3538feb71089')->throw()->json();
-  $laravelcollection = collect($getjson)->values();
-  return $laravelcollection;
-}
+
+
 function getDataLectures(){
   // $getjson = Http::acceptJson()->get('https://i-sdm.unesa.ac.id/api/dosen-ft-email')->throw()->json();
   // $laravelcollection = collect($getjson)->values();

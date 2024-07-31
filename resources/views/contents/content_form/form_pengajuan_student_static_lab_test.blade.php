@@ -121,7 +121,7 @@ Lab management | Dashboard
               <div class="input-group-addon">
                 <i class="fa fa-calendar"></i>
               </div>
-              <input type="text" name="inp_date[{{ $idx_time }}]"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
+              <input type="text" name="inp_date"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
             </div>
             {{-- <div class="row" style="margin-bottom: 10px;">
               <div class="col-sm-11">

@@ -58,7 +58,7 @@
 					telah selesai. Laporan hasil penelitian anda sudah divalidasi oleh kasublab pada {{ $data_applicant['result_date_validation'] }}
 					Untuk informasi lebih lanjut silakan klik  <a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}"><b>Detail Pengajuan</b></a>, atau menghubungi nomor kontak berikut
 					<ul>
-						<li>Kepala Laboratorium: {{ $data_applicant['name_subhead'] }} - {{ $data_applicant['no_contact_subhead'] }}</li>
+						<li>Kepala Sub Laboratorium: {{ $data_applicant['name_subhead'] }} - {{ $data_applicant['no_contact_subhead'] }}</li>
 						<li>Teknisi Pendamping: {{ $data_applicant['name_tech'] }} - {{ $data_applicant['no_contact_tech'] }}</li>
 					</ul>
 				</td>

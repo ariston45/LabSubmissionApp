@@ -42,7 +42,7 @@ Route::post('source-data-sch-lab-open', [LaboratoryController::class, 'sourceDat
 #eksternal data
 Route::prefix('unesa_api')->group(function () {
   Route::get('skripsi_mahasiswa',[ApiUnesaController::class, 'DataSkripsiMahasiswa'])->name('data_api_skripsi_mahasiswa');
-  Route::get('skripsi_mahasiswa/{id}', [ApiUnesaController::class, 'DataSkripsiMahasiswaTunggal'])->name('data_api_skripsi_mahasiswa_tunggal');
+  Route::get('skripsi_mahasiswa/{id}', [ApiUnesaController::class, 'DataSkripsiMahasiswaInit'])->name('data_api_skripsi_mahasiswa_init');
   #
   Route::get('datasource_mhs_skripsi', [ApiUnesaController::class, 'datasourceMhsSkripsi'])->name('datasource_skripsi_mahasiswa');
 });

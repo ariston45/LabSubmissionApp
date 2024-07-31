@@ -12,6 +12,8 @@ use App\Models\Laboratory;
 use App\Models\Laboratory_facility;
 use App\Models\Laboratory_labtest;
 use App\Models\Laboratory_labtest_facility;
+use App\Models\Laboratory_technician;
+
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\User_detail;
@@ -253,34 +255,103 @@ class DataController extends Controller
 	/* Tags:... */
 	public function sourceMonthOnDashboard(Request $request)
 	{
+		$user = Auth::user();
 		$subDate = Carbon::now()->subMonths(3);
 		$addDate = Carbon::now()->addMonths(3);
 		$period = CarbonPeriod::create($subDate, '1 month', $addDate);
 		$months = [];
-		foreach ($period as $key_a => $date) {
-			$months[$key_a] = date('F',strtotime($date));
-			$month_item = date('m',strtotime($date));
-			$data_submission['tp_penelitian'][$key_a] = Lab_submission::whereMonth('lsb_date_start',$month_item)
-			->whereIn('lsb_status', ['disetujui', 'selesai'])
-			->where('lsb_activity', 'tp_penelitian')
-			->count();
-			$data_submission['tp_pelatihan'][$key_a] = Lab_submission::whereMonth('lsb_date_start', $month_item)
-			->whereIn('lsb_status', ['disetujui', 'selesai'])
-			->where('lsb_activity', 'tp_pelatihan')
-			->count();
-			$data_submission['tp_pengabdian_masyarakat'][$key_a] = Lab_submission::whereMonth('lsb_date_start', $month_item)
-			->whereIn('lsb_status', ['disetujui', 'selesai'])
-			->where('lsb_activity', 'tp_pengabdian_masyarakat')
-			->count();
-			$data_submission['tp_magang'][$key_a] = Lab_submission::whereMonth('lsb_date_start', $month_item)
-			->whereIn('lsb_status', ['disetujui', 'selesai'])
-			->where('lsb_activity', 'tp_magang')
-			->count();
-			$data_submission['tp_lain_lain'][$key_a] = Lab_submission::whereMonth('lsb_date_start', $month_item)
-			->whereIn('lsb_status', ['disetujui', 'selesai'])
-			->where('lsb_activity', 'tp_lain_lain')
-			->count();
+		if ($user->level == 'LAB_SUBHEAD') {
+			foreach ($period as $key_a => $date) {
+				$months[$key_a] = date('F', strtotime($date));
+				$month_item = date('m', strtotime($date));
+				$data_submission['tp_penelitian'][$key_a] = Lab_submission::where('lsb_user_subhead', $user->id)
+				->whereMonth('lsb_date_start', $month_item)
+					->whereIn('lsb_status', ['disetujui', 'selesai'])
+					->where('lsb_activity', 'tp_penelitian')
+					->count();
+				$data_submission['tp_pelatihan'][$key_a] = Lab_submission::where('lsb_user_subhead', $user->id)
+				->whereMonth('lsb_date_start', $month_item)
+					->whereIn('lsb_status', ['disetujui', 'selesai'])
+					->where('lsb_activity', 'tp_pelatihan')
+					->count();
+				$data_submission['tp_pengabdian_masyarakat'][$key_a] = Lab_submission::where('lsb_user_subhead', $user->id)
+				->whereMonth('lsb_date_start', $month_item)
+					->whereIn('lsb_status', ['disetujui', 'selesai'])
+					->where('lsb_activity', 'tp_pengabdian_masyarakat')
+					->count();
+				$data_submission['tp_magang'][$key_a] = Lab_submission::where('lsb_user_subhead', $user->id)
+				->whereMonth('lsb_date_start', $month_item)
+					->whereIn('lsb_status', ['disetujui', 'selesai'])
+					->where('lsb_activity', 'tp_magang')
+					->count();
+				$data_submission['tp_lain_lain'][$key_a] = Lab_submission::where('lsb_user_subhead', $user->id)
+				->whereMonth('lsb_date_start', $month_item)
+					->whereIn('lsb_status', ['disetujui', 'selesai'])
+					->where('lsb_activity', 'tp_lain_lain')
+					->count();
+			}
+		} else if($user->level == 'LAB_TECHNICIAN') {
+			foreach ($period as $key_a => $date) {
+				$months[$key_a] = date('F', strtotime($date));
+				$month_item = date('m', strtotime($date));
+				$lab_ar = Laboratory_technician::where('lat_tech_id', $user->id)->get();
+				$lab_ids = [];
+				foreach ($lab_ar as $key => $value) {
+					$lab_ids[$key] = $value->lat_laboratory;
+				}
+				$data_submission['tp_penelitian'][$key_a] = Lab_submission::whereIn('lab_id', $lab_ids)
+				->whereMonth('lsb_date_start', $month_item)
+					->whereIn('lsb_status', ['disetujui', 'selesai'])
+					->where('lsb_activity', 'tp_penelitian')
+					->count();
+				$data_submission['tp_pelatihan'][$key_a] = Lab_submission::whereIn('lab_id', $lab_ids)
+				->whereMonth('lsb_date_start', $month_item)
+					->whereIn('lsb_status', ['disetujui', 'selesai'])
+					->where('lsb_activity', 'tp_pelatihan')
+					->count();
+				$data_submission['tp_pengabdian_masyarakat'][$key_a] = Lab_submission::whereIn('lab_id', $lab_ids)
+				->whereMonth('lsb_date_start', $month_item)
+					->whereIn('lsb_status', ['disetujui', 'selesai'])
+					->where('lsb_activity', 'tp_pengabdian_masyarakat')
+					->count();
+				$data_submission['tp_magang'][$key_a] = Lab_submission::whereIn('lab_id', $lab_ids)
+				->whereMonth('lsb_date_start', $month_item)
+					->whereIn('lsb_status', ['disetujui', 'selesai'])
+					->where('lsb_activity', 'tp_magang')
+					->count();
+				$data_submission['tp_lain_lain'][$key_a] = Lab_submission::whereIn('lab_id', $lab_ids)
+				->yieldwhereMonth('lsb_date_start', $month_item)
+					->whereIn('lsb_status', ['disetujui', 'selesai'])
+					->where('lsb_activity', 'tp_lain_lain')
+					->count();
+			}
+		}else{
+			foreach ($period as $key_a => $date) {
+				$months[$key_a] = date('F',strtotime($date));
+				$month_item = date('m',strtotime($date));
+				$data_submission['tp_penelitian'][$key_a] = Lab_submission::whereMonth('lsb_date_start',$month_item)
+				->whereIn('lsb_status', ['disetujui', 'selesai'])
+				->where('lsb_activity', 'tp_penelitian')
+				->count();
+				$data_submission['tp_pelatihan'][$key_a] = Lab_submission::whereMonth('lsb_date_start', $month_item)
+				->whereIn('lsb_status', ['disetujui', 'selesai'])
+				->where('lsb_activity', 'tp_pelatihan')
+				->count();
+				$data_submission['tp_pengabdian_masyarakat'][$key_a] = Lab_submission::whereMonth('lsb_date_start', $month_item)
+				->whereIn('lsb_status', ['disetujui', 'selesai'])
+				->where('lsb_activity', 'tp_pengabdian_masyarakat')
+				->count();
+				$data_submission['tp_magang'][$key_a] = Lab_submission::whereMonth('lsb_date_start', $month_item)
+				->whereIn('lsb_status', ['disetujui', 'selesai'])
+				->where('lsb_activity', 'tp_magang')
+				->count();
+				$data_submission['tp_lain_lain'][$key_a] = Lab_submission::whereMonth('lsb_date_start', $month_item)
+				->whereIn('lsb_status', ['disetujui', 'selesai'])
+				->where('lsb_activity', 'tp_lain_lain')
+				->count();
+			}
 		}
+		
 		$start_date = $subDate->startOfMonth();
 		$end_date = $addDate->endOfMonth();
 		$str_title = $start_date->format('d M, Y').' - '. $end_date->format('d M, Y');
@@ -489,6 +560,9 @@ class DataController extends Controller
 	/* Tags:... */
 	public function checkDataStudent(Request $request)
 	{
+		$data_sudents = getDataStudents();
+		echo $data_sudents;
+		die();
 		$id = $request->nim;
 		$data = getDataStudent($id);
 		$data_lecture = getDataLectures();

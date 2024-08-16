@@ -4,7 +4,7 @@
 Lab management | Dashboard
 @endsection
 @section('breadcrumb')
-<h4>Laboratorium</h4>
+<h4>Uji Laboratorium</h4>
 <ol class="breadcrumb">
   <li><a href="#"><i class="fa fa-home"></i> Laboratorium</a></li>
   <li><a href="#">Uji Laboratorium</a></li>
@@ -17,12 +17,12 @@ Lab management | Dashboard
     <div class="box-header with-border">
       <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i>Form Input Uji Laboratorium</h3>
       <div class="pull-right">
-        <a href="{{ url('laboratorium/'.$data_lab->lab_id.'/ujilab') }}">
+        <a href="{{ url('uji_laboratorium/labtest/'.$data_lab->lab_id) }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
     </div>
-    <form class="form-horizontal" action="{{ route('input_ujilab') }}" method="POST" enctype="multipart/form-data">
+    <form class="form-horizontal" action="{{ route('insert_labtest') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="box-body">
         {{-- !! --}}
@@ -112,7 +112,7 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_cost') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Biaya(value)
+              Biaya(per sampel)
             </span>
           </label>
           <div class="col-sm-12 col-md-8">

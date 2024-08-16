@@ -30,37 +30,53 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_name') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Nama
+              Nama <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-name" class="form-control" name="inp_name" value="{{ old('inp_name') }}" placeholder="Input nama.." autocomplete="new-password">
+            <input type="text" id="inp-name" class="form-control" name="inp_name" value="{{ old('inp_name') }}" placeholder="Input nama.." autocomplete="new-password" required>
             @if ($errors->has('inp_name'))
 						<span style="color: red;"><i>{{ $errors->first('inp_name') }}</i></span>
 						@endif
           </div>
         </div>
+        {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_no_id') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Nomor ID
+              Nomor ID <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-no-id" class="form-control" name="inp_no_id" value="{{ old('inp_no_id') }}" placeholder="Input nomor id.." autocomplete="new-password">
+            <input type="text" id="inp-no-id" class="form-control" name="inp_no_id" value="{{ old('inp_no_id') }}" placeholder="Input nomor id.." autocomplete="new-password" required>
             @if ($errors->has('inp_no_id'))
 						<span style="color: red;"><i>{{ $errors->first('inp_no_id') }}</i></span>
 						@endif
           </div>
         </div>
-        <div class="form-group has-feedback {{ $errors->has('inp_email') ? ' has-error' : '' }}">
+        {{--  --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_nip') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Email
+              NIP
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-email" class="form-control" name="inp_email" value="{{ old('inp_email') }}" placeholder="Input email.." autocomplete="new-password">
+            <input type="text" id="inp-no-id" class="form-control" name="inp_nip" value="{{ old('inp_nip') }}" placeholder="Input nip .." autocomplete="new-password" >
+            @if ($errors->has('inp_nip'))
+						<span style="color: red;"><i>{{ $errors->first('inp_nip') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{--  --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_email') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Email <span style="color: red;">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <input type="email" id="inp-email" class="form-control" name="inp_email" value="{{ old('inp_email') }}" placeholder="Input email.." autocomplete="new-password" required>
             @if ($errors->has('inp_email'))
 						<span style="color: red;"><i>{{ $errors->first('inp_email') }}</i></span>
 						@endif
@@ -69,6 +85,7 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_no_contact') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -82,6 +99,40 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        {{--  --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_rumpun') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Pilih Rumpun
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <select type="text" class="form-control" name="inp_rumpun" id="inp-rumpun" value="" placeholder="Pilih rumpun.." autocomplete="new-password">
+              <option value="{{ null }}">Pilih rumpun</option>
+              @foreach ($data_rumpun as $list)
+                <option value="{{ $list->lag_id }}">{{ $list->lag_name }}</option>                    
+              @endforeach
+            </select>
+            @if ($errors->has('inp_rumpun'))
+						<span style="color: red;"><i>{{ $errors->first('inp_rumpun') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{--  --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_institusi') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Universitas/Institusi <span style="color: red">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <input type="text" id="inp-institusi" class="form-control" name="inp_institusi" value="{{ old('inp_institusi') }}" placeholder="Input Universitas / Institusi.." autocomplete="new-password" required>
+            @if ($errors->has('inp_institusi'))
+						<span style="color: red;"><i>{{ $errors->first('inp_institusi') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_prodi') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -95,6 +146,7 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_fakultas') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -108,19 +160,7 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        <div class="form-group has-feedback {{ $errors->has('inp_institusi') ? ' has-error' : '' }}">
-          <label class="col-sm-12 col-md-3 control-label" >
-            <span style="padding-right: 30px;">
-              Universitas/Institusi
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-institusi" class="form-control" name="inp_institusi" value="{{ old('inp_institusi') }}" placeholder="Input Universitas / Institusi.." autocomplete="new-password">
-            @if ($errors->has('inp_institusi'))
-						<span style="color: red;"><i>{{ $errors->first('inp_institusi') }}</i></span>
-						@endif
-          </div>
-        </div>
+        {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_address') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -134,14 +174,15 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_level') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Level Akses
+              Level Akses <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select type="text" class="form-control" name="inp_level" id="inp-level" value="" placeholder="Pilih level.." autocomplete="new-password">
+            <select type="text" class="form-control" name="inp_level" id="inp-level" value="" placeholder="Pilih level.." autocomplete="new-password" required>
               <option value=""></option>
               <option value="LECTURE" @if (old('inp_level') == 'LECTURE') selected @endif >LECTURE</option>
               <option value="STUDENT" @if (old('inp_level') == 'STUDENT') selected @endif >STUDENT</option>
@@ -159,34 +200,38 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_password') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Password
+              Password <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="password" id="inp-password" class="form-control" name="inp_password" value="{{ old('inp_password') }}" placeholder="Input Universitas / Institusi.." autocomplete="new-password">
+            <input type="password" id="inp-password" class="form-control" name="inp_password" value="{{ old('inp_password') }}" placeholder="Input Universitas / Institusi.." autocomplete="new-password" required>
             @if ($errors->has('inp_password'))
 						<span style="color: red;"><i>{{ $errors->first('inp_password') }}</i></span>
 						@endif
           </div>
         </div>
+        {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_password_confirm') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Konfirmasi Password
+              Konfirmasi Password <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="password" id="inp-password-confirm" class="form-control" name="inp_password_confirm" value="{{ old('inp_password_confirm') }}" placeholder="Input Universitas / Institusi.." autocomplete="new-password">
+            <input type="password" id="inp-password-confirm" class="form-control" name="inp_password_confirm" value="{{ old('inp_password_confirm') }}" placeholder="Input Universitas / Institusi.." autocomplete="new-password" required>
             @if ($errors->has('inp_password_confirm'))
 						<span style="color: red;"><i>{{ $errors->first('inp_password_confirm') }}</i></span>
 						@endif
           </div>
         </div>
+        {{--  --}}
       </div>
       <div class="box-footer">
+        <i>Tanda ( <span style="color: red;">*</span> ) wajib diisi.</i>
         <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Simpan</button>
         <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
       </div>

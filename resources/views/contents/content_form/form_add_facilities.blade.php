@@ -109,7 +109,7 @@ Lab management | Dashboard
           </div>
         </div>
         {{-- dasar peminjaman --}}
-        <div class="form-group has-feedback {{ $errors->has('inp_brand') ? ' has-error' : '' }}" >
+        {{-- <div class="form-group has-feedback {{ $errors->has('inp_brand') ? ' has-error' : '' }}" >
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
               Dasar peminjaman <span style="color: red;">*</span>
@@ -126,7 +126,7 @@ Lab management | Dashboard
 						<span style="color: red;"><i>{{ $errors->first('inp_base') }}</i></span>
 						@endif
           </div>
-        </div>
+        </div> --}}
         {{-- biaya peminjaman --}}
         <div class="form-group has-feedback {{ $errors->has('inp_brand') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >

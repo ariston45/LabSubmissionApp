@@ -41,11 +41,11 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_laboratorium') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Nama laboratorium
+              Nama laboratorium <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-laboratorium" class="form-control" name="inp_laboratorium" value="" placeholder="Input nama laboratorium..">
+            <input type="text" id="inp-laboratorium" class="form-control" name="inp_laboratorium" value="" placeholder="Input nama laboratorium.." required>
             @if ($errors->has('inp_laboratorium'))
 						<span style="color: red;"><i>{{ $errors->first('inp_laboratorium') }}</i></span>
 						@endif
@@ -58,9 +58,9 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select id="inp-rumpun" class="form-control" name="inp_rumpun" placeholder="Input Rumpun..">
+            <select id="inp-rumpun" class="form-control" name="inp_rumpun" placeholder="Input Rumpun.." onchange="actChangeRumpun()">
+              <option value="0">--Rumpun--</option>
               @foreach ($data_rumpun as $list)
-              <option value="{{ null }}"></option>
               <option value="{{ $list->lag_id }}" @if (old('inp_rumpun') == $list->lag_id) selected @endif >{{ $list->lag_name }}</option>  
               @endforeach
             </select>
@@ -149,11 +149,11 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_cost') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Biaya
+              Biaya Pinjam (/hari)
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-cost" class="form-control" name="inp_cost"  value="{{ old('inp_cost') }}" oninput="fcurrencyInput('inp-cost')" placeholder="biaya..">
+            <input type="text" id="inp-cost" class="form-control" name="inp_cost"  value="{{ old('inp_cost') }}" oninput="fcurrencyInput('inp-cost')" placeholder="Rp...">
             @if ($errors->has('inp_cost'))
 						<span style="color: red;"><i>{{ $errors->first('inp_cost') }}</i></span>
 						@endif
@@ -162,7 +162,7 @@ Lab management | Dashboard
         <div class="form-group {{ $errors->has('inp_status') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Status Ketersediaan
+              Status Ketersediaan <span style="color: red">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
@@ -179,11 +179,40 @@ Lab management | Dashboard
         <div class="form-group {{ $errors->has('inp_status') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Dasar Biaya Peminjaman
+              Layanan
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select id="inp-base" class="form-control" name="inp_base" placeholder="" required>
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="inp_check_borrow" value="true" >
+                    Peminjaman Laboratorium
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="inp_check_rental" value="true">
+                    Sewa Alat Laboratorium
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="inp_check_ujilab" value="true">
+                    Pegujian Sampel di Laboratorium
+                  </label>
+                </div>
+              </div>
+            </div>
+            @if ($errors->has('inp_lap_option'))
+						<span style="color: red;"><i>{{ $errors->first('inp_lap_option') }}</i></span>
+						@endif
+            {{-- <select id="inp-base" class="form-control" name="inp_base" placeholder="" required>
               <option value="{{ null }}"></option>
               <option value="by_day" @if (old('inp_base') == 'by_day') selected @endif >Berdasarkan Hari</option>
               <option value="by_sample" @if (old('inp_base') == 'by_sample') selected @endif >Berdasrkan Jumlah Sampel</option>
@@ -191,7 +220,7 @@ Lab management | Dashboard
             </select>
             @if ($errors->has('inp_status'))
 						<span style="color: red;"><i>{{ $errors->first('inp_base') }}</i></span>
-						@endif
+						@endif --}}
           </div>
         </div>
       </div>
@@ -276,6 +305,20 @@ Lab management | Dashboard
 <script src="{{ url('/public/assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
 {{-- varibles --}}
 <script>
+  var select_rumpun = new TomSelect("#inp-rumpun",{
+    create: false,
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-rumpun">'+escape(data.title)+'</div>';
+			}
+		}
+  });
   var select_kasublab = new TomSelect("#inp-kalab",{
     create: false,			
 		valueField: 'id',
@@ -319,107 +362,72 @@ Lab management | Dashboard
 			}
 		}
   });
-  var select_status = new TomSelect("#inp-base",{
-    create: false,
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-base">'+escape(data.title)+'</div>';
-			}
-		}
-  });
-  var select_rumpun = new TomSelect("#inp-rumpun",{
-    create: false,
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-rumpun">'+escape(data.title)+'</div>';
-			}
-		}
-  });
 </script>
 {{-- function --}}
 <script>
-  function actGetUser_labSubhead() {
-		var par_a = 'LAB_SUBHEAD';
-		var dataOption_users = [];
-		$.ajaxSetup({
+  function actChangeRumpun(){
+    var rumpun = select_rumpun.getValue();
+    opsiUserSubhead(rumpun);
+    opsiUserTech(rumpun);
+  };
+  function opsiUserSubhead(id) {
+    var dataOptionUser = [];
+    $.ajaxSetup({
 			headers: {
 				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 			}
 		});
 		$.ajax({
 			type: 'POST',
-			url: "{{ route('source-data-users') }}",
+			url: "{{ route('source_data_users_subhead') }}",
 			data: {
-				"level":par_a
+				"rumpun":id
 			},
 			async: false,
 			success: function(result) {
-				var dataOpt_users = JSON.parse(result);
-				for (let index = 0; index < dataOpt_users.length; index++) {
-          dataOption_users.push({
-            id:dataOpt_users[index].id,
-            title:dataOpt_users[index].title,
+				$.each(result, function (i, result) {
+          dataOptionUser.push({
+            id: result.id,
+            title: result.title
           });
-        }
+        });
 			},
 		});
-		return dataOption_users;
-	};
-  function actGetUser_labTechnicians() {
-		var par_a = 'LAB_TECHNICIAN';
-		var dataOption_users = [];
-		$.ajaxSetup({
+    select_kasublab.clear();
+    select_kasublab.clearOptions();
+    select_kasublab.addOptions(dataOptionUser);
+  };
+  function opsiUserTech(id) {
+    var dataOptionUser_i = [];
+    $.ajaxSetup({
 			headers: {
 				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 			}
 		});
 		$.ajax({
 			type: 'POST',
-			url: "{{ route('source-data-users') }}",
+			url: "{{ route('source_data_users_tech') }}",
 			data: {
-				"level":par_a
+				"rumpun":id
 			},
 			async: false,
 			success: function(result) {
-				var dataOpt_users = JSON.parse(result);
-				for (let index = 0; index < dataOpt_users.length; index++) {
-          dataOption_users.push({
-            id:dataOpt_users[index].id,
-            title:dataOpt_users[index].title,
+				$.each(result, function (i, result) {
+          dataOptionUser_i.push({
+            id: result.id,
+            title: result.title
           });
-        }
+        });
 			},
 		});
-		return dataOption_users;
-	};
-  /* function actionRupiahCurFormat(angka) {
-    var number_string = angka.toString(),
-    split = number_string.split(","),
-    sisa = split[0].length % 3,
-    rupiah = split[0].substr(0, sisa) +
-      split[0].substr(sisa).match(/\d{3}/gi).join(",");
-
-    if (split[1]) {
-      rupiah += "." + split[1];
-    }
-    return "Rp. " + rupiah;
-  }; */
+    select_technician.clear();
+    select_technician.clearOptions();
+    select_technician.addOptions(dataOptionUser_i);
+  };
   function fcurrencyInput(elem) {
     var inputElement = document.getElementById(elem);
     inputElement.value = formatRupiah(inputElement.value, 'Rp ');
-  }
+  };
   function formatRupiah(number, prefix) {
     var number_string = number.replace(/[^,\d]/g, '').toString(),
     split = number_string.split(','),
@@ -437,10 +445,9 @@ Lab management | Dashboard
 {{-- ready function --}}
 <script>
   $(document).ready( function() {
-    var user_subhead_lab = actGetUser_labSubhead();
-    var user_technicians = actGetUser_labTechnicians();
-    select_kasublab.addOptions(user_subhead_lab);
-    select_technician.addOptions(user_technicians);
+    var id_rumpun = select_rumpun.getValue();
+    opsiUserSubhead(id_rumpun);
+    opsiUserTech(id_rumpun);
   });
   $(document).ready( function() {
     $(document).on('change', '#btn-file-foto :file', function() {

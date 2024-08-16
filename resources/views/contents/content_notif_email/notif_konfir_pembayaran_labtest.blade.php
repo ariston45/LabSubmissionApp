@@ -36,27 +36,13 @@
 			</tr>
 			<tr>
 				<td colspan="4">
-					Pengajuan peminjaman {{ $data_applicant['lab'] }}, dengan jadwal peminjaman tanggal <br> 
-					@php
-						$data = dataGetDatetime($data_applicant['lsb_id']);
-					@endphp
-					<table>
-						@foreach ($data as $key => $value)
-							<tr>
-								- {{ $key }}
-								@if (count($value) > 0)
-									<table>
-										@foreach ($value as $li)
-											<tr>&nbsp;&nbsp;{{$li}}</tr>
-										@endforeach
-									</table>
-								@endif
-							</tr>
-						@endforeach
-					</table>
-					Telah disetujui oleh {{ $data_applicant['kalab'] }}.
+					Pengajuan pengujian sampel di {{ $data_applicant['lab'] }}, dengan jadwal rilis laporan tanggal <br>
+					<b>
+						{!! $data_applicant['dates'] !!}
+					</b> 
+				
 					Untuk mengecek detail pembayaran, klik link <a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}"><b>Detail Peminjaman</b></a>. <br>
-					Silakan lakukan pembayaran dengan tranfer ke virtual accout berikut; <br>
+					Silakan lakukan pembayaran dengan transfer ke virtual accout berikut; <br>
 					<b>
 						VA Name : Unesa Laboratorium FT <br>
 						VA Number : 9422-023-066-05-0001 <br>
@@ -65,8 +51,8 @@
 			</tr>
 			<tr>
 				<td colspan="4">
-					Pembayaran dengan menggunakan nomor VA yang tertera melalui channel BTN maupun Bank lain menggunkan menu 'transfer ke bank lain'. Pembayaran dilakukan selama 3 x 24 jam sejak pengajuan dijukan, 
-					apabila tidak segara dilakukan pembayaran maka pengajuan dianggap batal.
+					Pembayaran dengan menggunakan nomor VA yang tertera melalui channel BTN maupun Bank lain menggunakan menu 'transfer ke bank lain'. Pembayaran dilakukan selama <b>3 x 24 jam </b> sejak pengajuan diajukan, 
+					apabila tidak segera dilakukan pembayaran maka pengajuan dianggap batal.
 				</td>
 			</tr>
 			<tr>

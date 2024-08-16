@@ -126,6 +126,7 @@ class LandController extends Controller
 		$id_labtest = $request->id;
 
 		$data_labtest = Laboratory_labtest::Join('laboratories', 'laboratory_labtests.lsv_lab_id', '=', 'laboratories.lab_id')
+		->leftjoin('laboratory_options', 'laboratory_labtests.lsv_lab_id', '=', 'laboratory_options.lop_lab_id')
 		->leftjoin('users', 'laboratories.lab_head','=', 'users.id')
 		->where('lsv_id', $id_labtest)
 		->first();

@@ -8,6 +8,7 @@ use Carbon\CarbonPeriod;
 
 use App\Models\Lab_schedule;
 use App\Models\Lab_submission;
+use App\Models\Lab_submission_adviser;
 use App\Models\Laboratory;
 use App\Models\Laboratory_facility;
 use App\Models\Laboratory_labtest;
@@ -205,10 +206,19 @@ class DataController extends Controller
 			return redirect()->back()->withErrors(['file_laporan_err' => 'File tidak tersedia.']);
 		}
 	}
-	public function downloadLaporanKegiatan_ii(Request $request)
+	/* Tags:... */
+	public function downloadLampiranMhs(Request $request)
 	{
 		try {
-			return Storage::download('public/data_laporan_bending/' . $request->filename);
+			return Storage::download('public/data_lampiran_mhs/' . $request->filename);
+		} catch (\Throwable $th) {
+			return redirect()->back()->withErrors(['file_laporan_err' => 'File tidak tersedia.']);
+		}
+	}
+	public function downloadLaporanLegalitas(Request $request)
+	{
+		try {
+			return Storage::download('public/data_legalitas/' . $request->filename);
 		} catch (\Throwable $th) {
 			return redirect()->back()->withErrors(['file_laporan_err' => 'File tidak tersedia.']);
 		}
@@ -447,17 +457,25 @@ class DataController extends Controller
 		$data = null;
 		if ($request->group == 'all' && $request->labs == 'all') {
 			$data = Laboratory::join('laboratory_labtests', 'laboratories.lab_id', '=', 'laboratory_labtests.lsv_lab_id')
+			->leftjoin('laboratory_options', 'laboratories.lab_id', '=', 'laboratory_options.lop_lab_id')
+			->where('lop_uji_lab','true')
 			->get();
 		} elseif ($request->group != 'all' && $request->labs == 'all') {
 			$data = Laboratory::join('laboratory_labtests', 'laboratories.lab_id', '=', 'laboratory_labtests.lsv_lab_id')
+			->leftjoin('laboratory_options', 'laboratories.lab_id', '=', 'laboratory_options.lop_lab_id')
+			->where('lop_uji_lab', 'true')
 			->where('lab_group', $request->group)
 			->get();
 		} elseif ($request->group == 'all' && $request->labs != 'all') {
 			$data = Laboratory::join('laboratory_labtests', 'laboratories.lab_id', '=', 'laboratory_labtests.lsv_lab_id')
+			->leftjoin('laboratory_options', 'laboratories.lab_id', '=', 'laboratory_options.lop_lab_id')
+			->where('lop_uji_lab', 'true')
 			->where('lab_id', $request->labs)
 			->get();
 		} else {
 			$data = Laboratory::join('laboratory_labtests', 'laboratories.lab_id', '=', 'laboratory_labtests.lsv_lab_id')
+			->leftjoin('laboratory_options', 'laboratories.lab_id', '=', 'laboratory_options.lop_lab_id')
+			->where('lop_uji_lab', 'true')
 			->where('lab_group', $request->group)
 			->where('lab_id', $request->labs)
 			->get();
@@ -494,7 +512,6 @@ class DataController extends Controller
 			}
 		}
 		echo $web_data;
-		// return $web_data;
 	}
 	/* Tags:... */
 	public function sourceDataFilterLab(Request $request)
@@ -560,91 +577,93 @@ class DataController extends Controller
 	/* Tags:... */
 	public function checkDataStudent(Request $request)
 	{
-		$data_sudents = getDataStudents();
-		echo $data_sudents;
-		die();
-		$id = $request->nim;
-		$data = getDataStudent($id);
-		$data_lecture = getDataLectures();
 		$web=null;
-		if (count($data) == 0) {
-			$web.= '<div class="col-md-offset-3 col-md-9 col-sm-12 dinamic-data-inp-1" style="color:red;"> Data simontasi belum tersedia.</div>';
-			return $web;
-		}
-		foreach ($data as $key => $value) {
-			$web .= '
-				<div id="input-promotor" class="form-group dinamic-data-inp-1" >
-          <label class="col-sm-12 col-md-3 control-label">
-            <span style="padding-right: 30px;">
-              Judul
-            </span>
-          </label>
-					<div class="col-sm-12 col-md-9 control-label" style="text-align: left;">
-            <b>' . $value['judul'] . '</b>
-            <input type="hidden" name="inp_judul" value="' . $value['judul']. '">
-          </div>
-        </div>';
+		if($request->param == 'tp_penelitian_skripsi'){
+			$id = $request->nim;
+			$data = getDataThesisA($id);
+			$data_lecture = getDataLectures();
+			if (count($data) == 0) {
+				$web.= '<div class="col-md-offset-3 col-md-9 col-sm-12 dinamic-data-inp-1" style="color:red;"> Data simontasi belum tersedia.</div>';
+				return $web;
+			}
+			foreach ($data as $key => $value) {
+				$web .= '
+					<div id="input-promotor" class="form-group dinamic-data-inp-1" >
+						<label class="col-sm-12 col-md-3 control-label">
+							<span style="padding-right: 30px;">
+								Judul
+							</span>
+						</label>
+						<div class="col-sm-12 col-md-9 control-label" style="text-align: left;">
+							<b>' . $value['judul'] . '</b>
+							<input type="hidden" name="inp_judul" value="' . $value['judul']. '">
+							<input type="hidden" name="inp_tujuan" value="">
+						</div>
+					</div>';
+					// 
+				if(Isset($value['pembimbing'])){
+					$n1 = $data_lecture->where('nama', $value['pembimbing']['nama'])->first();
+					$web .= '
+					<div id="input-promotor" class="form-group dinamic-data-inp-1" >
+						<label class="col-sm-12 col-md-3 control-label">
+							<span style="padding-right: 30px;">
+								Pembimbing
+							</span>
+						</label>
+						<div class="col-sm-12 col-md-9 control-label" style="text-align: left;">
+							<b>'. $value['pembimbing']['nama'].'</b>
+							<input type="hidden" name="inp_pembimbing" value="' . $value['pembimbing']['nama'] . '">
+							<input type="hidden" name="inp_pembimbing_nip" value="' . $value['pembimbing']['nip'] . '">
+							<input type="hidden" name="inp_pembimbing_no_id" value="' . $n1['nidn'] . '">
+						</div>
+					</div>';
+				}else{
+					$web.=null;
+				}
 				// 
-			if(Isset($value['pembimbing'])){
-				$n1 = $data_lecture->where('nama', $value['pembimbing']['nama'])->first();
-				$web .= '
-				<div id="input-promotor" class="form-group dinamic-data-inp-1" >
-          <label class="col-sm-12 col-md-3 control-label">
-            <span style="padding-right: 30px;">
-              Pembimbing
-            </span>
-          </label>
-					<div class="col-sm-12 col-md-9 control-label" style="text-align: left;">
-            <b>'. $value['pembimbing']['nama'].'</b>
-            <input type="hidden" name="inp_pembimbing" value="' . $value['pembimbing']['nama'] . '">
-						<input type="hidden" name="inp_pembimbing_nip" value="' . $value['pembimbing']['nip'] . '">
-						<input type="hidden" name="inp_pembimbing_no_id" value="' . $n1['nidn'] . '">
-          </div>
-        </div>';
-			}else{
-				$web.=null;
+				if (isset($value['promotor'])) {
+					$n2 = $data_lecture->where('nama', $value['pembimbing']['nama'])->first();
+					$web.= '
+					<div id="input-promotor" class="form-group dinamic-data-inp-1" >
+						<label class="col-sm-12 col-md-3 control-label">
+							<span style="padding-right: 30px;">
+								Promotor
+							</span>
+						</label>
+						<div class="col-sm-12 col-md-9 control-label" style="text-align: left;">
+							<b>'.$value['promotor']['nama'].'</b>
+							<input type="hidden" name="inp_promotor" value="'. $value['promotor']['nama']. '">
+							<input type="hidden" name="inp_promotor_nip" value="' . $value['promotor']['nip'] . '">
+							<input type="hidden" name="inp_promotor_no_id" value="' . $n2['nidn'] . '">
+						</div>
+					</div>';
+				} else {
+					$web .= null;
+				}
+				// 
+				if (isset($value['kopromotor'])) {
+					$n3 = $data_lecture->where('nama', $value['pembimbing']['nama'])->first();
+					$web .= '
+					<div id="input-kopromotor" class="form-group dinamic-data-inp-1" >
+						<label class="col-sm-12 col-md-3 control-label">
+							<span style="padding-right: 30px;">
+								Kopromotor
+							</span>
+						</label>
+						<div class="col-sm-12 col-md-9 control-label" style="text-align: left;">
+							<b>'.$value['kopromotor']['nama'].'</b>
+							<input type="hidden" name="inp_kopromotor" value="' . $value['kopromotor']['nama'] . '">
+							<input type="hidden" name="inp_kopromotor_nip" value="' . $value['kopromotor']['nip'] . '">
+							<input type="hidden" name="inp_kopromotor_no_id" value="' . $n3['nama'] . '">
+						</div>
+					</div>';
+				} else {
+					$web .= null;
+				}
+				// 
 			}
-			// 
-			if (isset($value['promotor'])) {
-				$n2 = $data_lecture->where('nama', $value['pembimbing']['nama'])->first();
-				$web.= '
-				<div id="input-promotor" class="form-group dinamic-data-inp-1" >
-          <label class="col-sm-12 col-md-3 control-label">
-            <span style="padding-right: 30px;">
-              Promotor
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-9 control-label" style="text-align: left;">
-						<b>'.$value['promotor']['nama'].'</b>
-            <input type="hidden" name="inp_promotor" value="'. $value['promotor']['nama']. '">
-						<input type="hidden" name="inp_promotor_nip" value="' . $value['promotor']['nip'] . '">
-						<input type="hidden" name="inp_promotor_no_id" value="' . $n2['nidn'] . '">
-          </div>
-        </div>';
-			} else {
-				$web .= null;
-			}
-			// 
-			if (isset($value['kopromotor'])) {
-				$n3 = $data_lecture->where('nama', $value['pembimbing']['nama'])->first();
-				$web .= '
-				<div id="input-kopromotor" class="form-group dinamic-data-inp-1" >
-          <label class="col-sm-12 col-md-3 control-label">
-            <span style="padding-right: 30px;">
-              Kopromotor
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-9 control-label" style="text-align: left;">
-						<b>'.$value['kopromotor']['nama'].'</b>
-            <input type="hidden" name="inp_kopromotor" value="' . $value['kopromotor']['nama'] . '">
-						<input type="hidden" name="inp_kopromotor_nip" value="' . $value['kopromotor']['nip'] . '">
-						<input type="hidden" name="inp_kopromotor_no_id" value="' . $n3['nama'] . '">
-          </div>
-        </div>';
-			} else {
-				$web .= null;
-			}
-			// 
+		}else{
+			$web.= null;
 		}
 		return $web;
 	}
@@ -653,38 +672,22 @@ class DataController extends Controller
 	{
 		// ===========================================
 		$activity = $request->activity;
-		$user = DataAuth();
-		$data_lab = Laboratory::where('lab_id',$request->lab_id)->first();
-		$data_reduce = Cost_reduction::where('reduction_usr_level', 'STUDENT')
-		->where('reduction_act_cat', $activity)
-		->first();
 		if ($activity == 'tp_penelitian_skripsi') {
 			$param_reduce = 100;
 		}else{
 			$param_reduce = 0;
 		}
-		if ($data_lab->lab_costbase == 'by_day') {
+		// die('hai');
+		if ($request->subs == 'lab_borrowing') {
+			$data_lab = Laboratory::where('lab_id', $request->ids)
+			->first();
 			$total_cost = $request->count * $data_lab->lab_rent_cost;
 			$val_reduce = $total_cost * ($param_reduce/100);
 			$total_cost_after = $total_cost - $val_reduce;
-		}elseif ($data_lab->lab_costbase == 'by_sample') {
-			$total_cost = $request->count * $data_lab->lab_rent_cost;
-			$val_reduce = $total_cost * ($param_reduce / 100);
-			$total_cost_after = $total_cost - $val_reduce;
-		}else{
-			foreach ($request->tool as $key => $value) {
-				$data_tool[$key] = Laboratory_facility::where('laf_laboratorium',$request->lab_id)->where('laf_id',$value)->first();
-				$cost_per_tool[$key] = $data_tool[$key]->laf_value * $request->count[$key] * $request->unit[$key];
-				$data_tools[$key] = [
-					'name' => $data_tool[$key]->laf_name,
-					'lama_pinjam' => $request->count[$key],
-					'jumlah_unit' => $request->unit[$key],
-					'base' => $data_tool[$key]->laf_base,
-					'unit_cost' => $data_tool[$key]->laf_value,
-					'total_cost' => $cost_per_tool[$key]
-				];
-			}
-			$total_cost = array_sum($cost_per_tool);
+		}elseif ($request->subs == 'lab_test') {
+			$data_lab_test = Laboratory_labtest::where('lsv_id',$request->ids)
+			->first();
+			$total_cost = $request->count * $data_lab_test->lsv_price;
 			$val_reduce = $total_cost * ($param_reduce / 100);
 			$total_cost_after = $total_cost - $val_reduce;
 		}
@@ -702,7 +705,7 @@ class DataController extends Controller
 					<td style="width: 5%; text-align: center;"></td>
 					<td colspan="2"><b>Laboratorium</b></td>
 				</tr>';
-				if ($data_lab->lab_costbase == 'by_day') {
+				if ($request->subs == 'lab_borrowing') {
 					$web.= '<tr>
 						<td style="width: 5%; text-align: center;">1</td>
 						<td>' . $data_lab->lab_name . '</td>
@@ -726,11 +729,11 @@ class DataController extends Controller
 							<td> Potongan ' . $param_reduce . ' %</td>
 							<td style="width: 5%; text-align: center;">(- ' . funCurrencyRupiah($val_reduce) . ')</td>
 						</tr>';
-				}else if($data_lab->lab_costbase == 'by_sample') {
+				}else if($request->subs == 'lab_test') {
 					$web .= '<tr>
 						<td style="width: 5%; text-align: center;">1</td>
-						<td>' . $data_lab->lab_name . '</td>
-						<td style="width: 5%; text-align: center;">' . funCurrencyRupiah($data_lab->lab_rent_cost) . ' / sample</td>
+						<td>' . $data_lab_test->lsv_name . '</td>
+						<td style="width: 5%; text-align: center;">' . funCurrencyRupiah($data_lab_test->lsv_price) . ' / sample</td>
 					</tr>';
 					$web .= '<tr>
 						<td style="width: 5%; text-align: center;"></td>
@@ -750,34 +753,6 @@ class DataController extends Controller
 							<td> Potongan ' . $param_reduce . ' %</td>
 							<td style="width: 5%; text-align: center;">(- ' . funCurrencyRupiah($val_reduce) . ')</td>
 						</tr>';
-				}else{
-					$web .= '<tr>
-								<td style="width: 5%; text-align: center;">1</td>
-								<td colspan="2">' . $data_lab->lab_name . '</td>
-							</tr>';
-					$web .= '<tr>
-								<td style="width: 5%; text-align: center;"></td>
-								<td colspan="2"><b>Alat dan Fasilitas</b></td>
-							</tr>';
-					$no = 1;
-					foreach ($data_tools as $key => $value) {
-						# code...
-						$web .= '<tr>
-										<td style="width: 5%; text-align: center;">'.$no.'</td>
-										<td>' . $value['name'] . ' ('. funCurrencyRupiah($value['unit_cost']).' * '. $value['jumlah_unit'].' unit * '. $value['lama_pinjam'].' '. $value['base'].' ) </td>
-										<td style="width: 5%; text-align: center;">' . funCurrencyRupiah($value['total_cost']) . '</td>
-										</tr>';
-										$no++;
-					}
-					$web .= '<tr>
-									<td style="width: 5%; text-align: center;"></td>
-									<td colspan="2"><b>Potongan Biaya</b></td>
-								</tr>';
-					$web .= '<tr>
-									<td style="width: 5%; text-align: center;">1</td>
-									<td> Potongan ' . $param_reduce . ' %</td>
-									<td style="width: 5%; text-align: center;">(- ' . funCurrencyRupiah($val_reduce) . ')</td>
-								</tr>';
 				}
 				$web.='<tr>
 					<td style="width: 5%; text-align: center;"></td>
@@ -801,8 +776,9 @@ class DataController extends Controller
 		}
 		$startDate = Carbon::parse($request->dts);
 		$endDate = Carbon::parse($request->dte);
-		$jumlahHari = $startDate->diffInDays($endDate);
-		
+		$difdate = $startDate->diffInDays($endDate);
+		$jumlahHari = $difdate + 1;
+		// die('<br> Test');
 		foreach ($request->tool as $key => $value) {
 			$data_tool[$key] = Laboratory_facility::where('laf_laboratorium', $request->lab_id)->where('laf_id', $value)->first();
 			$cost_per_tool[$key] = $data_tool[$key]->laf_value * $request->unit[$key] * $jumlahHari;
@@ -1162,7 +1138,7 @@ class DataController extends Controller
 			$user_email[$key] = $value->email;
 		}
 		$data_lecture = getDataLectures();
-		$data_student = getDataStudents();
+		$data_student = getDataThesis();
 		foreach ($data_student as $key => $value) {
 			$ar_student[$key] = [
 				'nim' => $value['nim'],
@@ -1170,7 +1146,6 @@ class DataController extends Controller
 				'judul' => $value['judul']
 			];
 		}
-		dd($ar_student);
 		// dd($data_student);
 		foreach ($data_lecture as $key => $value) {
 			if (in_array($value['email'], $user_email)) {
@@ -1251,6 +1226,96 @@ class DataController extends Controller
 			$data = [
 				"param" => 1,
 				"tanggal" => $minDate
+			];
+		}
+		return $data;
+	}
+	/* Tags:... */
+	public function actionReloadDataSkripsi(Request $request)
+	{
+		$data_pengajuan = Lab_submission::leftjoin('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+		->leftjoin('user_details', 'lab_submissions.lsb_user_id', '=', 'user_details.usd_user')
+		->leftjoin('laboratories', 'lab_submissions.lsb_lab_id', '=', 'laboratories.lab_id')
+		->where('lsb_id', $request->id)
+		->first();
+		if($data_pengajuan->lsb_title == null || $data_pengajuan->lsb_title == ""){
+			$data_api_skripsi = getDataThesisA($data_pengajuan->no_id);
+			// dd($data_api_skripsi);
+			$data_judul = null;
+			$data_adviser = [];
+			foreach ($data_api_skripsi as $key => $value) {
+				$data_judul = $value['judul'];
+				if (isset($value['pembimbing'])) {
+					$data_adviser[0] = [
+						"las_lbs_id" => $request['id'],
+						"las_byname" => "Pembimbing",
+						"las_nip" => $value['pembimbing']['nip'],
+						"las_fullname" => $value['pembimbing']['nama'],
+					];
+				}
+				if (isset($value['promotor'])) {
+					$data_adviser[1] = [
+						"las_lbs_id" => $request['id'],
+						"las_byname" => "Promotor",
+						"las_nip" => $value['promotor']['nip'],
+						"las_fullname" => $value['promotor']['nama'],
+					];
+				}
+				if (isset($value['kopromotor'])) {
+					$data_adviser[2] = [
+						"las_lbs_id" => $request['id'],
+						"las_byname" => "Kopromotor",
+						"las_nip" => $value['kopromotor']['nip'],
+						"las_fullname" => $value['kopromotor']['nama'],
+					];
+				}
+			}
+			Lab_submission::where('lsb_id',$request->id)->update(["lsb_title"=>$data_judul]);
+			Lab_submission_adviser::insert($data_adviser);
+		}
+		return redirect()->back();
+	}
+	/* Tags:... */
+	public function dataUserSubHead(Request $request)
+	{
+		if ($request->rumpun == 0) {
+			$users = User::where('level', 'LAB_SUBHEAD')->get();
+		}else{
+			$users = User::where('level', 'LAB_SUBHEAD')->where('rumpun_id',$request->rumpun)->get();
+		}
+		if ($users->count() != 0) {
+			foreach ($users as $key => $value) {
+				$data[$key] = [
+					"id"=> $value->id,
+					"title" => $value->name,
+				];
+			}
+		}else{
+			$data[0] = [
+				"id" => null,
+				"title" => null,
+			];
+		}
+		return $data;
+	}
+	public function dataUserTech(Request $request)
+	{
+		if ($request->rumpun == 0) {
+			$users = User::where('level', 'LAB_TECHNICIAN')->get();
+		} else {
+			$users = User::where('level', 'LAB_TECHNICIAN')->where('rumpun_id', $request->rumpun)->get();
+		}
+		if ($users->count() != 0) {
+			foreach ($users as $key => $value) {
+				$data[$key] = [
+					"id" => $value->id,
+					"title" => $value->name,
+				];
+			}
+		} else {
+			$data[0] = [
+				"id" => null,
+				"title" => null,
 			];
 		}
 		return $data;

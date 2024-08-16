@@ -11,8 +11,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetPassword;
 use App\Http\Requests\ActEmailReset;
 use Str;
+use App\Mail\Mail_notif_activation_link;
 
 use App\Http\Requests\UserStoreRequest;
+use App\Models\EmailActivation;
 use App\Models\Password_reset;
 use Session;
 use Illuminate\Support\Facades\Redirect;
@@ -35,12 +37,30 @@ class AuthController extends Controller
 			'password' => 'required',
 		]);
 		$credit = $request->only('email', 'password');
+
 		list($username, $domain) = explode('@', $credit['email']);
+		#check email domain
 		if ($domain == 'mhs.unesa.ac.id') {
+			#jika domain menggunakan mhs.unesa.ac.id
 			if (checkDataEmail($credit['email']) == true) {
+				#jika alamat email sudah terdaftar
+				if (Auth::attempt($credit)) {
+					$user = Auth::user();
+					$auth_level = array('UNSET', 'LECTURE', 'STUDENT', 'PUBLIC_MEMBER', 'PUBLIC_NON_MEMBER', 'LAB_HEAD', 'LAB_SUBHEAD', 
+					'LAB_TECHNICIAN', 'ADMIN_PRODI', 'ADMIN_MASTER', 'ADMIN_SYSTEM');
+					if (in_array($user->level, $auth_level)) {
+						return redirect()->intended('beranda');
+					}
+					return redirect()->intended('/');
+				}
+				return redirect('login')
+				->withInput()
+				->withErrors(['failed_login' => 'Username atau Password yang anda inputkan tidak sesuai.']);
+				#
+			} else {
+				#jika alamat email belum terdaftar
 				$store_param = storingData($credit['email']);
-				if ($store_param == true
-				) {
+				if ($store_param == true) {
 					if (Auth::attempt($credit)) {
 						$user = Auth::user();
 						$auth_level = array('UNSET', 'LECTURE', 'STUDENT', 'PUBLIC_MEMBER', 'PUBLIC_NON_MEMBER', 'LAB_HEAD', 'LAB_SUBHEAD', 'LAB_TECHNICIAN', 'ADMIN_PRODI', 'ADMIN_MASTER', 'ADMIN_SYSTEM');
@@ -57,25 +77,39 @@ class AuthController extends Controller
 					->withInput()
 					->withErrors(['failed_login' => 'Mohon maaf untuk saat ini anda tidak bisa login langsung, silakan registrasi terlebih dahulu.']);
 				}
-			} else {
-				if (Auth::attempt($credit)) {
-					$user = Auth::user();
-					$auth_level = array('UNSET', 'LECTURE', 'STUDENT', 'PUBLIC_MEMBER', 'PUBLIC_NON_MEMBER', 'LAB_HEAD', 'LAB_SUBHEAD', 'LAB_TECHNICIAN', 'ADMIN_PRODI', 'ADMIN_MASTER', 'ADMIN_SYSTEM');
-					if (in_array($user->level, $auth_level)) {
-						return redirect()->intended('beranda');
-					}
-					return redirect()->intended('/');
-				}
-				return redirect('login')
-				->withInput()
-				->withErrors(['failed_login' => 'Username atau Password yang anda inputkan tidak sesuai.']);
 			}
 		} else {
+			# jika email menggunakan domain selain mhs.unesa.ac.id atau domain email lainnya
+			# check data user
+			$user = User::where('email',$credit['email'])->select('email','status','email_verified_at')->first();
+			if ($user == null) {
+				return redirect('login')->withInput()
+				->withErrors(['failed_login' => 'Username atau Password yang anda inputkan tidak sesuai.']);
+			}else{
+				if ($user->email_verified_at == null) {
+					return redirect('login')->withInput()
+						->withErrors(['failed_login' => 'Mohon maaf akun anda belum aktif, harap aktifkan akun anda']);
+				}
+				if ($user->status == 'block') {
+					return redirect('login')->withInput()
+					->withErrors(['failed_login' => 'Mohon maaf akun anda belum aktif.']);
+				}
+			}
+			# proses kredensial
 			if (Auth::attempt($credit)) {
 				$user = Auth::user();
 				$auth_level = array('UNSET', 'LECTURE', 'STUDENT', 'PUBLIC_MEMBER', 'PUBLIC_NON_MEMBER', 'LAB_HEAD', 'LAB_SUBHEAD', 'LAB_TECHNICIAN', 'ADMIN_PRODI', 'ADMIN_MASTER', 'ADMIN_SYSTEM');
 				if (in_array($user->level, $auth_level)) {
-					return redirect()->intended('beranda');
+					switch ($user->level) {
+						case 'ADMIN_PRODI':
+							# code...
+							return redirect()->intended('jadwal_lab');
+							break;
+						
+						default:
+							return redirect()->intended('beranda');
+							break;
+					}
 				}
 				return redirect()->intended('/');
 			}
@@ -92,68 +126,79 @@ class AuthController extends Controller
 	/* Tags:... */
 	public function actionRegister(Request $request)
 	{
-		$generate_id = genIdUser();
-		if ($request->level == 'STUDENT') {
-			$data_detail = getDataStudent($request->no_id);
-			if ($data_detail->count() === 0) {
-				return redirect()->back()->withError(['msg_err' => 'Data mahasiswa di SIMONTASI belum tersedia.']);
-			}
-			foreach ($data_detail as $key => $value) {
-				$data_filter = [
-					"usd_user" => $generate_id,
-					"usd_phone" => $value['no_hp'],
-					"usd_address" => $value['alamat'],
-					"usd_prodi" => $value['prodi'],
-					"usd_fakultas" => "Fakultas Teknik",
-					"usd_universitas" => "Universitas Negeri Surabaya"
-				];
-				$name = $value['nama_mhs'];
-				$email = $value['email'];
-			}
-			$data_post = [
-				'id' => $generate_id,
-				'no_id' => $request->no_id,
-				'username' => null,
-				'status' => 'active',
-				'email' => $email,
-				'name' => $name,
-				'level' => $request->level,
-				'password' => bcrypt($request->password)
-			];
-			// dd($data_post);
-			$storeStudentDetail = User_detail::insert($data_filter);
-		}else{
-			$data_post = [
-				'id' => $generate_id,
-				'no_id' => $request->no_id,
-				'username' => null,
-				'status' => 'active',
-				'email' => $request->email,
-				'name' => $request->name,
-				'level' => $request->level,
-				'password' => bcrypt($request->password)
-			];
-			$data_filter = [
-				"usd_user" => $generate_id,
-				"usd_phone" => null,
-				"usd_address" => null,
-				"usd_prodi" => null,
-				"usd_fakultas" => null,
-				"usd_universitas" => null,
-			];
-		}
 		$detect_user = User::where('email', $request->email)->first();
 		if ($detect_user != null) {
-			return redirect()->back()->withError(['msg_err' => 'Alamat email anda sudah terdaftar.']);
+			return redirect()->back()->withErrors(['msg_err' => 'Alamat email anda sudah terdaftar.']);
+		}
+		if ($request->level == 'PUBLIC_MEMBER') {
+			$email = $parts = explode('@', $request->email);
+			if (!in_array($email[1],['mhs.unesa.ac.id', 'unesa.ac.id'])) {
+				return redirect()->back()->withErrors(['msg_err' => 'Mohon maaf, anda tidak bisa mendaftar dengan alamat email ini.']);
 			}
-		$storeStudentDetail = User_detail::insert($data_filter);
-		$storeUser = User::insert($data_post);
-		$data_login = [
+		}
+		$generate_id = genIdUser();
+		$token = Str::uuid(64);
+		$data_post = [
+			'id' => $generate_id,
+			'no_id' => $request->no_id,
+			'username' => null,
+			'status' => 'block',
 			'email' => $request->email,
-			'password' => Hash::make($request->password),
+			'name' => $request->name,
+			'level' => $request->level,
+			'password' => bcrypt($request->password)
 		];
-		Auth::loginUsingId($data_post['id']);
-		return redirect()->intended('beranda');
+		$data_filter = [
+			"usd_user" => $generate_id,
+			"usd_phone" => null,
+			"usd_address" => null,
+			"usd_prodi" => null,
+			"usd_fakultas" => null,
+			"usd_universitas" => null,
+		];
+		$data_activation = [
+			"user_id" => $generate_id,
+			"token" => $token,
+		];
+		$data_notif = [
+			"url" => url('activation-account/'. $token)
+		];
+		User::insert($data_post);
+		User_detail::insert($data_filter);
+		EmailActivation::insert($data_activation);
+		Mail::to($request->email)->send(new Mail_notif_activation_link($data_notif));
+		return redirect('register-success');
+	}
+	/* Tags:... */
+	public function registerSuccess(Request $request)
+	{
+		return view('auth.register_congrat');
+	}
+	/* Tags:... */
+	public function actActivation(Request $request)
+	{
+		$token = $request->token;
+		$data_token = EmailActivation::where('token',$token)->where('used_token','false')->first();
+		if ($data_token != null) {
+			$data_user = User::where('id',$data_token->user_id)->first();
+			if ($data_token->used_token == 'false') {
+				$date = date('Y-m-d H:i:s');
+				User::where('id',$data_user->id)->update(['status'=>'active', 'email_verified_at'=>$date]);
+				EmailActivation::where('token',$token)->update(['used_token'=>'true']);
+				$data = [
+					'param' => true,
+					'msg' => 'Akun berhasil diaktivasi.'
+				];
+			}else{
+				$data = [
+					'param' => true,
+					'msg' => 'Akun berhasil diaktivasi pada '. $data_user->email_verified_at,
+				];
+			}
+		}else {
+			return redirect('login');
+		}
+		return view('auth.activation_success', compact('data'));
 	}
 	/* Tags:... */
 	public function actionLogout(Request $request)

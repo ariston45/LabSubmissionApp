@@ -81,14 +81,11 @@ class DatatablesController extends Controller
 		->addColumn('opsi', function ($data) {
 			return ' <div style="text-align:center;">
 		<div class="btn-group">
-			<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<button class="btn btn-flat btn-default btn-xs dropdown-toggle btn-block" type="button" data-toggle="dropdown" >
 				Menu <span class="caret"></span>
 			</button>
 			<ul class="dropdown-menu pull-right">
-				<li><a href="' . url('jadwal_lab/' . $data->lab_id) . '"><i class="ri-calendar-2-line" aria-hidden="true" style="margin-right:12px;"></i>Jadwal Lab</a></li>
 				<li><a href="' . url('laboratorium/' . $data->lab_id . '/teknisi') . '"><i class="ri-user-settings-line" aria-hidden="true" style="margin-right:12px;"></i>Teknisi Lab</a></li>
-				<li><a href="' . url('laboratorium/' . $data->lab_id . '/ujilab') . '"><i class="ri-microscope-line" aria-hidden="true" style="margin-right:12px;"></i>Uji Lab</a></li>
-				<li><a href="' . url('fasilitas_lab/' . $data->lab_id ) . '"><i class="ri-computer-line" aria-hidden="true" style="margin-right:12px;"></i>Fasilitas Lab</a></li>
 				<li><a href="' . url('laboratorium/' . $data->lab_id . '/update-lab') . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update Data</a></li>
 			</ul>
 		</div></div>';
@@ -103,11 +100,11 @@ class DatatablesController extends Controller
 		})
 		->addColumn('status', function ($data) {
 			if ($data->lab_status == 'tersedia') {
-				$res = '<div style="text-align:left;"><span class="badge bg-green">' . strLabStatus($data->lab_status) . '</span>';
+				$res = '<div style="text-align:center;"><span class="badge bg-green">' . strLabStatus($data->lab_status) . '</span>';
 			} elseif ($data->lab_status == 'tidak_tersedia') {
-				$res = '<div style="text-align:left;"><span class="badge bg-yellow">' . strLabStatus($data->lab_status) . '</span>';
+				$res = '<div style="text-align:center;"><span class="badge bg-yellow">' . strLabStatus($data->lab_status) . '</span>';
 			} else {
-				$res = '<div style="text-align:left;"><span class="badge bg-default">Not Set</span>';
+				$res = '<div style="text-align:center;"><span class="badge bg-default">Not Set</span>';
 			}
 			return $res;
 		})
@@ -176,19 +173,39 @@ class DatatablesController extends Controller
 		}else{
 			$status = [$request->status];
 		}
+		if ($request->crt_start == null && $request->crt_end == null) {
+			$crt_start = date('Y-m-d',strtotime('1970-1-1'));
+			$crt_end = date('Y-m-d', strtotime('2070-1-1'));
+		}else if($request->crt_start != null && $request->crt_end != null){
+			$crt_start = date('Y-m-d', strtotime($request->crt_start));
+			$crt_end = date('Y-m-d', strtotime($request->crt_end));
+		} else if ($request->crt_start == null && $request->crt_end != null) {
+			$crt_start = date('Y-m-d', strtotime('1970-1-1'));
+			$crt_end = date('Y-m-d', strtotime($request->crt_end));
+		} else if ($request->crt_start != null && $request->crt_end == null) {
+			$crt_start = date('Y-m-d', strtotime($request->crt_start));
+			$crt_end = date('Y-m-d', strtotime('2070-1-1'));
+		}else{
+			$crt_start = date('Y-m-d', strtotime('1970-1-1'));
+			$crt_end = date('Y-m-d', strtotime('2070-1-1'));
+		}
+		// echo $crt_start;
+		// die();
 		$user = authUser();
 		if (rulesUser(['ADMIN_SYSTEM', 'ADMIN_MASTER', 'LAB_HEAD'])) {
 			if ($request->dt_start == null && $request->dt_end == null) {
 				if ($request->status == null) {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					->whereIn('lsb_status', $status)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech', 'lab_submissions.created_at as lsb_created')
+					->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
 					->get();
 				}else{
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					->whereIn('lsb_status', $status)
 					->where('lsb_status',$request->status)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+					->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 					->get();
 				}
 			} elseif($request->dt_start != null && $request->dt_end != null) {
@@ -200,7 +217,8 @@ class DatatablesController extends Controller
 						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 						->whereIn('lsb_status', $status)
 						->where('lsb_period','like','%'. $date_perform.'%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+						->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -213,7 +231,8 @@ class DatatablesController extends Controller
 						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 						->whereIn('lsb_status', $status)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+						->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -228,13 +247,15 @@ class DatatablesController extends Controller
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					->whereIn('lsb_status', $status)
 					->where('lsb_user_subhead', $user->id)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+					->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end','lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 					->get();
 				} else {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					->whereIn('lsb_status', $status)
 					->where('lsb_user_subhead', $user->id)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+					->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end','lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 					->get();
 				}
 			} elseif ($request->dt_start != null && $request->dt_end != null) {
@@ -247,7 +268,8 @@ class DatatablesController extends Controller
 						->whereIn('lsb_status', $status)
 						->where('lsb_user_subhead', $user->id)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+							->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end','lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -261,7 +283,8 @@ class DatatablesController extends Controller
 						->whereIn('lsb_status', $status)
 						->where('lsb_user_subhead', $user->id)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+							->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end','lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -295,7 +318,8 @@ class DatatablesController extends Controller
 						->whereIn('lsb_status', $status)
 						->where('lsb_user_tech', $user->id)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+							->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end','lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -309,7 +333,8 @@ class DatatablesController extends Controller
 						->whereIn('lsb_status', $status)
 						->where('lsb_user_tech', $user->id)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+							->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end','lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -332,7 +357,8 @@ class DatatablesController extends Controller
 					// ->whereIn('lsb_id', $lids)
 					->where('lsb_user_id', $user->id)
 					->whereIn('lsb_status', $status)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+						->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end','lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 					->get();
 				} else {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
@@ -340,7 +366,8 @@ class DatatablesController extends Controller
 					// ->whereIn('lsb_id', $lids)
 					->where('lsb_user_id', $user->id)
 					->whereIn('lsb_status', $status)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+						->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end','lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 					->get();
 				}
 			} elseif ($request->dt_start != null && $request->dt_end != null) {
@@ -361,7 +388,8 @@ class DatatablesController extends Controller
 						->where('lsb_user_id', $user->id)
 						->whereIn('lsb_status', $status)
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+							->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end','lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -372,12 +400,11 @@ class DatatablesController extends Controller
 					foreach ($period as $key => $value) {
 						$date_perform = date('Y-m-d', strtotime($value));
 						$data_colect[$key] = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
-						// ->where('lsb_user_lecture', $user->id)
-						// ->where('lsb_id', $lids)
 						->where('lsb_user_id', $user->id)
 						->whereIn('lsb_status', $status)
+							->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
 						->where('lsb_period', 'like', '%' . $date_perform . '%')
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end','lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -392,13 +419,15 @@ class DatatablesController extends Controller
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					->whereIn('lsb_status', $status)
 					->where('lsb_user_id', $user->id)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+						->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end','lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 					->get();
 				} else {
 					$data = Lab_submission::join('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
 					->whereIn('lsb_status', $status)
 					->where('lsb_user_id', $user->id)
-					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+						->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+					->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end','lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 					->get();
 				}
 			} elseif ($request->dt_start != null && $request->dt_end != null) {
@@ -417,7 +446,8 @@ class DatatablesController extends Controller
 						->whereIn('lsb_id', $ids)
 						->whereIn('lsb_status', $status)
 						->where('lsb_user_id', $user->id)
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+							->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end','lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -431,7 +461,8 @@ class DatatablesController extends Controller
 						->whereIn('lsb_id', $ids)
 						->whereIn('lsb_status', $status)
 						->where('lsb_user_id', $user->id)
-						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end', 'lsb_user_tech')
+							->whereBetween('lab_submissions.created_at', [$crt_start, $crt_end])
+						->select('lsb_id', 'name', 'lab_submissions.created_at as lsb_created', 'lsb_activity', 'lsb_title', 'lsb_status', 'lsb_date_start', 'lsb_date_end','lsb_user_tech', 'lab_submissions.created_at as lsb_created')
 						->get();
 						$colData = $colData->merge($data_colect[$key]);
 					}
@@ -452,15 +483,15 @@ class DatatablesController extends Controller
 		->addColumn('opsi', function ($data) {
 			return ' <div style="text-align:center;">
 			<a href="' . url('pengajuan/detail-pengajuan') . '/' . $data->lsb_id . '" target="_blank">
-			<button class="btn btn-flat btn-default btn-xs" type="button"> Detail </button>
+			<button class="btn btn-flat btn-primary btn-xs btn-block" type="button"> Detail </button>
 			</a></div>';
 		})
 		->addColumn('pemohon', function ($data) {
 			return $data->name;
 		})
 		->addColumn('waktu_pengajuan', function ($data) {
-			$date = date('d/m/Y',strtotime($data->lsb_created));
-			return $date;
+			$date = date('Y/m/d H:i',strtotime($data->lsb_created));
+			return '<div style="text-align:center;">'.$date.'</div>';
 		})
 		->addColumn('kegiatan', function ($data) {
 			if ($data->lsb_activity == 'tp_penelitian') {
@@ -491,7 +522,12 @@ class DatatablesController extends Controller
 			foreach ($data as $key => $value) {
 				$str.= '<span class="badge bg-blue">Acc: '.$value->las_username.'</span>';
 			}
-			return '<div style="text-align:center;">'.$str.'</div>';
+			if($str == null || $str == ''){
+				$res = '-';
+			}else{
+				$res = $str;
+			}
+			return '<div style="text-align:center;">'.$res.'</div>';
 		})
 		->addColumn('status',function ($data) {
 			if ($data->lsb_status == 'menunggu') {
@@ -743,51 +779,113 @@ class DatatablesController extends Controller
 		->make(true);
 	}
 	/* Tags:... */
-	public function sourceDataTestLab(Request $request)
+	public function sourceDataLaboratoriumLabtest(Request $request)
 	{
-		$data = Laboratory_labtest::where('lsv_lab_id',$request->lab_id)->get();
+		$user = Auth::user();
+		if (rulesUser(['ADMIN_SYSTEM', 'ADMIN_MASTER', 'LAB_HEAD'])) {
+			$data = Laboratory::join('laboratory_options', 'laboratories.lab_id', '=', 'laboratory_options.lop_lab_id')
+			->leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->where('lop_uji_lab', 'true')
+			->get();
+		} elseif (rulesUser(['LAB_SUBHEAD'])) {
+			$data = Laboratory::join('laboratory_options', 'laboratories.lab_id','=', 'laboratory_options.lop_lab_id')
+			->leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->where('lop_uji_lab','true')
+			->where('id', $user->id)
+			->get();
+		} elseif (rulesUser(['LAB_TECHNICIAN'])) {
+			$data = Laboratory::join('laboratory_options', 'laboratories.lab_id', '=', 'laboratory_options.lop_lab_id')
+			->join('laboratory_technicians', 'laboratories.lab_id', '=', 'laboratory_technicians.lat_laboratory')
+			->leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->where('lop_uji_lab', 'true')
+			->where('lat_tech_id', $user->id)
+			->get();
+		} else {
+			$data = Laboratory::join('laboratory_options', 'laboratories.lab_id', '=', 'laboratory_options.lop_lab_id')
+			->leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->where('lop_uji_lab', 'true')
+			->get();
+		}
 		return DataTables::of($data)
 		->addIndexColumn()
 		->addColumn('empty_str', function ($k) {
 			return '';
 		})
 		->addColumn('opsi', function ($data) {
-			return ' <div style="text-align:center;">
-		<div class="btn-group">
-			<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				Menu <span class="caret"></span>
-			</button>
-			<ul class="dropdown-menu pull-right">
-				<li><a href="' . url('laboratorium/detail-ujilab/' . $data->lsv_id) . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Detail Uji Lab</a></li>
-				<li><a href="' . url('laboratorium/form-update-ujilab/' . $data->lsv_id) . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update</a></li>
-				<li><a href="#" onclick="actDeleteFacility(' . $data->lvs_id . ')"><i class="ri-delete-bin-line" aria-hidden="true" style="margin-right:12px;"></i>Hapus</a></li>
-			</ul>
-		</div></div>';
+			return '<a href="' . url('uji_laboratorium/labtest/' . $data->lab_id) . '">
+				<button class="btn btn-block btn-flat btn-default btn-xs " type="button" > <b>Lihat Uji Laboratorium</b></button></a>';
 		})
 		->addColumn('name', function ($data) {
-			$res = $data->lsv_name;
+			$res = $data->lab_name;
 			return $res;
 		})
-		->addColumn('notes', function ($data) {
-			$res = $data->lsv_notes;
+		->addColumn('head', function ($data) {
+			$res = $data->name;
 			return $res;
 		})
-		->addColumn('utility', function ($data) {
-			$data_utlity = Laboratory_labtest_facility::join('laboratory_facilities', 'laboratory_labtest_facilities.lst_facility','=', 'laboratory_facilities.laf_id')
-			->where('lst_lsv_id',$data->lsv_id)->select('laf_name')->get();
-			$res ='';
-			foreach ($data_utlity as $key => $value) {
-				$res.='- '.$value->laf_name.'<br>';
+		->addColumn('status', function ($data) {
+			if ($data->lab_status == 'tersedia') {
+				$res = '<div style="text-align:center;"><span class="badge bg-green">' . strLabStatus($data->lab_status) . '</span>';
+			} elseif ($data->lab_status == 'tidak_tersedia') {
+				$res = '<div style="text-align:center;"><span class="badge bg-yellow">' . strLabStatus($data->lab_status) . '</span>';
+			} else {
+				$res = '<div style="text-align:center;"><span class="badge bg-default">Not Set</span>';
 			}
 			return $res;
 		})
-		->addColumn('price', function ($data) {
-			$res = $data->lsv_price;
+		->addColumn('location', function ($data) {
+			$res = $data->lab_location;
 			return $res;
 		})
-		->rawColumns(['opsi', 'name', 'notes', 'utility','price'])
+		->rawColumns(['opsi', 'name', 'head', 'status', 'location'])
 		->make(true);
 	}
+	/* Tags:... */
+	// public function sourceDataUji(Request $request)
+	// {
+	// 	$data = Laboratory_labtest::where('lsv_lab_id',$request->lab_id)->get();
+	// 	return DataTables::of($data)
+	// 	->addIndexColumn()
+	// 	->addColumn('empty_str', function ($k) {
+	// 		return '';
+	// 	})
+	// 	->addColumn('opsi', function ($data) {
+	// 		return ' <div style="text-align:center;">
+	// 	<div class="btn-group">
+	// 		<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	// 			Menu <span class="caret"></span>
+	// 		</button>
+	// 		<ul class="dropdown-menu pull-right">
+	// 			<li><a href="' . url('laboratorium/detail-ujilab/' . $data->lsv_id) . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Detail Uji Lab</a></li>
+	// 			<li><a href="' . url('laboratorium/form-update-ujilab/' . $data->lsv_id) . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update</a></li>
+	// 			<li><a href="#" onclick="actDeleteFacility(' . $data->lvs_id . ')"><i class="ri-delete-bin-line" aria-hidden="true" style="margin-right:12px;"></i>Hapus</a></li>
+	// 		</ul>
+	// 	</div></div>';
+	// 	})
+	// 	->addColumn('name', function ($data) {
+	// 		$res = $data->lsv_name;
+	// 		return $res;
+	// 	})
+	// 	->addColumn('notes', function ($data) {
+	// 		$res = $data->lsv_notes;
+	// 		return $res;
+	// 	})
+	// 	->addColumn('utility', function ($data) {
+	// 		$data_utlity = Laboratory_labtest_facility::join('laboratory_facilities', 'laboratory_labtest_facilities.lst_facility','=', 'laboratory_facilities.laf_id')
+	// 		->where('lst_lsv_id',$data->lsv_id)->select('laf_name')->get();
+	// 		$res ='';
+	// 		foreach ($data_utlity as $key => $value) {
+	// 			$res.='- '.$value->laf_name.'<br>';
+	// 		}
+	// 		return $res;
+	// 	})
+	// 	->addColumn('price', function ($data) {
+	// 		$res = $data->lsv_price;
+	// 		return $res;
+	// 	})
+	// 	->rawColumns(['opsi', 'name', 'notes', 'utility','price'])
+	// 	->make(true);
+	// }
 	/* Tags:... */
 	public function sourceDataScheduleLab(Request $request)
 	{
@@ -1179,15 +1277,23 @@ class DatatablesController extends Controller
 			->addColumn('opsi', function ($data) {
 				$web ='';
 				if ($data->lab_status == 'tersedia') {
-					$web.='<div style="text-align:center;"><a href="' . url('pengajuan/laboratorium/form-pengajuan-pinjam/' . $data->lab_id) . '">
-					<button class="btn btn-flat btn-default btn-xs " type="button" > <b>Pinjam Laboratorium</b></button></a>';
-					$web.='<a href="' . url('pengajuan/laboratorium/form-pengajuan-sewa/' . $data->lab_id) . '">
-					<button class="btn btn-flat btn-default btn-xs " type="button" > <b>Sewa Alat Laboratorium</b></button></a></div>';
+					if($data->lop_pinjam_lab == 'true'){
+						$web.='<div style="text-align:center;"><a href="' . url('pengajuan/laboratorium/form-pengajuan-pinjam/' . $data->lab_id) . '">
+						<button class="btn btn-flat btn-default btn-xs " type="button" > <b>Pinjam Laboratorium</b></button></a>';
+					}
+					if($data->lop_sewa_alat_lab == 'true'){
+						$web.='<a href="' . url('pengajuan/laboratorium/form-pengajuan-sewa/' . $data->lab_id) . '">
+						<button class="btn btn-flat btn-default btn-xs " type="button" > <b>Sewa Alat Laboratorium</b></button></a></div>';
+					}
 				}else{
-					$web.= '<div style="text-align:center;"><a href="#">
-					<button class="btn btn-flat btn-default btn-xs " type="button" disabled> <b>Pinjam Laboratorium</b></button></a>';
-					$web .= '<a href="#">
-					<button class="btn btn-flat btn-default btn-xs " type="button" disabled> <b>Sewa Alat Laboratorium</b></button></a></div>';
+					if ($data->lop_pinjam_lab == 'true') {
+						$web .= '<div style="text-align:center;"><a href="#">
+						<button class="btn btn-flat btn-default btn-xs " type="button" disabled> <b>Pinjam Laboratorium</b></button></a>';
+					}
+					if ($data->lop_sewa_alat_lab == 'true') {
+						$web .= '<a href="#">
+						<button class="btn btn-flat btn-default btn-xs " type="button" disabled> <b>Sewa Alat Laboratorium</b></button></a></div>';
+					}
 				}
 				return $web;
 			})
@@ -1339,6 +1445,10 @@ class DatatablesController extends Controller
 				</ul>
 			</div></div>';
 		})
+		->addColumn('check', function ($data) {
+			$res = '<input type="checkbox" name="idusers[]" value="'.$data->id.'">';
+			return $res;
+		})
 		->addColumn('name', function ($data) {
 			$res = $data->name;
 			return $res;
@@ -1364,10 +1474,10 @@ class DatatablesController extends Controller
 			}
 			return $res;
 		})
-		->rawColumns(['opsi', 'name', 'no_id', 'email','level','status'])
+		->rawColumns(['opsi', 'name', 'no_id', 'email','level','status', 'check'])
 		->make(true);
 	}
-	public function sourceDataUjilab(Request $request)
+	public function sourceDataLabtest(Request $request)
 	{
 		$user = DataAuth();
 		if($user->level == 'LAB_SUBHEAD'){
@@ -1397,7 +1507,7 @@ class DatatablesController extends Controller
 			})
 			->addColumn('opsi', function ($data) {
 				return ' <a href="'.url('uji_laboratorium/detail-ujilab/'.$data->lsv_id).'">
-				<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button"> Detail</button></a>';
+				<button class="btn btn-flat btn-primary btn-xs btn-block" type="button"> Detail</button></a>';
 			})
 			->addColumn('name', function ($data) {
 				$res = $data->lsv_name;
@@ -1429,7 +1539,7 @@ class DatatablesController extends Controller
 				return $res;
 			})
 			->addColumn('price', function ($data) {
-				$res = $data->lsv_price;
+				$res = funCurrencyRupiah($data->lsv_price);
 				return $res;
 			})
 			->rawColumns(['opsi', 'name', 'notes', 'utility', 'price','lab','status', 'name_kasublab'])
@@ -1439,7 +1549,9 @@ class DatatablesController extends Controller
 	public function sourceDataPengajuanUjilab(Request $request)
 	{
 		$data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id', '=', 'laboratories.lab_id')
+		->join('laboratory_options', 'laboratory_labtests.lsv_lab_id','=', 'laboratory_options.lop_lab_id')
 		->join('users', 'laboratories.lab_head', '=', 'users.id')
+		->where('lop_uji_lab','true')
 		->get();
 		return DataTables::of($data)
 			->addIndexColumn()

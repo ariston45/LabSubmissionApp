@@ -62,8 +62,19 @@ class ApiUnesaController extends Controller
   }
   public function DataSkripsiMahasiswa(Request $request)
   {
-    $data = Unesa_data::where('api_code_name', 'data_source_skripsi')->first();
-    $skripsi_mhs = getDataStudents();
+    $url = 'https://simontasiplus.unesa.ac.id/api_mhs_simontasi/36a169ac-4080-419e-a6c0-3538feb71089';
+    $client = new Client();
+    $response = $client->request('GET', $url, [
+      'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept' => 'application/json',
+      ],
+    ]);
+    $data = json_decode($response->getBody(), true);
+    $dataCollection = collect($data);
+    dd($dataCollection);
+    // $data = Unesa_data::where('api_code_name', 'data_source_skripsi')->first();
+    // $skripsi_mhs = getDataStudents();
   }
   /* Tags:... */
   public function datasourceMhsSkripsi_i()
@@ -93,5 +104,11 @@ class ApiUnesaController extends Controller
     $data = json_decode($response->getBody(), true);
     $dataCollection = collect($data);
     return $dataCollection->where('nim', $value);
+  }
+  /* Tags:... */
+  public function DataMahasiswa(Request $request)
+  {
+    $ab = getDataStudent('23050404243');
+    print_r($ab);
   }
 }

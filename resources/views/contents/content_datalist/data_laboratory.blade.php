@@ -26,11 +26,11 @@ Lab management | Dashboard
 			<table id="tabel_laboratorium" class="table tabel_custom table-condensed">
 				<thead>
 					<tr>
-						<th style="width: 5%">No</th>
-						<th style="width: 30%">Laboratorium</th>
-						<th style="width: 20%">Kepala Lab</th>
-						<th style="width: 15%">Status</th>
-            <th style="width: 30%">Lokasi</th>
+						<th style="width: 3%">No</th>
+						<th style="width: 25%">Laboratorium</th>
+						<th style="width: 25%">Kepala Lab</th>
+            <th style="width: 25%">Lokasi</th>
+						<th style="width: 10%;text-align: center;">Status</th>
 						<th style="width: 10%;text-align:center;">Opsi</th>
 					</tr>
 				</thead>
@@ -74,15 +74,15 @@ Lab management | Dashboard
 			responsive: true,
 			lengthChange: true,
 			ajax: {
-				"url" : "{!! route('source-datatables-laboratorium') !!}",
+				"url" : "{!! route('source_datatables_laboratorium') !!}",
 				"type" : "POST",
 			},
 			columns: [
 				{data: 'DT_RowIndex', name: 'DT_RowIndex'},
 				{data: 'name', name: 'name', orderable: true, searchable: true },
 				{data: 'head', name: 'head', orderable: true, searchable: true },
-				{data: 'status', name: 'status', orderable: true, searchable: true },
 				{data: 'location', name: 'location', orderable: true, searchable: true },
+				{data: 'status', name: 'status', orderable: true, searchable: true },
 				{data: 'opsi', name: 'opsi', orderable: false, searchable: false},
 			]
 		});

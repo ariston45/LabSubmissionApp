@@ -3,6 +3,7 @@
 	$user = ProfileController::IdenUser();
 	$menus = ProfileController::IdenMenu();
   actionEliminateSubmission();
+  actionRecountTool();
 @endphp
 <!DOCTYPE html>
 <html>

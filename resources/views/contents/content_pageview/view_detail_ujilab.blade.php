@@ -14,10 +14,10 @@ Lab management | Dashboard
     <div class="box-header with-border">
       <h3 class="box-title" style="color: #0277bd"><i class="ri-file-list-3-line" style="margin-right: 4px;"></i> Detail Permohonan</h3>
       <div class="pull-right">
-        <a href="{{ url('uji_laboratorium/form-update-ujilab/'.$data->lsv_id) }}">
-          <button class="btn btn-flat btn-xs btn-default"><i class="ri-edit-2-line" style="margin-right: 4px;"></i> Update </button>
+        <a href="{{ url('uji_laboratorium/labtest/form-update-ujilab/'.$data->lsv_id) }}">
+          <button class="btn btn-flat btn-xs btn-primary"><i class="ri-edit-2-line" style="margin-right: 4px;"></i> Update </button>
         </a>
-        <a href="{{ url('laboratorium/'.$data->lsv_lab_id.'/ujilab') }}">
+        <a href="{{ url('uji_laboratorium/labtest/'.$data->lsv_lab_id) }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
@@ -43,7 +43,7 @@ Lab management | Dashboard
           </tr>
           <tr>
             <td style="width: 30%;"><b>Biaya</b></td>
-            <td style="width: 80%;">{{ $data->lsv_price }}</td>
+            <td style="width: 80%;">{{ funCurrencyRupiah($data->lsv_price) }}</td>
           </tr>
         </tbody>
       </table>

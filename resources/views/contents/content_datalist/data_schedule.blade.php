@@ -397,6 +397,7 @@ Lab management | Dashboard
 			selectMirror: true,
 			nowIndicator: true,
 			dateClick: function(info) {
+				// alert('test');
 			},
 			eventClick: function(info) {
 				if (info.event.url) {
@@ -427,7 +428,6 @@ Lab management | Dashboard
 					minute: '2-digit',
 					hour12: false,
 				});
-
 				if (init_class == 'sch_reguler') {
 					return{
 						html: '<div class="label bg-navy fc-event-title">'+evn_time+' : '+evn_title+'</div>'

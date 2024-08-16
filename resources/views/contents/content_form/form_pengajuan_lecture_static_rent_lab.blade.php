@@ -13,9 +13,9 @@ Lab management | Dashboard
 <div class="col-md-12">
   <div class="box box-primary">
     <div class="box-header with-border">
-      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan {{$lab_data->lab_name}}</h3>
+      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan Pinjam {{$lab_data->lab_name}}</h3>
       <div class="pull-right">
-        <a href="{{ url('pengajuan') }}">
+        <a href="{{ url('pengajuan/laboratorium') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
@@ -42,11 +42,11 @@ Lab management | Dashboard
         <div class="form-group {{ $errors->has('inp_kegiatan') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Keperluan Kegiatan
+              Keperluan Kegiatan <span style="color: red">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select id="inp-kegiatan" class="form-control" name="inp_kegiatan" onchange="actActivitySubs()">
+            <select id="inp-kegiatan" class="form-control" name="inp_kegiatan" onchange="actActivitySubs()" required>
               <option value="{{ null }}">Pilih kegiatan..</option>
               <option value="tp_penelitian" @if (old('inp_kegiatan') == 'tp_penelitian') selected @endif >Penelitian</option>
               <option value="tp_pelatihan" @if (old('inp_kegiatan') == 'tp_pelatihan') selected @endif >Pelatihan</option>
@@ -82,11 +82,11 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_judul') ? ' has-error' : '' }}" id="fm-judul" >
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Judul
+              Judul <span style="color: red">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-judul-ii" class="form-control" name="inp_judul" value="{{ old('inp_judul') }}" placeholder="Judul kegiatan/ Judul Penelitian/ Judul pelatihan/ ...">
+            <input type="text" id="inp-judul-ii" class="form-control" name="inp_judul" value="{{ old('inp_judul') }}" placeholder="Judul kegiatan/ Judul Penelitian/ Judul pelatihan/ ..." required>
             @if ($errors->has('inp_judul'))
 						<span style="color: red;"><i>{{ $errors->first('inp_judul') }}</i></span>
 						@endif
@@ -120,11 +120,27 @@ Lab management | Dashboard
             @if ($errors->has('inp_fasilitas'))
 						<span style="color: red;"><i>{{ $errors->first('inp_fasilitas') }}</i></span>
 						@endif
-            @if ($errors->has('tool_err'))
-						<span style="color: red;"><i>{{ $errors->first('tool_err') }}</i></span>
-						@endif
           </div>
         </div>
+        <div class="form-group act-tool {{ $errors->has('inp_fasilitas') ? ' has-error' : '' }}" id="fm-inp-tool" style="margin-bottom: 5px;">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Opsional Fasilitas/Alat lainnya 
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <div style="margin-bottom: 5px;">
+              <select id="inp-tool-opsional" class="form-control" multiple name="inp_fasilitas_opsional[]">
+                <option value="{{ null }}">Pilih fasilitas/alat..</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        @if ($errors->has('tool_err'))
+        <div class="col-md-offset-3 col-md-9 act-datetime" >
+          <span style="color: red;"><i>{{ $errors->first('tool_err') }}</i></span>
+        </div>
+        @endif
         {{-- !!  --}}
         @php
           $idx_time = 0;
@@ -135,7 +151,7 @@ Lab management | Dashboard
         <div class="form-group has-feedback act-datetime {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}" style="margin-bottom: 0px;">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Jadwal
+              Jadwal <span style="color: red">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
@@ -145,9 +161,9 @@ Lab management | Dashboard
 									<div class="input-group-addon">
 										<i class="fa fa-calendar"></i>
 									</div>
-									<input type="text" name="inp_date[{{ $idx_time }}]"  value="{{ old('inp_date') }}" class="form-control countable inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
+									<input type="text" name="inp_date[{{ $idx_time }}]"  value="{{ old('inp_date') }}" class="form-control countable inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly required>
 								</div>
-                <select name="inp_time[{{ $idx_time }}][]" id="inp-time" class="form-control inp-time-cls" multiple>
+                <select name="inp_time[{{ $idx_time }}][]" id="inp-time" class="form-control inp-time-cls" multiple required>
                   @foreach ($times as $item)
                     <option value="{{ $item->lti_id }}">{{ setTime($item->lti_start) }} - {{ setTime($item->lti_end) }}</option>
                   @endforeach
@@ -166,16 +182,20 @@ Lab management | Dashboard
 						@endif
           </div> 
         </div>
-        {{-- ~ --}}        
-        {{-- !!  --}}
-        
+        {{-- !! --}}
         <div id="cost-tables" class="col-md-offset-3 col-md-9" style="padding: 0px;">
           <div id="test-id"></div>
         </div>
       </div>
       <div class="box-footer">
-        <div class="col-md-offset-3 col-md-9">
+        <div class="col-md-3">
+          <i> Tanda ( <span style="color: red;">*</span> ) wajib diisi </i>
+        </div>
+        <div class="col-md-9">
           <button type="button" class="btn btn-default btn-flat" onclick="actPrePayment()"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
+          <a href="{{ url('jadwal_lab/'.$lab_data->lab_id) }}">
+            <button type="button" class="btn btn-default btn-flat"><i class="ri-calendar-2-line" style="margin-right: 5px;"></i>Cek Jadwal</button>
+          </a>
           <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
           <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
         </div>
@@ -287,6 +307,20 @@ Lab management | Dashboard
 			},
 			item: function(data, escape) {
 				return '<div id="select-time">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+  var select_tool_opsional = new TomSelect("#inp-tool-opsional",{
+    create: true,			
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-opsional">'+escape(data.title)+'</div>';
 			}
 		}
   });
@@ -450,7 +484,8 @@ Lab management | Dashboard
       type: 'POST',
       url: "{{ route('source-data-cost-lab-tables') }}",
       data: {
-        "lab_id":lab_id,
+        "ids":lab_id,
+        "subs":"lab_borrowing",
         "activity": activity,
         "count":count_day,
       },
@@ -516,63 +551,6 @@ Lab management | Dashboard
         $('#check-sch').html("");
       } else {
         actViewCheckSch(par_a,par_b);
-      }
-    });
-    
-
-  });
-  /*
-  $(document).ready( function() {
-    select_lab.on('change', function () {  
-      var data_facility = [];
-      var item_lab = select_lab.getValue();
-      $.ajaxSetup({
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-      });
-      $.ajax({
-        type: 'POST',
-        url: "{{ route('source-data-facilities') }}",
-        data: {
-          "lab_id":item_lab,
-        },
-        async: false,
-        success: function(result) {
-          console.log(result);
-          select_facility.clear();
-          select_facility.clearOptions();
-          var dataLabOption = JSON.parse(result);
-          for (let index = 0; index < dataLabOption.length; index++) {
-            data_facility.push({
-              id:dataLabOption[index].id,
-              title:dataLabOption[index].title,
-            });
-          }
-          select_facility.addOptions(data_facility);
-        },
-      });
-      actViewLabCost(item_lab);
-    });
-    select_facility.on('change',function () {
-      var dd = select_facility.getValue();
-      actViewFacilityCost(dd)
-    });
-  });
-  */
-  $(document).ready( function() {
-    $(document).on('change', '#btn-file-foto :file', function() {
-      var input = $(this),
-      label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-      input.trigger('fileselect', [label]);
-    });
-    $('#btn-file-foto :file').on('fileselect', function(event, label) {
-      var input = $(this).parents('.input-group').find(':text'),
-      log = label;
-      if( input.length ) {
-        input.val(log);
-      } else {
-        if( log ) alert(log);
       }
     });
   });

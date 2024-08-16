@@ -28,6 +28,6 @@ class Mail_user_laptest_approval extends Mailable
      */
     public function build()
     {
-        return $this->subject('Permohonan Peminjaman ' . $this->data['lab'])->view('contents.content_notif_email.notif_subhead_approve_labtest',)->with('data_applicant', $this->data);
+        return $this->subject('Permohonan Uji Lab Di' . $this->data['lab'])->view('contents.content_notif_email.notif_user_approve_labtest',)->with('data_applicant', $this->data);
     }
 }

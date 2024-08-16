@@ -36,7 +36,7 @@ Lab management | Dashboard
             </ol>
           </div>
         </div>
-        <div class="form-group has-feedback {{ $errors->has('dok_laporan') ? ' has-error' : '' }}">
+        {{-- <div class="form-group has-feedback {{ $errors->has('dok_laporan') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
               Upload Laporan
@@ -58,7 +58,7 @@ Lab management | Dashboard
 						<span style="color: red;"><i>{{ $errors->first('file_err_filesize') }}</i></span>
 						@endif
           </div>
-        </div>
+        </div> --}}
         <div class="form-group has-feedback {{ $errors->has('dok_laporan_test_bending') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
@@ -69,7 +69,7 @@ Lab management | Dashboard
             <div class="input-group">
 							<span class="input-group-btn">
 								<span id="btn-file-foto-1" class="btn btn-default btn-file btn-flat">
-									Buka Berkas <input type="file" id="id-upload-ii" name="dok_test_bending" >
+									Buka Berkas <input type="file" id="id-upload-ii" name="dok_legalitas" >
 								</span>
 							</span>
               <input type="text" class="form-control" readonly="" name="image3">

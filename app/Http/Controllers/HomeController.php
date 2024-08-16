@@ -110,36 +110,38 @@ class HomeController extends Controller
 					$sub_count_entry = Lab_submission::where('lsb_user_tech', $user->id)
 					->whereIn('lsb_status', ['menunggu'])
 					->count();
+					
 					$sub_count_acc = Lab_submission::where('lsb_user_tech', $user->id)
 					->whereIn('lsb_status', ['disetujui', 'selesai'])
 					->count();
+					
 					foreach ($period as $key => $value) {
 						$month_item = date('m', strtotime($value));
-						$sub_count['all'][$key] = Lab_submission::whereIn('lab_id', $lab_ids)
+						$sub_count['all'][$key] = Lab_submission::whereIn('lsb_lab_id', $lab_ids)
 						->whereMonth('lsb_date_start', $month_item)
 						->whereIn('lsb_status', ['disetujui', 'selesai'])
 						->count();
-						$sub_count['tp_penelitian'][$key] = Lab_submission::whereIn('lab_id', $lab_ids)
+						$sub_count['tp_penelitian'][$key] = Lab_submission::whereIn('lsb_lab_id', $lab_ids)
 						->whereMonth('lsb_date_start', $month_item)
 						->whereIn('lsb_status', ['disetujui', 'selesai'])
 						->where('lsb_activity', 'tp_penelitian')
 						->count();
-						$sub_count['tp_pelatihan'][$key] = Lab_submission::whereIn('lab_id', $lab_ids)
+						$sub_count['tp_pelatihan'][$key] = Lab_submission::whereIn('lsb_lab_id', $lab_ids)
 						->whereMonth('lsb_date_start', $month_item)
 						->whereIn('lsb_status', ['disetujui', 'selesai'])
 						->where('lsb_activity', 'tp_pelatihan')
 						->count();
-						$sub_count['tp_pengabdian_masyarakat'][$key] = Lab_submission::whereIn('lab_id', $lab_ids)
+						$sub_count['tp_pengabdian_masyarakat'][$key] = Lab_submission::whereIn('lsb_lab_id', $lab_ids)
 						->whereMonth('lsb_date_start', $month_item)
 						->whereIn('lsb_status', ['disetujui', 'selesai'])
 						->where('lsb_activity', 'tp_pengabdian_masyarakat')
 						->count();
-						$sub_count['tp_magang'][$key] = Lab_submission::whereIn('lab_id', $lab_ids)
+						$sub_count['tp_magang'][$key] = Lab_submission::whereIn('lsb_lab_id', $lab_ids)
 						->whereMonth('lsb_date_start', $month_item)
 						->whereIn('lsb_status', ['disetujui', 'selesai'])
 						->where('lsb_activity', 'tp_magang')
 						->count();
-						$sub_count['tp_lain_lain'][$key] = Lab_submission::whereIn('lab_id', $lab_ids)
+						$sub_count['tp_lain_lain'][$key] = Lab_submission::whereIn('lsb_lab_id', $lab_ids)
 						->whereMonth('lsb_date_start', $month_item)
 						->whereIn('lsb_status', ['disetujui', 'selesai'])
 						->where('lsb_activity', 'tp_lain_lain')

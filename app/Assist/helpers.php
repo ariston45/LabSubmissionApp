@@ -25,11 +25,11 @@ use App\Models\Unesa_data;
 # API Helper
 # ================================================================================================================================================================================== #
 # Data all students skripsi
-function getDataStudents()
+function getDataThesis()
 {
   $data = Unesa_data::where('api_code_name', 'data_source_skripsi')->first();
   if ($data->api_url_status == 'aktif') {
-    $url = 'https://simontasiplus.unesa.ac.id/api_mhs_simontasi/36a169ac-4080-419e-a6c0-3538feb71089';
+    $url = $data->api_url;
     $client = new Client();
     $response = $client->request('GET', $url, [
       'headers' => [
@@ -40,7 +40,6 @@ function getDataStudents()
     $data = json_decode($response->getBody(), true);
     $dataCollection = collect($data);
   } else {
-    // dd($data);
     $path = Storage::url('data_source/' . $data->api_file_data);
     $url = url($path);
     $client = new Client();
@@ -56,11 +55,11 @@ function getDataStudents()
   return $dataCollection;
 }
 # data initial students skripsic
-function getDataStudent($value_id)
+function getDataThesisA($value_id)
 {
   $data = Unesa_data::where('api_code_name', 'data_source_skripsi')->first();
   if ($data->api_url_status == 'aktif') {
-    $url = 'https://simontasiplus.unesa.ac.id/api_mhs_simontasi/36a169ac-4080-419e-a6c0-3538feb71089';
+    $url = $data->api_url;
     $client = new Client();
     $response = $client->request('GET', $url, [
       'headers' => [
@@ -84,6 +83,125 @@ function getDataStudent($value_id)
     $dataCollection = collect($data);
   }
   return $dataCollection->where('nim', $value_id);
+}
+# data student FT
+function getDataStudents()
+{
+  $data = Unesa_data::where('api_code_name', 'data_source_mahasiswa_ft')->first();
+  if ($data->api_url_status == 'aktif') {
+    $url = $data->api_url;
+    $client = new Client();
+    $response = $client->request('GET', $url, [
+      'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept' => 'application/json',
+      ],
+    ]);
+    $data = json_decode($response->getBody(), true);
+    $dataCollection = collect($data);
+  } else {
+    $path = Storage::url('data_source/' . $data->api_file_data);
+    $url = url($path);
+    $client = new Client();
+    $response = $client->request('GET', $url, [
+      'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept' => 'application/json',
+      ],
+    ]);
+    $data = json_decode($response->getBody(), true);
+    $dataCollection = collect($data)->values();
+  }
+  return $dataCollection;
+}
+# data initial students skripsic
+function getDataStudent($value_id)
+{
+  $data = Unesa_data::where('api_code_name', 'data_source_mahasiswa_ft')->first();
+  if ($data->api_url_status == 'aktif') {
+    $url = $data->api_url;
+    $client = new Client();
+    $response = $client->request('GET', $url, [
+      'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept' => 'application/json',
+      ],
+    ]);
+    $data = json_decode($response->getBody(), true);
+    $dataCollection = collect($data);
+  } else {
+    $path = Storage::url('data_source/' . $data->api_file_data);
+    $url = url($path);
+    $client = new Client();
+    $response = $client->request('GET', $url, [
+      'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept' => 'application/json',
+      ],
+    ]);
+    $data = json_decode($response->getBody(), true);
+    $dataCollection = collect($data);
+  }
+  return $dataCollection->where('nim', $value_id);
+}
+function getDataStudentByEmail($value_email)
+{
+  $data = Unesa_data::where('api_code_name', 'data_source_mahasiswa_ft')->first();
+  if ($data->api_url_status == 'aktif') {
+    $url = $data->api_url;
+    $client = new Client();
+    $response = $client->request('GET', $url, [
+      'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept' => 'application/json',
+      ],
+    ]);
+    $data = json_decode($response->getBody(), true);
+    $dataCollection = collect($data);
+  } else {
+    $path = Storage::url('data_source/' . $data->api_file_data);
+    $url = url($path);
+    $client = new Client();
+    $response = $client->request('GET', $url, [
+      'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept' => 'application/json',
+      ],
+    ]);
+    $data = json_decode($response->getBody(), true);
+    $dataCollection = collect($data);
+  }
+  return $dataCollection->where('email', $value_email)->first();
+}
+# data lecture FT
+function getDataLectures()
+{
+  $data = Unesa_data::where('api_code_name', 'data_dosen')->first();
+  if ($data->api_url_status == 'aktif') {
+    $url = $data->api_url;
+    $client = new Client();
+    $response = $client->request('GET', $url, [
+      'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept' => 'application/json',
+      ],
+    ]);
+    $data = json_decode($response->getBody(), true);
+    $dataCollection = collect($data);
+  } else {
+    $path = Storage::url('data_source/' . $data->api_file_data);
+    $url = url($path);
+    $client = new Client();
+    $response = $client->request('GET', $url, [
+      'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept' => 'application/json',
+      ],
+    ]);
+    $data = json_decode($response->getBody(), true);
+    $dataCollection = collect($data)->values();
+  }
+  return $dataCollection;
 }
 # ================================================================================================================================================================================== #
 function genIdUser(){
@@ -284,30 +402,6 @@ function funCurrencyRupiah($value)
   $res = "Rp ". $number_format;
   return $res;
 }
-
-
-
-
-function getDataLectures(){
-  // $getjson = Http::acceptJson()->get('https://i-sdm.unesa.ac.id/api/dosen-ft-email')->throw()->json();
-  // $laravelcollection = collect($getjson)->values();
-  // return $laravelcollection;
-  $url = 'https://i-sdm.unesa.ac.id/api/dosen-ft-email';
-  $client = new Client();
-  $response = $client->request('GET', $url, [
-    'headers' => [
-      'Accept' => 'application/json',
-    ],
-  ]);
-  dd($response);
-  $data = json_decode($response->getBody(), true);
-  $laravelcollection = collect($data)->values();
-  if ($laravelcollection == null) {
-    return 0;
-  } else {
-    return $laravelcollection;
-  }
-}
 /* Tags:... */
 function getIdOrder()
 {
@@ -320,9 +414,9 @@ function checkDataEmail($value)
 {
   $data = User::where('email',$value)->select('email')->first();
   if ($data == null) {
-    return true;
-  } else {
     return false;
+  } else {
+    return true;
   }
 }
 function setTime($value)
@@ -332,33 +426,28 @@ function setTime($value)
 }
 /** */
 function storingData($value){
-  $getjson = Http::acceptJson()->get('https://simontasiplus.unesa.ac.id/api_mhs_simontasi/36a169ac-4080-419e-a6c0-3538feb71089')->throw()->json();
-  $laravelcollection = collect($getjson)->values();
-  $data = $laravelcollection->where('email', $value);
-  if($data->count() > 0){
+  $data = getDataStudentByEmail($value);
+  if($data != null){
     $id = genIdUser();
-    foreach ($data as $key => $value) {
-      $usr = [
-        'id' => $id,
-        'no_id' => $value['nim'],
-        'name' => $value['nama_mhs'],
-        'username' => null,
-        'status' => 'active',
-        'level' => 'STUDENT',
-        'password' => bcrypt($value['nim']),
-        'email' => $value['email']
-      ];
-    }
-    foreach ($data as $key => $value) {
-      $usd = [
-        'usd_user' => $id,
-        'usd_phone' => $value['no_hp'],
-        'usd_address' => $value['alamat'],
-        'usd_prodi' => $value['prodi'],
-        'usd_fakultas' => 'Fakultas Teknik',
-        'usd_universitas' => 'Universitas Negeri Surabaya'
-      ];
-    }
+    $usr = [
+      'id' => $id,
+      'no_id' => $data['nim'],
+      'name' => $data['nama_mhs'],
+      'username' => null,
+      'status' => 'active',
+      'level' => 'STUDENT',
+      'password' => bcrypt($data['nim']),
+      'email' => $data['email'],
+      'email_verified_at' => date('Y-m-d H:i:s'),
+    ];
+    $usd = [
+      'usd_user' => $id,
+      'usd_phone' => $data['no_hp'],
+      'usd_address' => $data['alamat'],
+      'usd_prodi' => $data['prodi'],
+      'usd_fakultas' => 'Fakultas Teknik',
+      'usd_universitas' => 'Universitas Negeri Surabaya'
+    ];
     User::insert($usr);
     User_detail::insert($usd);
     return true;
@@ -403,4 +492,7 @@ function actionEliminateSubmission(){
   foreach ($cek_lab as $key => $value) {
     Lab_submission::where('lsb_id',$value->lsb_id)->update(['lsb_status'=>'tidak_terpakai']);
   }
+}
+function actionRecountTool(){
+
 }

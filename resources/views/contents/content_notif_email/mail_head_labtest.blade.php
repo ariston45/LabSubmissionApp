@@ -54,7 +54,7 @@
 			</tr>
 			<tr>
 				<td colspan="4">
-					Memohon izin pemakaian laboratorium dan fasilitas untuk keperluan kegiatan <b>{{ $data_applicant['act'] }}</b>, dengan Judul: 
+					Mengajukan permohonan untuk pengujian di laboratorium  <b>{{ $data_applicant['lab'] }}</b>, dengan Judul: 
 				</td>
 			</tr>
 			<tr>
@@ -64,37 +64,28 @@
 			</tr>
 			<tr>
 				<td colspan="4">
-					Rencana kegiatan tersebut akan dilaksanakan pada : <br>
+					Adapun pengujian ini untuk keperluan  <b>{{ $data_applicant['act'] }}</b> dengan tujuan <b>{{ $data_applicant['tujuan'] }}</b>.
 				</td>
-			</tr>
-			<tr>
-				<td colspan="2" style="padding-left: 40px;padding-top: 0px;padding-bottom: 0px;"> Hari/Tanggal </td>
-				<td>
-					: {!! $data_applicant['datetimes'] !!}
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2" style="padding-left: 40px;padding-top: 0px;padding-bottom: 0px;"> Di Laboratorium</td>
-				<td>: {{ $data_applicant['lab'] }}</td>
 			</tr>
 			<tr>
 				<td colspan="4">
-					{{-- Fasilitas laboratorium yang digunakan terlampir. <br> --}}
-					Demikian permohonan ini saya buat dan saya menyatakan akan bertanggungjawab sepenuhnya apabila terjadi kerusakan atau kehilangan atas alat terlampir selama saya pakai/pinjam. <br>
-					Atas perhatian dan bantuannya saya sampaikan terima kasih.
+					Hasil pengujian ini diharapkan sudah bisa keluar pada,<br>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" style="padding-left: 40px;padding-top: 0px;padding-bottom: 0px;"> Hari/Tanggal :</td>
+				<td>
+					{!! $data_applicant['datetimes'] !!}
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4">
+					Demikian permohonan pengujian sampel di laboratorium ini saya sampaikan. Atas perhatian dan kerjasamanya, saya ucapkan terima kasish.
 				</td>
 			</tr>
 		</tbody>
 	</table>
-	@if (isset($data_applicant['lecture_acc']))
-	<br>
-		Disetujui {{ $data_applicant['lecture_acc'] }}
-	@endif
-	@if (isset($data_applicant['head_acc']))
-	<br>
-		Disetujui {{ $data_applicant['head_acc'] }}
-	@endif
-	<br><hr>
+	<hr>
 	<a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}">
 		<button type="button" class="btn bg-olive btn-flat margin">Detail Pengajuan</button>
 	</a>

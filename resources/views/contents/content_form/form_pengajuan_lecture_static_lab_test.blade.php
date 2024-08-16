@@ -43,14 +43,17 @@ Lab management | Dashboard
         <div class="form-group {{ $errors->has('inp_kegiatan') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Keperluan Kegiatan
+              Keperluan Kegiatan <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select id="inp-kegiatan" class="form-control" name="inp_kegiatan" onchange="actActivitySubs()">
+            <select id="inp-kegiatan" class="form-control" name="inp_kegiatan" required>
               <option value="{{ null }}">Pilih kegiatan..</option>
-              <option value="tp_penelitian_skripsi" @if (old('inp_kegiatan') == 'tp_penelitian_skripsi') selected @endif >Penelitian Skripsi</option>
-              <option value="tp_lain_lain" @if (old('inp_kegiatan') == 'tp_lainnya') selected @endif >Lainnya</option>
+              <option value="tp_penelitian" @if (old('inp_kegiatan') == 'tp_penelitian') selected @endif >Penelitian</option>
+              <option value="tp_pelatihan" @if (old('inp_kegiatan') == 'tp_pelatihan') selected @endif >Pelatihan</option>
+              <option value="tp_pengabdian_masyarakat" @if (old('inp_kegiatan') == 'tp_pengabdian_masyarakat') selected @endif >Pengabdian Masyarakat</option>
+              <option value="tp_magang" @if (old('inp_kegiatan') == 'tp_magang') selected @endif >Magang</option>
+              <option value="tp_lain_lain" @if (old('inp_kegiatan') == 'tp_lain_lain') selected @endif >Lain-lain*</option>
             </select>
             <div id="data-loading" style="display: none;">
               <img src="{{ url('/public/assets/img/loading.gif') }}" class="img-loading" alt="">
@@ -60,12 +63,8 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        {{-- !! --}}
-        @if (rulesUser(['STUDENT']))
-        <div id="data-simontasi"></div>
-        @endif
         {{-- Opsi untuk pilihan lain-lain --}}
-        <div class="form-group has-feedback {{ $errors->has('inp_opsi_lainnya') ? ' has-error' : '' }}" id="fm-opsi" style="display: none;">
+        <div class="form-group has-feedback {{ $errors->has('inp_opsi_lainnya') ? ' has-error' : '' }}" id="fm-opsi" >
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
               Tujuan
@@ -76,14 +75,14 @@ Lab management | Dashboard
           </div>
         </div>
         {{-- --- --}}
-        <div class="form-group has-feedback {{ $errors->has('inp_judul') ? ' has-error' : '' }}" id="fm-judul" style="display: none;">
+        <div class="form-group has-feedback {{ $errors->has('inp_judul') ? ' has-error' : '' }}" id="fm-judul">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Judul
+              Judul <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-judul-ii" class="form-control" name="inp_judul" value="{{ old('inp_judul') }}" placeholder="Judul kegiatan/ Judul Penelitian/ Judul pelatihan/ ...">
+            <input type="text" id="inp-judul-ii" class="form-control" name="inp_judul" value="{{ old('inp_judul') }}" placeholder="Judul kegiatan/ Judul Penelitian/ Judul pelatihan/ ..." required>
             @if ($errors->has('inp_judul'))
 						<span style="color: red;"><i>{{ $errors->first('inp_judul') }}</i></span>
 						@endif
@@ -96,11 +95,11 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_sample') ? ' has-error' : '' }}" id="fm-inp-sample">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Jumlah Sampel
+              Jumlah Sampel <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="number" id="inp-sample" class="form-control" name="inp_sampel" value="{{ old('inp_sampel') }}" placeholder="Inputkan jumlah sampel...">
+            <input type="number" id="inp-sample" class="form-control" name="inp_sampel" value="{{ old('inp_sampel') }}" placeholder="Inputkan jumlah sampel..." required>
             @if ($errors->has('inp_sampel'))
 						<span style="color: red;"><i>{{ $errors->first('inp_sampel') }}</i></span>
 						@endif
@@ -113,7 +112,7 @@ Lab management | Dashboard
         <div class="form-group has-feedback act-datetime {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Jadwal Pengamnilan Hasil
+              Jadwal Rilis Hasil <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
@@ -123,20 +122,6 @@ Lab management | Dashboard
               </div>
               <input type="text" name="inp_date"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
             </div>
-            {{-- <div class="row" style="margin-bottom: 10px;">
-              <div class="col-sm-11">
-                <select name="inp_time[{{ $idx_time }}][]" id="inp-time" class="form-control inp-time-cls" multiple>
-                  @foreach ($times as $item)
-                    <option value="{{ $item->lti_id }}">{{ setTime($item->lti_start) }} - {{ setTime($item->lti_end) }}</option>
-                  @endforeach
-                </select>
-              </div>
-              <div class="col-sm-1">
-                <button type="button" id="btn-add-input-datetime" class="btn btn-flat btn-default">
-                  <i class="fa fa-plus" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div> --}}
             <div id="input-dt-container">
             </div>
             @if ($errors->has('sch_konflik_err'))
@@ -150,7 +135,12 @@ Lab management | Dashboard
         </div>
       </div>
       <div class="box-footer">
-        <div class="col-md-offset-3 col-md-9">
+        <div class="col-md-3">
+          <i>
+            Tanda ( <span style="color: red;">*</span> ) wajib diisi
+          </i>
+        </div>
+        <div class="col-md-9">
           <button type="button" class="btn btn-default btn-flat" onclick="actPrePayment();"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
           {{-- <a href="{{ url('jadwal_lab/'.$lab_data->lab_id) }}" target="_blank">
             <button type="button" class="btn btn-default btn-flat"><i class="ri-calendar-schedule-line" style="margin-right: 5px;"></i>Cek Jadwal</button>
@@ -382,7 +372,7 @@ Lab management | Dashboard
     });
   };
   function actPrePayment() {
-    var lab_id = "{{ $lab_test_data->lab_id }}";
+    var lsv_id = "{{ $lsv_id }}";
     var count_sample = $('#inp-sample').val();
     var activity = $('#inp-kegiatan').find(":selected").val();
     $.ajaxSetup({
@@ -394,7 +384,8 @@ Lab management | Dashboard
       type: 'POST',
       url: "{{ route('source-data-cost-lab-tables') }}",
       data: {
-        "lab_id":lab_id,
+        "ids":lsv_id,
+        "subs":"lab_test",
         "activity": activity,
         "count":count_sample,
       },

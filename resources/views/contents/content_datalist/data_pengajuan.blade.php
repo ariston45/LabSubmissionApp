@@ -17,7 +17,7 @@ Lab management | Dashboard
 				<div class="col-sm-12">
 					@if (rulesUser(['STUDENT','LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
 					<a href="{{ url('pengajuan/laboratorium') }}" class="btn btn-app bg-blue" style="min-width: 120px;">
-						<i class="fa fa-building"></i> Permohonan Lab
+						<i class="fa fa-building"></i> Pengajuan Lab
 					</a>
 					<a href="{{ url('pengajuan/uji_laboratorium') }}" class="btn btn-app bg-blue" style="min-width: 120px;">
 						<i class="fa fa-flask"></i> Uji Lab
@@ -54,32 +54,62 @@ Lab management | Dashboard
 					<div class="form-group has-feedback {{ $errors->has('inp_laboratorium') ? ' has-error' : '' }}">
 						<label class="col-sm-12 col-md-3 control-label">
 							<span style="padding-right: 30px;">
-								Tanggal Mulai
+								Tanggal Pelaksanaan
 							</span>
 						</label>
 						<div class="col-sm-12 col-md-9">
-							{{-- <input type="text" id="inp-laboratorium" class="form-control input-sm" name="inp_laboratorium" value="" placeholder="Input nama laboratorium.."> --}}
-							<div class="input-group inp-split-cst date " id="date-pick-start">
-								<div class="input-group-addon">
-									<i class="fa fa-calendar"></i>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="input-group inp-split-cst date" id="date-pick-start">
+										<div class="input-group-addon bg-gray-active">
+											<b>
+												Tanggal Awal
+											</b>
+										</div>
+										<input type="text" id="date-start" name="date_start" class="form-control pull-right input-sm" placeholder="yyyy-mm-dd" readonly>
+									</div>
 								</div>
-								<input type="text" id="date-start" name="date_start"  value="{{ old('date_start') }}" class="form-control pull-right input-sm" placeholder="yyyy-mm-dd" readonly>
+								<div class="col-sm-6">
+									<div class="input-group inp-split-cst date" id="date-pick-end">
+										<div class="input-group-addon bg-gray-active">
+											<b>
+												Tanggal Akhir
+											</b>
+										</div>
+										<input type="text" id="date-end" class="form-control pull-right input-sm" name="date_end" value="{{ old('date_end') }}" placeholder="yyyy-mm-dd" readonly>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
 					<div class="form-group has-feedback {{ $errors->has('inp_laboratorium') ? ' has-error' : '' }}">
 						<label class="col-sm-12 col-md-3 control-label" >
 							<span style="padding-right: 30px;">
-								Tanggal Akhir
+								Tanggal Kirim Pengajuan
 							</span>
 						</label>
 						<div class="col-sm-12 col-md-9">
-							{{-- <input type="text" id="inp-laboratorium" class="form-control input-sm" name="inp_laboratorium" value="" placeholder="Input nama laboratorium.."> --}}
-							<div class="input-group inp-split-cst date has-feedback {{ $errors->has('date_end') ? ' has-error' : '' }}" id="date-pick-end">
-								<div class="input-group-addon">
-									<i class="fa fa-calendar"></i>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="input-group inp-split-cst date" id="date-pick-start-crt">
+										<div class="input-group-addon bg-gray-active">
+											<b>
+												Tanggal Awal
+											</b>
+										</div>
+										<input type="text" id="date-start-crt" name="date_start_crt" class="form-control pull-right input-sm" placeholder="yyyy-mm-dd" readonly>
+									</div>
 								</div>
-								<input type="text" id="date-end" class="form-control pull-right input-sm" name="date_end" value="{{ old('date_end') }}" placeholder="yyyy-mm-dd" readonly>
+								<div class="col-sm-6">
+									<div class="input-group inp-split-cst date" id="date-pick-end-crt">
+										<div class="input-group-addon bg-gray-active">
+											<b>
+												Tanggal Akhir
+											</b>
+										</div>
+										<input type="text" id="date-end-crt" class="form-control pull-right input-sm" name="date_end_crt" value="{{ old('date_end') }}" placeholder="yyyy-mm-dd" readonly>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -90,7 +120,6 @@ Lab management | Dashboard
 							</span>
 						</label>
 						<div class="col-sm-12 col-md-9">
-							{{-- <input type="text" id="inp-laboratorium" class="form-control input-sm" name="inp_laboratorium" value="" placeholder="Input nama laboratorium.."> --}}
 							<select id="inp-status" class="form-control input-sm" name="inp_status">
 								<option value="{{ null }}">Pilih status..</option>
 								<option value="menunggu">Menunggu</option>
@@ -98,22 +127,27 @@ Lab management | Dashboard
 							</select>
 						</div>
 					</div>
-					<div style="padding: 0px; text-align:right">
-						<button type="button" class="btn btn-sm btn-success btn-flat" onclick="actionFilter()"><i class="ri-filter-2-line" style="margin-right: 5px;"></i>Submit</button>
+					<div class="form-group has-feedback {{ $errors->has('inp_laboratorium') ? ' has-error' : '' }}">
+						<div class="col-md-offset-3 col-sm-12 col-md-9">
+							<div style="padding: 0px; ">
+								<button type="button" class="btn btn-sm btn-success btn-flat" onclick="actionFilter()"><i class="ri-filter-2-line" style="margin-right: 5px;"></i>Filter Data</button>
+							</div>
+						</div>
 					</div>
 				</form>
 			</div>
 			<table id="tabel_pengajuan" class="table tabel_custom table-condensed">
 				<thead>
 					<tr>
-						<th style="width: 5%">No</th>
+						<th style="width: 3%">No</th>
 						<th style="width: 15%">Pemohon</th>
-						<th style="width: 30%">Judul</th>
+						<th style="width: 25%">Judul</th>
 						<th style="width: 10%">Waktu Pelaksanaan</th>
-						<th style="width: 11%;text-align:center;">Persetujuan</th>
+						<th style="width: 10%;text-align:center;">Persetujuan</th>
 						<th style="width: 10%;text-align:center;">Teknisi</th>
-						<th style="width: 11%;text-align:center;">Status</th>
-						<th style="width: 8%;text-align:center;">Opsi</th>
+						<th style="width: 10%;text-align:center;">Status</th>
+						<th style="width: 10%;text-align:center;">Diajukan</th>
+						<th style="width: 5%;text-align:center;">Opsi</th>
 					</tr>
 				</thead>
 			</table>
@@ -160,7 +194,7 @@ Lab management | Dashboard
 <script src="{{ url('assets/plugins/jquery-confirm/jquery-confirm.min.js') }}"></script>
 {{-- Function --}}
 <script>
-	function mainData(par_a,par_b,par_c) {
+	function mainData(par_a,par_b,par_c,par_d,par_e) {
 		tabel_siswa = $('#tabel_pengajuan').DataTable({
 			ordering: false,
 			processing: true,
@@ -173,7 +207,9 @@ Lab management | Dashboard
 				"data":{
 					"dt_start":par_a,
 					"dt_end":par_b,
-					"status":par_c
+					"status":par_c,
+					"crt_start":par_d,
+					"crt_end":par_e,
 				},
 				error: function(jqXHR, textStatus, errorThrown){
 					if (jqXHR.status != 0){
@@ -207,6 +243,7 @@ Lab management | Dashboard
 				{data: 'acc', name: 'acc', orderable: false, searchable: true },
 				{data: 'tech', name: 'tech', orderable: false, searchable: true },
 				{data: 'status', name: 'status', orderable: false, searchable: true },
+				{data: 'waktu_pengajuan', name: 'waktu_pengajuan', orderable: false, searchable: true },
 				{data: 'opsi', name: 'opsi', orderable: false, searchable: false},
 			]
 		});
@@ -217,9 +254,11 @@ Lab management | Dashboard
 	function actionFilter() {  
 		var inp_dt_start = $('#date-start').val();
 		var inp_dt_end = $('#date-end').val();
+		var inp_dt_start_crt = $('#date-start-crt').val();
+		var inp_dt_end_crt = $('#date-end-crt').val();
 		var inp_status = $('#inp-status').val();
 		$('#tabel_pengajuan').DataTable().clear().destroy();
-		mainData(inp_dt_start,inp_dt_end,inp_status);
+		mainData(inp_dt_start,inp_dt_end,inp_status,inp_dt_start_crt,inp_dt_end_crt);
 	};
 </script>
 <script>
@@ -227,7 +266,9 @@ Lab management | Dashboard
 		var par_a = null;
 		var par_b = null;
 		var par_c = null;
-		mainData(par_a,par_b,par_c);
+		var par_d = null;
+		var par_e = null;
+		mainData(par_a,par_b,par_c,par_d,par_e);
 	});
 </script>
 {{-- Call ids --}}
@@ -239,6 +280,18 @@ Lab management | Dashboard
     orientation:'bottom',
   });
 	$('#date-pick-end').datepicker({
+    autoclose: true,
+    format: 'yyyy-mm-dd',
+    todayHighlight: true,
+    orientation:'bottom',
+  });
+	$('#date-pick-start-crt').datepicker({
+    autoclose: true,
+    format: 'yyyy-mm-dd',
+    todayHighlight: true,
+    orientation:'bottom',
+  });
+	$('#date-pick-end-crt').datepicker({
     autoclose: true,
     format: 'yyyy-mm-dd',
     todayHighlight: true,

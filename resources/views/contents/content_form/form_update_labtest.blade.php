@@ -22,7 +22,7 @@ Lab management | Dashboard
         </a>
       </div>
     </div>
-    <form class="form-horizontal" action="{{ route('update_ujilab') }}" method="POST" enctype="multipart/form-data">
+    <form class="form-horizontal" action="{{ route('update_labtest') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="box-body">
         {{-- !! --}}
@@ -145,7 +145,7 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_cost') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Biaya(value)
+              Biaya(per sampel)
             </span>
           </label>
           <div class="col-sm-12 col-md-8">

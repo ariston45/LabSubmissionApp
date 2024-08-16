@@ -34,6 +34,10 @@ Lab management | Dashboard
             <td style="width: 70%;">{{ $data_user->no_id }}</td>
           </tr>
           <tr>
+            <td style="width: 30%;"><b>NIP</b></td>
+            <td style="width: 70%;">{{ $data_user->nip }}</td>
+          </tr>
+          <tr>
             <td style="width: 30%;"><b>Prodi</b></td>
             <td style="width: 70%;">{{ $data_user->usd_prodi }}</td>
           </tr>

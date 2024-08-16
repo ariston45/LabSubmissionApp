@@ -56,7 +56,7 @@
 					</table>
 					Telah disetujui oleh {{ $data_applicant['kalab'] }}.
 					Untuk mengecek detail pembayaran, klik link <a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}"><b>Detail Peminjaman</b></a>. <br>
-					Silakan lakukan pembayaran dengan tranfer ke virtual accout berikut; <br>
+					Silakan lakukan pembayaran dengan transfer ke virtual accout berikut; <br>
 					<b>
 						VA Name : Unesa Laboratorium FT <br>
 						VA Number : 9422-023-066-05-0001 <br>

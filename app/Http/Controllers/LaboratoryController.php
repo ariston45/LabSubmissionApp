@@ -26,6 +26,7 @@ use App\Models\Laboratory_facility_count_status;
 use App\Models\Laboratory_facility;
 use App\Models\Laboratory_labtest;
 use App\Models\Laboratory_labtest_facility;
+use App\Models\Laboratory_option;
 use App\Models\Laboratory_time_option;
 
 class LaboratoryController extends Controller
@@ -44,7 +45,8 @@ class LaboratoryController extends Controller
 	/* Tags:... */
 	public function formUpdateLab(Request $request)
 	{
-		$data_lab = Laboratory::leftjoin('users', 'laboratories.lab_head','=','users.id')
+		$data_lab = Laboratory::join('laboratory_options','laboratories.lab_id','=', 'laboratory_options.lop_lab_id')
+		->leftjoin('users', 'laboratories.lab_head','=','users.id')
 		->where('lab_id',$request->id)
 		->select('*')
 		->first();
@@ -107,6 +109,7 @@ class LaboratoryController extends Controller
 	/* Tags:... */
 	public function actionUpdateLaboratory(LabPostRequest $request)
 	{
+		
 		$lab_id = $request->lab_id;
 		$lab_data = Laboratory::where('lab_id', $lab_id)->first();
 
@@ -139,6 +142,27 @@ class LaboratoryController extends Controller
 			"lab_rent_cost" => funFormatCurToDecimal($request->inp_cost),
 			"lab_costbase" => $request->inp_base,
 		];
+		if ($request->inp_check_borrow == null) {
+			$inp_check_borrow = 'false';
+		} else {
+			$inp_check_borrow = 'true';
+		}
+		if ($request->inp_check_rental == null) {
+			$inp_check_rental = 'false';
+		} else {
+			$inp_check_rental = 'true';
+		}
+		if ($request->inp_check_ujilab == null) {
+			$inp_check_ujilab = 'false';
+		} else {
+			$inp_check_ujilab = 'true';
+		}
+		$data_opsi_layanan = [
+			"lop_pinjam_lab" => $inp_check_borrow,
+			"lop_sewa_alat_lab" => $inp_check_rental,
+			"lop_uji_lab" => $inp_check_ujilab,
+		];
+		$insLabOps = Laboratory_option::where('lop_lab_id',$lab_id)->update($data_opsi_layanan);
 		$insLabData = Laboratory::where('lab_id',$lab_id)->update($data_laboratorium);
 		$delTechLap = Laboratory_technician::where('lat_laboratory',$lab_id)->delete();
 		foreach ($request->inp_teknisi as $key => $list) {
@@ -149,7 +173,7 @@ class LaboratoryController extends Controller
 			];
 			$insTechLabData = Laboratory_technician::insert($data_technicians[$key]);
 		}
-		return redirect('laboratorium');
+		return redirect()->back();
 	}
 	/* Tags:... */
 	public function viewLabTechnicians(Request $request)
@@ -191,13 +215,13 @@ class LaboratoryController extends Controller
 		return view('contents.content_datalist.data_lab_facilities', compact('data_lab'));
 	}
 	/* Tags:... */
-	public function viewUjiLab(Request $request)
+	public function dataViewLabtest(Request $request)
 	{
 		$data_lab = Laboratory::leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
 		->where('lab_id', $request->id)
 		->select('lab_name', 'name', 'lab_id')
 		->first();
-		return view('contents.content_datalist.data_lab_ujilab', compact('data_lab'));
+		return view('contents.content_datalist.data_labtest', compact('data_lab'));
 	}
 	/* Tags:... */
 	public function formAddLaboratoryFacility(Request $request)
@@ -210,7 +234,7 @@ class LaboratoryController extends Controller
 		return view('contents.content_form.form_input_facilities', compact('users', 'data_lab'));
 	}
 	/* Tags:... */
-	public function formAddLaboratoryTest(Request $request)
+	public function formInsertLabtest(Request $request)
 	{
 		$data_utility = Laboratory_facility::where('laf_laboratorium',$request->id)->get();
 		$users = User::get();
@@ -242,7 +266,7 @@ class LaboratoryController extends Controller
 			'laf_name' => $request->inp_fasilitas,
 			'laf_utility' => $request->inp_utility,
 			'laf_brand' => $request->inp_brand,
-			'laf_base' => $request->inp_base,
+			'laf_base' => 'Hari',
 			'laf_value' => funFormatCurToDecimal($request->inp_cost),
 			'laf_description' => $request->inp_diskripsi,
 			'laf_image' => $file_name,
@@ -271,9 +295,6 @@ class LaboratoryController extends Controller
 	/* Tags:... */
 	public function viewLabTestDetail(Request $request)
 	{
-		// $data_fasilitas = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
-		// ->where('laf_id', $request->id)
-		// ->first();
 		$id= $request->id;
 		$data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id','=', 'laboratories.lab_id')
 		->where('lsv_id',$id)
@@ -578,7 +599,7 @@ class LaboratoryController extends Controller
 		return redirect()->back();
 	}
 	/* Tags:... */
-	public function actionInputUjiLab(LabTestPostRequest $request)
+	public function actionInsertLabtest(LabTestPostRequest $request)
 	{
 		// data
 		$id_testlab = genIdLabTest();
@@ -611,10 +632,10 @@ class LaboratoryController extends Controller
 		}
 		Laboratory_labtest::insert($data);
 		Laboratory_labtest_facility::insert($data_utility);
-		return redirect()->route('laboratorium_uji_lab',['id' => $request->lab_id]);
+		return redirect()->route('labtest',['id' => $request->lab_id]);
 	}
 	/* Tags:... */
-	public function actionUpdateUjiLab(Request $request)
+	public function actionUpdateLabtest(Request $request)
 	{
 		$lsv_id = $request->lsv_id;
 		$lab_id = $request->lab_id;
@@ -655,10 +676,10 @@ class LaboratoryController extends Controller
 		Laboratory_labtest::where('lsv_id', $id_testlab)->update($data);
 		Laboratory_labtest_facility::where('lst_lsv_id', $id_testlab)->delete();
 		Laboratory_labtest_facility::insert($data_utility);
-		return redirect()->route('laboratorium_uji_lab', ['id' => $request->lab_id]);
+		return redirect()->route('detail_labtest', ['id' => $lsv_id]);
 	}
 	/* Tags:... */
-	public function formUpdateLaboratoryUji(Request $request)
+	public function formUpdateLabtest(Request $request)
 	{
 		$users = User::get();
 		$id = $request->id;
@@ -677,8 +698,13 @@ class LaboratoryController extends Controller
 		return view('contents.content_form.form_update_labtest', compact('users', 'data_lab', 'data_utility', 'tools'));
 	}
 	/* Tags:... */
-	public function dataUjiLabs(Request $request)
+	public function dataViewLaboratoriumUji(Request $request)
 	{
-		return view('contents.content_datalist.data_uji_lab');
+		return view('contents.content_datalist.data_lab_uji');
+	}
+	/* Tags:... */
+	public function dataLabForLabtest(Request $request)
+	{
+		#code...
 	}
 }

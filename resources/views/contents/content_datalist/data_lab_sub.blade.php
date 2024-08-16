@@ -25,12 +25,12 @@ Lab management | Dashboard
 				<thead>
 					<tr>
 						<th style="width: 5%">No</th>
-						<th style="width: 50%">Nama Laboratorium</th>
+						<th style="width: 25%">Nama Laboratorium</th>
+            <th style="width: 30%">Lokasi</th>
 						<th style="width: 15%;text-align:center;">Status</th>
-						<th style="width: 30%;text-align:center;">Opsi</th>
+						<th style="width: 25%;text-align:center;">Opsi</th>
 						{{-- <th style="width: 20%">Kepala Lab</th>
-						<th style="width: 15%">Status</th>
-            <th style="width: 30%">Lokasi</th> --}}
+						<th style="width: 15%">Status</th> --}}
 					</tr>
 				</thead>
 			</table>
@@ -83,8 +83,8 @@ Lab management | Dashboard
 				{data: 'DT_RowIndex', name: 'DT_RowIndex'},
 				{data: 'name', name: 'name', orderable: true, searchable: true },
 				// {data: 'head', name: 'head', orderable: true, searchable: true },
+				{data: 'location', name: 'location', orderable: true, searchable: true },
 				{data: 'status', name: 'status', orderable: false, searchable: true },
-				// {data: 'location', name: 'location', orderable: true, searchable: true },
 				{data: 'opsi', name: 'opsi', orderable: false, searchable: false},
 			]
 		});

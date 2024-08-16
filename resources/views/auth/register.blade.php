@@ -11,8 +11,8 @@
 		<select class="form-control" name="level" id="inp_level" onchange="inpLevel()" required>
 			<option value="{{ null }}"></option>
 			{{-- <option value="STUDENT" @if (old('level') == 'STUDENT') selected @endif >Mahasiswa Fakultas Teknik</option> --}}
-			<option value="PUBLIC_MEMBER" @if (old('level') == 'PUBLIC_MEMBER') selected @endif>Umum Anggota Universitas</option>
-			<option value="PUBLIC_NON_MEMBER" @if (old('level') == 'PUBLIC_NON_MEMBER') selected @endif>Umum Non-Anggota Universitas</option>
+			<option value="PUBLIC_MEMBER" @if (old('level') == 'PUBLIC_MEMBER') selected @endif>Umum Anggota UNESA</option>
+			<option value="PUBLIC_NON_MEMBER" @if (old('level') == 'PUBLIC_NON_MEMBER') selected @endif>Umum Non-Anggota UNESA</option>
 		</select>
 		@if ($errors->has('level'))
 		<span style="color: red;"><i>{{ $errors->first('level') }}</i></span>
@@ -53,16 +53,15 @@
 		<span style="color: red;"><i>{{ $errors->first('password_confirm') }}</i></span>
 		@endif
 	</div>
+	@if ($errors->has('msg_err'))
 	<div class="row">
 		<div class="col-sm-12">
-			<div class="alert alert-warning" id="notif" style="display: none; margin: 0 auto 10px"></div>
-			@if ($errors->has('msg_err'))
 			<div class="alert alert-warning" id="notif" style="margin: 0 auto 10px">
 				{{ $errors->first('msg_err') }}
 			</div>
-			@endif
 		</div>
 	</div>
+	@endif
 	<div class="row">
 		<div class="col-sm-5">
 			<div class="checkbox">

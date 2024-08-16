@@ -24,13 +24,12 @@ Lab management | Dashboard
 			<table id="tabel-jadwal-laboratorium" class="table tabel_custom table-condensed">
 				<thead>
 					<tr>
-						<th style="width: 5%">No</th>
-						<th style="width: 60%">Nama Laboratorium</th>
+						<th style="width: 3%">No</th>
+						<th style="width: 25%">Nama Laboratorium</th>
+						<th style="width: 25%">Kepala Lab</th>
+            <th style="width: 25%">Lokasi</th>
 						<th style="width: 10%;text-align:center;">Status</th>
-						<th style="width: 25%;text-align:center;">Opsi</th>
-						{{-- <th style="width: 20%">Kepala Lab</th>
-						<th style="width: 15%">Status</th>
-            <th style="width: 30%">Lokasi</th> --}}
+						<th style="width: 10%;text-align:center;">Opsi</th>
 					</tr>
 				</thead>
 			</table>
@@ -82,9 +81,9 @@ Lab management | Dashboard
 			columns: [
 				{data: 'DT_RowIndex', name: 'DT_RowIndex'},
 				{data: 'name', name: 'name', orderable: true, searchable: true },
-				// {data: 'head', name: 'head', orderable: true, searchable: true },
+				{data: 'head', name: 'head', orderable: true, searchable: true },
+				{data: 'location', name: 'location', orderable: true, searchable: true },
 				{data: 'status', name: 'status', orderable: false, searchable: true },
-				// {data: 'location', name: 'location', orderable: true, searchable: true },
 				{data: 'opsi', name: 'opsi', orderable: false, searchable: false},
 			]
 		});

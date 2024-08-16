@@ -20,7 +20,7 @@ Lab management | Dashboard
         </a>
       </div>
     </div>
-    <form class="form-horizontal" action="{{ route('upload_laporan') }}" method="POST" enctype="multipart/form-data">
+    <form class="form-horizontal" action="{{ route('upload_laporan_student') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <input type="hidden" value="{{ $data_submission->id }}" name="id_user" readonly>
       <input type="hidden" value="{{ $data_submission->no_id }}" name="no_id" readonly>
@@ -31,13 +31,14 @@ Lab management | Dashboard
           <div class="col-md-offset-3 col-sm-12 col-md-9">
             <label>Pedoman File Upload</label>
             <ol style="list-style-type:square;">
-              <li>Tipe file yang didukung hanya berformat (ekstensi) PDF</li>
+              <li>Upload hasil uji lab anda.</li>
+              <li>Upload skripsi atau jurnal laporan, untuk skripsi pilih bab bagian hasil.</li>
+              <li>Tipe file yang didukung hanya berformat (ekstensi) PDF.</li>
               <li>Ukuran file tidak boleh lebih dari 1024 bytes.</li>
-              <li>Untuk skripsi yang di-upload merupakan bab bagian hasil</li>
             </ol>
           </div>
         </div>
-        <div class="form-group has-feedback {{ $errors->has('dok_laporan') ? ' has-error' : '' }}">
+        {{-- <div class="form-group has-feedback {{ $errors->has('dok_laporan') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
               Upload Laporan Hasil
@@ -50,16 +51,16 @@ Lab management | Dashboard
 									Buka Berkas <input type="file" id="id-upload" name="dok_laporan" >
 								</span>
 							</span>
-              <input type="text" class="form-control" readonly="" name="image2">
+              <input type="text" class="form-control" readonly="" name="name_dok_laporan">
 						</div>
             @if ($errors->has('file_err'))
-						<span style="color: red;"><i>{{ $errors->first('file_err') }}</i></span>
+						<span style="color: red;"><i>{{ $errors->first('file_err_a') }}</i></span>
 						@endif
             @if ($errors->has('file_err_filesize'))
-						<span style="color: red;"><i>{{ $errors->first('file_err_filesize') }}</i></span>
+						<span style="color: red;"><i>{{ $errors->first('file_err_filesize_a') }}</i></span>
 						@endif
           </div>
-        </div>
+        </div> --}}
         <div class="form-group has-feedback {{ $errors->has('dok_laporan_test_bending') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
@@ -70,16 +71,16 @@ Lab management | Dashboard
             <div class="input-group">
 							<span class="input-group-btn">
 								<span id="btn-file-foto-1" class="btn btn-default btn-file btn-flat">
-									Buka Berkas <input type="file" id="id-upload-ii" name="dok_test_bending" >
+									Buka Berkas <input type="file" id="id-upload-ii" name="dok_skripsi_jurnal" >
 								</span>
 							</span>
-              <input type="text" class="form-control" readonly="" name="image3">
+              <input type="text" class="form-control" readonly="" name="name_dok_skripsi_jurnal">
 						</div>
             @if ($errors->has('file_err'))
-						<span style="color: red;"><i>{{ $errors->first('file_err') }}</i></span>
+						<span style="color: red;"><i>{{ $errors->first('file_err_b') }}</i></span>
 						@endif
             @if ($errors->has('file_err_filesize'))
-						<span style="color: red;"><i>{{ $errors->first('file_err_filesize') }}</i></span>
+						<span style="color: red;"><i>{{ $errors->first('file_err_filesize_b') }}</i></span>
 						@endif
           </div>
         </div>

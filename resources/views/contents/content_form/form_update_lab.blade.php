@@ -170,7 +170,7 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_cost') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Biaya
+              Biaya Pinjam Per Hari
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
@@ -197,7 +197,45 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        <div class="form-group {{ $errors->has('inp_status') ? ' has-error' : '' }}">
+        <div class="form-group {{ $errors->has('inp_lap_option') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label">
+            <span style="padding-right: 30px;">
+              Opsi Layanan Laboratorium
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="inp_check_borrow" @if ($data_lab->lop_pinjam_lab == 'true') checked @endif value="true" >
+                    Peminjaman Laboratorium
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="inp_check_rental" @if ($data_lab->lop_sewa_alat_lab == 'true') checked @endif value="true">
+                    Sewa Alat Laboratorium
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="inp_check_ujilab" @if ($data_lab->lop_uji_lab == 'true') checked @endif value="true">
+                    Pegujian Sampel di Laboratorium
+                  </label>
+                </div>
+              </div>
+            </div>
+            @if ($errors->has('inp_lap_option'))
+						<span style="color: red;"><i>{{ $errors->first('inp_lap_option') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{-- <div class="form-group {{ $errors->has('inp_status') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
               Dasar Biaya Peminjaman
@@ -214,7 +252,7 @@ Lab management | Dashboard
 						<span style="color: red;"><i>{{ $errors->first('inp_base') }}</i></span>
 						@endif
           </div>
-        </div>
+        </div> --}}
       </div>
       <div class="box-footer">
         <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Simpan</button>

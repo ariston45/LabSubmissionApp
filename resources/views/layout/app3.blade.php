@@ -45,7 +45,7 @@
           <li><a href="{{ url('page-layanan') }}" @if (request()->is('page-layanan*') == true) class="active" @endif>Uji Lab</a></li>
           {{-- <li><a href="{{ url('page-kontak') }}" @if (request()->is('page-kontak*') == true) class="active" @endif>Kontak</a></li> --}}
           @if (authCheck()==true)
-            <li><a href="{{ url('beranda') }}" @if (request()->is('beranda*') == true) class="active" @endif>Aplikasi</a></li>
+            <li><a href="{{ url('beranda') }}" @if (request()->is('beranda*') == true) class="active" @endif>Pengajuan</a></li>
           @endif
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>

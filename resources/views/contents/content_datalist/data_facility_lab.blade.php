@@ -3,16 +3,16 @@
 Lab management | Dashboard
 @endsection
 @section('breadcrumb')
-<h4>Jadwal Laboratorium</h4>
+<h4>Fasilitas Laboratorium</h4>
 <ol class="breadcrumb">
-	<li><a href="#"><i class="fa fa-home"></i> Jadwal Laboratorium</a></li>
+	<li><a href="#"><i class="fa fa-home"></i> Fasilitas Laboratorium</a></li>
 </ol>
 @endsection
 @section('content')
 <div class="col-md-12">
 	<div class="box box-primary">
 		<div class="box-header with-border">
-			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Jadwal Laboratorium</h3>
+			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Laboratorium</h3>
 			<div class="pull-right">
 				{{-- <a href="{{ url('laboratorium/form-input-lab') }}">
 					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah Jadwal</button>
@@ -24,13 +24,12 @@ Lab management | Dashboard
 			<table id="tabel-jadwal-laboratorium" class="table tabel_custom table-condensed">
 				<thead>
 					<tr>
-						<th style="width: 5%">No</th>
-						<th style="width: 60%">Nama Laboratorium</th>
+						<th style="width: 3%">No</th>
+						<th style="width: 25%">Nama Laboratorium</th>
+						<th style="width: 25%">Kepala Lab</th>
+            <th style="width: 25%">Lokasi</th>
 						<th style="width: 10%;text-align:center;">Status</th>
-						<th style="width: 25%;text-align:center;">Opsi</th>
-						{{-- <th style="width: 20%">Kepala Lab</th>
-						<th style="width: 15%">Status</th>
-            <th style="width: 30%">Lokasi</th> --}}
+						<th style="width: 10%;text-align:center;">Opsi</th>
 					</tr>
 				</thead>
 			</table>
@@ -82,9 +81,9 @@ Lab management | Dashboard
 			columns: [
 				{data: 'DT_RowIndex', name: 'DT_RowIndex'},
 				{data: 'name', name: 'name', orderable: true, searchable: true },
-				// {data: 'head', name: 'head', orderable: true, searchable: true },
+				{data: 'head', name: 'head', orderable: true, searchable: true },
+				{data: 'location', name: 'location', orderable: true, searchable: true },
 				{data: 'status', name: 'status', orderable: false, searchable: true },
-				// {data: 'location', name: 'location', orderable: true, searchable: true },
 				{data: 'opsi', name: 'opsi', orderable: false, searchable: false},
 			]
 		});

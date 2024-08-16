@@ -35,7 +35,7 @@ Lab management | Dashboard
           @else
           <img src="{{ url('public/storage/image_lab_test/'.$data_labtest->lsv_img) }}" class="img-fluid" alt="">
           @endif
-          <h3 style="color: #0b4d70;">{{ $data_labtest->lsv_img }}</h3>
+          <h3 style="color: #0b4d70;">{{ $data_labtest->lsv_name }}</h3>
           <p style="color: #444444cc;">
             {{ $data_labtest->lsv_notes }}
           </p>
@@ -84,11 +84,21 @@ Lab management | Dashboard
             <p style="color: #444444cc;">{{ funCurrencyRupiah($data_labtest->lsv_price )}}</p>
           </div>
           @if (checkUser(['LECTURE','STUDENT','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']) == true)
-          <div class="align-items-center d-grid gap-2">
-            <a href="{{ url('pengajuan/form-pengajuan') }}">
-              <button type="button" class="btn btn-success" style="width: 100%;">Ajukan Peminjaman</button>
-            </a>
-          </div>
+            @if ($data_labtest->lop_uji_lab == 'true')
+              @if ($data_labtest->lab_status == 'tersedia')
+              <div class="align-items-center d-grid gap-2">
+                <a href="{{ url('pengajuan/form-pengajuan') }}">
+                  <button type="button" class="btn btn-success" style="width: 100%;">Ajukan Peminjaman</button>
+                </a>
+              </div>
+              @else
+              <div class="align-items-center d-grid gap-2" >
+                <a href="#">
+                  <button type="button" class="btn btn-success" style="width: 100%;" disabled>Ajukan Peminjaman</button>
+                </a>
+              </div>
+              @endif
+            @endif
           @endif
         </div>
       </div>
@@ -101,9 +111,6 @@ Lab management | Dashboard
           <ul class="nav nav-tabs flex-column">
             <li class="nav-item">
               <a class="nav-link active show" data-bs-toggle="tab" href="#tab-1" style="color: #444444cc; padding-left: 16px;">Fasilitas dan Alat</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="tab" href="#tab-3" style="color: #444444cc; padding-left: 16px;">Ketentuan Peminjaman</a>
             </li>
           </ul>
         </div>

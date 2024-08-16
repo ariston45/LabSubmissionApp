@@ -40,22 +40,30 @@ Route::prefix('landing')->group(function () {
 Route::group(['middleware' => ['auth']], function () {
 	Route::prefix('datasource')->group(function () {
 		# Source datatables
-		Route::post('source-datatables-laboratorium', [DatatablesController::class, 'sourceDataLaboratorium'])->name('source-datatables-laboratorium');
+		Route::post('source-datatables-laboratorium', [DatatablesController::class, 'sourceDataLaboratorium'])->name('source_datatables_laboratorium');
 		Route::post('source-datatables-teknisi-lab', [DatatablesController::class, 'sourceDataTeknisiLab'])->name('source-datatables-teknisi-lab');
-		Route::post('source-datatables-fasilitas-lab', [DatatablesController::class, 'sourceDataFasilitasLab'])->name('source-datatables-fasilitas-lab');
-		Route::post('source-datatables-test-lab', [DatatablesController::class, 'sourceDataTestLab'])->name('source-datatables-test-lab');
-		Route::match(['get','post'], 'source-datatables-schedule-lab',[DatatablesController::class, 'sourceDataScheduleLab'])->name('source-datatables-schedule-lab');
-		Route::match(['get', 'post'], 'source-datatables-reguler-schedule-lab', [DatatablesController::class, 'sourceDataScheduleLabReguler'])->name('source-datatables-reguler-schedule-lab');
-		Route::post('source-datatables-lab-byshcedule', [DatatablesController::class, 'sourceDataLabSchedule'])->name('source_datatables_lab_byshcedule');
 		Route::post('source-datatables-labs-sub', [DatatablesController::class, 'sourceDataLabSub'])->name('source_datatables_labs_sub');
-		Route::post('source-datatables-lab-byfacility', [DatatablesController::class, 'sourceDataLabFacility'])->name('source_datatables_lab_byfacility');
+		#Facility
 		Route::post('source-datatables-fasilitas', [DatatablesController::class, 'sourceDataFasilitas'])->name('source-datatables-fasilitas');
-		Route::post('source-datatables-user', [DatatablesController::class, 'sourceDataUsers'])->name('source-datatables-user');
+		Route::post('source-datatables-fasilitas-lab', [DatatablesController::class, 'sourceDataFasilitasLab'])->name('source-datatables-fasilitas-lab');
+		Route::post('source-datatables-lab-byfacility', [DatatablesController::class, 'sourceDataLabFacility'])->name('source_datatables_lab_byfacility');
+		#schedule
+		Route::post('source-datatables-lab-byshcedule', [DatatablesController::class, 'sourceDataLabSchedule'])->name('source_datatables_lab_byshcedule');
+		Route::match(['get','post'], 'source-datatables-schedule-lab',[DatatablesController::class, 'sourceDataScheduleLab'])->name('source-datatables-schedule-lab');
+		#Pengajuan
 		Route::post('source-datatables-pengajuan', [DatatablesController::class, 'sourceDataPengajuan'])->name('source-datatables-pengajuan');
 		Route::post('source-datatables-pengajuan-archieve', [DatatablesController::class, 'sourceDataPengajuanArchive'])->name('source-datatables-pengajuan-archieve');
 		Route::post('source-datatables-pengajuan-additional', [DatatablesController::class, 'sourceDataPengajuanAdditional'])->name('source-datatables-pengajuan-additional');
-		Route::match(['get', 'post'], 'source-data-labtest', [DatatablesController::class, 'sourceDataUjilab'])->name('source_data_labtest');
+		Route::match(['get', 'post'], 'source-datatables-reguler-schedule-lab', [DatatablesController::class, 'sourceDataScheduleLabReguler'])->name('source-datatables-reguler-schedule-lab');
 		Route::match(['get', 'post'], 'source-data-labtest-pengajuan', [DatatablesController::class, 'sourceDataPengajuanUjilab'])->name('source_data_labtest_pengajuan');
+		#UjiLab
+		Route::post('source-datatables-laboratorium-labtest', [DatatablesController::class, 'sourceDataLaboratoriumLabtest'])->name('source_datatables_laboratorium_labtest');
+
+		Route::match(['get', 'post'], 'source-data-labtest', [DatatablesController::class, 'sourceDataLabtest'])->name('source_data_labtest');
+		// Route::match(['get', 'post'], 'source-data-labtest', [DatatablesController::class, 'sourceDataLabUji'])->name('source_datatables_ujilab');
+		#User
+		Route::post('source-datatables-user', [DatatablesController::class, 'sourceDataUsers'])->name('source-datatables-user');
+		
 		#Other
 		Route::post('source-data-sch-lab', [LaboratoryController::class, 'sourceDataScheduleLabJson'])->name('source_data_sch_lab');
 		Route::post('users', [DataController::class, 'sourceDataUser'])->name('source-data-users');
@@ -66,7 +74,6 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('data-times-sch', [DataController::class, 'sourceTimeData'])->name('data-times-sch');
 		Route::match(['get', 'post'], 'source-data-month-ondashboard', [DataController::class, 'sourceMonthOnDashboard'])->name('source-data-month-ondashboard');
 		Route::match(['get', 'post'], 'source-check-skripsi', [DataController::class, 'checkDataStudent'])->name('source_check_skripsi');
-		Route::match(['get', 'post'], 'source-data-cost-lab-tables', [DataController::class, 'viewLabCostTables'])->name('source-data-cost-lab-tables');
 		Route::match(['get', 'post'], 'source-data-cost-facility-tables', [DataController::class, 'viewFacilityCostTables'])->name('source-data-cost-facility-tables');
 		Route::match(['get', 'post'], 'source-data-check-sch', [DataController::class, 'viewCheckDataSch'])->name('source-data-check-sch');
 		Route::match(['get', 'post'], 'source-data-testlab', [DataController::class, 'sourceDataTestLab'])->name('source_data_testlab');
@@ -74,16 +81,22 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::match(['get', 'post'], 'source-check-lab', [DataController::class, 'checkLabDetail'])->name('source_check_lab');
 		Route::match(['get', 'post'], 'source-check-tool', [DataController::class, 'checkToolDetail'])->name('source_check_tool');
 		#cek estimasi biaya
+		Route::match(['get', 'post'], 'source-data-cost-lab-tables', [DataController::class, 'viewLabCostTables'])->name('source-data-cost-lab-tables');
 		Route::match(['get', 'post'], 'source-check-cost-tool', [DataController::class, 'checkCostTool'])->name('source_check_cost_tool');
 		Route::match(['get', 'post'], 'check-date-hasil-ujilab', [DataController::class, 'checkDateHasil'])->name('check_date_hasil_ujilab');
+		#Data user
+		Route::match(['get', 'post'], 'source-data-users-subhead', [DataController::class, 'dataUserSubHead'])->name('source_data_users_subhead');
+		Route::match(['get', 'post'], 'source-data-users-tech', [DataController::class, 'dataUserTech'])->name('source_data_users_tech');
+		
 		
 	});
 	
 	/*************************************************************************************************************************************************/
 	Route::prefix('download')->group(function () {
 		Route::get('bukti-bayar/{filename}', [DataController::class, 'downloadBuktiBayar'])->name('download_bukti_bayar');
-		Route::get('laporan/{filename}', [DataController::class, 'downloadLaporanKegiatan'])->name('download_result_report');
-		Route::get('laporan_ii/{filename}', [DataController::class, 'downloadLaporanKegiatan'])->name('download_result_report_ii');
+		Route::get('laporan_hasil/{filename}', [DataController::class, 'downloadLaporanKegiatan'])->name('download_result_report');
+		Route::get('lampiran_mhs/{filename}', [DataController::class, 'downloadLampiranMhs'])->name('download_attachment_student');
+		Route::get('laporan_legalitas/{filename}', [DataController::class, 'downloadLaporanLegalitas'])->name('download_legalization_report');
 	});
 	/*************************************************************************************************************************************************/
 	Route::get('beranda', [HomeController::class, 'HomeSystem']);
@@ -107,7 +120,8 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('action-confirm-payment', [PengajuanController::class, 'actionConfirmPayment'])->name('confirm_payment');
 		Route::post('action-upload-bukti', [PengajuanController::class, 'actionUploadBukti'])->name('upload_bukti_pembayaran');
 		Route::post('action-konfirmasi-tech', [PengajuanController::class, 'actionTechConfirm'])->name('action_konfirmasi_tech');
-		
+
+		Route::match(['get', 'post'], 'action-reload-data-skripsi/{id}', [DataController::class, 'actionReloadDataSkripsi'])->name('action_reload_data_skripsi');
 		Route::post('action-pengajuan-static-by-day', [PengajuanController::class, 'actionPengajuanStaticDay'])->name('action_pengajuan_static_by_day');
 		Route::post('action-pengajuan-static-by-tool', [PengajuanController::class, 'actionPengajuanStaticTool'])->name('action_pengajuan_static_by_tool');
 		Route::post('action-pengajuan-static-by-labtest', [PengajuanController::class, 'actionPengajuanStaticLabtest'])->name('action_pengajuan_static_labtest');
@@ -117,6 +131,7 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('update-technical-submission', [PengajuanController::class, 'actionSettechnical'])->name('update_technical_submission');
 		Route::post('update-technical-report-submission', [PengajuanController::class, 'actionTechReport'])->name('update_technical_report_submission');
 		Route::post('action-upload-laporan', [PengajuanController::class, 'actionUploadLaporan'])->name('upload_laporan');
+		Route::post('action-upload-laporan-student', [PengajuanController::class, 'actionUploadLaporanStudent'])->name('upload_laporan_student');
 		Route::post('update-validation-report', [PengajuanController::class, 'actionUpdateValidation'])->name('update_validation_report');
 		# viewpage
 		Route::get('viewpage-pengajuan/{id}', [PengajuanController::class, 'viewPengajuan'])->name('viewpage_pengajuan');
@@ -131,10 +146,9 @@ Route::group(['middleware' => ['auth']], function () {
 		# viewpage
 		Route::get('{id}/teknisi', [LaboratoryController::class, 'viewLabTechnicians']);
 		Route::get('{id}/fasilitas', [LaboratoryController::class, 'viewLabFacility'])->name('laboratorium_fasilitas');
-		Route::get('{id}/ujilab', [LaboratoryController::class, 'viewUjiLab'])->name('laboratorium_uji_lab');
+		
 		Route::get('{id}/jadwal', [LaboratoryController::class, 'viewLabSchedule'])->name('laboratorium_schedule');
 		// Route::get('detail-fasilitas/{id}', [LaboratoryController::class, 'viewLabFacilityDetail']);
-		
 		# form
 		Route::get('{id}/update-lab', [LaboratoryController::class, 'formUpdateLab'])->name('update_lab');
 		Route::get('form-input-lab', [LaboratoryController::class, 'formLaboratory']);
@@ -157,8 +171,8 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('update-sch-laboratorium', [LaboratoryController::class, 'actionUpdateLabSch'])->name('update_sch_laboratorium');
 		
 		Route::post('input-exclude-sch', [LaboratoryController::class, 'actionInputExcludeSch'])->name('input_exclude_sch');
-		Route::post('input-ujilab', [LaboratoryController::class, 'actionInputUjiLab'])->name('input_ujilab');
-		Route::post('update-ujilab', [LaboratoryController::class, 'actionUpdateUjiLab'])->name('update_ujilab');
+		
+		// 
 		#Source data
 	});
 	/*************************************************************************************************************************************************/
@@ -187,9 +201,14 @@ Route::group(['middleware' => ['auth']], function () {
 	});
 	/*************************************************************************************************************************************************/
 	Route::prefix('uji_laboratorium')->group(function () {
-		Route::get('/', [LaboratoryController::class, 'dataUjiLabs']);
-		Route::get('detail-ujilab/{id}', [LaboratoryController::class, 'viewLabTestDetail']);
-		Route::get('form-update-ujilab/{id}', [LaboratoryController::class, 'formUpdateLaboratoryUji']);
+		Route::get('/', [LaboratoryController::class, 'dataViewLaboratoriumUji']);
+		Route::get('labtest/{id}', [LaboratoryController::class, 'dataViewLabtest'])->name('labtest');
+		Route::get('labtest/form-tambah-ujilab/{id}', [LaboratoryController::class, 'formInsertLabtest'])->name('form_insert_labtest');
+		Route::get('labtest/form-update-ujilab/{id}', [LaboratoryController::class, 'formUpdateLabtest']);
+		Route::get('detail-ujilab/{id}', [LaboratoryController::class, 'viewLabTestDetail'])->name('detail_labtest');
+		Route::post('input-ujilab', [LaboratoryController::class, 'actionInsertLabtest'])->name('insert_labtest');
+		Route::post('update-ujilab', [LaboratoryController::class, 'actionUpdateLabtest'])->name('update_labtest');
+		Route::get('select-laboratorium', [LaboratoryController::class, 'dataLabForLabtest']);
 	});
 	/*************************************************************************************************************************************************/
 	Route::prefix('laporan')->group(function () {
@@ -212,8 +231,9 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('user-detail/form-update-user/{id}', [PengaturanController::class, 'formUpdateUser']);
 		Route::get('form-datasource', [PengaturanController::class, 'formPengaturanDatasource']);
 		# action
+		Route::post('action-to-users', [PengaturanController::class, 'actionToUser'])->name('actio_to_users');
 		Route::post('input-data-user', [PengaturanController::class, 'actionInputUser'])->name('input-data-user');
-		Route::post('update-data-user', [PengaturanController::class, 'actionUpdateUser'])->name('update-data-user');
+		Route::post('update-data-user', [PengaturanController::class, 'actionUpdateUser'])->name('update_data_user');
 		Route::post('update-datasource', [PengaturanController::class, 'actionUpdateDataSource'])->name('update_datasource');
 	});
 	/*************************************************************************************************************************************************/

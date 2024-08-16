@@ -41,6 +41,7 @@ Route::post('source-data-filter-lab', [DataController::class, 'sourceDataFilterL
 Route::post('source-data-sch-lab-open', [LaboratoryController::class, 'sourceDataScheduleLabJson'])->name('source_data_sch_lab_open');
 #eksternal data
 Route::prefix('unesa_api')->group(function () {
+  Route::get('skripsi_mahasiswa_ft', [ApiUnesaController::class, 'DataMahasiswa'])->name('data_mahasiswa');
   Route::get('skripsi_mahasiswa',[ApiUnesaController::class, 'DataSkripsiMahasiswa'])->name('data_api_skripsi_mahasiswa');
   Route::get('skripsi_mahasiswa/{id}', [ApiUnesaController::class, 'DataSkripsiMahasiswaInit'])->name('data_api_skripsi_mahasiswa_init');
   #
@@ -61,9 +62,11 @@ Route::prefix('cek_data')->group(function () {
 });
 # Auth
 Route::get('login', [AuthController::class,'viewLogin'])->name('login');
-Route::post('login-action',[AuthController::class, 'actionLogin'])->name('login-action');
+Route::post('login-action',[AuthController::class, 'actionLogin'])->name('login_action');
 Route::get('register', [AuthController::class, 'viewRegister'])->name('view-register');
 Route::post('register-action', [AuthController::class, 'actionRegister'])->name('register-action');
+Route::get('register-success', [AuthController::class, 'registerSuccess'])->name('register-success');
+Route::get('activation-account/{token}', [AuthController::class, 'actActivation'])->name('activation_account');
 Route::get('logout', [AuthController::class, 'actionLogout'])->name('logout');
 Route::get('init-user', [ProfileController::class,'IdenUser'])->name('init-user');
 Route::get('reset', [AuthController::class, 'viewFormCheck'])->name('reset');

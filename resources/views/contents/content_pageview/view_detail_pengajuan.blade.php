@@ -14,17 +14,55 @@ Lab management | Dashboard
     <div class="box-header with-border">
       <h3 class="box-title" style="color: #0277bd"><i class="ri-file-list-3-line" style="margin-right: 4px;"></i> Detail Permohonan </h3>
       <div class="pull-right">
-        @if ($data_pengajuan->lsb_status == 'menunggu')
-          @if (rulesUser(['LAB_HEAD','ADMIN_MASTER','ADMIN_MASTER']))
-            <a href="#" onclick="actionConfirmPayment();">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
-            </a>
-            <a href="#" onclick="actionAccept();">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
-            </a>
+        {{-- ========================================================================================================================================================================== --}}
+        
+        @if ($data_pengajuan->lsb_status == 'menunggu') 
+          @if (rulesUser(['LAB_HEAD']))
+            @if ($data_pengajuan->lsb_type == 'testing')
+              @if ($param_acc_subhead == true)
+                <a href="#" onclick="actionConfirmPayment();">
+                <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
+                </a>
+                <a href="#" onclick="actionAccept();">
+                  <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                </a>
+              @endif
+            @else
+              @if ($data_pengajuan->lsb_activity == 'tp_penelitian_skripsi')
+                <a href="#">
+                  <button class="btn btn-flat btn-xs btn-default" disabled><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
+                </a>
+                <a href="{{ url('pengajuan/action-reload-data-skripsi/'.$data_pengajuan->lsb_id) }}">
+                  <button class="btn btn-flat btn-xs btn-default"><i class="ri-restart-line" style="margin-right: 4px;"></i> Reload Data Skripsi</button>
+                </a>
+              @else
+                <a href="#" onclick="actionConfirmPayment();">
+                  <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
+                </a>
+              @endif
+              <a href="#" onclick="actionAccept();">
+                <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+              </a>
+            @endif
             <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
             </a>
+          @elseif (rulesUser(['LAB_SUBHEAD']))
+          @if ($data_pengajuan->lsb_type == 'testing')
+          @if ($param_acc_subhead == false)
+          <a href="#" onclick="actionResponKasublab();">
+            <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+          </a>
+          @endif
+          <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
+            <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
+          </a>
+          @endif
+          @if ($data_pengajuan->lsb_activity == 'tp_penelitian_skripsi')
+            <a href="{{ url('pengajuan/action-reload-data-skripsi/'.$data_pengajuan->lsb_id) }}">
+              <button class="btn btn-flat btn-xs btn-default"><i class="ri-restart-line" style="margin-right: 4px;"></i> Reload Data Skripsi</button>
+            </a>
+          @endif
           @elseif (rulesUser(['STUDENT','LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
             @if ($data_order->los_confirm_payment == 'true')
               <button class="btn btn-flat btn-xs btn-default" onclick="actionUploadBukti()"><i class="ri-upload-2-line" style="margin-right: 4px;"></i> Upload Bukti Bayar</button>
@@ -33,6 +71,7 @@ Lab management | Dashboard
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
             </a>
           @endif
+        {{-- ========================================================================================================================================================================== --}}
         @elseif ($data_pengajuan->lsb_status == 'ditolak')
           @if (rulesUser(['LAB_HEAD','ADMIN_MASTER','ADMIN_MASTER']))
             <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
@@ -46,28 +85,36 @@ Lab management | Dashboard
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Buat Pengajuan Baru</button>
             </a>
           @endif
+        {{-- ========================================================================================================================================================================== --}}
         @elseif($data_pengajuan->lsb_status == 'disetujui')
           @if (rulesUser(['LAB_HEAD']))
             <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
             </a>
+
           @elseif (rulesUser(['LAB_SUBHEAD','ADMIN_MASTER','ADMIN_MASTER']))
             <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
             </a>
-            @if ($data_pengajuan->lsb_type == 'testing')
-            <a href="#" onclick="actionResponKasublab();">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Uji Laboratorium</button>
-            </a>
-            @else
-            <a href="#" onclick="actionSetTech();">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Set Teknikal Pendamping</button>
-            </a>
+            @if ($data_pengajuan->lsb_type != 'testing')
+              <a href="#" onclick="actionSetTech();">
+                <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Set Teknikal Pendamping</button>
+              </a>
             @endif
-            @if ($data_pengajuan->level == 'PUBLIC_MEMBER' || $data_pengajuan->level == 'PUBLIC_NON_MEMBER')
-            <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
-              <button class="btn btn-flat btn-xs btn-primary"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
-            </a>
+              @if ($data_pengajuan->lsb_activity == 'tp_penelitian_skripsi')
+                <a href="{{ url('pengajuan/action-reload-data-skripsi/'.$data_pengajuan->lsb_id) }}">
+                  <button class="btn btn-flat btn-xs btn-default"><i class="ri-restart-line" style="margin-right: 4px;"></i> Reload Data Skripsi</button>
+                </a>
+              @endif
+            @if ($data_pengajuan->level == 'PUBLIC_MEMBER' || $data_pengajuan->level == 'PUBLIC_NON_MEMBER' || $data_pengajuan->level == 'LECTURE' || $data_pengajuan->level == 'STUDENT')
+              @if ($data_result != null)
+                <a href="#" onclick="actValidationReport()">
+                  <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Validasi Laporan</button>
+                </a>
+              @endif
+                <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
+                  <button class="btn btn-flat btn-xs btn-success"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
+                </a>
             @else
               @if ($data_result != null)
                 <a href="#" onclick="actValidationReport()">
@@ -77,16 +124,15 @@ Lab management | Dashboard
             @endif
           @elseif (rulesUser(['LAB_TECHNICIAN']))
             <a href="#" onclick="actionSetTechConfirm();">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Peminjaman Selesai</button>
+              <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Konfirmasi Validasi</button>
             </a>
-          {{--  --}}
           @elseif (rulesUser(['STUDENT']))
             <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
               <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
             </a>
             @if ($data_result == null)
             <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
-              <button class="btn btn-flat btn-xs btn-primary"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
+              <button class="btn btn-flat btn-xs btn-success"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
             </a>
             @endif
           @elseif (rulesUser(['LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
@@ -107,7 +153,29 @@ Lab management | Dashboard
         <tbody>
           <tr>
             <td style="width: 30%;"><b>Nama</b></td>
-            <td style="width: 70%;">{{ $data_pengajuan->name }}</td>
+            <td style="width: 70%;">
+              {{ $data_pengajuan->name }}
+              <div>
+                @switch($data_pengajuan->level)
+                  @case('STUDENT')
+                  <i>Kategori pengguna: Mahasiswa FT</i>
+                  @break
+                  @case('LECTURE')
+                  <i>Kategori pengguna: Dosen FT</i>  
+                  @break
+                  @case('PUBLIC_MEMBER')
+                  <i>Kategori pengguna: Umum Anggota UNESA</i>  
+                  @break
+                  @case('PUBLIC_NON_MEMBER')
+                  <i>Kategori pengguna: Umum Non Anggota UNESA</i>  
+                  @break
+                  @default
+                    
+                @endswitch
+                <i></i>
+              </div>
+              {{-- <div class="pull-right">Test</div> --}}
+            </td>
           </tr>
           <tr>
             <td style="width: 30%;"><b>NIM / No.ID</b></td>
@@ -155,11 +223,11 @@ Lab management | Dashboard
             <td style="width: 30%;"><b>Kategori Pengajuan</b></td>
             <td style="width: 70%;">
               @if ($data_pengajuan->lsb_type == 'borrowing')
-                <b>Peminjaman Laboratorium</b>
+              <b>Peminjaman Laboratorium</b>
               @elseif ($data_pengajuan->lsb_type == 'rental')
-                <b>Sewa Alat Laboratorium</b>
+              <b>Sewa Alat Laboratorium</b>
               @else
-                <b>Pengujian Sampel</b>
+              <b>Pengujian Sampel</b>
               @endif
             </td>
           </tr>
@@ -177,18 +245,26 @@ Lab management | Dashboard
                 </div>
               </td>
             </tr>
-          @endforeach
+            @endforeach
+          <tr>
+            <td>
+              <b>Diajukan pada </b>
+            </td>
+            <td>
+              {{ date('Y-m-d H:i:s', strtotime($data_pengajuan->dt_ajukan)) }}
+            </td>
+          </tr>
           <tr>
             <td style="width: 30%;">
               <b>Hari/Tanggal </b>
               @if ($data_pengajuan->lsb_type == 'testing')
-                <b>Keluar Hasil</b>
-              @else
+                <b>Rilis Hasil</b>
+                @else
                 <b>Pelaksanaan</b>
-              @endif
-            </td>
-            <td style="width: 70%;">{!! $web_date !!}</td>
-          </tr>
+                @endif
+              </td>
+              <td style="width: 70%;">{!! $web_date !!}</td>
+            </tr>
           <tr>
             <td style="width: 30%;"><b>Laboratorium</b></td>
             <td style="width: 70%;">{{ strJudul($data_pengajuan->lab_name) }}</td>
@@ -201,21 +277,21 @@ Lab management | Dashboard
                   <th>Daftar fasilitas terdaftar</th>
                 </tr>
                 @if ($data_facility_listed->count() == 0)
-                  <tr><td>--</td></tr>
+                <tr><td>--</td></tr>
                 @else
-                  @foreach ($data_facility_listed as $list)
+                @foreach ($data_facility_listed as $list)
                     <tr>
                       <td>
                         <b>-</b> {{ $list->laf_name }} <i>[Jumlah Unit : {{ $list->lsf_cnt_unit }}]</i>
                       </td>
                     </tr>
-                  @endforeach
+                    @endforeach
                 @endif
                 <tr>
                   <th>Daftar fasilitas tidak terdaftar</th>
                 </tr>
                 @if ($data_facility_unlisted->count() == 0)
-                  <tr><td>--</td></tr>
+                <tr><td>--</td></tr>
                 @else
                   @foreach ($data_facility_unlisted as $list)
                     <tr>
@@ -234,22 +310,47 @@ Lab management | Dashboard
               @if ($data_result == null)
                 --
               @else
-                <a href="{{ route('download_result_report',['filename'=> $data_result->lsr_filename]) }}">{{ $data_result->lsr_filename }}</a> 
-                @if ($errors->has('file_laporan_err'))
-                <br> <span style="color: red;"><i>{{ $errors->first('file_laporan_err') }}</i></span>
+                @if ($data_result->lsr_file_result == null)
+                  --
+                @else
+                  <a href="{{ route('download_result_report',['filename'=> $data_result->lsr_file_result]) }}">{{ $data_result->lsr_file_result }}</a> 
+                  @if ($errors->has('file_laporan_err'))
+                  <br> <span style="color: red;"><i>{{ $errors->first('file_laporan_err') }}</i></span>
+                  @endif
                 @endif
               @endif
             </td>
           </tr>
+          {{-- <tr>
+            <td style="width: 30%;"><b>Lampiran Jurnal/Skripsi</b></td>
+            <td style="width: 70%;">
+              @if ($data_result == null)
+              --
+              @else
+                @if ($data_result->lsr_file_attachment == null)
+                --
+                @else
+                  <a href="{{ route('download_attachment_student',['filename'=> $data_result->lsr_file_attachment]) }}">{{ $data_result->lsr_file_attachment }}</a> 
+                  @if ($errors->has('file_laporan_err'))
+                  <br> <span style="color: red;"><i>{{ $errors->first('file_laporan_err') }}</i></span>
+                  @endif
+                @endif
+              @endif
+            </td>
+          </tr> --}}
           <tr>
             <td style="width: 30%;"><b>Laporan Legalitas</b></td>
             <td style="width: 70%;">
               @if ($data_result == null)
                 --
               @else
-                <a href="{{ route('download_result_report_ii',['filename'=> $data_result->lsr_filename_legalitas]) }}">{{ $data_result->lsr_filename_legalitas }}</a> 
+                @if ($data_result->lsr_file_legalization == null)
+                  --
+                @else
+                <a href="{{ route('download_legalization_report',['filename'=> $data_result->lsr_file_legalization]) }}">{{ $data_result->lsr_file_legalization }}</a> 
                 @if ($errors->has('file_laporan_err'))
-                <br> <span style="color: red;"><i>{{ $errors->first('file_laporan_err') }}</i></span>
+                  <br> <span style="color: red;"><i>{{ $errors->first('file_laporan_err') }}</i></span>
+                  @endif
                 @endif
               @endif
             </td>
@@ -260,10 +361,11 @@ Lab management | Dashboard
               @if ($data_result  == null)
                 --
               @else
-                @if ($data_result->lsr_status == 'false')
+                @if ($data_result->lsr_status_validation == 'false')
                   Laporan belum divalidasi.
                 @else
-                  Laporan sudah di validasi oleh {{ $data_result->name }}
+                  Laporan sudah di validasi oleh {{ $data_result->name }} <br>
+                  <i>Catatan Kasublab : {{ $data_result->lsr_notes }}</i>
                 @endif
               @endif
             </td>
@@ -287,15 +389,15 @@ Lab management | Dashboard
               <table>
                 <tr>
                   @if ($data_pengajuan->lab_costbase == 'by_day')
-                    <td colspan="2"><b>Daftar Hari :</b></td>
+                  <td colspan="2"><b>Daftar Hari :</b></td>
                   @elseif ($data_pengajuan->lab_costbase == 'by_tool')
                     <td colspan="2"><b>Daftar Alat dan Fasilitas :</b></td>
                   @elseif ($data_pengajuan->lab_costbase == 'by_sample')
                     <td colspan="2"><b>Jumlah sample : </b></td>
-                  @endif
+                    @endif
                 </tr>
                 @foreach ($data_detail_order as $value)
-                  <tr>
+                <tr>
                     <td style="padding: 2px 10px 2px 2px;">{{ $value->lod_item_name }}</td>
                     <td style="padding: 2px 2px 2px 2px;">: {{ funCurrencyRupiah($value->lod_cost) }}</td>
                   </tr>
@@ -304,7 +406,7 @@ Lab management | Dashboard
                     <td colspan="2" style="padding: 2px 10px 2px 2px;"><i>Catatan: {{ $value->lod_note_order }}</i></td>
                   </tr> 
                   @endif
-                @endforeach
+                  @endforeach
                 <tr>
                   <td style="padding: 2px 10px 2px 2px;">Jumlah Biaya</td>
                   <td style="padding: 2px 2px 2px 2px;">: ({{ funCurrencyRupiah($data_order->los_cost_total) }})</td>
@@ -328,36 +430,33 @@ Lab management | Dashboard
               </table>
             </td>
           </tr>
-          {!! $str_acc !!}
+          <tr>
+            <td style="width: 30%;"><b>Kepala Laboratorium</b></td>
+            <td style="width: 70%;">
+              {!! $web_head_acc !!}
+            </td>
+          </tr>
           <tr>
             <td style="width: 30%;"><b>Kepala Sub Lab</b></td>
             <td style="width: 70%;">
-            @if ($user_kasublab == null)
-              --
-            @else
-              {{ strJudul($user_kasublab->name) }} 
-              <br> <i>No. Kontak: {{ $user_kasublab->usd_phone }}</i>
-              <br> <i>Catatan: 
-              @if (isset($data_result->lsr_notes))
-                {{ $data_result->lsr_notes }}
-              @endif</i>
-            @endif
+              {!! $web_subhead_acc !!}
             </td>
           </tr>
           <tr>
             <td style="width: 30%;"><b>Teknisi Lab</b></td>
             <td style="width: 70%;">
-            @if ($data_pengajuan->lsb_user_tech == null || $data_pengajuan->lsb_user_tech == '')
-              --
+            @if ($user_technical == null)
+            --
             @else
-              {{ strJudul($user_technical->name) }} 
-              <br> <i>No. Kontak: {{ $user_technical->usd_phone }}</i>
+            {{ strJudul($user_technical->name) }} 
+            <br> <i>No. Kontak: {{ $user_technical->usd_phone }}</i>
+            {{-- @dd("test") --}}
             @endif
-              
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            
+          </td>
+        </tr>
+      </tbody>
+    </table>
     </div>
   </div>
 </div>
@@ -366,14 +465,14 @@ Lab management | Dashboard
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Konfirmasi Peminjaman Laboratorium Selesai</h4>
+				<h4 class="modal-title">Mengonfirmasi Kasublab Untuk Memvalidasi Laporan</h4>
 			</div>
       <form action="{{ route('action_konfirmasi_tech') }}" method="POST" enctype="multipart/form-data" autocomplete="new-password">
 				@csrf
 				<div class="modal-body">
 					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
           <input type="hidden" name="lab_subhead" value="{{ $data_pengajuan->lab_head }}">
-					Pemohon telah menyelesaikan peminjaman lab.
+					Pemohon telah menyelesaikan peminjaman lab dan sudah mengupload laporan.
 				</div>
 				<div class="modal-footer">
 					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
@@ -449,7 +548,7 @@ Lab management | Dashboard
 						<label>
 							Set Diskon
 						</label>
-						<input type="number" class="form-control" name="reduction">
+						<input id="inp-reduction" type="number" class="form-control" name="reduction" oninput="actInputReduction()">
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -546,8 +645,14 @@ Lab management | Dashboard
 						<select type="text" class="form-control" name="inp_acc" id="inp-acc" value="">
               <option value="{{ null }}">Pilih Respon</option>
               <option value="disetujui">Disetujui</option>
-              <option value="ditolak">Ditolak</option>
+              <option value="disetujui_rejadwal">Disetujui dengan penjadwalan ulang publikasi hasil</option>
             </select>
+					</div>
+          <div class="form-group has-feedback" style="margin-bottom: 0px;">
+						<label>
+							Penjadwalan Ulang Publikasi
+						</label>
+						<input type="date" class="form-control" name="date_rejadwal">
 					</div>
           <div class="form-group has-feedback" style="margin-bottom: 0px;">
 						<label>
@@ -592,6 +697,7 @@ Lab management | Dashboard
 							Laporan Kegiatan
 						</label>
 						<div class="input-group">
+
 							<span class="input-group-btn">
 								<span id="btn-file-foto" class="btn btn-default btn-file btn-flat">
 									Buka Berkas <input type="file" id="id-upload" name="laporan_kegiatan" >
@@ -785,6 +891,14 @@ Lab management | Dashboard
   };
   function actionResponKasublab() {
     $('#modalResponPengajuanLabtest').modal('show');
+  };
+  function actInputReduction() {
+    var val_reduction = $('#inp-reduction').val();
+    if (val_reduction > 100) {
+      $('#inp-reduction').val(100);
+    }else if(val_reduction < 0){
+      $('#inp-reduction').val(0);
+    }
   };
 </script>
 {{-- call by id or class --}}

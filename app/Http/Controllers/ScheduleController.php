@@ -29,6 +29,7 @@ class ScheduleController extends Controller
 	/* Tags:... */
 	public function dataSchedule(Request $request)
 	{
+		// die();
 		$lab_id = $request->id;
 		$data_lab = Laboratory::where('lab_id', $lab_id)->first();
 		return view('contents.content_datalist.data_schedule', compact('lab_id', 'data_lab'));

@@ -1,7 +1,7 @@
 @extends('auth.auth_layout')
 @section('content')
-<form role="form" method="POST" action="{{ route('login-action') }}" autocomplete="off">
-	{{ csrf_field() }}
+<form role="form" method="POST" action="{{ route('login_action') }}" autocomplete="off">
+	@csrf
 	<div class="form-group has-feedback {{ $errors->has('email') ? ' has-error' : '' }}">
 		<label>Email</label>
 		<input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}"  autocomplete="new-password" required>

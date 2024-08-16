@@ -139,7 +139,7 @@ Lab management | Dashboard
                       <tr>
                         <th style="width: 5%; text-align: center;">No</th>
                         <th style="width: 65%; text-align: center;">Nama Fasilitas Dan Alat</th>
-                        <th style="width: 30%;text-align: center;">Biaya Pinjam</th>
+                        <th style="width: 30%;text-align: center;">Biaya Pinjam/Hari</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -148,8 +148,11 @@ Lab management | Dashboard
                       @endphp
                       @foreach ($data_facility as $list)
                       <tr>
-                        <td style="width: 5%; text-align: center;">{{ $no }}</td>
-                        <td>{{ $list->laf_name }}</td>
+                        <td style="width: 5%; text-align: center; vertical-align: top;">{{ $no }}</td>
+                        <td>
+                          <b>{{ $list->laf_name }}</b><br>
+                          <p>{{ $list->laf_description }}</p>
+                        </td>
                         <td style="width: 5%; text-align: center;">{{ funCurrencyRupiah($list->laf_value) }}</td>
                       </tr>
                       @php
@@ -199,93 +202,6 @@ Lab management | Dashboard
               </div>
             </div>
             <div class="tab-pane" id="tab-3">
-              <div class="row">
-                <div class="col-lg-12 details order-2 order-lg-1">
-                  <h3 style="color: #0b4d70;">Ketentuan Peminjaman</h3>
-                </div>
-                <div class="col-md-12 order-1 order-lg-2" style="color: #016e72">
-                  <b>Tujuan:</b> <br>
-                  <p>
-                    Ketentuan ini dibuat untuk mengatur peminjaman laboratorium (lab) di Fakultas Teknik Universitas Negeri Surabaya dengan tujuan:
-                  </p>
-                  <ul>
-                    <li>Meningkatkan ketersediaan dan pemanfaatan lab secara optimal.</li>
-                    <li>Menjaga keamanan dan keselamatan pengguna lab.</li>
-                    <li>Menjaga kebersihan dan kelestarian peralatan dan fasilitas lab.</li>
-                  </ul>
-                  <br>
-                  <b>Pihak yang Berkepentingan:</b> <br>
-                  <ul>
-                    <li>Peminjam: Mahasiswa, dosen, peneliti, atau pihak lain yang membutuhkan lab untuk kegiatan penelitian, pendidikan, magang, atau pengabdian kepada masyarakat.</li>
-                    <li>Penanggung Jawab Lab: Orang yang ditunjuk oleh [Nama Institusi] untuk bertanggung jawab atas pengelolaan lab.</li>
-                  </ul>
-                  <b>Prosedur Peminjaman:</b> <br>
-                  <ol>
-                    <li>Pengajuan Permohonan:</li>
-                    <ol type="a">
-                      <li>Peminjam mengajukan permohonan peminjaman melalui aplikasi, </li>
-                    </ol>
-                    <li>Peninjauan Permohonan:</li>
-                  </ol>
-                  **Prosedur Peminjaman:**
-                  1. **Pengajuan Permohonan:**
-                      * Peminjam mengajukan permohonan peminjaman lab dengan mengisi formulir yang telah disediakan. Formulir tersebut dapat diperoleh di [Lokasi Formulir].
-                      * Formulir permohonan harus dilengkapi dengan informasi berikut:
-                          * Nama peminjam
-                          * Kontak peminjam
-                          * Nama kegiatan
-                          * Tujuan kegiatan
-                          * Tanggal dan waktu peminjaman
-                          * Peralatan dan fasilitas lab yang dibutuhkan
-                          * Nama penanggung jawab kegiatan (jika ada)
-                      * Formulir permohonan yang telah diisi lengkap harus diajukan kepada Penanggung Jawab Lab paling lambat [Jangka Waktu Pengajuan] sebelum tanggal peminjaman.
-                  2. **Peninjauan Permohonan:**
-                      * Penanggung Jawab Lab akan meninjau permohonan yang diajukan dan mempertimbangkan hal-hal berikut:
-                          * Ketersediaan lab pada tanggal dan waktu yang diajukan.
-                          * Kesesuaian kegiatan dengan fungsi dan tujuan lab.
-                          * Ketersediaan peralatan dan fasilitas lab yang dibutuhkan.
-                          * Kelayakan penanggung jawab kegiatan (jika ada).
-                      * Penanggung Jawab Lab dapat meminta informasi tambahan kepada peminjam jika diperlukan.
-                  3. **Keputusan Peminjaman:**
-                      * Penanggung Jawab Lab akan memberikan keputusan peminjaman lab kepada peminjam paling lambat [Jangka Waktu Keputusan] sebelum tanggal peminjaman.
-                      * Keputusan peminjaman lab dapat berupa:
-                          * Disetujui
-                          * Disetujui dengan syarat
-                          * Ditolak
-                      * Jika peminjaman lab disetujui, Penanggung Jawab Lab akan memberikan surat izin peminjaman lab kepada peminjam.
-                  4. **Pelaksanaan Peminjaman:**
-                      * Peminjam harus mematuhi semua ketentuan yang tercantum dalam surat izin peminjaman lab.
-                      * Peminjam bertanggung jawab atas keamanan dan keselamatan diri sendiri, orang lain, dan peralatan dan fasilitas lab selama peminjaman.
-                      * Peminjam wajib menjaga kebersihan dan kelestarian peralatan dan fasilitas lab.
-                      * Peminjam wajib mengembalikan peralatan dan fasilitas lab dalam kondisi baik dan bersih setelah selesai digunakan.
-                  5. **Pasca Peminjaman:**
-                      * Peminjam harus membuat laporan kegiatan kepada Penanggung Jawab Lab dalam waktu [Jangka Waktu Laporan] setelah selesai peminjaman.
-                      * Laporan kegiatan harus memuat informasi berikut:
-                          * Nama kegiatan
-                          * Tujuan kegiatan
-                          * Tanggal dan waktu peminjaman
-                          * Peralatan dan fasilitas lab yang digunakan
-                          * Hasil kegiatan
-                          * Kendala yang dihadapi
-                          * Saran dan masukan
-                      * Penanggung Jawab Lab akan mengevaluasi pelaksanaan peminjaman lab berdasarkan laporan kegiatan dan surat izin peminjaman lab.
-
-                  **Ketentuan Umum:**
-
-                  * Lab hanya dapat dipinjam untuk kegiatan penelitian, pendidikan, atau pengabdian kepada masyarakat yang telah disetujui oleh [Nama Institusi].
-                  * Lab tidak dapat dipinjam untuk kegiatan komersial atau pribadi.
-                  * Peminjam dilarang membawa masuk makanan, minuman, dan barang-barang yang dapat mengganggu keamanan dan kebersihan lab.
-                  * Peminjam dilarang merokok, menggunakan narkoba, dan melakukan tindakan lain yang dapat membahayakan diri sendiri, orang lain, dan peralatan dan fasilitas lab.
-                  * Peminjam bertanggung jawab atas segala kerusakan yang terjadi pada peralatan dan fasilitas lab selama peminjaman.
-                  * Penanggung Jawab Lab berhak menghentikan peminjaman lab jika peminjam melanggar ketentuan yang telah ditetapkan.
-                  **Informasi:**
-                  * Untuk informasi lebih lanjut mengenai peminjaman lab, silakan hubungi Penanggung Jawab Lab di [Kontak Penanggung Jawab Lab].
-                  **Lampiran:**
-                  * Formulir Permohonan Peminjaman Lab
-                  **Catatan:**
-                  Ketentuan ini dapat diubah sewaktu-waktu oleh [Nama Institusi].
-                </div>
-              </div>
             </div>
           </div>
         </div>

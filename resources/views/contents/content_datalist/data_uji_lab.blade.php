@@ -15,7 +15,7 @@ Lab management | Dashboard
 			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Uji Laboratorium</h3>
 			<div class="pull-right">
 				@if (rulesUser(['ADMIN_SYSTEM','ADMIN_MASTER','LAB_HEAD']))
-				<a href="{{ url('laboratorium/form-input-lab') }}">
+				<a href="{{ url('uji_laboratorium/select-laboratorium') }}">
 					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah Uji Laboratorium</button>
 				</a>
 				@endif

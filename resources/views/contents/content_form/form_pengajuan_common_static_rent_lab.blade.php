@@ -198,7 +198,6 @@ Lab management | Dashboard
           </div>
         </div>
         {{-- !! --}}
-        {{-- !! --}}
         @php
           $idx_tool = 0;
         @endphp
@@ -298,7 +297,7 @@ Lab management | Dashboard
         </div>
         <div class="col-md-9">
           <button type="button" class="btn btn-default btn-flat" onclick="actPrePayment()"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
-          <a href="#">
+          <a href="{{ url('jadwal_lab/'.$lab_data->lab_id) }}">
             <button type="button" class="btn btn-default btn-flat"><i class="ri-calendar-2-line" style="margin-right: 5px;"></i>Cek Jadwal</button>
           </a>
           <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
@@ -589,7 +588,8 @@ Lab management | Dashboard
       type: 'POST',
       url: "{{ route('source-data-cost-lab-tables') }}",
       data: {
-        "lab_id":lab_id,
+        "ids":lab_id,
+        "subs":"lab_borrowing",
         "activity": activity,
         "count":count_day,
       },

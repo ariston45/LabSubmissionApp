@@ -30,25 +30,18 @@
 			<tr>
 				<td>
 					Salam Hangat, <br>
-					{{ $data_applicant['inp_nama'] }}<br>
+					Kepala Laboratorium Fakultas Teknik Unesa
 					di Tempat<br>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					Pengajuan pengujian sampel di {{ $data_applicant['lab'] }}, dengan jadwal pengeluaran hasil uji lab tanggal <b>{{$data_applicant['dates']}}</b>,<br>
+					Pengajuan pengujian sampel di {{ $data_applicant['lab'] }}, dengan jadwal rilis hasil uji lab tanggal <b>{{$data_applicant['dates']}}</b>,<br>
 					telah disetujui oleh;
 				</td>
 			<tr>
 				<td>
-					@if (isset($data_applicant['head_acc']))
-					{{ $data_applicant['head_acc'] }}.
-					<br>
-					@endif
-					@if (isset($data_applicant['head_acc']))
-					{{ $data_applicant['subhead_acc'] }}.
-					<br>
-					@endif
+					{{$data_applicant['name_subhead']}} pada {{$data_applicant['dates_now']}}.
 				</td>
 			</tr>
 			<tr>

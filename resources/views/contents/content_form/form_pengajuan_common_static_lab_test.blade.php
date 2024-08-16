@@ -28,14 +28,6 @@ Lab management | Dashboard
         {{-- !! --}}
         <input type="hidden" id="inp-lab" name="inp_lab" value="{{ $lab_test_data->lab_id }}" >
         <input type="hidden" id="inp-lsv" name="inp_lsv" value="{{ $lsv_id }}" >
-        {{-- <input type="hidden" id="inp-nama" name="inp_nama" value="{{ $user_data->name }}" >
-        <input type="hidden" id="inp-id" name="inp_id" value="{{ $user_data->no_id }}" >
-        <input type="hidden" id="inp-program-studi" name="inp_program_studi" value="{{ $user_data->usd_prodi }}">
-        <input type="hidden" id="inp-fakultas" name="inp_fakultas" value="{{ $user_data->usd_fakultas }}">
-        <input type="hidden" id="inp-institusi" name="inp_institusi" value="{{ $user_data->usd_universitas }}">
-        <input type="hidden" id="inp-nomor-kontak" name="inp_nomor_kontak" value="{{ $user_data->usd_phone }}">
-        <input type="hidden" id="inp-nomor-kontak" name="inp_address" value="{{ $user_data->usd_address }}">
-        <input type="hidden" name="inp_type_sub" value="pinjam_lab"> --}}
         {{-- !! --}}
         <div class="col-sm-offset-3 col-sm-9">
           <div class="divider">Data Pemohon</div>
@@ -143,9 +135,9 @@ Lab management | Dashboard
           </label>
           <div class="col-sm-12 col-md-9">
             @if ($user_data->usd_address != null)
-            <input type="text" id="inp-nomor-kontak" class="form-control" name="inp_address" value="{{ $user_data->usd_address }}" placeholder="Input alamat..." required>
+            <input type="text" id="inp-alamat" class="form-control" name="inp_address" value="{{ $user_data->usd_address }}" placeholder="Input alamat..." required>
             @else
-            <input type="text" id="inp-nomor-kontak" class="form-control" name="inp_address" value="{{ old('inp_address') }}" placeholder="Input alamat..." required>
+            <input type="text" id="inp-alamat" class="form-control" name="inp_address" value="{{ old('inp_address') }}" placeholder="Input alamat..." required>
             @endif
           </div>
         </div>
@@ -228,7 +220,7 @@ Lab management | Dashboard
         <div class="form-group has-feedback act-datetime {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Jadwal Mulai <span style="color: red;">*</span>
+              Jadwal Rilis Hasil <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
@@ -236,13 +228,11 @@ Lab management | Dashboard
               <div class="input-group-addon">
                 <i class="fa fa-calendar"></i>
               </div>
-              <input type="text" name="inp_date"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly required>
+              <input type="text" id="inp-date" name="inp_date"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" onchange="actSetDate()" readonly required>
             </div>
-            @if ($errors->has('sch_konflik_err'))
-						<span style="color: red;"><i>{!! $errors->first('sch_konflik_err') !!}</i></span>
-						@endif
+            <div id="input-dt-container">
+            </div>
           </div> 
-          
         </div>
         {{-- ~ --}}
         <div id="cost-tables" class="col-md-offset-3 col-md-9" style="padding: 0px;">
@@ -452,7 +442,7 @@ Lab management | Dashboard
     });
   };
   function actPrePayment() {
-    var lab_id = "{{$lab_test_data->lab_id}}";
+    var lsv_id = "{{ $lsv_id }}";
     var count_sample = $('#inp-sample').val();
     var activity = $('#inp-kegiatan').find(":selected").val();
     $.ajaxSetup({
@@ -464,13 +454,38 @@ Lab management | Dashboard
       type: 'POST',
       url: "{{ route('source-data-cost-lab-tables') }}",
       data: {
-        "lab_id":lab_id,
+        "ids":lsv_id,
+        "subs":"lab_test",
         "activity": activity,
         "count":count_sample,
       },
       async: false,
       success: function(result) {
         $('#test-id').html(result);
+      },
+    });
+  }
+  function actSetDate() {
+    var inp_date = $('#inp-date').val();
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    $.ajax({
+      type: 'POST',
+      url: "{{ route('check_date_hasil_ujilab') }}",
+      data: {
+        "inp_date":inp_date,
+      },
+      async: false,
+      success: function(result) {
+        if (result.param == 0) {
+          $('#info-date').html('<div style="color:red;"><i>Perhatian inputkan tanggal minimal '+result.tanggal+'.</i></div>');
+          $('#btn-submit').prop('disabled', true);
+        } else {
+          $('#btn-submit').prop('disabled', false);
+        }
       },
     });
   };

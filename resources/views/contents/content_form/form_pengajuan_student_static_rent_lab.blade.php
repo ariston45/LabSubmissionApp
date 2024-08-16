@@ -13,7 +13,7 @@ Lab management | Dashboard
 <div class="col-md-12">
   <div class="box box-primary">
     <div class="box-header with-border">
-      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan {{$lab_data->lab_name}}</h3>
+      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Pengajuan Pinjam {{$lab_data->lab_name}}</h3>
       <div class="pull-right">
         <a href="{{ url('pengajuan/laboratorium') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
@@ -42,11 +42,11 @@ Lab management | Dashboard
         <div class="form-group {{ $errors->has('inp_kegiatan') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Keperluan Kegiatan
+              Keperluan Kegiatan <span style="color: red">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select id="inp-kegiatan" class="form-control" name="inp_kegiatan" onchange="actActivitySubs()">
+            <select id="inp-kegiatan" class="form-control" name="inp_kegiatan" onchange="actActivitySubs()" required>
               <option value="{{ null }}">Pilih kegiatan..</option>
               <option value="tp_penelitian_skripsi" @if (old('inp_kegiatan') == 'tp_penelitian_skripsi') selected @endif >Penelitian Skripsi</option>
               <option value="tp_lain_lain" @if (old('inp_kegiatan') == 'tp_lainnya') selected @endif >Lainnya</option>
@@ -68,22 +68,22 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_opsi_lainnya') ? ' has-error' : '' }}" id="fm-opsi" style="display: none;">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Tujuan
+              Tujuan <span style="color: red">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-tujuan" class="form-control" name="inp_tujuan" value="{{ old('inp_tujuan') }}" placeholder="Inputkan tujuan">
+            <input type="text" id="inp-tujuan" class="form-control" name="inp_tujuan" value="{{ old('inp_tujuan') }}" placeholder="Inputkan tujuan" required>
           </div>
         </div>
         {{-- --- --}}
         <div class="form-group has-feedback {{ $errors->has('inp_judul') ? ' has-error' : '' }}" id="fm-judul" style="display: none;">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Judul
+              Judul <span style="color: red">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-judul-ii" class="form-control" name="inp_judul" value="{{ old('inp_judul') }}" placeholder="Judul kegiatan/ Judul Penelitian/ Judul pelatihan/ ...">
+            <input type="text" id="inp-judul-ii" class="form-control" name="inp_judul" value="{{ old('inp_judul') }}" placeholder="Judul kegiatan/ Judul Penelitian/ Judul pelatihan/ ..." required>
             @if ($errors->has('inp_judul'))
 						<span style="color: red;"><i>{{ $errors->first('inp_judul') }}</i></span>
 						@endif
@@ -146,7 +146,7 @@ Lab management | Dashboard
         <div class="form-group has-feedback act-datetime {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}" style="margin-bottom: 0px;">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Jadwal
+              Jadwal <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
@@ -185,8 +185,14 @@ Lab management | Dashboard
         </div>
       </div>
       <div class="box-footer">
-        <div class="col-md-offset-3 col-md-9">
+        <div class="col-md-3">
+          <i> Tanda ( <span style="color: red;">*</span> ) wajib diisi </i>
+        </div>
+        <div class="col-md-9">
           <button type="button" class="btn btn-default btn-flat" onclick="actPrePayment()"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
+          <a href="{{ url('jadwal_lab/'.$lab_data->lab_id) }}">
+            <button type="button" class="btn btn-default btn-flat"><i class="ri-calendar-2-line" style="margin-right: 5px;"></i>Cek Jadwal</button>
+          </a>
           <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
           <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
         </div>
@@ -318,7 +324,7 @@ Lab management | Dashboard
 </script>
 {{-- function --}}
 <script>
-  function callDataStudent() {
+  function callDataStudent(param) {
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -328,6 +334,7 @@ Lab management | Dashboard
       type: 'POST',
       url: "{{ route('source_check_skripsi') }}",
       data: {
+        "param":param,
         "nim":"{{ $user_data->no_id }}",
       },
       async: false,
@@ -341,19 +348,21 @@ Lab management | Dashboard
   };
   function actActivitySubs() {
     var val_activity = $('#inp-kegiatan').find(":selected").val();
-    // alert(val_activity);
     if (val_activity == 'tp_penelitian_skripsi') {
-      $('#fm-judul').hide();
       $('#fm-opsi').hide();
       $("#fm-judul").hide();
-      // $("#inp-judul-ii").prop('disabled', true);
+      $("#inp-judul-ii").prop('disabled', true);
+      $("#inp-tujuan").prop('disabled', true);
       $('#data-loading').show();
       setTimeout(function() {
-        callDataStudent();
+        callDataStudent(val_activity);
       }, 2000);
     }else if(val_activity == 'tp_lain_lain'){
       $('#fm-judul').fadeIn();
       $('#fm-opsi').fadeIn();
+      $("#inp-judul-ii").prop('disabled', false);
+      $("#inp-tujuan").prop('disabled', false);
+      callDataStudent(val_activity);
     }
   };
   function actViewLabCost(id) {
@@ -475,7 +484,8 @@ Lab management | Dashboard
       type: 'POST',
       url: "{{ route('source-data-cost-lab-tables') }}",
       data: {
-        "lab_id":lab_id,
+        "ids":lab_id,
+        "subs":"lab_borrowing",
         "activity": activity,
         "count":count_day,
       },

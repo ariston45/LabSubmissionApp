@@ -21,19 +21,46 @@ Lab management | Dashboard
 		</div>
 		<div class="box-body">
 			<div class="clearfix"></div>
-			<table id="tabel_laboratorium" class="table tabel_custom table-condensed">
-				<thead>
-					<tr>
-						<th style="width: 5%">No</th>
-						<th style="width: 30%">Nama</th>
-						<th style="width: 20%">ID</th>
-						<th style="width: 15%">Email</th>
-            <th style="width: 15%">Level</th>
-						<th style="width: 15%">Status</th>
-						<th style="width: 10%;text-align:center;">Opsi</th>
-					</tr>
-				</thead>
-			</table>
+			<form action="{{ route('actio_to_users') }}" method="POST">
+				@csrf
+				<div class="row" style="margin-bottom: 20px;">
+					<div class="col-md-12">
+						<div class="form-group has-feedback {{ $errors->has('inp_name') ? ' has-error' : '' }}" >
+							<div class="col-sm-6 col-md-5">
+								<div class="input-group">
+									<span class="input-group-addon"><b>Pilih Opsi</b></span>
+									<select name="op" id="op" class="form-control input-sm">
+										<option value="0">--Pilih Opsi--</option>
+										<option value="1">Update Status Nonaktif</option>
+										<option value="2">Update Status Aktif</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-sm-6 col-md-5">
+								<button class="btn btn-sm btn-flat btn-default" type="submit">Submit</button>
+							</div>
+						</div>
+					</div>
+					@if ($errors->has('check_opsi'))
+						<div class="col-md-12" style="margin-top: 8px;margin-left: 5px;">
+							<span style="color: red;"><i>{{ $errors->first('check_opsi') }}</i></span>
+						</div>
+					@endif
+				</div>
+				<table id="tabel_laboratorium" class="table tabel_custom table-condensed">
+					<thead>
+						<tr>
+							<th style="width: 5%">Check</th>
+							<th style="width: 30%">Nama</th>
+							<th style="width: 20%">ID</th>
+							<th style="width: 15%">Email</th>
+							<th style="width: 15%">Level</th>
+							<th style="width: 15%">Status</th>
+							<th style="width: 10%;text-align:center;">Opsi</th>
+						</tr>
+					</thead>
+				</table>
+			</form>
 		</div>
 	</div>
 </div>
@@ -77,7 +104,8 @@ Lab management | Dashboard
 				"type" : "POST",
 			},
 			columns: [
-				{data: 'DT_RowIndex', name: 'DT_RowIndex'},
+				// {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+				{data: 'check', name: 'check', orderable: true, searchable: true },
 				{data: 'name', name: 'name', orderable: true, searchable: true },
 				{data: 'no_id', name: 'no_id', orderable: true, searchable: true },
 				{data: 'email', name: 'email', orderable: true, searchable: true },

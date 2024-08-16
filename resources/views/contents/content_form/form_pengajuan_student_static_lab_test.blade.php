@@ -43,11 +43,11 @@ Lab management | Dashboard
         <div class="form-group {{ $errors->has('inp_kegiatan') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Keperluan Kegiatan
+              Keperluan Kegiatan <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select id="inp-kegiatan" class="form-control" name="inp_kegiatan" onchange="actActivitySubs()">
+            <select id="inp-kegiatan" class="form-control" name="inp_kegiatan" onchange="actActivitySubs()" required>
               <option value="{{ null }}">Pilih kegiatan..</option>
               <option value="tp_penelitian_skripsi" @if (old('inp_kegiatan') == 'tp_penelitian_skripsi') selected @endif >Penelitian Skripsi</option>
               <option value="tp_lain_lain" @if (old('inp_kegiatan') == 'tp_lainnya') selected @endif >Lainnya</option>
@@ -79,11 +79,11 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_judul') ? ' has-error' : '' }}" id="fm-judul" style="display: none;">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Judul
+              Judul <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-judul-ii" class="form-control" name="inp_judul" value="{{ old('inp_judul') }}" placeholder="Judul kegiatan/ Judul Penelitian/ Judul pelatihan/ ...">
+            <input type="text" id="inp-judul-ii" class="form-control" name="inp_judul" value="{{ old('inp_judul') }}" placeholder="Judul kegiatan/ Judul Penelitian/ Judul pelatihan/ ..." required>
             @if ($errors->has('inp_judul'))
 						<span style="color: red;"><i>{{ $errors->first('inp_judul') }}</i></span>
 						@endif
@@ -96,11 +96,11 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_sample') ? ' has-error' : '' }}" id="fm-inp-sample">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Jumlah Sampel
+              Jumlah Sampel <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="number" id="inp-sample" class="form-control" name="inp_sampel" value="{{ old('inp_sampel') }}" placeholder="Inputkan jumlah sampel...">
+            <input type="number" id="inp-sample" class="form-control" name="inp_sampel" value="{{ old('inp_sampel') }}" placeholder="Inputkan jumlah sampel..." required>
             @if ($errors->has('inp_sampel'))
 						<span style="color: red;"><i>{{ $errors->first('inp_sampel') }}</i></span>
 						@endif
@@ -113,7 +113,7 @@ Lab management | Dashboard
         <div class="form-group has-feedback act-datetime {{ $errors->has('date_start') ? ' has-error' : '' }} {{ $errors->has('check_time') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label">
             <span style="padding-right: 30px;">
-              Jadwal Pengambilan Hasil
+              Jadwal Rilis Hasil <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
@@ -121,33 +121,16 @@ Lab management | Dashboard
               <div class="input-group-addon">
                 <i class="fa fa-calendar"></i>
               </div>
-              <input type="text" id="inp-date" name="inp_date"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" onchange="actSetDate()" readonly>
+              <input type="text" id="inp-date" name="inp_date"  value="{{ old('inp_date') }}" class="form-control inp-date-s pull-right" placeholder="yyyy-mm-dd" onchange="actSetDate()" readonly required>
             </div>
-            @if ($user_kasublab != null)
+            {{-- @if ($user_kasublab != null)
             <div>
               <i>Catatan: untuk cek jadwal keluar hasil pengujian anda juga bisa menghubungi kasublab <b>{{$user_kasublab->name}}</b> nomor kontak <b>{{$user_kasublab->usd_phone}}</b> </i>
             </div>
-            @endif
-            <div id="info-date"></div>
-            {{-- <div class="row" style="margin-bottom: 10px;">
-              <div class="col-sm-11">
-                <select name="inp_time[{{ $idx_time }}][]" id="inp-time" class="form-control inp-time-cls" multiple>
-                  @foreach ($times as $item)
-                    <option value="{{ $item->lti_id }}">{{ setTime($item->lti_start) }} - {{ setTime($item->lti_end) }}</option>
-                  @endforeach
-                </select>
-              </div>
-              <div class="col-sm-1">
-                <button type="button" id="btn-add-input-datetime" class="btn btn-flat btn-default">
-                  <i class="fa fa-plus" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div> --}}
+            @endif --}}
+            {{-- <div id="info-date"></div> --}}
             <div id="input-dt-container">
             </div>
-            @if ($errors->has('sch_konflik_err'))
-						<span style="color: red;"><i>{!! $errors->first('sch_konflik_err') !!}</i></span>
-						@endif
           </div> 
         </div>
         {{-- ~ --}}
@@ -156,7 +139,10 @@ Lab management | Dashboard
         </div>
       </div>
       <div class="box-footer">
-        <div class="col-md-offset-3 col-md-9">
+        <div class="col-md-3">
+          <i> Tanda ( <span style="color: red;">*</span> ) wajib diisi </i>
+        </div>
+        <div class="col-md-9">
           <button type="button" class="btn btn-default btn-flat" onclick="actPrePayment();"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
           {{-- <a href="{{ url('jadwal_lab/'.$lab_data->lab_id) }}" target="_blank">
             <button type="button" class="btn btn-default btn-flat"><i class="ri-calendar-schedule-line" style="margin-right: 5px;"></i>Cek Jadwal</button>
@@ -245,42 +231,10 @@ Lab management | Dashboard
 			}
 		}
   });
-  /*
-  var select_time = new TomSelect(".inp-time-cls",{
-    create: false,
-    maxItem: 20,			
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-time">'+escape(data.title)+'</div>';
-			}
-		}
-  });
-  var select_tool = new TomSelect("#inp-fasilitas",{
-    create: false,
-    maxItem: 20,			
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-time">'+escape(data.title)+'</div>';
-			}
-		}
-  });
-  */
 </script>
 {{-- function --}}
 <script>
-  function callDataStudent() {
+  function callDataStudent(param) {
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -290,6 +244,7 @@ Lab management | Dashboard
       type: 'POST',
       url: "{{ route('source_check_skripsi') }}",
       data: {
+        "param":param,
         "nim":"{{ $user_data->no_id }}",
       },
       async: false,
@@ -303,19 +258,21 @@ Lab management | Dashboard
   };
   function actActivitySubs() {
     var val_activity = $('#inp-kegiatan').find(":selected").val();
-    // alert(val_activity);
     if (val_activity == 'tp_penelitian_skripsi') {
-      $('#fm-judul').hide();
       $('#fm-opsi').hide();
       $("#fm-judul").hide();
-      // $("#inp-judul-ii").prop('disabled', true);
+      $("#inp-judul-ii").prop('disabled', true);
+      $("#inp-tujuan").prop('disabled', true);
       $('#data-loading').show();
       setTimeout(function() {
-        callDataStudent();
+        callDataStudent(val_activity);
       }, 2000);
     }else if(val_activity == 'tp_lain_lain'){
       $('#fm-judul').fadeIn();
       $('#fm-opsi').fadeIn();
+      $("#inp-judul-ii").prop('disabled', false);
+      $("#inp-tujuan").prop('disabled', false);
+      callDataStudent(val_activity);
     }
   };
   function actViewLabCost(id) {
@@ -388,7 +345,7 @@ Lab management | Dashboard
     });
   };
   function actPrePayment() {
-    var lab_id = "{{ $lab_test_data->lab_id }}";
+    var lsv_id = "{{ $lsv_id }}";
     var count_sample = $('#inp-sample').val();
     var activity = $('#inp-kegiatan').find(":selected").val();
     $.ajaxSetup({
@@ -400,7 +357,8 @@ Lab management | Dashboard
       type: 'POST',
       url: "{{ route('source-data-cost-lab-tables') }}",
       data: {
-        "lab_id":lab_id,
+        "ids":lsv_id,
+        "subs":"lab_test",
         "activity": activity,
         "count":count_sample,
       },
@@ -409,7 +367,7 @@ Lab management | Dashboard
         $('#test-id').html(result);
       },
     });
-  };
+  }
   function actSetDate() {
     var inp_date = $('#inp-date').val();
     $.ajaxSetup({

@@ -26,7 +26,7 @@ Lab management | Dashboard
       @csrf
       <div class="box-body">
         <div class="col-md-offset-3 col-md-9 act-datetime act-tool" >
-          <div class="divider">Data Source Mahasiswa Skripsi</div>
+          <div class="divider">Data Source Skripsi Mahasiswa</div>
         </div>
         {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_name_a') ? ' has-error' : '' }}">
@@ -80,7 +80,7 @@ Lab management | Dashboard
 									Buka Berkas <input type="file" id="id-upload-i" name="file_data_a" >
 								</span>
 							</span>
-              <input type="text" class="form-control" readonly="" name="image1" value="{{$dataset_skripsi->api_file_data}}">
+              <input type="text" class="form-control" readonly="" name="name_a" value="{{$dataset_skripsi->api_file_data}}">
 						</div>
           </div>
         </div>
@@ -140,7 +140,7 @@ Lab management | Dashboard
 									Buka Berkas <input type="file" id="id-upload-ii" name="file_data_b" >
 								</span>
 							</span>
-              <input type="text" class="form-control" readonly="" name="image2" value="{{$dataset_mhs->api_file_data}}">
+              <input type="text" class="form-control" readonly="" name="name_b" value="{{$dataset_mhs->api_file_data}}">
 						</div>
           </div>
         </div>
@@ -199,7 +199,7 @@ Lab management | Dashboard
 									Buka Berkas <input type="file" id="id-upload-iii" name="file_data_c" >
 								</span>
 							</span>
-              <input type="text" class="form-control" readonly="" name="image3" value="{{$dataset_dosen->api_file_data}}">
+              <input type="text" class="form-control" readonly="" name="name_c" value="{{$dataset_dosen->api_file_data}}">
 						</div>
           </div>
         </div>

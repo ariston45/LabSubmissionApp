@@ -38,23 +38,20 @@
 				<td colspan="4">
 					Pengajuan peminjaman {{ $data_applicant['lab'] }}, dengan jadwal peminjaman tanggal <br> 
 					{!! $data_applicant['datetimes'] !!}
-					telah ditolak oleh
+					Telah ditolak oleh
 					@if (isset($data_applicant['head_acc']))
 						{{ $data_applicant['head_acc'] }}.
 						<br>
 					@endif
-					Untuk informasi lebih lanjut silakan klik tombol detail pengajuan yang ada di bawah.
+					Untuk informasi lebih lanjut silakan klik tautan <a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}"> Detail Pengajuan </a>.
 				</td>
+			</tr>
+			<tr> <td></td></tr>
+			<tr>
+				Salam Hormat, <br>
+				<b>Tim SIPLAB</b>
 			</tr>
 		</tbody>
 	</table>
-	@if (isset($data_applicant['lecture_acc']))
-		<br>
-		Pengajuan telah disetujui dosen pembimbing {{ $data_applicant['lecture_acc'] }}.
-	@endif
-	<hr>
-	<a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}">
-		<button type="button" class="btn bg-olive btn-flat margin">Detail Pengajuan</button>
-	</a>
 </body>
 </html>

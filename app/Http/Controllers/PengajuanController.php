@@ -1792,7 +1792,6 @@ class PengajuanController extends Controller
 		->leftjoin('laboratories', 'lab_submissions.lsb_lab_id', '=', 'laboratories.lab_id')
 		->where('lsb_id', $request->lsb_id)
 		->first();
-		// dd($data_pengajuan);
 		# Eksespsi
 		# Jadwal pengajuan
 		$data_tanggal = Lab_sub_date::where('lsd_lsb_id', $request->lsb_id)->get();
@@ -1932,6 +1931,8 @@ class PengajuanController extends Controller
 		->leftjoin('laboratories', 'lab_submissions.lsb_lab_id','=', 'laboratories.lab_id')
 		->where('lsb_id',$request->lsb_id)
 		->first();
+		# Cek data kalab / head
+		$data_user_head = User::where('id', $data_pengajuan->lsb_user_head)->select('name')->first();
 		# trans data Jadwal pengajuan
 		$data_tanggal = Lab_sub_date::where('lsd_lsb_id',$request->lsb_id)->get();
 		$p_dates = [];
@@ -1963,25 +1964,17 @@ class PengajuanController extends Controller
 			$recek_date[$p_dates[$key]] = $cek_time;
 			$id_sch_date++;
 		}
-		dd($recek_date);
-		// $data_tanggal_check_other = Lab_sub_date::join('lab_sub_times', 'lab_sub_dates.lsd_id','=', 'lab_sub_times.lstt_date_subs_id')
-		// ->where('lsd_lab', $data_pengajuan->lsb_lab_id)
-		// ->where('lsd_lsb_id','!=', $request->lsb_id)
-		// ->whereIn('lsd_date', $p_dates)
-		// ->get();
-		// foreach ($data_tanggal_check_other as $key => $value) {
-			
-		// }
-		// dd($data_tanggal_check_other);
-
-		die();
 		# data jadwal
 		$web_date ='';
+		#skop action rule
 		if($data_pengajuan->lsb_type == 'rental'){
+			# Pinjam Alat
 			$web_date.='<table>';
 			$web_date.='<tr><td>' . strDate($data_pengajuan->lsb_date_start) . ' - ' . strDate($data_pengajuan->lsb_date_end).'</td></tr>';
 			$web_date.='</table>';
 		} elseif($data_pengajuan->lsb_type == 'borrowing'){
+			# Pinjam Lab
+			# table jadwal
 			$web_date .= '<table>';
 			foreach ($data_tanggal as $key => $list) {
 				$web_date .= '<tr><th>' . strDateStart($list->lsd_date) . '</th><tr>';
@@ -1996,7 +1989,72 @@ class PengajuanController extends Controller
 				}
 			}
 			$web_date .= '</table>';
+			# Recek tanggal
+			$recek_index = 0;
+			$cek_id_submission = [];
+			foreach ($recek_date as $key => $value) {
+				$data_recek[$recek_index] = Lab_sub_date::join('lab_sub_times', 'lab_sub_dates.lsd_id', '=', 'lab_sub_times.lstt_date_subs_id')
+				->where('lsd_lab', $data_pengajuan->lsb_lab_id)
+				->where('lsd_lsb_id', '!=', $request->lsb_id)
+				->where('lsd_date', $key)
+				->select('lstt_time_id', 'lsd_lsb_id')
+				->get();
+				foreach ($data_recek[$recek_index] as $key => $svalue) {
+					if (in_array(
+						$svalue->lstt_time_id,
+						$value
+					)) {
+						$cek_id_submission[$svalue->lsd_lsb_id] = $svalue->lsd_lsb_id;
+					}
+				}
+				$recek_index++;
+			}
+			if (count($cek_id_submission) > 0) {
+				Lab_submission::whereIn('lsb_id', $cek_id_submission)->update(['lsb_status' => 'ditolak']);
+				$recek_data_pengajuan = Lab_submission::leftjoin('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+				->leftjoin('user_details', 'lab_submissions.lsb_user_id', '=', 'user_details.usd_user')
+				->leftjoin('laboratories', 'lab_submissions.lsb_lab_id', '=', 'laboratories.lab_id')
+				->whereIn('lsb_id', $cek_id_submission)
+				->get();
+				foreach ($recek_data_pengajuan as $key => $list) {
+					$data_tanggal_recek = Lab_sub_date::where('lsd_lsb_id', $list->lsb_id)->get();
+					$web_date_recek = "";
+					$web_date_recek .= '<table>';
+					foreach ($data_tanggal_recek as $key_a => $value) {
+						$web_date_recek .= '<tr><th>' . strDateStart($list->lsd_date) . '</th><tr>';
+						$data_time = Lab_sub_time::join('laboratory_time_options', 'lab_sub_times.lstt_time_id', '=', 'laboratory_time_options.lti_id')
+						->where('lstt_date_subs_id', $value->lsd_id)
+						->get();
+						if ($data_time->count() > 0) {
+							foreach ($data_time as $key_b => $svalue) {
+								$web_date_recek .= '<tr><td> &nbsp; - ' . setTime($svalue->lti_start) . ' <b>-</b> ' . setTime($svalue->lti_end) . '</td></tr>';
+							}
+						} else {
+							$web_date_recek .= '<tr><td> -- </td></tr>';
+						}
+					}
+					$web_date_recek .= '</table>';
+					$data_applicant_recek[$key] = [
+						'lsb_id' => $list->lsb_id,
+						'inp_nama' => $list->name,
+						'inp_id' => $list->no_id,
+						'inp_program_studi' => $list->usd_prodi,
+						'inp_fakultas' => $list->usd_fakultas,
+						'inp_institusi' => $list->usd_universitas,
+						'inp_address' => $list->usd_address,
+						'no_contact' => $list->usd_phone,
+						'title' => $list->lsb_title,
+						'time' => strDateStart($list->lbs_date_start) . ' <b>s/d</b> ' . strDateEnd($list->lbs_date_end),
+						'lab_id' => $list->lsb_lab_id,
+						'lab' => $list->lab_name,
+						'datetimes' => $web_date_recek,
+						'head_acc' => $data_user_head->name,
+					];
+					Mail::to($data_pengajuan->email)->send(new Mail_head_reject($data_applicant_recek[$key]));
+				}
+			}
 		}else{
+			# Uji sample / uji di lab
 			$web_date .= '<table>';
 			$web_date .= '<tr><td> -- </td></tr>';
 			$web_date .= '</table>';
@@ -2094,8 +2152,6 @@ class PengajuanController extends Controller
 				}
 			}
 		}
-		# Cek data kalab / head
-		$data_user_head = User::where('id', $data_pengajuan->lsb_user_head)->select('name')->first();
 		# insert data acc by head
 		Lab_submission_acc::insert($data_acc);
 		# update data pengajuan

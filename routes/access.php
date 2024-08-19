@@ -234,6 +234,7 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('action-to-users', [PengaturanController::class, 'actionToUser'])->name('actio_to_users');
 		Route::post('input-data-user', [PengaturanController::class, 'actionInputUser'])->name('input-data-user');
 		Route::post('update-data-user', [PengaturanController::class, 'actionUpdateUser'])->name('update_data_user');
+		Route::post('update-data-profile', [PengaturanController::class, 'actionUpdateProfile'])->name('update_data_profile');
 		Route::post('update-datasource', [PengaturanController::class, 'actionUpdateDataSource'])->name('update_datasource');
 	});
 	/*************************************************************************************************************************************************/

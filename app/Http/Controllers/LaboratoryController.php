@@ -50,6 +50,7 @@ class LaboratoryController extends Controller
 		->where('lab_id',$request->id)
 		->select('*')
 		->first();
+		// dd($data_lab);
 		$data_kasublab = User::where('level','LAB_SUBHEAD')->get();
 		$data_all_tech = Laboratory_technician::leftjoin('users', 'laboratory_technicians.lat_tech_id', '=', 'users.id')
 		->select('lat_id', 'lat_tech_id', 'id', 'name')
@@ -94,6 +95,28 @@ class LaboratoryController extends Controller
 			"lab_rent_cost" => funFormatCurToDecimal($request->inp_cost),
 			"lab_costbase" => $request->inp_base,
 		];
+		if ($request->inp_check_borrow == null) {
+			$inp_check_borrow = 'false';
+		} else {
+			$inp_check_borrow = 'true';
+		}
+		if ($request->inp_check_rental == null) {
+			$inp_check_rental = 'false';
+		} else {
+			$inp_check_rental = 'true';
+		}
+		if ($request->inp_check_ujilab == null) {
+			$inp_check_ujilab = 'false';
+		} else {
+			$inp_check_ujilab = 'true';
+		}
+		$data_opsi_layanan = [
+			"lop_lab_id" => $lab_id, 
+			"lop_pinjam_lab" => $inp_check_borrow,
+			"lop_sewa_alat_lab" => $inp_check_rental,
+			"lop_uji_lab" => $inp_check_ujilab,
+		];
+		$insLabOps = Laboratory_option::insert($data_opsi_layanan);
 		$insLabData = Laboratory::insert($data_laboratorium);
 		// 
 		foreach ($request->inp_teknisi as $key => $list) {

@@ -584,51 +584,53 @@ class PengajuanController extends Controller
 		# cek duplikat input tanggal
 		$dateCollection = collect($request->inp_date);
 		$duplicates = $dateCollection->duplicates();
+		// dd($request->inp_time);
 		if ($duplicates->isNotEmpty()) {
 			return redirect()->back()->withErrors(['sch_konflik_err' => 'Inputan tanggal pengajuan tidak boleh ada yang duplikat.']);
 		}
 		# Cek inputan jadwal
-		if (count($request->inp_time) == 0) {
-			return redirect()->back()->withErrors(['sch_err' => 'Harap inputkan tanggal']);
-		} else {
-			try {
-				$nx = 0;
-				$p_dates = [];
-				foreach ($request->inp_date as $key => $list_date) {
-					if($list_date != "" || $list_date != null){
-						if ($list_date < $now) {
-							return redirect()->back()->withErrors(['sch_konflik_err' => 'Harap inputkan tanggal dan jam peminjaman dengan benar.']);
-						}
-						$p_dates[$key] = $list_date;
-						$data_date[$key] = [
-							"lsd_id" => $id_date,
-							"lsd_lsb_id" => $id,
-							"lsd_date" => $list_date,
-							"lsd_lab" =>  $request->inp_lab
-						];
-						$cv = 0;
-						$times_text[$list_date] = [];
-						foreach ($request->inp_time[$key] as $sk => $list_time) {
-							$times = Laboratory_time_option::where('lti_id', $list_time)->first();
-							$times_text[$list_date][$sk] = date('H:i', strtotime($times->lti_start)) . ' - ' . date('H:i', strtotime($times->lti_end));
-							$mktime[$cv] = $list_time;
-							$data_time[$nx] = [
-								"lstt_date_subs_id" => $id_date,
-								"lstt_time_id" => $list_time,
-							];
-							$cv++;
-							$nx++;
-						}
-						$mkdate[$list_date] = $mktime;
-						$datetimes[$list_date] = $times_text;
-						$id_date++;
+		try {
+			$nx = 0;
+			$p_dates = [];
+			foreach ($request->inp_date as $key => $list_date) {
+				if($list_date != "" || $list_date != null){
+					if ($list_date < $now) {
+						return redirect()->back()->withErrors(['sch_konflik_err' => 'Harap inputkan tanggal dan jam peminjaman dengan benar.']);
 					}
+					$p_dates[$key] = $list_date;
+					$data_date[$key] = [
+						"lsd_id" => $id_date,
+						"lsd_lsb_id" => $id,
+						"lsd_date" => $list_date,
+						"lsd_lab" =>  $request->inp_lab
+					];
+					$cv = 0;
+					$times_text[$list_date] = [];
+					foreach ($request->inp_time[$key] as $sk => $list_time) {
+						$times = Laboratory_time_option::where('lti_id', $list_time)->first();
+						$times_text[$list_date][$sk] = date('H:i', strtotime($times->lti_start)) . ' - ' . date('H:i', strtotime($times->lti_end));
+						$mktime[$cv] = $list_time;
+						$data_time[$nx] = [
+							"lstt_date_subs_id" => $id_date,
+							"lstt_time_id" => $list_time,
+						];
+						$cv++;
+						$nx++;
+					}
+					$mkdate[$list_date] = $mktime;
+					$datetimes[$list_date] = $times_text;
+					$id_date++;
 				}
-				$period_date_str = implode('#', $p_dates);
-			} catch (\Throwable $th) {
-				return redirect()->back()->withErrors(['sch_err' => 'Harap inputkan tanggal dan jam peminjaman dengan benar.']);
 			}
+			$period_date_str = implode('#', $p_dates);
+		} catch (\Throwable $th) {
+			return redirect()->back()->withErrors(['sch_err' => 'Harap inputkan tanggal dan jam peminjaman dengan benar.']);
 		}
+		die();
+		// if (count($request->inp_time) == 0) {
+		// 	return redirect()->back()->withErrors(['sch_err' => 'Harap inputkan tanggal']);
+		// } else {
+		// }
 		# Cek jadwal konflik
 		$b = 0;
 		# non_reguler
@@ -865,6 +867,7 @@ class PengajuanController extends Controller
 				$index_tool++;
 			}
 		}
+		die();
 		# insert date and time
 		Lab_sub_date::insert($data_date);
 		Lab_sub_time::insert($data_time);
@@ -1938,7 +1941,7 @@ class PengajuanController extends Controller
 		$p_dates = [];
 		$inp_time = [];
 		$recek_date = [];
-		
+
 		foreach ($data_tanggal as $key => $value) {
 			$p_dates[$key] = $value->lsd_date;
 			$inp_date[$key] = [

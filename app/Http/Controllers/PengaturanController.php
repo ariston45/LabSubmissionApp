@@ -68,6 +68,16 @@ class PengaturanController extends Controller
 	{
 		$id_user = $request->id;
 		$id_user_detail = $request->usd_id;
+		$cek_user = User::where('id', $id_user)->first();
+		if ($cek_user->email == $request->inp_email) {
+			$email = $cek_user->email;
+		} else {
+			$email = $request->inp_email;
+			$cek_email = User::where('email', $email)->first();
+			if ($cek_email->count() > 0) {
+				return redirect()->back()->withInput($request->input())->withErrors(['check_email' => 'Alamat email sudah terdaftar.']);
+			}
+		}
 		if ($request->inp_password == null) {
 			# code...
 			$data = [
@@ -93,10 +103,7 @@ class PengaturanController extends Controller
 				'rumpun_id' => $request->rumpun,
 			];
 		}
-		$storeUser = User::where('id',$id_user)->update($data);
-		if (!$storeUser) {
-			return redirect()->back()->withInput($request->input())->withErrors(['check_email' => 'Alamat email sudah didaftarkan.']);
-		}
+		
 		if ($id_user_detail == null) {
 			$data_ii = [
 				'usd_user' => $id_user,
@@ -117,6 +124,67 @@ class PengaturanController extends Controller
 			];
 			User_detail::where('usd_id', $id_user_detail)->update($data_ii);
 		}
+		$storeUser = User::where('id', $id_user)->update($data);
+		return redirect()->back();
+	}
+	public function actionUpdateProfile(UserPostUpdateRequest $request)
+	{
+		$id_user = $request->id;
+		$id_user_detail = $request->usd_id;
+		$cek_user = User::where('id',$id_user)->first();
+		if ($cek_user->email == $request->inp_email) {
+			$email = $cek_user->email;
+		}else{
+			$email = $request->inp_email;
+			$cek_email = User::where('email', $email)->first();
+			if ($cek_email->count() > 0) {
+				return redirect()->back()->withInput($request->input())->withErrors(['check_email' => 'Alamat email sudah terdaftar.']);
+			}
+		}
+		# cek password
+		if ($request->inp_password == null) {
+			# code...
+			$data = [
+				'no_id' => $request->inp_no_id,
+				'username' => null,
+				'status' =>  $request->inp_status,
+				'email' => $email,
+				'name' => $request->inp_name,
+				'nip' => $request->inp_nip,
+			];
+		} else {
+			$data = [
+				'no_id' => $request->inp_no_id,
+				'username' => null,
+				'email' => $email,
+				'name' => $request->inp_name,
+				'level' => $request->inp_level,
+				'password' => bcrypt($request->inp_password),
+				'nip' => $request->nip,
+			];
+		}
+		# cek user detail
+		if ($id_user_detail == null) {
+			$data_ii = [
+				'usd_user' => $id_user,
+				'usd_phone' => $request->inp_no_contact,
+				'usd_address' => $request->inp_address,
+				'usd_prodi' => $request->inp_prodi,
+				'usd_fakultas' => $request->inp_fakultas,
+				'usd_universitas' => $request->inp_institusi,
+			];
+			User_detail::insert($data_ii);
+		} else {
+			$data_ii = [
+				'usd_phone' => $request->inp_no_contact,
+				'usd_address' => $request->inp_address,
+				'usd_prodi' => $request->inp_prodi,
+				'usd_fakultas' => $request->inp_fakultas,
+				'usd_universitas' => $request->inp_institusi,
+			];
+			User_detail::where('usd_id', $id_user_detail)->update($data_ii);
+		}
+		$storeUser = User::where('id', $id_user)->update($data);
 		return redirect()->back();
 	}
 	/* Tags:... */
@@ -174,7 +242,7 @@ class PengaturanController extends Controller
 		->where('id', $request->id)
 		->first();
 		// dd($data_user);
-		return view('contents.content_form.form_update_user', compact('data_user'));
+		return view('contents.content_form.form_update_profile', compact('data_user'));
 	}
 	public function formPengaturanDatasource(Request $request)
 	{

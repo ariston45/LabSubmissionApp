@@ -119,6 +119,7 @@
                   <br>&nbsp;&nbsp;&nbsp;{{$li}}
                 @endforeach
               @endif
+              <br>
             @endforeach
         </td>
       </tr>

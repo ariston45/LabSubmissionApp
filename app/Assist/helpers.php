@@ -468,7 +468,7 @@ function dataGetDatetime($id){
     ->get();
     $i = 0;
     foreach ($data_time as $key => $value) {
-      $data_time[$i] = $value->lti_start.' - '. $value->lti_end;
+      $data_time[$i] = date('H:i',strtotime($value->lti_start)).' - '. date('H:i',strtotime($value->lti_end));
       $i++;
     }
     $data[$date_key] = $data_time;

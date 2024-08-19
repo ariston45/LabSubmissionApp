@@ -22,7 +22,7 @@ Lab management | Dashboard
         </a>
       </div>
     </div>
-    <form class="form-horizontal" action="{{ route('update_data_user') }}" method="POST" enctype="multipart/form-data" autocomplete="off">
+    <form class="form-horizontal" action="{{ route('update_data_profile') }}" method="POST" enctype="multipart/form-data" autocomplete="off">
       @csrf
       <div class="box-body">
         {{-- !! --}}
@@ -35,7 +35,7 @@ Lab management | Dashboard
           </label>
           <div class="col-sm-12 col-md-9">
             <input type="hidden" id="inp-id" class="form-control" name="id" value="{{ $data_user->id }}" placeholder="Input nama.." autocomplete="new-password" required>
-            <input type="hidden" id="inp-usd-id" class="form-control" name="usd_id" value="{{ $data_user->usd_id }}" placeholder="Input nama.." autocomplete="new-password">
+            <input type="hidden" id="inp-id" class="form-control" name="usd_id" value="{{ $data_user->usd_id }}" placeholder="Input nama.." autocomplete="new-password">
             <input type="text" id="inp-name" class="form-control" name="inp_name" value="{{ $data_user->name }}" placeholder="Input nama.." autocomplete="new-password">
             @if ($errors->has('inp_name'))
 						<span style="color: red;"><i>{{ $errors->first('inp_name') }}</i></span>
@@ -64,7 +64,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="number" id="inp-nip" class="form-control" name="inp_nip" value="{{ $data_user->nip }}" placeholder="Input nip .." autocomplete="new-password" >
+            <input type="number" id="inp-no-id" class="form-control" name="inp_nip" value="{{ $data_user->nip }}" placeholder="Input nip .." autocomplete="new-password" >
             @if ($errors->has('inp_nip'))
 						<span style="color: red;"><i>{{ $errors->first('inp_nip') }}</i></span>
 						@endif
@@ -102,7 +102,7 @@ Lab management | Dashboard
           </div>
         </div>
         {{--  --}}
-        <div class="form-group has-feedback {{ $errors->has('inp_rumpun') ? ' has-error' : '' }}">
+        {{-- <div class="form-group has-feedback {{ $errors->has('inp_rumpun') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
               Pilih Rumpun
@@ -119,7 +119,7 @@ Lab management | Dashboard
 						<span style="color: red;"><i>{{ $errors->first('inp_rumpun') }}</i></span>
 						@endif
           </div>
-        </div>
+        </div> --}}
         {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_institusi') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
@@ -207,14 +207,14 @@ Lab management | Dashboard
           <input type="hidden" name="inp_level" value="{{ $data_user->level }}">
         @endif
         {{--  --}}
-        <div class="form-group has-feedback {{ $errors->has('inp_status') ? ' has-error' : '' }}">
+        {{-- <div class="form-group has-feedback {{ $errors->has('inp_status') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
               Update Status <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select type="text" class="form-control" name="inp_status" id="inp-status" value="" placeholder="Pilih level.." autocomplete="new-password" required>
+            <select type="text" class="form-control" name="inp_status" id="inp-level" value="" placeholder="Pilih level.." autocomplete="new-password" required>
               <option value=""></option>
               <option value="active" @if ($data_user->status == 'active') selected @endif >Active</option>
               <option value="block" @if ($data_user->status == 'block') selected @endif >Nonactive</option>
@@ -223,7 +223,7 @@ Lab management | Dashboard
             <span style="color: red;"><i>{{ $errors->first('inp_status') }}</i></span>
             @endif
           </div>
-        </div>
+        </div> --}}
         {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_password') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >

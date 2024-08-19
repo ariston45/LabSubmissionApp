@@ -1795,6 +1795,7 @@ class PengajuanController extends Controller
 		->leftjoin('laboratories', 'lab_submissions.lsb_lab_id', '=', 'laboratories.lab_id')
 		->where('lsb_id', $request->lsb_id)
 		->first();
+		// dd($data_pengajuan);
 		# Eksespsi
 		# Jadwal pengajuan
 		$data_tanggal = Lab_sub_date::where('lsd_lsb_id', $request->lsb_id)->get();
@@ -1915,7 +1916,7 @@ class PengajuanController extends Controller
 		Mail::to($data_user_subhead->email)->send(new NotifConfirmTech($data_applicant));
 		return redirect()->back();
 	}
-		/* Tags:... */
+	/* Tags:... */
 	public function actionAccA(Request $request)
 	{
 		$user = Auth::user();
@@ -1925,19 +1926,19 @@ class PengajuanController extends Controller
 		if (!rulesUser(['LAB_HEAD', 'LAB_SUBHEAD'])) {
 			return redirect()->back()->withErrors(['file_acc_arr' => 'Anda tidak memiliki akses.']);
 		}
-		if ($request->inp_acc == null OR $request->inp_acc == '') {
+		if ($request->inp_acc == null or $request->inp_acc == '') {
 			return redirect()->back()->withErrors(['file_acc_arr' => 'Harap pilih respon pengajuan disetujui atau ditolak']);
 		}
 		# Data pengajuan
-		$data_pengajuan = Lab_submission::leftjoin('users', 'lab_submissions.lsb_user_id','=','users.id')
-		->leftjoin('user_details', 'lab_submissions.lsb_user_id','=', 'user_details.usd_user')
-		->leftjoin('laboratories', 'lab_submissions.lsb_lab_id','=', 'laboratories.lab_id')
-		->where('lsb_id',$request->lsb_id)
-		->first();
+		$data_pengajuan = Lab_submission::leftjoin('users', 'lab_submissions.lsb_user_id', '=', 'users.id')
+			->leftjoin('user_details', 'lab_submissions.lsb_user_id', '=', 'user_details.usd_user')
+			->leftjoin('laboratories', 'lab_submissions.lsb_lab_id', '=', 'laboratories.lab_id')
+			->where('lsb_id', $request->lsb_id)
+			->first();
 		# Cek data kalab / head
 		$data_user_head = User::where('id', $data_pengajuan->lsb_user_head)->select('name')->first();
 		# trans data Jadwal pengajuan
-		$data_tanggal = Lab_sub_date::where('lsd_lsb_id',$request->lsb_id)->get();
+		$data_tanggal = Lab_sub_date::where('lsd_lsb_id', $request->lsb_id)->get();
 		$p_dates = [];
 		$inp_time = [];
 		$recek_date = [];
@@ -1945,13 +1946,13 @@ class PengajuanController extends Controller
 		foreach ($data_tanggal as $key => $value) {
 			$p_dates[$key] = $value->lsd_date;
 			$inp_date[$key] = [
-				"lscd_id" => $id_sch_date,
-				"lscd_sch" => $id_lab_sch,
-				"lscd_day" => date('l',strtotime($value->lsd_date)),
-				"lscd_date" => $value->lsd_date,
-				"lscd_status" => 'active',
-			];
-			$data_jam[$key] = Lab_sub_time::where('lstt_date_subs_id',$value->lsd_id)->get();
+					"lscd_id" => $id_sch_date,
+					"lscd_sch" => $id_lab_sch,
+					"lscd_day" => date('l', strtotime($value->lsd_date)),
+					"lscd_date" => $value->lsd_date,
+					"lscd_status" => 'active',
+				];
+			$data_jam[$key] = Lab_sub_time::where('lstt_date_subs_id', $value->lsd_id)->get();
 			if ($data_jam[$key] != null) {
 				$idx_time = 0;
 				$cek_time = [];
@@ -1969,14 +1970,14 @@ class PengajuanController extends Controller
 			$id_sch_date++;
 		}
 		# data jadwal
-		$web_date ='';
+		$web_date = '';
 		#skop action rule
-		if($data_pengajuan->lsb_type == 'rental'){
+		if ($data_pengajuan->lsb_type == 'rental') {
 			# Pinjam Alat
-			$web_date.='<table>';
-			$web_date.='<tr><td>' . strDate($data_pengajuan->lsb_date_start) . ' - ' . strDate($data_pengajuan->lsb_date_end).'</td></tr>';
-			$web_date.='</table>';
-		} elseif($data_pengajuan->lsb_type == 'borrowing'){
+			$web_date .= '<table>';
+			$web_date .= '<tr><td>' . strDate($data_pengajuan->lsb_date_start) . ' - ' . strDate($data_pengajuan->lsb_date_end) . '</td></tr>';
+			$web_date .= '</table>';
+		} elseif ($data_pengajuan->lsb_type == 'borrowing') {
 			# Pinjam Lab
 			# table jadwal
 			$web_date .= '<table>';
@@ -2057,16 +2058,16 @@ class PengajuanController extends Controller
 					Mail::to($data_pengajuan->email)->send(new Mail_head_reject($data_applicant_recek[$key]));
 				}
 			}
-		}else{
+		} else {
 			# Uji sample / uji di lab
 			$web_date .= '<table>';
 			$web_date .= '<tr><td> -- </td></tr>';
 			$web_date .= '</table>';
 		}
 		# data kasublab
-		$data_kasublab = User::leftJoin('user_details','users.id','=', 'user_details.usd_user')
+		$data_kasublab = User::leftJoin('user_details', 'users.id', '=', 'user_details.usd_user')
 		->where('id', $data_pengajuan->lsb_user_subhead)
-		->select('name', 'usd_phone','email')
+		->select('name', 'usd_phone', 'email')
 		->first();
 		#data pembimbing
 		$data_adviser = Lab_submission_adviser::where('las_lbs_id', $request->lsb_id)->get();
@@ -2093,22 +2094,22 @@ class PengajuanController extends Controller
 		}
 		#
 		$data_a = [
-			'lbs_id' => $id_lab_sch,
-			'lbs_lab' => $data_pengajuan->lsb_lab_id,
-			'lbs_day' => null,
-			'lbs_date_start' => null,
-			'lbs_date_end' => null,
-			'lbs_time_start' => null,
-			'lbs_time_end' =>null,
-			'lbs_dates_period' => null,
-			'lbs_type' => 'non_reguler',
-			'lbs_matkul' => $data_pengajuan->lsb_title,
-			'lbs_tenant_init' => $data_pengajuan->id,
-			'lbs_tenant_name' => $data_pengajuan->name,
-			'lbs_res_person' => null,
-			'lbs_submission' => $data_pengajuan->lsb_id,                                                                                                                                                                                                                                            
-		];
-		if ($data_pengajuan->lsb_activity == 'tp_penelitian'|| $data_pengajuan->lsb_activity == 'tp_penelitian_skripsi') {
+				'lbs_id' => $id_lab_sch,
+				'lbs_lab' => $data_pengajuan->lsb_lab_id,
+				'lbs_day' => null,
+				'lbs_date_start' => null,
+				'lbs_date_end' => null,
+				'lbs_time_start' => null,
+				'lbs_time_end' => null,
+				'lbs_dates_period' => null,
+				'lbs_type' => 'non_reguler',
+				'lbs_matkul' => $data_pengajuan->lsb_title,
+				'lbs_tenant_init' => $data_pengajuan->id,
+				'lbs_tenant_name' => $data_pengajuan->name,
+				'lbs_res_person' => null,
+				'lbs_submission' => $data_pengajuan->lsb_id,
+			];
+		if ($data_pengajuan->lsb_activity == 'tp_penelitian' || $data_pengajuan->lsb_activity == 'tp_penelitian_skripsi') {
 			$act = 'Penelitian';
 		} else if ($data_pengajuan->lsb_activity == 'tp_pelatihan') {
 			$act = 'Pelatihan';
@@ -2137,16 +2138,16 @@ class PengajuanController extends Controller
 			'lab_id' => $data_pengajuan->lsb_lab_id,
 			'lab' => $data_pengajuan->lab_name,
 			'act' => $act,
-			'datetimes' => $web_date, 
+			'datetimes' => $web_date,
 		];
 		# set alat
 		$tool_loan = Lab_facility::where('lsf_submission', $data_pengajuan->lsb_id)->get();
-		foreach($tool_loan as $key => $value){
+		foreach ($tool_loan as $key => $value) {
 			if ($value->lsf_facility_status == 'listed') {
-				$lab_tool[$key] = Laboratory_facility_count_status::where('lcs_facility',$value->lsf_facility_id)->first();
-				if($lab_tool[$key]->lcs_ready < $value->lsf_cnt_unit){
+				$lab_tool[$key] = Laboratory_facility_count_status::where('lcs_facility', $value->lsf_facility_id)->first();
+				if ($lab_tool[$key]->lcs_ready < $value->lsf_cnt_unit) {
 					// return redirect()->back();
-				}else{
+				} else {
 					$data_status_tool[$key] = [
 						'lcs_ready' => $lab_tool[$key]->lcs_ready - $value->lsf_cnt_unit,
 						'lcs_used' => $lab_tool[$key]->lcs_used + $value->lsf_cnt_unit
@@ -2162,28 +2163,28 @@ class PengajuanController extends Controller
 		if ($request->inp_acc == 'disetujui') {
 			# pengajuan diterima
 			$data_accepting = [
-				'head_acc' => $data_user_head->name . ', pada ' . strDatetimes(date('Y-m-d H:i:s')),
-			];
+					'head_acc' => $data_user_head->name . ', pada ' . strDatetimes(date('Y-m-d H:i:s')),
+				];
 			$data_applicant = array_merge($data_applicant, $data_accepting);
-			$updateTool = Lab_facility::where('lsf_submission', $request->lsb_id)->update(['lsf_end_dt'=> $data_pengajuan->lsb_date_end]);
-			$udateStatus = Lab_submission::where('lsb_id', $request->lsb_id)->update(['lsb_status' => 'disetujui', 'lsb_notes'=>$request->inp_catatan]);
+			$updateTool = Lab_facility::where('lsf_submission', $request->lsb_id)->update(['lsf_end_dt' => $data_pengajuan->lsb_date_end]);
+			$udateStatus = Lab_submission::where('lsb_id', $request->lsb_id)->update(['lsb_status' => 'disetujui', 'lsb_notes' => $request->inp_catatan]);
 			$storeSchedule = Lab_schedule::insert($data_a);
 			$storeSchDate = Lab_sch_date::insert($inp_date);
 			$storeSctTime = Lab_sch_time::insert($inp_time);
 			if ($data_kasublab->email != null) {
 				Mail::to($data_kasublab->email)->send(new Mail_head_acc($data_applicant));
 			}
-		}else if($request->inp_acc == 'ditolak'){
+		} else if ($request->inp_acc == 'ditolak') {
 			#pengajuan ditolak
 			$data_rejecting = [
-				'head_acc' => $data_user_head->name . ', pada ' . strDatetimes(date('Y-m-d H:i:s')),
-			];
+					'head_acc' => $data_user_head->name . ', pada ' . strDatetimes(date('Y-m-d H:i:s')),
+				];
 			$data_applicant = array_merge($data_applicant, $data_rejecting);
 			$udateStatus = Lab_submission::where('lsb_id', $request->lsb_id)->update(['lsb_status' => 'ditolak', 'lsb_notes' => $request->inp_catatan]);
 			if ($data_pengajuan->email != null) {
 				Mail::to($data_pengajuan->email)->send(new Mail_head_reject($data_applicant));
 			}
-		}else{
+		} else {
 			return redirect()->back();
 		}
 		return redirect()->back();

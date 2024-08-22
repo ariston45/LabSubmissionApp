@@ -584,7 +584,6 @@ class PengajuanController extends Controller
 		# cek duplikat input tanggal
 		$dateCollection = collect($request->inp_date);
 		$duplicates = $dateCollection->duplicates();
-		// dd($request->inp_time);
 		if ($duplicates->isNotEmpty()) {
 			return redirect()->back()->withErrors(['sch_konflik_err' => 'Inputan tanggal pengajuan tidak boleh ada yang duplikat.']);
 		}
@@ -606,16 +605,18 @@ class PengajuanController extends Controller
 					];
 					$cv = 0;
 					$times_text[$list_date] = [];
-					foreach ($request->inp_time[$key] as $sk => $list_time) {
-						$times = Laboratory_time_option::where('lti_id', $list_time)->first();
-						$times_text[$list_date][$sk] = date('H:i', strtotime($times->lti_start)) . ' - ' . date('H:i', strtotime($times->lti_end));
-						$mktime[$cv] = $list_time;
-						$data_time[$nx] = [
-							"lstt_date_subs_id" => $id_date,
-							"lstt_time_id" => $list_time,
-						];
-						$cv++;
-						$nx++;
+					if (count($request->inp_time[$key]) > 0) {
+						foreach ($request->inp_time[$key] as $sk => $list_time) {
+							$times = Laboratory_time_option::where('lti_id', $list_time)->first();
+							$times_text[$list_date][$sk] = date('H:i', strtotime($times->lti_start)) . ' - ' . date('H:i', strtotime($times->lti_end));
+							$mktime[$cv] = $list_time;
+							$data_time[$nx] = [
+								"lstt_date_subs_id" => $id_date,
+								"lstt_time_id" => $list_time,
+							];
+							$cv++;
+							$nx++;
+						}
 					}
 					$mkdate[$list_date] = $mktime;
 					$datetimes[$list_date] = $times_text;
@@ -624,13 +625,8 @@ class PengajuanController extends Controller
 			}
 			$period_date_str = implode('#', $p_dates);
 		} catch (\Throwable $th) {
-			return redirect()->back()->withErrors(['sch_err' => 'Harap inputkan tanggal dan jam peminjaman dengan benar.']);
+			return redirect()->back()->withErrors(['sch_konflik_err' => 'Harap inputkan tanggal dan jam peminjaman dengan benar.']);
 		}
-		die();
-		// if (count($request->inp_time) == 0) {
-		// 	return redirect()->back()->withErrors(['sch_err' => 'Harap inputkan tanggal']);
-		// } else {
-		// }
 		# Cek jadwal konflik
 		$b = 0;
 		# non_reguler

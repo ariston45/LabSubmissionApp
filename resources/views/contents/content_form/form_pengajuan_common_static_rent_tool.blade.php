@@ -308,9 +308,6 @@ Lab management | Dashboard
         </div>
         <div class="col-md-9">
           <button type="button" class="btn btn-default btn-flat" onclick="cekCost()"><i class="ri-file-list-3-line" style="margin-right: 5px;"></i>Cek Estimasi Biaya</button>
-          <a href="#">
-            <button type="button" class="btn btn-default btn-flat"><i class="ri-calendar-2-line" style="margin-right: 5px;"></i>Cek Jadwal</button>
-          </a>
           <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-send-plane-fill" style="margin-right: 5px;"></i>Kirim</button>
           <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
         </div>

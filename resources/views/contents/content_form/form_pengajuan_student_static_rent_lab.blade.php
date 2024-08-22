@@ -158,11 +158,16 @@ Lab management | Dashboard
 									</div>
 									<input type="text" name="inp_date[{{ $idx_time }}]"  value="{{ old('inp_date') }}" class="form-control countable inp-date-s pull-right" placeholder="yyyy-mm-dd" readonly>
 								</div>
-                <select name="inp_time[{{ $idx_time }}][]" id="inp-time" class="form-control inp-time-cls" multiple>
-                  @foreach ($times as $item)
-                    <option value="{{ $item->lti_id }}">{{ setTime($item->lti_start) }} - {{ setTime($item->lti_end) }}</option>
-                  @endforeach
-                </select>
+                <div class="input-group inp-split-cst date" style="margin-bottom: 6px;">
+									<div class="input-group-addon">
+										<i class="fa fa-clock-o"></i>
+									</div>
+                  <select name="inp_time[{{ $idx_time }}][]" id="inp-time" class="form-control inp-time-cls" multiple>
+                    @foreach ($times as $item)
+                      <option value="{{ $item->lti_id }}">{{ setTime($item->lti_start) }} - {{ setTime($item->lti_end) }}</option>
+                    @endforeach
+                  </select>
+								</div>
               </div>
               <div class="col-sm-1">
                 <button type="button" id="btn-add-input-datetime" class="btn btn-flat btn-default">
@@ -509,9 +514,12 @@ Lab management | Dashboard
         +'<div class="input-group-addon"><i class="fa fa-calendar"></i></div>'
         +'<input type="text" name="inp_date['+Idx_number+']"  value="{{ old('date_start') }}" class="form-control countable inp-date-s-'+Idx_number+' pull-right" placeholder="yyyy-mm-dd" readonly>'
         +'</div>'
+        +'<div class="input-group inp-split-cst date" style="margin-bottom: 6px;">'
+        +'<div class="input-group-addon"><i class="fa fa-clock-o"></i></div>'
         +'<select name="inp_time['+Idx_number+'][]" id="inp-time-idx-'+Idx_number+'" class="form-control inp-time-cls" multiple>'
         +'@foreach ($times as $item)<option value="{{ $item->lti_id }}">{{ setTime($item->lti_start) }} - {{ setTime($item->lti_end) }}</option> @endforeach'
         +'</select>'
+        +'</div>'
         +'</div>'
         +'<div class="col-sm-1">'
         +'<button type="button" id="btn-add-input-datetime" class="btn btn-flat btn-default rm-inp-dt"><i class="fa fa-times" aria-hidden="true"></i></button>'

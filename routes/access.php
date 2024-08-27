@@ -133,6 +133,7 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('action-upload-laporan', [PengajuanController::class, 'actionUploadLaporan'])->name('upload_laporan');
 		Route::post('action-upload-laporan-student', [PengajuanController::class, 'actionUploadLaporanStudent'])->name('upload_laporan_student');
 		Route::post('update-validation-report', [PengajuanController::class, 'actionUpdateValidation'])->name('update_validation_report');
+		Route::post('update-pengajuan-selesai', [PengajuanController::class, 'actionUpdateSubmissionEnd'])->name('update_pengajuan_selesai');
 		# viewpage
 		Route::get('viewpage-pengajuan/{id}', [PengajuanController::class, 'viewPengajuan'])->name('viewpage_pengajuan');
 		Route::get('detail-pengajuan/{id}', [PengajuanController::class, 'viewDetailPengajuan'])->name('detail_pengajuan');

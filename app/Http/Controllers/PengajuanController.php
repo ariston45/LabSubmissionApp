@@ -2,26 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\Mail_head_validation_report;
 use App\Mail\Mail_head_validation_report_testlab;
-use App\Mail\Mail_user_laptest_approval;
-use App\Mail\Mail_user_laptest_approval_reschedule;
 use App\Mail\Mail_head_laptest_approval;
 use App\Mail\Mail_head_laptest_approval_reschedule;
 use App\Mail\Mail_user_validation_report_testlab;
 use Illuminate\Http\Request;
-use App\Http\Requests\PengajuanPostRequest;
 use App\Http\Requests\TechReportPostRequest;
 
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
-use DataTables;
-use Storage;
 
-use App\Http\Controllers\SendingController;
 use App\Mail\Mail_head_acc;
+use App\Mail\Mail_head_acc_i;
+use App\Mail\Mail_head_acc_ii;
+use App\Mail\Mail_head_acc_iii;
 use App\Mail\Mail_head_reject;
 use App\Models\Lab_facility;
 use App\Models\Lab_submission;
@@ -30,8 +26,6 @@ use App\Models\User;
 use App\Models\Lab_schedule;
 use App\Models\Lab_submission_acc;
 use App\Models\Lab_submission_adviser;
-use FontLib\Table\Type\post;
-use Illuminate\Support\Facades\Storage as FacadesStorage;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Mail_head_rent_tool;
@@ -41,10 +35,6 @@ use App\Mail\Mail_subhead_labtest;
 use App\Mail\Mail_user_pay_confirm_for_labtest;
 // use App\Mail\NotifMail;
 use App\Mail\NotifMailForApplicant;
-use App\Mail\NotifMailForSubhead;
-use App\Mail\NotifMailForApplicantReject;
-use App\Mail\NotifMailForApplicantValidation;
-use App\Mail\NotifMailForHeadValidation;
 use App\Mail\NotifMailForTechnical;
 use App\Mail\NotifMailForApplicantPayConfirm;
 use App\Mail\NotifMailForHeadUpBukti;
@@ -863,7 +853,6 @@ class PengajuanController extends Controller
 				$index_tool++;
 			}
 		}
-		die();
 		# insert date and time
 		Lab_sub_date::insert($data_date);
 		Lab_sub_time::insert($data_time);
@@ -1425,6 +1414,7 @@ class PengajuanController extends Controller
 		if ($data_pengajuan == null) {
 			return view('error.404');
 		}
+		// dd($data_pengajuan);
 		# act view date
 		$data_date = Lab_sub_date::where('lsd_lsb_id', $request->id)->get();
 		$web_date = '';
@@ -1935,10 +1925,10 @@ class PengajuanController extends Controller
 		$data_user_head = User::where('id', $data_pengajuan->lsb_user_head)->select('name')->first();
 		# trans data Jadwal pengajuan
 		$data_tanggal = Lab_sub_date::where('lsd_lsb_id', $request->lsb_id)->get();
+		$data_tenggal_testlab = $data_tanggal->first();
 		$p_dates = [];
 		$inp_time = [];
 		$recek_date = [];
-
 		foreach ($data_tanggal as $key => $value) {
 			$p_dates[$key] = $value->lsd_date;
 			$inp_date[$key] = [
@@ -2057,7 +2047,7 @@ class PengajuanController extends Controller
 		} else {
 			# Uji sample / uji di lab
 			$web_date .= '<table>';
-			$web_date .= '<tr><td> -- </td></tr>';
+			$web_date .= '<tr><td>  </td></tr>';
 			$web_date .= '</table>';
 		}
 		# data kasublab
@@ -2127,6 +2117,7 @@ class PengajuanController extends Controller
 			'inp_institusi' => $data_pengajuan->usd_universitas,
 			'inp_address' => $data_pengajuan->usd_address,
 			'no_contact' => $data_pengajuan->usd_phone,
+			'name_head' => $data_user_head->name,
 			'name_subhead' => $data_kasublab->name,
 			'no_contact_subhead' => $data_kasublab->usd_phone,
 			'title' => $data_pengajuan->lsb_title,
@@ -2135,6 +2126,9 @@ class PengajuanController extends Controller
 			'lab' => $data_pengajuan->lab_name,
 			'act' => $act,
 			'datetimes' => $web_date,
+			'dates' => strDateStart($data_tenggal_testlab->lsd_date),
+			'dates_reschedule' => strDateStart($data_tenggal_testlab->lsd_date_opsional),
+			'dates_now' => date('Y-m-d h:i:s'),
 		];
 		# set alat
 		$tool_loan = Lab_facility::where('lsf_submission', $data_pengajuan->lsb_id)->get();
@@ -2167,8 +2161,24 @@ class PengajuanController extends Controller
 			$storeSchedule = Lab_schedule::insert($data_a);
 			$storeSchDate = Lab_sch_date::insert($inp_date);
 			$storeSctTime = Lab_sch_time::insert($inp_time);
-			if ($data_kasublab->email != null) {
-				Mail::to($data_kasublab->email)->send(new Mail_head_acc($data_applicant));
+			if ($data_pengajuan->lsb_type == 'borrowing') {
+				if ($data_kasublab->email != null) {
+					Mail::to($data_kasublab->email)->send(new Mail_head_acc($data_applicant));
+				}
+			} else if ($data_pengajuan->lsb_type == 'rental') {
+				if ($data_pengajuan->email != null) {
+					Mail::to($data_pengajuan->email)->send(new Mail_head_acc_i($data_applicant));
+				}
+			} else {
+				if ($data_tenggal_testlab->lsd_date_opsional == null) {
+					if ($data_pengajuan->email != null) {
+						Mail::to($data_pengajuan->email)->send(new Mail_head_acc_ii($data_applicant));
+					}
+				}else{
+					if ($data_pengajuan->email != null) {
+						Mail::to($data_pengajuan->email)->send(new Mail_head_acc_iii($data_applicant));
+					}
+				}
 			}
 		} else if ($request->inp_acc == 'ditolak') {
 			#pengajuan ditolak
@@ -2527,7 +2537,7 @@ class PengajuanController extends Controller
 			if ($data_head->email != null) {
 				Mail::to($data_head->email)->send(new Mail_head_validation_report_testlab($data_applicant));
 			}
-		}elseif($data_pengajuan->lsb_type == 'rental'){
+		}elseif($data_pengajuan->lsb_type == 'borrowing'){
 			if ($data_pengajuan->email != null) {
 				Mail::to($data_pengajuan->email)->send(new Mail_user_validation_report_testlab($data_applicant));
 			}
@@ -2538,6 +2548,21 @@ class PengajuanController extends Controller
 		// dd($data_pengajuan);
 		Lab_submission::where('lsb_id',$request->lsb_id)->update($data_subs);
 		Lab_submission_result::where('lsr_id',$request->lsr_id)->update($data_validate);
+		return redirect()->back();
+	}
+	public function actionUpdateSubmissionEnd(Request $request)
+	{
+		$data_subs = [
+			'lsb_status' => $request->inp_status,
+		];
+		$data_validate = [
+			'lsr_lsb_id'=>$request->lsb_id,
+			'lsr_user_validator' => DataAuth()->id,
+			'lsr_notes' => $request->inp_catatan,
+			'lsr_status_validation' => 'true',
+		];
+		Lab_submission::where('lsb_id', $request->lsb_id)->update($data_subs);
+		Lab_submission_result::insert($data_validate);
 		return redirect()->back();
 	}
 }

@@ -1,3 +1,6 @@
+@php
+	$data = dataGetDatetime($data_applicant['lsb_id']);
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,33 +31,32 @@
 	<table class="table" style="width:100%">
 		<tbody>
 			<tr>
-				<td colspan="4">
+				<td>
 					Salam Hangat, <br>
 					{{ $data_applicant['inp_nama'] }}<br>
 					di Tempat<br>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="4">
-					Pengajuan peminjaman {{ $data_applicant['lab'] }}, dengan jadwal peminjaman tanggal <br> 
-					@php
-						$data = dataGetDatetime($data_applicant['lsb_id']);
-					@endphp
-					<table>
-						@foreach ($data as $key => $value)
-							<tr>
-								- {{ $key }}
-								@if (count($value) > 0)
-									<table>
-										@foreach ($value as $li)
-											<tr>&nbsp;&nbsp;{{$li}}</tr>
-										@endforeach
-									</table>
-								@endif
-							</tr>
+				<td>
+					Pengajuan peminjaman {{ $data_applicant['lab'] }}, dengan jadwal peminjaman tanggal;
+				</td>
+			</tr>
+			@foreach ($data as $key => $value)
+			<tr>
+				<td>
+					- {{ $key }} <br>
+					@if (count($value) > 0)
+						@foreach ($value as $li)
+							&nbsp;&nbsp;{{$li}} <br>
 						@endforeach
-					</table>
-					Telah disetujui oleh {{ $data_applicant['kalab'] }}.
+					@endif
+				</td>
+			</tr>
+			@endforeach
+			<tr>
+				<td>
+					Telah disetujui oleh {{ $data_applicant['kalab'] }}. <br>
 					Untuk mengecek detail pembayaran, klik link <a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}"><b>Detail Peminjaman</b></a>. <br>
 					Silakan lakukan pembayaran dengan transfer ke virtual accout berikut; <br>
 					<b>
@@ -64,17 +66,17 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan="4">
+				<td >
 					Pembayaran dengan menggunakan nomor VA yang tertera melalui channel BTN maupun Bank lain menggunkan menu 'transfer ke bank lain'.
 				</td>
 			</tr>
 			<tr>
-				<td colspan="4">
+				<td>
 					Apabila sudah melakukan pembayaran silakan segera upload bukti bayar anda.
 				</td>
 			</tr>
 			<tr>
-				<td colspan="4"></td>
+				<td></td>
 			</tr>
 			<tr>
 				<td>

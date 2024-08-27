@@ -30,10 +30,11 @@
 			<tr>
 				<td>
 					Salam Hangat, <br>
-					Kepala Laboratorium Fakultas Teknik Unesa
+					Kepala Laboratorium Fakultas Teknik Unesa <br>
 					di Tempat<br>
 				</td>
 			</tr>
+			<tr><td></td></tr>
 			<tr>
 				<td>
 					Pengajuan pengujian sampel di {{ $data_applicant['lab'] }}, yang diajukan dengan rilis hasil uji lab pada <b>{{$data_applicant['dates']}}</b>,<br>
@@ -54,11 +55,15 @@
 					Kepala Sub Laboratorium: {{ $data_applicant['name_subhead'] }} - {{ $data_applicant['no_contact_subhead'] }}
 				</td>
 			</tr>
+			<tr><td></td></tr>
+			<tr><td></td></tr>
+			<tr>
+				<td>Hormat Kami,</td>
+			</tr>
+			<tr>
+				<td><b>Tim SIPLAB</b></td>
+			</tr>
 		</tbody>
 	</table>
-	<hr>
-	<a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}">
-		<button type="button" class="btn bg-olive btn-flat margin">Detail Pengajuan</button>
-	</a>
 </body>
 </html>

@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class NotifMailForApplicantPayConfirm extends Mailable
+class Mail_head_acc_ii extends Mailable
 {
     use Queueable, SerializesModels;
     public $data;
@@ -28,7 +28,6 @@ class NotifMailForApplicantPayConfirm extends Mailable
      */
     public function build()
     {
-        // die();
-        return $this->subject('Konfirmasi Pembayaran Pinjam ' . $this->data['lab'])->view('contents.content_notif_email.notif_konfir_pembayaran',)->with('data_applicant', $this->data);
+        return $this->subject('Permohonan Uji Sampel di ' . $this->data['lab'])->view('contents.content_notif_email.notif_head_approve_labtest',)->with('data_applicant', $this->data);
     }
 }

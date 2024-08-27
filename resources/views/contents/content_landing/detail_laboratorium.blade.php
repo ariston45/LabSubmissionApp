@@ -105,7 +105,7 @@ Lab management | Dashboard
         <div class="col-lg-3">
           <ul class="nav nav-tabs flex-column">
             <li class="nav-item pl-2">
-              <a class="nav-link active show" data-bs-toggle="tab" href="#tab-0" style="color: #444444cc; padding-left: 16px;">Jadwal Lab</a>
+              <a class="nav-link active show" data-bs-toggle="tab" href="#tab-0" style="color: #444444cc; padding-left: 16px;">Jadwal Penggunaan Laboratorium</a>
             </li>
             <li class="nav-item pl-2">
               <a class="nav-link" data-bs-toggle="tab" href="#tab-1" style="color: #444444cc; padding-left: 16px;">Fasilitas dan Alat</a>

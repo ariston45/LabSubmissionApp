@@ -7,9 +7,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class NotifMailForHeadValidation extends Mailable
+class Mail_head_acc_i extends Mailable
 {
     use Queueable, SerializesModels;
+    public $data;
 
     /**
      * Create a new message instance.
@@ -18,7 +19,7 @@ class NotifMailForHeadValidation extends Mailable
      */
     public function __construct($data)
     {
-        $this->data = $data;
+        $this->data=$data;
     }
 
     /**
@@ -28,6 +29,6 @@ class NotifMailForHeadValidation extends Mailable
      */
     public function build()
     {
-        return $this->subject('Permohonan Peminjaman ' . $this->data['lab'])->view('contents.content_notif_email.notif_9',)->with('data_applicant', $this->data);
+        return $this->subject('Permohonan Sewa Alat ' . $this->data['lab'])->view('contents.content_notif_email.mail_head_acc_i',)->with('data_applicant', $this->data);
     }
 }

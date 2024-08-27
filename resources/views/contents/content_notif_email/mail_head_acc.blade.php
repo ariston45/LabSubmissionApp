@@ -36,7 +36,7 @@
 			</tr>
 			<tr>
 				<td colspan="4">
-					Pengajuan peminjaman laboratorium {{ $data_applicant['lab'] }}, dengan jadwal peminjaman tanggal <br>
+					Pengajuan sewa alat laboratorium {{ $data_applicant['lab'] }}, dengan jadwal sewa alat tanggal <br>
 					{!! $data_applicant['datetimes'] !!}
 					telah  disetujui oleh
 					@if (isset($data_applicant['head_acc']))

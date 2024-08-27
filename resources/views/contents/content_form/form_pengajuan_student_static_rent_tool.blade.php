@@ -338,54 +338,6 @@ Lab management | Dashboard
       callDataStudent(val_activity);
     }
   };
-  function actViewLabCost(id) {
-    var val_activity = $('#inp-kegiatan').find(":selected").val();
-    if (val_activity == "") {
-      alert('harap inputkan activity terlebih dahulu.');
-      location.reload();
-    }
-    $.ajaxSetup({
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      }
-    });
-    $.ajax({
-      type: 'POST',
-      url: "{{ route('source-data-cost-lab-tables') }}",
-      data: {
-        "lab_id":id,
-        "activity": val_activity,
-      },
-      async: false,
-      success: function(result) {
-        $('#cost-tables').html(result);
-      },
-    });
-  };
-  function actViewFacilityCost(idf) {
-    var val_activity = $('#inp-kegiatan').find(":selected").val();
-    if (val_activity == null) {
-      alert('harap inputkan activity terlebih dahulu.');
-    }
-    var lab_selected = select_lab.getValue();
-    $.ajaxSetup({
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      }
-    });
-    $.ajax({
-      type: 'POST',
-      url: "{{ route('source-data-cost-facility-tables') }}",
-      data: {
-        "lab_id":lab_selected,
-        "lab_facility":idf
-      },
-      async: false,
-      success: function(result) {
-        $('#cost-tables').html(result);
-      },
-    });
-  };
   function actGetSatuan(index) {
     var laf_id = $('#inp-tool-'+[index]).find(":selected").val();
     $.ajaxSetup({
@@ -408,6 +360,7 @@ Lab management | Dashboard
   function cekCost() {
     let id_tooL_selects = document.querySelectorAll('.init-tool');
     let id_unit_selects = document.querySelectorAll('.init-jml-unit');
+    let val_activity = $('#inp-kegiatan').find(":selected").val();
     let selectedValtool = [];
     let selectedValunit = [];
     // Iterasi melalui elemen-elemen select dan ambil nilai yang dipilih
@@ -429,6 +382,7 @@ Lab management | Dashboard
       type: 'POST',
       url: "{{ route('source_check_cost_tool') }}",
       data: {
+        "activity":val_activity,
         "lab_id":lab_id,
         "subs":"tool_rental",
         "tool": selectedValtool,

@@ -15,133 +15,392 @@ Lab management | Dashboard
       <h3 class="box-title" style="color: #0277bd"><i class="ri-file-list-3-line" style="margin-right: 4px;"></i> Detail Permohonan </h3>
       <div class="pull-right">
         {{-- ========================================================================================================================================================================== --}}
-        
-        @if ($data_pengajuan->lsb_status == 'menunggu') 
-          @if (rulesUser(['LAB_HEAD']))
-            @if ($data_pengajuan->lsb_type == 'testing')
-              @if ($param_acc_subhead == true)
-                <a href="#" onclick="actionConfirmPayment();">
-                <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
-                </a>
-                <a href="#" onclick="actionAccept();">
-                  <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
-                </a>
+        @switch($data_pengajuan->lsb_status)
+          {{-- Status --}}
+          @case('menunggu')
+            {{-- User session --}}
+            @if (rulesUser(['LAB_HEAD']))
+              {{-- submission type --}}
+              @if ($data_pengajuan->lsb_type == 'borrowing')
+                {{-- user applicant --}}
+                @if ($data_pengajuan->level == 'STUDENT')
+                  @if ($data_pengajuan->lsb_activity == 'tp_penelitian_skripsi')
+                    <a href="{{ url('pengajuan/action-reload-data-skripsi/'.$data_pengajuan->lsb_id) }}">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-restart-line" style="margin-right: 4px;"></i> Reload Data Skripsi</button>
+                    </a>
+                    <a href="#" onclick="actionAccept();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                    </a>
+                  @else
+                    <a href="#" onclick="actionConfirmPayment();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-percent-line" style="margin-right: 4px;"></i> Set Diskon</button>
+                    </a>
+                    @if ($data_order->los_confirm_payment == 'true')
+                      <a href="#" onclick="actionAccept();">
+                        <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                      </a>
+                    @else
+                      <a href="#">
+                        <button class="btn btn-flat btn-xs btn-default" disabled><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                      </a>
+                    @endif
+                  @endif
+                @elseif ($data_pengajuan->level == 'LECTURE')
+                  <a href="#" onclick="actionConfirmPayment();">
+                    <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
+                  </a>
+                  @if ($data_order->los_confirm_payment == 'true')
+                    <a href="#" onclick="actionAccept();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                    </a>
+                  @else
+                    <a href="#">
+                      <button class="btn btn-flat btn-xs btn-default" disabled><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                    </a>
+                  @endif
+                @elseif ($data_pengajuan->level == 'PUBLIC_MEMBER' || $data_pengajuan->level == 'PUBLIC_NON_MEMBER')
+                  <a href="#" onclick="actionConfirmPayment();">
+                    <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
+                  </a>
+                  @if ($data_order->los_confirm_payment == 'true')
+                    <a href="#" onclick="actionAccept();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                    </a>
+                  @else
+                    <a href="#">
+                      <button class="btn btn-flat btn-xs btn-default" disabled><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                    </a>
+                  @endif
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'rental')
+                {{-- user applicant --}}
+                @if ($data_pengajuan->level == 'STUDENT')
+                  @if ($data_pengajuan->lsb_activity == 'tp_penelitian_skripsi')
+                    <a href="{{ url('pengajuan/action-reload-data-skripsi/'.$data_pengajuan->lsb_id) }}">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-restart-line" style="margin-right: 4px;"></i> Reload Data Skripsi</button>
+                    </a>
+                    <a href="#" onclick="actionAccept();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                    </a>
+                  @else
+                    <a href="#" onclick="actionConfirmPayment();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
+                    </a>
+                    @if ($data_order->los_confirm_payment == 'true')
+                      <a href="#" onclick="actionAccept();">
+                        <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                      </a>
+                    @else
+                      <a href="#">
+                        <button class="btn btn-flat btn-xs btn-default" disabled><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                      </a>
+                    @endif
+                  @endif
+                @elseif ($data_pengajuan->level == 'LECTURE')
+                  <a href="#" onclick="actionConfirmPayment();">
+                    <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
+                  </a>
+                  @if ($data_order->los_confirm_payment == 'true')
+                    <a href="#" onclick="actionAccept();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                    </a>
+                  @else
+                    <a href="#">
+                      <button class="btn btn-flat btn-xs btn-default" disabled><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                    </a>
+                  @endif
+                @elseif ($data_pengajuan->level == 'PUBLIC_MEMBER' || $data_pengajuan->level == 'PUBLIC_NON_MEMBER')
+                  <a href="#" onclick="actionConfirmPayment();">
+                    <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
+                  </a>
+                  @if ($data_order->los_confirm_payment == 'true')
+                    <a href="#" onclick="actionAccept();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                    </a>
+                  @else
+                    <a href="#">
+                      <button class="btn btn-flat btn-xs btn-default" disabled><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                    </a>
+                  @endif
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'testing')
+                {{-- cek acc kasublab --}}
+                @if ($param_acc_subhead == true)
+                  {{-- user applicant --}}
+                  @if ($data_pengajuan->level == 'STUDENT')
+                    @if ($data_pengajuan->lsb_activity == 'tp_penelitian_skripsi')
+                      <a href="{{ url('pengajuan/action-reload-data-skripsi/'.$data_pengajuan->lsb_id) }}">
+                        <button class="btn btn-flat btn-xs btn-default"><i class="ri-restart-line" style="margin-right: 4px;"></i> Reload Data Skripsi</button>
+                      </a>
+                      <a href="#" onclick="actionAccept();">
+                        <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                      </a>
+                    @else
+                      <a href="#" onclick="actionConfirmPayment();">
+                        <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
+                      </a>
+                      @if ($data_order->los_confirm_payment == 'true')
+                        <a href="#" onclick="actionAccept();">
+                          <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                        </a>
+                      @else
+                        <a href="#">
+                          <button class="btn btn-flat btn-xs btn-default" disabled><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                        </a>
+                      @endif
+                    @endif
+                  @elseif ($data_pengajuan->level == 'LECTURE')
+                    <a href="#" onclick="actionConfirmPayment();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
+                    </a>
+                    @if ($data_order->los_confirm_payment == 'true')
+                      <a href="#" onclick="actionAccept();">
+                        <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                      </a>
+                    @else
+                      <a href="#">
+                        <button class="btn btn-flat btn-xs btn-default" disabled><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                      </a>
+                    @endif
+                  @elseif ($data_pengajuan->level == 'PUBLIC_MEMBER' || $data_pengajuan->level == 'PUBLIC_NON_MEMBER')
+                    <a href="#" onclick="actionConfirmPayment();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
+                    </a>
+                    @if ($data_order->los_confirm_payment == 'true')
+                      <a href="#" onclick="actionAccept();">
+                        <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                      </a>
+                    @else
+                      <a href="#">
+                        <button class="btn btn-flat btn-xs btn-default" disabled><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                      </a>
+                    @endif
+                  @endif
+                @endif
               @endif
-            @else
-              @if ($data_pengajuan->lsb_activity == 'tp_penelitian_skripsi')
-                <a href="#">
-                  <button class="btn btn-flat btn-xs btn-default" disabled><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
-                </a>
-                <a href="{{ url('pengajuan/action-reload-data-skripsi/'.$data_pengajuan->lsb_id) }}">
-                  <button class="btn btn-flat btn-xs btn-default"><i class="ri-restart-line" style="margin-right: 4px;"></i> Reload Data Skripsi</button>
-                </a>
-              @else
-                <a href="#" onclick="actionConfirmPayment();">
-                  <button class="btn btn-flat btn-xs btn-default"><i class="ri-wallet-3-line" style="margin-right: 4px;"></i> Set Diskon</button>
-                </a>
-              @endif
-              <a href="#" onclick="actionAccept();">
-                <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
-              </a>
-            @endif
-            <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
-            </a>
-          @elseif (rulesUser(['LAB_SUBHEAD']))
-          @if ($data_pengajuan->lsb_type == 'testing')
-          @if ($param_acc_subhead == false)
-          <a href="#" onclick="actionResponKasublab();">
-            <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
-          </a>
-          @endif
-          <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
-            <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
-          </a>
-          @endif
-          @if ($data_pengajuan->lsb_activity == 'tp_penelitian_skripsi')
-            <a href="{{ url('pengajuan/action-reload-data-skripsi/'.$data_pengajuan->lsb_id) }}">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-restart-line" style="margin-right: 4px;"></i> Reload Data Skripsi</button>
-            </a>
-          @endif
-          @elseif (rulesUser(['STUDENT','LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
-            @if ($data_order->los_confirm_payment == 'true')
-              <button class="btn btn-flat btn-xs btn-default" onclick="actionUploadBukti()"><i class="ri-upload-2-line" style="margin-right: 4px;"></i> Upload Bukti Bayar</button>
-            @endif
-            <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
-            </a>
-          @endif
-        {{-- ========================================================================================================================================================================== --}}
-        @elseif ($data_pengajuan->lsb_status == 'ditolak')
-          @if (rulesUser(['LAB_HEAD','ADMIN_MASTER','ADMIN_MASTER']))
-            <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
-            </a>
-          @elseif (rulesUser(['STUDENT','LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
-            <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
-            </a>
-            <a href="{{ url('pengajuan/form-pengajuan') }}">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Buat Pengajuan Baru</button>
-            </a>
-          @endif
-        {{-- ========================================================================================================================================================================== --}}
-        @elseif($data_pengajuan->lsb_status == 'disetujui')
-          @if (rulesUser(['LAB_HEAD']))
-            <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
-            </a>
+            @elseif (rulesUser(['LAB_SUBHEAD']))
+              @if ($data_pengajuan->lsb_type == 'borrowing')
+                {{-- user applicant --}}
+              @elseif ($data_pengajuan->lsb_type == 'rental')
 
-          @elseif (rulesUser(['LAB_SUBHEAD','ADMIN_MASTER','ADMIN_MASTER']))
-            <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
-            </a>
-            @if ($data_pengajuan->lsb_type != 'testing')
-              <a href="#" onclick="actionSetTech();">
-                <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Set Teknikal Pendamping</button>
-              </a>
-            @endif
-              @if ($data_pengajuan->lsb_activity == 'tp_penelitian_skripsi')
-                <a href="{{ url('pengajuan/action-reload-data-skripsi/'.$data_pengajuan->lsb_id) }}">
-                  <button class="btn btn-flat btn-xs btn-default"><i class="ri-restart-line" style="margin-right: 4px;"></i> Reload Data Skripsi</button>
-                </a>
+              @elseif ($data_pengajuan->lsb_type == 'testing')
+                @if ($data_pengajuan->level == 'STUDENT')
+                  <a href="{{ url('pengajuan/action-reload-data-skripsi/'.$data_pengajuan->lsb_id) }}">
+                    <button class="btn btn-flat btn-xs btn-default"><i class="ri-restart-line" style="margin-right: 4px;"></i> Reload Data Skripsi</button>
+                  </a>
+                @endif
+                {{-- cek acc kasublab --}}
+                @if ($param_acc_subhead == false)
+                  <a href="#" onclick="actionResponKasublab();">
+                    <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                  </a>
+                @endif
               @endif
-            @if ($data_pengajuan->level == 'PUBLIC_MEMBER' || $data_pengajuan->level == 'PUBLIC_NON_MEMBER' || $data_pengajuan->level == 'LECTURE' || $data_pengajuan->level == 'STUDENT')
-              @if ($data_result != null)
-                <a href="#" onclick="actValidationReport()">
-                  <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Validasi Laporan</button>
-                </a>
+            @elseif (rulesUser(['LAB_TECHNICIAN']))
+            @elseif (rulesUser(['STUDENT']))
+              @if ($data_pengajuan->lsb_type == 'borrowing')
+                @if ($data_pengajuan->lsb_activity == 'tp_lain_lain')
+                  @if ($data_order->los_confirm_payment == 'true')
+                    <button class="btn btn-flat btn-xs btn-default" onclick="actionUploadBukti()"><i class="ri-upload-2-line" style="margin-right: 4px;"></i> Upload Bukti Bayar</button>
+                  @endif
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'rental')
+                @if ($data_pengajuan->lsb_activity == 'tp_lain_lain')
+                  @if ($data_order->los_confirm_payment == 'true')
+                    <button class="btn btn-flat btn-xs btn-default" onclick="actionUploadBukti()"><i class="ri-upload-2-line" style="margin-right: 4px;"></i> Upload Bukti Bayar</button>
+                  @endif
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'testing')
+                {{-- cek acc kasublab --}}
+                @if ($param_acc_subhead == true)
+                  @if ($data_pengajuan->lsb_activity == 'tp_lain_lain')
+                    @if ($data_order->los_confirm_payment == 'true')
+                      <button class="btn btn-flat btn-xs btn-default" onclick="actionUploadBukti()"><i class="ri-upload-2-line" style="margin-right: 4px;"></i> Upload Bukti Bayar</button>
+                    @endif
+                  @endif
+                @endif
               @endif
-                <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
-                  <button class="btn btn-flat btn-xs btn-success"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
-                </a>
-            @else
-              @if ($data_result != null)
-                <a href="#" onclick="actValidationReport()">
-                  <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Validasi Laporan</button>
-                </a>
+            @elseif (rulesUser(['LECTURE']))
+              @if ($data_pengajuan->lsb_type == 'borrowing')
+                @if ($data_order->los_confirm_payment == 'true')
+                  <button class="btn btn-flat btn-xs btn-default" onclick="actionUploadBukti()"><i class="ri-upload-2-line" style="margin-right: 4px;"></i> Upload Bukti Bayar</button>
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'rental')
+                @if ($data_order->los_confirm_payment == 'true')
+                  <button class="btn btn-flat btn-xs btn-default" onclick="actionUploadBukti()"><i class="ri-upload-2-line" style="margin-right: 4px;"></i> Upload Bukti Bayar</button>
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'testing')
+                {{-- cek acc kasublab --}}
+                @if ($param_acc_subhead == true)
+                  @if ($data_order->los_confirm_payment == 'true')
+                    <button class="btn btn-flat btn-xs btn-default" onclick="actionUploadBukti()"><i class="ri-upload-2-line" style="margin-right: 4px;"></i> Upload Bukti Bayar</button>
+                  @endif
+                @endif
+              @endif
+            @elseif (rulesUser(['PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
+              @if ($data_pengajuan->lsb_type == 'borrowing')
+                @if ($data_order->los_confirm_payment == 'true')
+                  <button class="btn btn-flat btn-xs btn-default" onclick="actionUploadBukti()"><i class="ri-upload-2-line" style="margin-right: 4px;"></i> Upload Bukti Bayar</button>
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'rental')
+                @if ($data_order->los_confirm_payment == 'true')
+                  <button class="btn btn-flat btn-xs btn-default" onclick="actionUploadBukti()"><i class="ri-upload-2-line" style="margin-right: 4px;"></i> Upload Bukti Bayar</button>
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'testing')
+                {{-- cek acc kasublab --}}
+                @if ($param_acc_subhead == true)
+                  @if ($data_order->los_confirm_payment == 'true')
+                    <button class="btn btn-flat btn-xs btn-default" onclick="actionUploadBukti()"><i class="ri-upload-2-line" style="margin-right: 4px;"></i> Upload Bukti Bayar</button>
+                  @endif
+                @endif
               @endif
             @endif
-          @elseif (rulesUser(['LAB_TECHNICIAN']))
-            <a href="#" onclick="actionSetTechConfirm();">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Konfirmasi Validasi</button>
-            </a>
-          @elseif (rulesUser(['STUDENT']))
-            <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
-            </a>
-            @if ($data_result == null)
-            <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
-              <button class="btn btn-flat btn-xs btn-success"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
-            </a>
+          @break
+          @case('disetujui')
+            @if (rulesUser(['LAB_HEAD']))
+              {{-- submission type --}}
+              @if ($data_pengajuan->lsb_type == 'borrowing')
+              @elseif ($data_pengajuan->lsb_type == 'rental')
+              @elseif ($data_pengajuan->lsb_type == 'testing')
+              @endif
+            @elseif (rulesUser(['LAB_SUBHEAD']))
+              @if ($data_pengajuan->lsb_type == 'borrowing')
+                {{-- user applicant --}}
+                @if ($data_pengajuan->level == 'STUDENT')
+                  @if ($user_technical == null)
+                    <a href="#" onclick="actionSetTech();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Set Teknikal Pendamping</button>
+                    </a>
+                  @endif
+                  @if ($data_result != null)
+                    <a href="#" onclick="actValidationReport()">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Validasi Laporan</button>
+                    </a>
+                  @endif
+                @elseif ($data_pengajuan->level == 'LECTURE')
+                  @if ($user_technical == null)
+                    <a href="#" onclick="actionSetTech();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Set Teknikal Pendamping</button>
+                    </a>
+                  @endif
+                  @if ($data_result != null)
+                    <a href="#" onclick="actValidationReport()">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Validasi Laporan</button>
+                    </a>
+                  @endif
+                @elseif ($data_pengajuan->level == 'PUBLIC_MEMBER' || $data_pengajuan->level == 'PUBLIC_NON_MEMBER')
+                  @if ($user_technical == null)
+                    <a href="#" onclick="actionSetTech();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Set Teknikal Pendamping</button>
+                    </a>
+                  @endif
+                  {{-- <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
+                    <button class="btn btn-flat btn-xs btn-success"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
+                  </a> --}}
+                  <a href="#" onclick="actEndRentalReport()">
+                    <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Peminjaman Selesai</button>
+                  </a>
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'rental')
+                {{-- user applicant --}}
+                @if ($data_pengajuan->level == 'STUDENT')
+                  @if ($data_result != null)
+                    <a href="#" onclick="actValidationReport()">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Validasi Laporan</button>
+                    </a>
+                  @endif
+                @elseif ($data_pengajuan->level == 'LECTURE')
+                  @if ($data_result != null)
+                    <a href="#" onclick="actValidationReport()">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Validasi Laporan</button>
+                    </a>
+                  @endif
+                @elseif ($data_pengajuan->level == 'PUBLIC_MEMBER' || $data_pengajuan->level == 'PUBLIC_NON_MEMBER')
+                  <a href="#" onclick="actEndRentalReport()">
+                    <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Sewa Alat Selesai</button>
+                  </a>
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'testing')
+                {{-- cek acc kasublab --}}
+                @if ($param_acc_subhead == false)
+                  <a href="#" onclick="actionResponKasublab();">
+                    <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Respon Pengajuan</button>
+                  </a>
+                @endif
+                @if ($data_pengajuan->level == 'STUDENT')
+                  <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
+                    <button class="btn btn-flat btn-xs btn-success"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
+                  </a>
+                @elseif ($data_pengajuan->level == 'LECTURE')
+                  <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
+                    <button class="btn btn-flat btn-xs btn-success"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
+                  </a>
+                @elseif ($data_pengajuan->level == 'PUBLIC_MEMBER' || $data_pengajuan->level == 'PUBLIC_NON_MEMBER')
+                  <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
+                    <button class="btn btn-flat btn-xs btn-success"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
+                  </a>
+                @endif
+              @endif
+            @elseif (rulesUser(['LAB_TECHNICIAN']))
+              @if ($data_pengajuan->lsb_type == 'borrowing')
+                @if ($data_pengajuan->level == 'STUDENT')
+                  <a href="#" onclick="actionSetTechConfirm();">
+                    <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Konfirmasi Validasi</button>
+                  </a>
+                @elseif ($data_pengajuan->level == 'LECTURE')
+                  <a href="#" onclick="actionSetTechConfirm();">
+                    <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Konfirmasi Validasi</button>
+                  </a>
+                @elseif ($data_pengajuan->level == 'PUBLIC_MEMBER' || $data_pengajuan->level == 'PUBLIC_NON_MEMBER')
+                  <a href="#" onclick="actionSetTechConfirm();">
+                    <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Konfirmasi Validasi</button>
+                  </a>
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'rental')
+              @elseif ($data_pengajuan->lsb_type == 'testing')
+              @endif
+            @elseif (rulesUser(['STUDENT']))
+              @if ($data_pengajuan->lsb_type == 'borrowing')
+                {{-- user applicant --}}
+                @if ($data_result == null)
+                  <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
+                    <button class="btn btn-flat btn-xs btn-success"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
+                  </a>
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'rental')
+                @if ($data_result == null)
+                  <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
+                    <button class="btn btn-flat btn-xs btn-success"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
+                  </a>
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'testing')
+              @endif
+            @elseif (rulesUser(['LECTURE']))
+              @if ($data_pengajuan->lsb_type == 'borrowing')
+                {{-- user applicant --}}
+                @if ($data_result == null)
+                  <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
+                    <button class="btn btn-flat btn-xs btn-success"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
+                  </a>
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'rental')
+                @if ($data_result == null)
+                  <a href="{{ url('pengajuan/form-laporan/'.$data_pengajuan->lsb_id) }}">
+                    <button class="btn btn-flat btn-xs btn-success"><i class="ri-draft-line" style="margin-right: 4px;"></i> Upload Laporan</button>
+                  </a>
+                @endif
+              @elseif ($data_pengajuan->lsb_type == 'testing')
+              @endif
+            @elseif (rulesUser(['PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
             @endif
-          @elseif (rulesUser(['LECTURE','PUBLIC_MEMBER','PUBLIC_NON_MEMBER']))
-            <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
-              <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
-            </a>
-          @endif
-        @elseif ($data_pengajuan->lsb_status == 'selesai')
-        @endif
+          @break
+          @case('ditolak')
+          @break
+          @default
+        @endswitch
+        <a href="{{ url('pengajuan/viewpage-pengajuan-pdf/'.$data_pengajuan->lsb_id) }}">
+          <button class="btn btn-flat btn-xs btn-default"><i class="ri-mail-download-fill" style="margin-right: 4px;"></i> Download Surat</button>
+        </a>
         <a href="{{ url('pengajuan') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
@@ -731,15 +990,6 @@ Lab management | Dashboard
           @else
             <input type="hidden" name="lsr_id" value="{{ $data_result->lsr_id }}">
           @endif
-					{{-- <div class="form-group has-feedback" style="margin-bottom: 12px;">
-						<label>
-							Status Kegiatan
-						</label>
-						<select type="text" class="form-control" name="inp_status" id="inp-status" value="" placeholder="Pilih status..">
-              <option value=""></option>
-              <option value="selesai">Kegiatan Selesai</option>
-            </select>
-					</div> --}}
           <input type="hidden" value="selesai" name="inp_status">
           <div class="form-group has-feedback" style="margin-bottom: 12px;">
 						<label>
@@ -751,6 +1001,38 @@ Lab management | Dashboard
 				<div class="modal-footer">
 					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
 					<button type="submit" class="btn btn-sm btn-primary btn-flat"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Kirim</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="modalEndRental" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Laporan Selesai</h4>
+			</div>
+			<form action="{{ route('update_pengajuan_selesai') }}" method="POST" enctype="multipart/form-data" autocomplete="new-password">
+				@csrf
+				<div class="modal-body">
+					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
+          @if ($data_result == null)
+            <input type="hidden" name="lsr_id" value="">
+          @else
+            <input type="hidden" name="lsr_id" value="{{ $data_result->lsr_id }}">
+          @endif
+          <input type="hidden" value="selesai" name="inp_status">
+          <div class="form-group has-feedback" style="margin-bottom: 12px;">
+						<label>
+							Tulis Catatan
+						</label>
+            <textarea class="form-control" rows="3" name="inp_catatan" placeholder="Enter ..." style="width: 100%;"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
+					<button type="submit" class="btn btn-sm btn-primary btn-flat"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Simpan</button>
 				</div>
 			</form>
 		</div>
@@ -885,6 +1167,9 @@ Lab management | Dashboard
   };
   function actValidationReport(params) {
     $('#modalValidationReport').modal('show');
+  };
+  function actEndRentalReport(params) {
+    $('#modalEndRental').modal('show');
   };
   function actionSetTechConfirm() {
     $('#modalTechConfirm').modal('show');

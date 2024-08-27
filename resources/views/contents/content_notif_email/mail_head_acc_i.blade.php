@@ -28,42 +28,29 @@
 	<table class="table" style="width:100%">
 		<tbody>
 			<tr>
-				<td>
+				<td colspan="4">
 					Salam Hangat, <br>
-					Kepala Laboratorium Fakultas Teknik Unesa <br>
+					Kasub {{ $data_applicant['lab'] }}<br>
 					di Tempat<br>
 				</td>
 			</tr>
-			<tr><td></td></tr>
 			<tr>
-				<td>
-					Pengajuan pengujian sampel di {{ $data_applicant['lab'] }}, dengan jadwal rilis hasil uji lab tanggal <b>{{$data_applicant['dates']}}</b>,<br>
-					telah disetujui oleh;
+				<td colspan="4">
+					Pengajuan sewa alat laboratorium {{ $data_applicant['lab'] }}, dengan jadwal sewa tanggal <br>
+					{!! $data_applicant['datetimes'] !!}
+					telah  disetujui oleh
+					@if (isset($data_applicant['head_acc']))
+					{{ $data_applicant['head_acc'] }}.
+					<br>
+					@endif
+					Untuk informasi lebih lanjut silakan klik tombol <i>Detail Pengajuan</i> yang ada di bawah.
 				</td>
-			<tr>
-				<td>
-					{{$data_applicant['name_subhead']}} pada {{$data_applicant['dates_now']}}.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					Untuk informasi lebih lanjut silakan klik  <a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}"><b>Detail Pengajuan</b></a>, atau menghubungi nomor kontak berikut:
-				</td>
-			</tr>
-			<tr>
-				<td>
-					Kepala Sub Laboratorium: {{ $data_applicant['name_subhead'] }} - {{ $data_applicant['no_contact_subhead'] }}
-				</td>
-			</tr>
-			<tr><td></td></tr>
-			<tr><td></td></tr>
-			<tr>
-				<td>Hormat Kami,</td>
-			</tr>
-			<tr>
-				<td><b>Tim SIPLAB</b></td>
 			</tr>
 		</tbody>
 	</table>
+	<hr>
+	<a href="{{ url('pengajuan/detail-pengajuan') }}/{{ $data_applicant['lsb_id'] }}">
+		<button type="button" class="btn bg-olive btn-flat margin">Detail Pengajuan</button>
+	</a>
 </body>
 </html>

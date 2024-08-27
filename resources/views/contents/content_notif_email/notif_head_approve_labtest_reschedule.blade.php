@@ -30,19 +30,19 @@
 			<tr>
 				<td>
 					Salam Hangat, <br>
-					Kepala Laboratorium Fakultas Teknik Unesa <br>
+					{{ $data_applicant['inp_nama'] }}<br>
 					di Tempat<br>
 				</td>
 			</tr>
 			<tr><td></td></tr>
 			<tr>
 				<td>
-					Pengajuan pengujian sampel di {{ $data_applicant['lab'] }}, dengan jadwal rilis hasil uji lab tanggal <b>{{$data_applicant['dates']}}</b>,<br>
-					telah disetujui oleh;
+					Pengajuan pengujian sampel di {{ $data_applicant['lab'] }}, yang diajukan dengan rilis hasil uji lab pada <b>{{$data_applicant['dates']}}</b>,<br>
+					telah disetujui dengan pengunduran rilis hasil uji lab pada {{$data_applicant['dates_reschedule']}}.
 				</td>
 			<tr>
 				<td>
-					{{$data_applicant['name_subhead']}} pada {{$data_applicant['dates_now']}}.
+					Pengajuan disetujui pada {{$data_applicant['dates_now']}} oleh {{$data_applicant['name_head']}}.
 				</td>
 			</tr>
 			<tr>

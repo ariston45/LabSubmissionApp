@@ -30,7 +30,7 @@
 			<tr>
 				<td>
 					Salam Hangat, <br>
-					Kepala Laboratorium Fakultas Teknik Unesa <br>
+					{{ $data_applicant['inp_nama'] }}<br>
 					di Tempat<br>
 				</td>
 			</tr>
@@ -42,7 +42,7 @@
 				</td>
 			<tr>
 				<td>
-					{{$data_applicant['name_subhead']}} pada {{$data_applicant['dates_now']}}.
+					{{$data_applicant['name_head']}} pada {{$data_applicant['dates_now']}}.
 				</td>
 			</tr>
 			<tr>

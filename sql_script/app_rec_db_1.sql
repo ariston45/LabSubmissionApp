@@ -11,7 +11,7 @@
  Target Server Version : 100427 (10.4.27-MariaDB)
  File Encoding         : 65001
 
- Date: 16/08/2024 09:31:29
+ Date: 30/08/2024 09:52:04
 */
 
 SET NAMES utf8mb4;
@@ -106,14 +106,6 @@ CREATE TABLE `lab_facilities`  (
 -- ----------------------------
 -- Records of lab_facilities
 -- ----------------------------
-INSERT INTO `lab_facilities` VALUES (160, 1, '58', '2024-08-08', NULL, NULL, 1, 'listed', 'Elle ADR 3000', NULL, '2024-08-08 09:35:43', '2024-08-08 09:42:08', NULL, NULL);
-INSERT INTO `lab_facilities` VALUES (161, 2, '58', NULL, NULL, NULL, 1, 'listed', 'Elle ADR 3000', 1, '2024-08-08 09:47:56', '2024-08-08 09:49:49', NULL, NULL);
-INSERT INTO `lab_facilities` VALUES (162, 4, '58', '2024-08-08', NULL, NULL, 1, 'listed', 'Elle ADR 3000', NULL, '2024-08-08 10:06:01', '2024-08-08 10:13:33', NULL, NULL);
-INSERT INTO `lab_facilities` VALUES (163, 5, '1', NULL, NULL, NULL, 30, 'listed', 'Laptop', 1, '2024-08-12 15:33:59', NULL, NULL, NULL);
-INSERT INTO `lab_facilities` VALUES (164, 6, '1', NULL, NULL, NULL, 30, 'listed', 'Laptop', 1, '2024-08-12 15:53:09', NULL, NULL, NULL);
-INSERT INTO `lab_facilities` VALUES (165, 7, '58', '2024-08-15', NULL, NULL, 1, 'listed', 'Elle ADR 3000', NULL, '2024-08-15 09:12:39', NULL, NULL, NULL);
-INSERT INTO `lab_facilities` VALUES (166, 8, '1', NULL, NULL, NULL, 30, 'listed', 'Laptop', 1, '2024-08-15 15:33:48', NULL, NULL, NULL);
-INSERT INTO `lab_facilities` VALUES (167, 9, '1', NULL, NULL, NULL, 30, 'listed', 'Laptop', 1, '2024-08-15 16:44:50', NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for lab_labtests
@@ -150,9 +142,6 @@ CREATE TABLE `lab_sch_dates`  (
 -- ----------------------------
 -- Records of lab_sch_dates
 -- ----------------------------
-INSERT INTO `lab_sch_dates` VALUES (1, '1', 'Thursday', '2024-08-08', 'active', '2024-08-08 09:42:08', NULL);
-INSERT INTO `lab_sch_dates` VALUES (2, '2', 'Thursday', '2024-08-15', 'active', '2024-08-08 09:49:49', NULL);
-INSERT INTO `lab_sch_dates` VALUES (3, '3', 'Thursday', '2024-08-08', 'active', '2024-08-08 10:13:33', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sch_times
@@ -171,8 +160,6 @@ CREATE TABLE `lab_sch_times`  (
 -- ----------------------------
 -- Records of lab_sch_times
 -- ----------------------------
-INSERT INTO `lab_sch_times` VALUES (149, 2, 0, 'active', '2024-08-08 09:49:49', NULL);
-INSERT INTO `lab_sch_times` VALUES (150, 2, 1, 'active', '2024-08-08 09:49:49', NULL);
 
 -- ----------------------------
 -- Table structure for lab_schedules
@@ -203,9 +190,6 @@ CREATE TABLE `lab_schedules`  (
 -- ----------------------------
 -- Records of lab_schedules
 -- ----------------------------
-INSERT INTO `lab_schedules` VALUES (1, 58, 1, 'non_reguler', 184, NULL, 'ALIF AKBAR HIDAYATULLAH', 'MODIFIKASI STRUKTUR GEDUNG RUMAH SAKIT KENDANGSARI KOTA SURABAYA DENGAN BAJA-BETON KOMPOSIT MENGGUNAKAN SISTEM RANGKA PEMIKUL MOMEN', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-08-08 09:42:08', NULL, '2024-08-08 09:42:08');
-INSERT INTO `lab_schedules` VALUES (2, 58, 2, 'non_reguler', 184, NULL, 'ALIF AKBAR HIDAYATULLAH', 'MODIFIKASI STRUKTUR GEDUNG RUMAH SAKIT KENDANGSARI KOTA SURABAYA DENGAN BAJA-BETON KOMPOSIT MENGGUNAKAN SISTEM RANGKA PEMIKUL MOMEN', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-08-08 09:49:49', NULL, '2024-08-08 09:49:49');
-INSERT INTO `lab_schedules` VALUES (3, 58, 4, 'non_reguler', 197, NULL, 'Alex', 'Judul Peneltian 1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-08-08 10:13:33', NULL, '2024-08-08 10:13:33');
 
 -- ----------------------------
 -- Table structure for lab_sub_dates
@@ -225,17 +209,6 @@ CREATE TABLE `lab_sub_dates`  (
 -- ----------------------------
 -- Records of lab_sub_dates
 -- ----------------------------
-INSERT INTO `lab_sub_dates` VALUES (1, 1, '2024-08-08', NULL, 58, '2024-08-08 09:35:43', NULL);
-INSERT INTO `lab_sub_dates` VALUES (2, 2, '2024-08-15', NULL, 58, '2024-08-08 09:47:56', NULL);
-INSERT INTO `lab_sub_dates` VALUES (3, 3, '2024-08-15', NULL, 58, '2024-08-08 09:55:45', NULL);
-INSERT INTO `lab_sub_dates` VALUES (4, 4, '2024-08-08', '2024-08-15', 58, '2024-08-08 10:06:01', '2024-08-08 10:07:52');
-INSERT INTO `lab_sub_dates` VALUES (5, 5, '2024-08-20', NULL, 1, '2024-08-12 15:33:59', NULL);
-INSERT INTO `lab_sub_dates` VALUES (6, 5, '2024-08-21', NULL, 1, '2024-08-12 15:33:59', NULL);
-INSERT INTO `lab_sub_dates` VALUES (7, 6, '2024-08-21', NULL, 1, '2024-08-12 15:53:09', NULL);
-INSERT INTO `lab_sub_dates` VALUES (8, 7, '2024-08-15', NULL, 58, '2024-08-15 09:12:39', NULL);
-INSERT INTO `lab_sub_dates` VALUES (9, 8, '2024-09-04', NULL, 1, '2024-08-15 15:33:48', NULL);
-INSERT INTO `lab_sub_dates` VALUES (10, 9, '2024-09-04', NULL, 1, '2024-08-15 16:44:50', NULL);
-INSERT INTO `lab_sub_dates` VALUES (11, 9, '2024-09-05', NULL, 1, '2024-08-15 16:44:50', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_order_details
@@ -258,17 +231,6 @@ CREATE TABLE `lab_sub_order_details`  (
 -- ----------------------------
 -- Records of lab_sub_order_details
 -- ----------------------------
-INSERT INTO `lab_sub_order_details` VALUES (258, 1, 1, '', 'Peminjaman lab dengan jumlah sample 5', 500000.00, '2024-08-08 09:35:43', NULL, NULL, NULL);
-INSERT INTO `lab_sub_order_details` VALUES (259, 2, 0, '', 'Peminjaman tanggal 2024-08-15', 100000.00, '2024-08-08 09:47:56', NULL, NULL, NULL);
-INSERT INTO `lab_sub_order_details` VALUES (260, 3, 0, '', 'Peminjaman tanggal 2024-08-15', 100000.00, '2024-08-08 09:55:45', NULL, NULL, NULL);
-INSERT INTO `lab_sub_order_details` VALUES (261, 4, 1, '', 'Peminjaman lab dengan jumlah sample 10', 1000000.00, '2024-08-08 10:06:01', NULL, NULL, NULL);
-INSERT INTO `lab_sub_order_details` VALUES (262, 5, 0, '', 'Peminjaman tanggal 2024-08-20', 40000.00, '2024-08-12 15:33:59', NULL, NULL, NULL);
-INSERT INTO `lab_sub_order_details` VALUES (263, 5, 1, '', 'Peminjaman tanggal 2024-08-21', 40000.00, '2024-08-12 15:33:59', NULL, NULL, NULL);
-INSERT INTO `lab_sub_order_details` VALUES (264, 6, 0, '', 'Peminjaman tanggal 2024-08-21', 40000.00, '2024-08-12 15:53:09', NULL, NULL, NULL);
-INSERT INTO `lab_sub_order_details` VALUES (265, 7, 1, '', 'Peminjaman lab dengan jumlah sample 10', 1000000.00, '2024-08-15 09:12:39', NULL, NULL, NULL);
-INSERT INTO `lab_sub_order_details` VALUES (266, 8, 0, '', 'Peminjaman tanggal 2024-09-04', 40000.00, '2024-08-15 15:33:48', NULL, NULL, NULL);
-INSERT INTO `lab_sub_order_details` VALUES (267, 9, 0, '', 'Peminjaman tanggal 2024-09-04', 40000.00, '2024-08-15 16:44:50', NULL, NULL, NULL);
-INSERT INTO `lab_sub_order_details` VALUES (268, 9, 1, '', 'Peminjaman tanggal 2024-09-05', 40000.00, '2024-08-15 16:44:50', NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_orders
@@ -292,15 +254,6 @@ CREATE TABLE `lab_sub_orders`  (
 -- ----------------------------
 -- Records of lab_sub_orders
 -- ----------------------------
-INSERT INTO `lab_sub_orders` VALUES (1, 1, NULL, '2024-08-08 09:35:43', 500000.00, 100.00, 'false', 500000.00, 0.00, '2024-08-08 09:35:43', NULL);
-INSERT INTO `lab_sub_orders` VALUES (2, 2, NULL, '2024-08-08 09:47:56', 100000.00, 100.00, 'false', 100000.00, 0.00, '2024-08-08 09:47:56', NULL);
-INSERT INTO `lab_sub_orders` VALUES (3, 3, NULL, '2024-08-08 09:55:45', 100000.00, 0.00, 'false', 0.00, 100000.00, '2024-08-08 09:55:45', NULL);
-INSERT INTO `lab_sub_orders` VALUES (4, 4, NULL, '2024-08-08 10:06:01', 1000000.00, 10.00, 'true', 100000.00, 900000.00, '2024-08-08 10:06:01', '2024-08-08 10:10:11');
-INSERT INTO `lab_sub_orders` VALUES (5, 5, NULL, '2024-08-12 15:33:59', 80000.00, 100.00, 'false', 80000.00, 0.00, '2024-08-12 15:33:59', NULL);
-INSERT INTO `lab_sub_orders` VALUES (6, 6, NULL, '2024-08-12 15:53:09', 40000.00, 0.00, 'false', 0.00, 40000.00, '2024-08-12 15:53:09', NULL);
-INSERT INTO `lab_sub_orders` VALUES (7, 7, NULL, '2024-08-15 09:12:39', 1000000.00, 100.00, 'false', 1000000.00, 0.00, '2024-08-15 09:12:39', NULL);
-INSERT INTO `lab_sub_orders` VALUES (8, 8, NULL, '2024-08-15 15:33:48', 40000.00, 100.00, 'false', 40000.00, 0.00, '2024-08-15 15:33:48', NULL);
-INSERT INTO `lab_sub_orders` VALUES (9, 9, NULL, '2024-08-15 16:44:50', 80000.00, 100.00, 'false', 80000.00, 0.00, '2024-08-15 16:44:50', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_times
@@ -318,24 +271,6 @@ CREATE TABLE `lab_sub_times`  (
 -- ----------------------------
 -- Records of lab_sub_times
 -- ----------------------------
-INSERT INTO `lab_sub_times` VALUES (266, 2, 0, '2024-08-08 09:47:56', NULL);
-INSERT INTO `lab_sub_times` VALUES (267, 2, 1, '2024-08-08 09:47:56', NULL);
-INSERT INTO `lab_sub_times` VALUES (268, 3, 2, '2024-08-08 09:55:45', NULL);
-INSERT INTO `lab_sub_times` VALUES (269, 3, 3, '2024-08-08 09:55:45', NULL);
-INSERT INTO `lab_sub_times` VALUES (270, 5, 0, '2024-08-12 15:33:59', NULL);
-INSERT INTO `lab_sub_times` VALUES (271, 5, 1, '2024-08-12 15:33:59', NULL);
-INSERT INTO `lab_sub_times` VALUES (272, 6, 0, '2024-08-12 15:33:59', NULL);
-INSERT INTO `lab_sub_times` VALUES (273, 6, 1, '2024-08-12 15:33:59', NULL);
-INSERT INTO `lab_sub_times` VALUES (274, 7, 0, '2024-08-12 15:53:09', NULL);
-INSERT INTO `lab_sub_times` VALUES (275, 7, 1, '2024-08-12 15:53:09', NULL);
-INSERT INTO `lab_sub_times` VALUES (276, 9, 0, '2024-08-15 15:33:48', NULL);
-INSERT INTO `lab_sub_times` VALUES (277, 9, 1, '2024-08-15 15:33:48', NULL);
-INSERT INTO `lab_sub_times` VALUES (278, 10, 0, '2024-08-15 16:44:50', NULL);
-INSERT INTO `lab_sub_times` VALUES (279, 10, 1, '2024-08-15 16:44:50', NULL);
-INSERT INTO `lab_sub_times` VALUES (280, 10, 2, '2024-08-15 16:44:50', NULL);
-INSERT INTO `lab_sub_times` VALUES (281, 11, 0, '2024-08-15 16:44:50', NULL);
-INSERT INTO `lab_sub_times` VALUES (282, 11, 1, '2024-08-15 16:44:50', NULL);
-INSERT INTO `lab_sub_times` VALUES (283, 11, 2, '2024-08-15 16:44:50', NULL);
 
 -- ----------------------------
 -- Table structure for lab_submission_accs
@@ -357,13 +292,6 @@ CREATE TABLE `lab_submission_accs`  (
 -- ----------------------------
 -- Records of lab_submission_accs
 -- ----------------------------
-INSERT INTO `lab_submission_accs` VALUES (263, '1', 'LAB_SUBHEAD', '34', 'Muhammad Imaduddin, S.T., M.T.', NULL, '2024-08-08 09:40:59', '2024-08-08 09:41:03', NULL);
-INSERT INTO `lab_submission_accs` VALUES (264, '1', 'LAB_HEAD', '0', 'Dr. Lutfiyah Hidayati, S.Pd., M.Pd.', NULL, '2024-08-08 09:42:08', '2024-08-08 09:42:08', NULL);
-INSERT INTO `lab_submission_accs` VALUES (265, '1', 'LECTURE', NULL, 'Meity Wulandari, S.T., M.T.', NULL, '2024-08-08 09:42:08', '2024-08-08 09:42:08', NULL);
-INSERT INTO `lab_submission_accs` VALUES (266, '2', 'LAB_HEAD', '0', 'Dr. Lutfiyah Hidayati, S.Pd., M.Pd.', NULL, '2024-08-08 09:49:49', '2024-08-08 09:49:49', NULL);
-INSERT INTO `lab_submission_accs` VALUES (267, '2', 'LECTURE', NULL, 'Meity Wulandari, S.T., M.T.', NULL, '2024-08-08 09:49:49', '2024-08-08 09:49:49', NULL);
-INSERT INTO `lab_submission_accs` VALUES (268, '4', 'LAB_SUBHEAD', '34', 'Muhammad Imaduddin, S.T., M.T.', NULL, '2024-08-08 10:07:49', '2024-08-08 10:07:52', NULL);
-INSERT INTO `lab_submission_accs` VALUES (269, '4', 'LAB_HEAD', '0', 'Dr. Lutfiyah Hidayati, S.Pd., M.Pd.', NULL, '2024-08-08 10:13:33', '2024-08-08 10:13:33', NULL);
 
 -- ----------------------------
 -- Table structure for lab_submission_advisers
@@ -385,12 +313,6 @@ CREATE TABLE `lab_submission_advisers`  (
 -- ----------------------------
 -- Records of lab_submission_advisers
 -- ----------------------------
-INSERT INTO `lab_submission_advisers` VALUES (52, 1, NULL, '199105282019032019', 'Pembimbing', 'Meity Wulandari, S.T., M.T.', '2024-08-08 09:35:43', NULL, 28059106);
-INSERT INTO `lab_submission_advisers` VALUES (53, 2, NULL, '199105282019032019', 'Pembimbing', 'Meity Wulandari, S.T., M.T.', '2024-08-08 09:47:56', NULL, 28059106);
-INSERT INTO `lab_submission_advisers` VALUES (54, 5, NULL, '199105282019032019', 'Pembimbing', 'Meity Wulandari, S.T., M.T.', '2024-08-12 15:33:59', NULL, 28059106);
-INSERT INTO `lab_submission_advisers` VALUES (55, 7, NULL, '199105282019032019', 'Pembimbing', 'Meity Wulandari, S.T., M.T.', '2024-08-15 09:12:39', NULL, 28059106);
-INSERT INTO `lab_submission_advisers` VALUES (56, 8, NULL, '199105282019032019', 'Pembimbing', 'Meity Wulandari, S.T., M.T.', '2024-08-15 15:33:48', NULL, 28059106);
-INSERT INTO `lab_submission_advisers` VALUES (57, 9, NULL, '199105282019032019', 'Pembimbing', 'Meity Wulandari, S.T., M.T.', '2024-08-15 16:44:50', NULL, 28059106);
 
 -- ----------------------------
 -- Table structure for lab_submission_results
@@ -413,7 +335,6 @@ CREATE TABLE `lab_submission_results`  (
 -- ----------------------------
 -- Records of lab_submission_results
 -- ----------------------------
-INSERT INTO `lab_submission_results` VALUES (29, 4, NULL, NULL, '4546788_20050724036_20050724036_alif_akbar_hidayatullah_09_07_2024_103303pdf_31_07_2024_212608pdf_08_08_2024_101359.pdf', 'true', 34, NULL, '2024-08-08 10:13:59', NULL);
 
 -- ----------------------------
 -- Table structure for lab_submissions
@@ -448,15 +369,6 @@ CREATE TABLE `lab_submissions`  (
 -- ----------------------------
 -- Records of lab_submissions
 -- ----------------------------
-INSERT INTO `lab_submissions` VALUES (1, 58, 'MODIFIKASI STRUKTUR GEDUNG RUMAH SAKIT KENDANGSARI KOTA SURABAYA DENGAN BAJA-BETON KOMPOSIT MENGGUNAKAN SISTEM RANGKA PEMIKUL MOMEN', 'testing', NULL, 'tp_penelitian_skripsi', '2024-08-08 09:35:43', NULL, '2024-08-08 09:35:43', 184, '0', NULL, '34', NULL, NULL, NULL, NULL, 'disetujui', NULL, NULL, '2024-08-08 09:42:08', '2024-08-08 09:42:08');
-INSERT INTO `lab_submissions` VALUES (2, 58, 'MODIFIKASI STRUKTUR GEDUNG RUMAH SAKIT KENDANGSARI KOTA SURABAYA DENGAN BAJA-BETON KOMPOSIT MENGGUNAKAN SISTEM RANGKA PEMIKUL MOMEN', 'borrowing', NULL, 'tp_penelitian_skripsi', NULL, NULL, '2024-08-15', 184, '0', NULL, '34', '73', NULL, NULL, NULL, 'disetujui', NULL, NULL, '2024-08-08 09:50:36', '2024-08-08 09:50:36');
-INSERT INTO `lab_submissions` VALUES (3, 58, 'Judul Penelitian', 'borrowing', 'Tujuan penelitian', 'tp_penelitian', NULL, NULL, '2024-08-15', 186, '0', NULL, '34', NULL, NULL, NULL, NULL, 'tidak_terpakai', NULL, NULL, '2024-08-16 09:11:44', '2024-08-16 09:11:44');
-INSERT INTO `lab_submissions` VALUES (4, 58, 'Judul Peneltian 1', 'testing', NULL, 'tp_penelitian', '2024-08-08 10:06:01', NULL, '2024-08-08 10:06:01', 197, '0', NULL, '34', NULL, '20240808_101225_hipet54459@biowey.com.pdf', NULL, NULL, 'selesai', NULL, NULL, '2024-08-08 10:13:59', '2024-08-08 10:13:59');
-INSERT INTO `lab_submissions` VALUES (5, 1, 'MODIFIKASI STRUKTUR GEDUNG RUMAH SAKIT KENDANGSARI KOTA SURABAYA DENGAN BAJA-BETON KOMPOSIT MENGGUNAKAN SISTEM RANGKA PEMIKUL MOMEN', 'borrowing', NULL, 'tp_penelitian_skripsi', NULL, NULL, '2024-08-20#2024-08-21', 184, '0', NULL, '11', NULL, NULL, NULL, NULL, 'menunggu', NULL, NULL, '2024-08-12 15:33:59', NULL);
-INSERT INTO `lab_submissions` VALUES (6, 1, 'Pengambangan produk lampu', 'borrowing', 'Pengembangan produk', 'tp_penelitian', NULL, NULL, '2024-08-21', 186, '0', NULL, '11', NULL, NULL, NULL, NULL, 'menunggu', NULL, NULL, '2024-08-12 15:53:09', NULL);
-INSERT INTO `lab_submissions` VALUES (7, 58, 'MODIFIKASI STRUKTUR GEDUNG RUMAH SAKIT KENDANGSARI KOTA SURABAYA DENGAN BAJA-BETON KOMPOSIT MENGGUNAKAN SISTEM RANGKA PEMIKUL MOMEN', 'testing', NULL, 'tp_penelitian_skripsi', '2024-08-15 09:12:39', NULL, '2024-08-15 09:12:39', 184, '0', NULL, '34', NULL, NULL, NULL, NULL, 'tidak_terpakai', NULL, NULL, '2024-08-16 09:11:44', '2024-08-16 09:11:44');
-INSERT INTO `lab_submissions` VALUES (8, 1, 'MODIFIKASI STRUKTUR GEDUNG RUMAH SAKIT KENDANGSARI KOTA SURABAYA DENGAN BAJA-BETON KOMPOSIT MENGGUNAKAN SISTEM RANGKA PEMIKUL MOMEN', 'borrowing', NULL, 'tp_penelitian_skripsi', NULL, NULL, '2024-09-04', 184, '0', NULL, '11', NULL, NULL, NULL, NULL, 'menunggu', NULL, NULL, '2024-08-15 15:33:48', NULL);
-INSERT INTO `lab_submissions` VALUES (9, 1, 'MODIFIKASI STRUKTUR GEDUNG RUMAH SAKIT KENDANGSARI KOTA SURABAYA DENGAN BAJA-BETON KOMPOSIT MENGGUNAKAN SISTEM RANGKA PEMIKUL MOMEN', 'borrowing', NULL, 'tp_penelitian_skripsi', NULL, NULL, '2024-09-04#2024-09-05', 184, '0', NULL, '11', NULL, NULL, NULL, NULL, 'menunggu', NULL, NULL, '2024-08-15 16:44:50', NULL);
 
 -- ----------------------------
 -- Table structure for laboratories

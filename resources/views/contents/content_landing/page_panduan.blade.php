@@ -26,23 +26,52 @@ Lab management | Dashboard
   </div><!-- End Page Title -->
   <section id="about" class="about section">
     <div class="container">
+      <div class="row">
+        <div class="col-12" style="text-align: center;margin-bottom: 20px;">
+          <h3>Panduan Untuk Mahasiswa</h3>
+        </div>
+        <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+          <div class="course-item">
+            {{-- <img src="assets/img/course-1.jpg" class="img-fluid" alt="..."> --}}
+            <video id="player1" playsinline controls>
+              <source src="{{ url('/public/assets/video/panduan_1_umum.mp4') }}" type="video/mp4" />
+              <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default />
+            </video>
+            <div class="course-content mt-3" style="width: 100%">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <p class="category">Web Development</p>
+                <p class="price">$169</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+          <div class="course-item">
+            {{-- <img src="assets/img/course-1.jpg" class="img-fluid" alt="..."> --}}
+            <video id="player2" playsinline controls>
+              <source src="{{ url('/public/assets/video/panduan_2_student.mp4') }}" type="video/mp4" />
+              <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default />
+            </video>
+            <div class="course-content mt-3" style="width: 100%">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <p class="category">Web Development</p>
+                <p class="price">$169</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="row gy-4">
         <div class="col-md-12 order-1 order-lg-2" style="color: aliceblue">
           <div class="mb-3">
           </div>
           <ol type="A">
             <li style="margin-bottom: 30px;"> <b>Panduan Pengguna User Umum</b> <br>
-              <video id="player1" playsinline controls>
-                <source src="{{ url('/public/assets/video/panduan_1_umum.mp4') }}" type="video/mp4" />
-                <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default />
-              </video>
+             
             </li>
             <li style="margin-bottom: 30px;">
               <b>Panduan Pengguna User Mahasiswa FT</b> <br>
-              <video id="player2" playsinline controls>
-                <source src="{{ url('/public/assets/video/panduan_2_student.mp4') }}" type="video/mp4" />
-                <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default />
-              </video>
+              
             </li>
             <li>
               Download Panduan PDF. <a href="{{ url('/public/assets/img/panduan.pdf') }}"> <label class="label label-default">Panduan.pdf</label></a>
@@ -74,6 +103,15 @@ Lab management | Dashboard
 @endsection
 @push('css')
   <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+  <style>
+    .plyr__video-wrapper,
+    .plyr__audio-wrapper {
+      width: 100%; /* Atur lebar sesuai kebutuhan, misalnya 100% */
+      height: 300px; /* Atur tinggi sesuai kebutuhan */
+      max-width: 600px; /* Atur batas lebar maksimal */
+      margin: 0 auto; /* Untuk memposisikan player di tengah */
+    }
+  </style>
 @endpush
 @push('scripts')
   <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>

@@ -79,13 +79,14 @@ class FacilityController extends Controller
 		$data_fasilitas = Laboratory_facility::join('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
 		->where('laf_id', $request->id)
 		->first();
+		// dd($data_fasilitas);
 		return view('contents.content_pageview.view_detail_fasilitas_i', compact('data_fasilitas'));
 	}
 	public function formUpdateLaboratoryFacility(Request $request)
 	{
 		$users = User::get();
 		$data_facility = Laboratory_facility::leftjoin('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
-		->leftJoin('laboratories', 'Laboratory_facilities.laf_laboratorium', '=', 'laboratories.lab_id')
+		->leftJoin('laboratories', 'laboratory_facilities.laf_laboratorium', '=', 'laboratories.lab_id')
 		->where('laf_id', $request->id)
 		->first();
 		// dd($data_facility);
@@ -97,7 +98,6 @@ class FacilityController extends Controller
 		$lab_facility_id = $request->laf_id;
 		$lab_fa_conunt_id = $request->lcs_id;
 		$laf_data = Laboratory_facility::where('laf_id',$request->laf_id)->first();
-		// dd($request->param_upload_url_img);
 		#
 		$laf_name = Str::slug($request->inp_fasilitas, '_');
 		$getFile = $request->file('upload_url_img');

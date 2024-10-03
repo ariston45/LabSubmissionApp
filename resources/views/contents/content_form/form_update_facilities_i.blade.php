@@ -17,7 +17,7 @@ Lab management | Dashboard
     <div class="box-header with-border">
       <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i>Form Update Alat/Fasilitas Laboratorium</h3>
       <div class="pull-right">
-        <a href="{{ url('laboratorium') }}">
+        <a href="{{ url('fasilitas_lab/'.$data_facility->laf_laboratorium) }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
@@ -162,7 +162,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-facility" class="form-control" name="inp_cn_facility" value="{{ $data_facility->lcs_count }}" placeholder="Input jumlah alat/fasilitas..">
+            <input type="number" id="inp-cn-facility" class="form-control" name="inp_cn_facility" value="{{ $data_facility->lcs_count }}" oninput="actCntTool()" placeholder="Input jumlah alat/fasilitas..">
             @if ($errors->has('inp_cn_facility'))
 						<span style="color: red;"><i>{{ $errors->first('inp_cn_facility') }}</i></span>
 						@endif
@@ -176,7 +176,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-ready" class="form-control" name="inp_cn_ready" value="{{$data_facility->lcs_ready}}" placeholder="Input jumlah alat/fasilitas yang tersedia untuk dipakai..">
+            <input type="number" id="inp-cn-ready" class="form-control" name="inp_cn_ready" value="{{$data_facility->lcs_ready}}" oninput="actCntToolReady()" placeholder="Input jumlah alat/fasilitas yang tersedia untuk dipakai..">
             @if ($errors->has('inp_cn_ready'))
 						<span style="color: red;"><i>{{ $errors->first('inp_cn_ready') }}</i></span>
 						@endif
@@ -190,7 +190,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-used" class="form-control" name="inp_cn_used" value="{{$data_facility->lcs_used}}"  placeholder="Input jumlah alat/fasilitas yang dipakai atau dipinjam..">
+            <input type="number" id="inp-cn-used" class="form-control" name="inp_cn_used" value="{{$data_facility->lcs_used}}"  placeholder="Input jumlah alat/fasilitas yang dipakai atau dipinjam..">
             @if ($errors->has('inp_cn_used'))
 						<span style="color: red;"><i>{{ $errors->first('inp_cn_used') }}</i></span>
 						@endif
@@ -204,7 +204,8 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-8">
-            <input type="text" id="inp-cn-unwearable" class="form-control" name="inp_cn_unwearable" value=" {{$data_facility->lcs_unwearable}}" placeholder="Input jumlah alat/fasilitas yang kondisi rusak/tidak bisa dipakai..">
+            <input type="number" id="inp-cn-unwearable" class="form-control" name="inp_cn_unwearable" value="{{$data_facility->lcs_unwearable}}" oninput="actCntToolUnwear()"
+            placeholder="Input jumlah alat/fasilitas yang kondisi rusak/tidak bisa dipakai..">
             @if ($errors->has('inp_cn_unwearable'))
 						<span style="color: red;"><i>{{ $errors->first('inp_cn_unwearable') }}</i></span>
 						@endif
@@ -322,7 +323,69 @@ Lab management | Dashboard
     $('#wrap-img-new').show();
     $('#btn-delete-picture').hide();
   };
-</script>
+  </script>
+  {{-- <script>
+  function actCntTool() {
+    let cnt_tool_input = $('#inp-cn-facility').val();
+    let cnt_used = {{$data_facility->lcs_used}};
+    let cnt_unwear = {{$data_facility->lcs_unwearable}};
+    let cnt_ready = {{ $data_facility->lcs_ready }};
+    let cnt_tool = {{ $data_facility->lcs_count }};
+    
+
+    let tmp_cnt_ready = Number(cnt_tool_input) - (Number(cnt_used)+Number(cnt_unwear));
+    if (tmp_cnt_ready < 0) {
+      $('#inp-cn-facility').val(cnt_tool);
+      $('#inp-cn-ready').val(cnt_ready);
+    }else{
+      $('#inp-cn-facility').val(cnt_tool_input);
+      $('#inp-cn-ready').val(tmp_cnt_ready);
+      $('#inp-cn-unwearable').val(cnt_unwear);
+    }
+    /* change atribut*/
+    $('#inp-cn-ready').removeAttr('readonly');
+    $('#inp-cn-unwearable').removeAttr('readonly');
+    /* set value */
+    // $('#inp-cn-used').val(0);
+    // $('#inp-cn-unwearable').val(0);
+  };
+  function actCntToolReady() {
+    var cnt_tool = $('#inp-cn-facility').val();
+    var cnt_used = $('#inp-cn-used').val();
+    var cnt_unwear = $('#inp-cn-unwearable').val();
+    var cnt_ready = $('#inp-cn-ready').val();
+
+    // var cnt_tmp = ;
+    var tmp_cnt_ready = Number(cnt_tool) - (Number(cnt_used)+Number(cnt_unwear));
+
+    if (cnt_ready > tmp_cnt_ready) {
+      $('#inp-cn-ready').val(tmp_cnt_ready);
+      if (condition) {
+        
+      }
+    }else if (cnt_ready < 0) {
+      $('#inp-cn-ready').val(0);
+    }else{
+      
+      var tmp_cnt_unwear = Number(cnt_tool) - (Number(cnt_ready)+Number(cnt_used));
+      $('#inp-cn-unwearable').val(tmp_cnt_unwear);
+    }
+  };
+  function actCntToolUnwear() {
+    var cnt_tool = $('#inp-cn-facility').val();
+    var cnt_used = $('#inp-cn-used').val();
+    var cnt_unwear = $('#inp-cn-unwearable').val();
+    var cnt_ready = $('#inp-cn-ready').val();
+    var total_tool = Number(cnt_tool) - (Number(cnt_used)+Number(cnt_ready));
+    var tmp_cnt_ready = Number(cnt_tool) - (Number(cnt_used)+Number(cnt_unwear));
+    var tmp_cnt_tool = Number(cnt_used)+Number(cnt_unwear)+Number(cnt_ready);
+    if (cnt_unwear <script 0) {
+      $('#inp-cn-unwearable').val(0);
+    }else if (cnt_unwear > cnt_ready) {
+      $('#inp-cn-ready').val(tmp_cnt_ready);
+    }
+  };
+</script> --}}
 {{-- ready function --}}
 <script>
   $(document).ready( function() {

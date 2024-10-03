@@ -23,36 +23,82 @@ Lab management | Dashboard
       </div>
     </div>
     <div class="box-body">
-      <table class="table table-bordered">
-        <tbody>
-          <tr>
-            <td style="width: 30%;"><b>Nama Uji Laboratorium</b></td>
-            <td style="width: 70%;">{{ $data->lsv_name }}</td>
-          </tr>
-          <tr>
-            <td style="width: 30%;"><b>Diskripsi</b></td>
-            <td style="width: 70%;">{{ $data->lsv_notes }}</td>
-          </tr>
-          <tr>
-            <td style="width: 30%;"><b>Alat dan Fasilitas</b></td>
-            <td style="width: 70%;">
-            @foreach ($tools as $list)
-              - {{ $list }} <br>             
-            @endforeach
-            </td>
-          </tr>
-          <tr>
-            <td style="width: 30%;"><b>Biaya</b></td>
-            <td style="width: 80%;">{{ funCurrencyRupiah($data->lsv_price) }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="row">
+        <div class="col-md-3" style="text-align: center;">
+          @if ($data->lsv_img == null)
+          <img src="{{ url('public/assets/img/noimage.jpg') }}" id="wrap-img" class="img img-thumbnail" style="width: 80%">
+          @else
+          <img src="{{ url('storage/image_lab_test/'. $data->lsv_img) }}" id="wrap-img" class="img img-thumbnail" style="width: 80%">
+          @endif
+        </div>
+        <div class="col-md-9">
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td style="width: 30%;"><b>Nama Uji Laboratorium</b></td>
+                <td style="width: 70%;">{{ $data->lsv_name }}</td>
+              </tr>
+              <tr>
+                <td style="width: 30%;"><b>Diskripsi</b></td>
+                <td style="width: 70%;">{{ $data->lsv_notes }}</td>
+              </tr>
+              <tr>
+                <td style="width: 30%;"><b>Alat dan Fasilitas</b></td>
+                <td style="width: 70%;">
+                @foreach ($tools as $list)
+                  - {{ $list }} <br>             
+                @endforeach
+                </td>
+              </tr>
+              <tr>
+                <td style="width: 30%;"><b>Biaya</b></td>
+                <td style="width: 80%;">{{ funCurrencyRupiah($data->lsv_price) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 @endsection
 @push('css')
-  
+<style>
+  .img-thumbnail{
+    border-radius: 0px;
+    border-color: #8a8a8a;
+  }
+  .upload_url_img, .upload_url_bg {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+
+  .upload_url_img + label, .upload_url_bg + label {
+    margin-top: 5px;
+    font-size: 11pt;
+    font-weight: 700;
+    color: white;
+    background-color: #333;
+    display: inline-block;
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 0px;
+    cursor: pointer;
+    width: 30%;
+  }
+
+  .upload_url_img:focus + label,
+  .upload_url_img + label:hover,
+  .upload_url_bg:focus + label,
+  .upload_url_bg + label:hover {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 0px;
+  }
+</style> 
 @endpush
 @push('script')
   

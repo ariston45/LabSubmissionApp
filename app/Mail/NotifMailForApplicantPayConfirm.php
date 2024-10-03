@@ -29,6 +29,6 @@ class NotifMailForApplicantPayConfirm extends Mailable
     public function build()
     {
         // die();
-        return $this->subject('Konfirmasi Pembayaran Pinjam ' . $this->data['lab'])->view('contents.content_notif_email.notif_konfir_pembayaran',)->with('data_applicant', $this->data);
+        return $this->subject('Konfirmasi Pembayaran SIPLAB')->view('contents.content_notif_email.notif_konfir_pembayaran',)->with('data_applicant', $this->data);
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 class Mail_user_pay_confirm_for_labtest extends Mailable
 {
     use Queueable, SerializesModels;
-
+    public $data;
     /**
      * Create a new message instance.
      *
@@ -28,6 +28,6 @@ class Mail_user_pay_confirm_for_labtest extends Mailable
      */
     public function build()
     {
-        return $this->subject('Konfirmasi Pembayaran Pinjam ' . $this->data['lab'])->view('contents.content_notif_email.notif_konfir_pembayaran_labtest',)->with('data_applicant', $this->data);
+        return $this->subject('Konfirmasi Pembayaran SIPLAB')->view('contents.content_notif_email.notif_konfir_pembayaran_labtest',)->with('data_applicant', $this->data);
     }
 }

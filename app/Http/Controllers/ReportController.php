@@ -57,7 +57,7 @@ class ReportController extends Controller
 			->where('lsd_date', $date_param)
 			->whereIn('lsb_lab_id', $ids)
 			->whereIn('lsb_status', ['disetujui', 'selesai'])
-			->select('lsb_id','id','lab_id','lsb_title','lsb_date_start','lsb_date_end','lab_name','name', 'los_cost_total', 'lsr_status', 'lsr_filename','lsb_file_1', 'lsd_date')
+			->select('lsb_id','id','lab_id','lsb_title','lsb_date_start','lsb_date_end','lab_name','name', 'los_cost_total', 'lsr_status_validation', 'lsr_file_result','lsb_file_1', 'lsd_date')
 			->get();
 
 			if ($data_submission[$key] != null) {

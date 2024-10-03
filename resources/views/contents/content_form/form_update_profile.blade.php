@@ -50,7 +50,11 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
+            @if (authUser()->level == "LAB_HEAD")
+            <input type="text" id="inp-no-id" class="form-control" name="inp_no_id" value="{{ $data_user->no_id }}" placeholder="Input nomor id.." autocomplete="new-password" required readonly>  
+            @else
             <input type="text" id="inp-no-id" class="form-control" name="inp_no_id" value="{{ $data_user->no_id }}" placeholder="Input nomor id.." autocomplete="new-password" required>
+            @endif
             @if ($errors->has('inp_no_id'))
 						<span style="color: red;"><i>{{ $errors->first('inp_no_id') }}</i></span>
 						@endif

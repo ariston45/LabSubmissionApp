@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>SIPLAB</title>
-  <link rel="icon" type="image/x-icon" href="{{ url('/public/assets/img/logo.png') }}">
+  <link rel="icon" type="image/x-icon" href="{{ url('assets/img/logo.png') }}">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <link rel="stylesheet" href="{{ url('assets/bootstrap/css/bootstrap.min.css') }}">
   <link rel="stylesheet" href="{{ url('assets/plugins/font-awesome-4.7.0/css/font-awesome.min.css') }}">

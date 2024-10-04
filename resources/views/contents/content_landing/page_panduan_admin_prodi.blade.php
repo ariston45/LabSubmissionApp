@@ -31,18 +31,18 @@ Lab management | Dashboard
       <div class="row gy-4">
         <div class="col-md-12 order-1 order-lg-2" style="color: aliceblue">
           {{-- <div class="pb-4" style="text-align: center;">
-            <img src="{{ url("/public/assets/img/Panduan_ft.jpg") }}" style="max-width: 900px;" alt="">
+            <img src="{{ url("/assets/img/Panduan_ft.jpg") }}" style="max-width: 900px;" alt="">
           </div> --}}
           <b>Panduan Registrasi</b> <br>
           <ol>
             <li>Klik tombol login pada pojok kanan atas</li>
             <li>
               Pilih menu link Daftar disini <br>
-              <img src="{{ url("/public/assets/img/reg_menu.PNG") }}" style="max-width: 300px;" alt=""> <br> <br>
+              <img src="{{ url("/assets/img/reg_menu.PNG") }}" style="max-width: 300px;" alt=""> <br> <br>
             </li>
             <li>
               Isi Form registrasi yang tersedia, harap isikan sesuai dengan status anda. <br>
-              <img src="{{ url("/public/assets/img/reg_menu_2.PNG") }}" style="max-width: 300px;" alt=""> <br> <br>
+              <img src="{{ url("/assets/img/reg_menu_2.PNG") }}" style="max-width: 300px;" alt=""> <br> <br>
             </li>
             <li>
               Selanjutnya klik simpan, dan registrasi selesai.

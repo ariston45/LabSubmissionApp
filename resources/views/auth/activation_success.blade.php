@@ -6,9 +6,9 @@
 </div>
 <div style="text-align: center; margin-bottom: 30px;">
 	@if ($data['param'] == true)
-		<img src="{{ url('/public/assets/img/success.png') }}" alt="" style="max-width: 60px;">
+		<img src="{{ url('assets/img/success.png') }}" alt="" style="max-width: 60px;">
 	@else
-		<img src="{{ url('/public/assets/img/cancel.png') }}" alt="" style="max-width: 60px;">
+		<img src="{{ url('assets/img/cancel.png') }}" alt="" style="max-width: 60px;">
 	@endif
 </div>
 <div style="text-align: center;">

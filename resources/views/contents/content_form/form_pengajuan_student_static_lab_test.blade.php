@@ -53,7 +53,7 @@ Lab management | Dashboard
               <option value="tp_lain_lain" @if (old('inp_kegiatan') == 'tp_lainnya') selected @endif >Lainnya</option>
             </select>
             <div id="data-loading" style="display: none;">
-              <img src="{{ url('/public/assets/img/loading.gif') }}" class="img-loading" alt="">
+              <img src="{{ url('assets/img/loading.gif') }}" class="img-loading" alt="">
             </div>
             @if ($errors->has('inp_kegiatan'))
 						<span style="color: red;"><i>{{ $errors->first('inp_kegiatan') }}</i></span>
@@ -156,9 +156,9 @@ Lab management | Dashboard
 </div>
 @endsection
 @push('css')
-<link rel="stylesheet" href="{{ url('/public/assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}">
-<link rel="stylesheet" href="{{ url('/public/assets/plugins/timepicker/bootstrap-timepicker.min.css') }}">
-<link rel="stylesheet" href="{{ url('/public/assets/plugins/tom-select/dist/css/tom-select.bootstrap4.min.css') }}">
+<link rel="stylesheet" href="{{ url('assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}">
+<link rel="stylesheet" href="{{ url('assets/plugins/timepicker/bootstrap-timepicker.min.css') }}">
+<link rel="stylesheet" href="{{ url('assets/plugins/tom-select/dist/css/tom-select.bootstrap4.min.css') }}">
 <style>
   .ts-control {
 		border-radius: 0px;
@@ -212,9 +212,9 @@ Lab management | Dashboard
 </style>
 @endpush
 @push('scripts')
-<script src="{{ url('/public/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
-<script src="{{ url('/public/assets/plugins/timepicker/bootstrap-timepicker.min.js') }}"></script>
-<script src="{{ url('/public/assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
+<script src="{{ url('assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ url('assets/plugins/timepicker/bootstrap-timepicker.min.js') }}"></script>
+<script src="{{ url('assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
 {{-- varibles --}}
 <script>
   var select_act = new TomSelect("#inp-kegiatan",{

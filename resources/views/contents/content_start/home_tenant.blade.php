@@ -19,22 +19,22 @@ Lab management | Dashboard
     </ol>
     <div class="carousel-inner">
       <div class="item active">
-        <img src="{{ url('/public/assets/img/Berandaii.png') }}" alt="First slide">
+        <img src="{{ url('assets/img/Berandaii.png') }}" alt="First slide">
         <div class="carousel-caption">
         </div>
       </div>
       <div class="item">
-        <img src="{{ url('/public/assets/img/b1.png') }}" alt="Second slide">
+        <img src="{{ url('assets/img/b1.png') }}" alt="Second slide">
         <div class="carousel-caption">
         </div>
       </div>
       <div class="item">
-        <img src="{{ url('/public/assets/img/lab_irigasi_dan_keairan.png') }}" alt="Third slide">
+        <img src="{{ url('assets/img/lab_irigasi_dan_keairan.png') }}" alt="Third slide">
         <div class="carousel-caption">
         </div>
       </div>
       <div class="item">
-        <img src="{{ url('/public/assets/img/lab_pendidikan_teknik_mesin.png') }}" alt="forth slide">
+        <img src="{{ url('assets/img/lab_pendidikan_teknik_mesin.png') }}" alt="forth slide">
         <div class="carousel-caption">
         </div>
       </div>
@@ -46,7 +46,7 @@ Lab management | Dashboard
       <span class="fa fa-angle-right"></span>
     </a>
   </div>
-  {{-- <img id="img-homec" class="img-responsive" src="{{ url('/public/assets/img/beranda.png') }}" alt=""> --}}
+  {{-- <img id="img-homec" class="img-responsive" src="{{ url('assets/img/beranda.png') }}" alt=""> --}}
   {{-- <div class="box box-warning">
     <div class="box-header with-border">
       <h3 class="box-title" style="color: darkorange"><i class="fa fa-info-circle"></i> Informasi</h3>
@@ -69,7 +69,7 @@ Lab management | Dashboard
             <i class="fa fa-shopping-cart"></i>
           </div>
         </div> --}}
-        <img id="img-homec" class="img-responsive" src="{{ url('/public/assets/img/tmb_buat_pengajuan.png') }}" alt="">
+        <img id="img-homec" class="img-responsive" src="{{ url('assets/img/tmb_buat_pengajuan.png') }}" alt="">
       </a>
     </div>
     <div class="col-lg-3 col-xs-6">
@@ -82,17 +82,17 @@ Lab management | Dashboard
             <i class="ion ion-stats-bars"></i>
           </div>
         </div> --}}
-        <img id="img-homec" class="img-responsive" src="{{ url('/public/assets/img/tmb_data_pengajuan.png') }}" alt="">
+        <img id="img-homec" class="img-responsive" src="{{ url('assets/img/tmb_data_pengajuan.png') }}" alt="">
       </a>
     </div>
     <div class="col-lg-3 col-xs-6">
       <a href="{{ url('jadwal_lab') }}">
-        <img id="img-homec" class="img-responsive" src="{{ url('/public/assets/img/tmb_jadwal_lab.png') }}" alt="">
+        <img id="img-homec" class="img-responsive" src="{{ url('assets/img/tmb_jadwal_lab.png') }}" alt="">
       </a>
     </div>
     <div class="col-lg-3 col-xs-6">
       <a href="{{ url('pengaturan/profil') }}">
-        <img id="img-homec" class="img-responsive" src="{{ url('/public/assets/img/tmb_profile.png') }}" alt="">
+        <img id="img-homec" class="img-responsive" src="{{ url('assets/img/tmb_profile.png') }}" alt="">
       </a>
     </div>
   </div>

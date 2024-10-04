@@ -90,7 +90,7 @@ Lab management | Dashboard
 <link rel="stylesheet" href="{{ url('assets/plugins/datatables/extensions/Responsive/css/responsive.dataTables.css') }}">
 <link rel="stylesheet" href="{{ url('assets/plugins/datatables/extensions/FixedHeader/css/fixedHeader.bootstrap.css') }}">
 <link rel="stylesheet" href="{{ url('assets/plugins/jquery-confirm/jquery-confirm.min.css') }}">
-<link rel="stylesheet" href="{{ url('/public/assets/plugins/tom-select/dist/css/tom-select.bootstrap4.min.css') }}">
+<link rel="stylesheet" href="{{ url('assets/plugins/tom-select/dist/css/tom-select.bootstrap4.min.css') }}">
 <style>
 	/* Select 2 styling */
 	.ts-control {
@@ -147,7 +147,7 @@ Lab management | Dashboard
 <script src="{{ url('assets/plugins/datatables/media/js/dataTables.bootstrap.min.js') }}"></script>
 <script src="{{ url('assets/plugins/datatables/extensions/Responsive/js/dataTables.responsive.js') }}"></script>
 <script src="{{ url('assets/plugins/jquery-confirm/jquery-confirm.min.js') }}"></script>
-<script src="{{ url('/public/assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
+<script src="{{ url('assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
 {{-- js to variables --}}
 <script>
 	var tabel_technician = $('#tabel-teknisi').DataTable({

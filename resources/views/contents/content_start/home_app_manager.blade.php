@@ -10,7 +10,7 @@ Lab management | Dashboard
 @endsection
 @section('content')
 <div class="col-md-12" style="margin-bottom: 20px;">
-  <img id="img-homec" class="img-responsive" src="{{ url('/public/assets/img/beranda_2.png') }}" alt="">
+  <img id="img-homec" class="img-responsive" src="{{ url('assets/img/beranda_2.png') }}" alt="">
   {{-- <div class="box box-warning">
     <div class="box-header with-border">
       <h3 class="box-title" style="color: darkorange"><i class="fa fa-info-circle"></i> Informasi</h3>

@@ -1,3 +1,4 @@
+<!doctype html>
 @php
   use App\Http\Controllers\ProfileController;
 	$user = ProfileController::IdenUser();
@@ -10,7 +11,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>SIPLAB | Aplikasi</title>
-    <link rel="icon" type="image/x-icon" href="{{ url('/public/assets/img/logo.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url('assets/img/logo.png') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title')</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -75,7 +76,7 @@
                   @if(DataAuth()->image != "")
                     <img src="" class="user-image" alt="User Image">
                   @else
-                    <img src="{{ url('/public/assets/img/userimg_i.png') }}" class="user-image" alt="User Image">
+                    <img src="{{ url('assets/img/userimg_i.png') }}" class="user-image" alt="User Image">
                   @endif
                   <span class="hidden-xs">{{ DataAuth()->name }}</span>
                 </a>
@@ -95,7 +96,7 @@
           <span id="display-logo" class="display-logo">
             <div class="logo-panel">
               <div class="image custom-logo" style="text-align: center;">
-                <img src="{{ url('/public/assets/img/logo_unesa.png') }}">
+                <img src="{{ url('assets/img/logo_unesa.png') }}">
               </div>
             </div>
             <text id="logo_name" class="logo-name logo-lg" >FAKULTAS TEKNIK</text>

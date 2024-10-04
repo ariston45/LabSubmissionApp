@@ -92,7 +92,7 @@ Lab management | Dashboard
 </main>
 @endsection
 @push('css')
-<link rel="stylesheet" href="{{ url('/public/assets/plugins/tom-select/dist/css/tom-select.bootstrap4.min.css') }}">
+<link rel="stylesheet" href="{{ url('assets/plugins/tom-select/dist/css/tom-select.bootstrap4.min.css') }}">
 <style>
   #inp-rumpun{
     background-color:aliceblue,
@@ -100,7 +100,7 @@ Lab management | Dashboard
 </style>
 @endpush
 @push('scripts')
-<script src="{{ url('/public/assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
+<script src="{{ url('assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
 {{-- Variables --}}
 <script>
 </script>

@@ -6,7 +6,7 @@ Lab management | Dashboard
 @section('content')
 <main class="main">
   <section id="welcome-img" class="hero section">
-    <img src="{{ url('/public/assets/img/ft_unesa.png') }}" alt="" data-aos="fade-in">
+    <img src="{{ url('assets/img/ft_unesa.png') }}" alt="" data-aos="fade-in">
     <div class="container">
       <h2 data-aos="fade-up" data-aos-delay="100" class="">Selamat Datang,<br>di Sistem Informasi Peminjaman Laboratorium</h2>
       <p data-aos="fade-up" data-aos-delay="200">Fakultas Teknik Universitas Negeri Surabaya</p>

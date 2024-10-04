@@ -40,7 +40,7 @@
 			<div class="login-box-body">
 				<div class="login-logo">
 					<a href="{{ url('/') }}">
-						<img id="image_logo" src="{{ url('/public/assets/img/logo_unesa.png') }}" alt="Logo Tenant"> 
+						<img id="image_logo" src="{{ url('assets/img/logo_unesa.png') }}" alt="Logo Tenant"> 
 					</a>
 				</div>
 				<hr>

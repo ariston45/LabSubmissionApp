@@ -34,7 +34,7 @@ Lab management | Dashboard
           <div class="course-item">
             {{-- <img src="assets/img/course-1.jpg" class="img-fluid" alt="..."> --}}
             <video id="player1" playsinline controls>
-              <source src="{{ url('/public/assets/video/mahasiswa_pinjam_lab.mp4') }}" type="video/mp4" />
+              <source src="{{ url('assets/video/mahasiswa_pinjam_lab.mp4') }}" type="video/mp4" />
               {{-- <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default /> --}}
             </video>
             <div class="course-content mt-3" style="width: 100%">
@@ -48,7 +48,7 @@ Lab management | Dashboard
           <div class="course-item">
             {{-- <img src="assets/img/course-1.jpg" class="img-fluid" alt="..."> --}}
             <video id="player2" playsinline controls>
-              <source src="{{ url('/public/assets/video/mahasiswa_sewa_alat.mp4') }}" type="video/mp4" />
+              <source src="{{ url('assets/video/mahasiswa_sewa_alat.mp4') }}" type="video/mp4" />
               {{-- <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default /> --}}
             </video>
             <div class="course-content mt-3" style="width: 100%">
@@ -62,7 +62,7 @@ Lab management | Dashboard
           <div class="course-item">
             {{-- <img src="assets/img/course-1.jpg" class="img-fluid" alt="..."> --}}
             <video id="player3" playsinline controls>
-              <source src="{{ url('/public/assets/video/mahasiswa_uji_lab.mp4') }}" type="video/mp4" />
+              <source src="{{ url('assets/video/mahasiswa_uji_lab.mp4') }}" type="video/mp4" />
               {{-- <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default /> --}}
             </video>
             <div class="course-content mt-3" style="width: 100%">
@@ -81,7 +81,7 @@ Lab management | Dashboard
           <div class="course-item">
             {{-- <img src="assets/img/course-1.jpg" class="img-fluid" alt="..."> --}}
             <video id="player4" playsinline controls>
-              <source src="{{ url('/public/assets/video/dosen_pinjam_lab.mp4') }}" type="video/mp4" />
+              <source src="{{ url('assets/video/dosen_pinjam_lab.mp4') }}" type="video/mp4" />
               {{-- <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default /> --}}
             </video>
             <div class="course-content mt-3" style="width: 100%">
@@ -95,7 +95,7 @@ Lab management | Dashboard
           <div class="course-item">
             {{-- <img src="assets/img/course-1.jpg" class="img-fluid" alt="..."> --}}
             <video id="player5" playsinline controls>
-              <source src="{{ url('/public/assets/video/dosen_sewa_alat.mp4') }}" type="video/mp4" />
+              <source src="{{ url('assets/video/dosen_sewa_alat.mp4') }}" type="video/mp4" />
               {{-- <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default /> --}}
             </video>
             <div class="course-content mt-3" style="width: 100%">
@@ -109,7 +109,7 @@ Lab management | Dashboard
           <div class="course-item">
             {{-- <img src="assets/img/course-1.jpg" class="img-fluid" alt="..."> --}}
             <video id="player6" playsinline controls>
-              <source src="{{ url('/public/assets/video/dosen_uji_lab.mp4') }}" type="video/mp4" />
+              <source src="{{ url('assets/video/dosen_uji_lab.mp4') }}" type="video/mp4" />
               {{-- <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default /> --}}
             </video>
             <div class="course-content mt-3" style="width: 100%">
@@ -128,7 +128,7 @@ Lab management | Dashboard
           <div class="course-item">
             {{-- <img src="assets/img/course-1.jpg" class="img-fluid" alt="..."> --}}
             <video id="player7" playsinline controls>
-              <source src="{{ url('/public/assets/video/umum_pinjam_lab.mp4') }}" type="video/mp4" />
+              <source src="{{ url('assets/video/umum_pinjam_lab.mp4') }}" type="video/mp4" />
               {{-- <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default /> --}}
             </video>
             <div class="course-content mt-3" style="width: 100%">
@@ -142,7 +142,7 @@ Lab management | Dashboard
           <div class="course-item">
             {{-- <img src="assets/img/course-1.jpg" class="img-fluid" alt="..."> --}}
             <video id="player8" playsinline controls>
-              <source src="{{ url('/public/assets/video/umum_sewa_alat.mp4') }}" type="video/mp4" />
+              <source src="{{ url('assets/video/umum_sewa_alat.mp4') }}" type="video/mp4" />
               {{-- <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default /> --}}
             </video>
             <div class="course-content mt-3" style="width: 100%">
@@ -156,7 +156,7 @@ Lab management | Dashboard
           <div class="course-item">
             {{-- <img src="assets/img/course-1.jpg" class="img-fluid" alt="..."> --}}
             <video id="player9" playsinline controls>
-              <source src="{{ url('/public/assets/video/umum_uji_lab.mp4') }}" type="video/mp4" />
+              <source src="{{ url('assets/video/umum_uji_lab.mp4') }}" type="video/mp4" />
               {{-- <track kind="captions" label="English captions" src="MY_CAPTIONS.vtt" srclang="en" default /> --}}
             </video>
             <div class="course-content mt-3" style="width: 100%">
@@ -170,7 +170,7 @@ Lab management | Dashboard
       <div class="row">
         <div class="col-12" style="text-align: center;margin-bottom: 20px;">
           <h3>Panduan Modul PDF Untuk Pengguna</h3>
-          Download Panduan PDF. <a href="{{ url('/public/assets/docs/Panduan_SIPLAB.pdf') }}"> <label class="label label-default">Panduan.pdf</label></a>
+          Download Panduan PDF. <a href="{{ url('assets/docs/Panduan_SIPLAB.pdf') }}"> <label class="label label-default">Panduan.pdf</label></a>
           
         </div>
       </div>

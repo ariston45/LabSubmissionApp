@@ -12,21 +12,21 @@
   <meta content="" name="keywords">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <!-- Favicons -->
-  <link rel="icon" type="image/x-icon" href="{{ url('/public/assets/img/logo.png') }}">
+  <link rel="icon" type="image/x-icon" href="{{ url('assets/img/logo.png') }}">
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <link href="{{ url('/public/assets/bootstrap5/vendor/bootstrap/css/bootstrap-grid.min.css') }}" rel="stylesheet">
-  <link href="{{ url('/public/assets/bootstrap5/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ url('/public/assets/bootstrap5/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
-  <link href="{{ url('/public/assets/bootstrap5/vendor/aos/aos.css') }}" rel="stylesheet">
-  <link href="{{ url('/public/assets/bootstrap5/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
-  <link href="{{ url('/public/assets/bootstrap5/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+  <link href="{{ url('assets/bootstrap5/vendor/bootstrap/css/bootstrap-grid.min.css') }}" rel="stylesheet">
+  <link href="{{ url('assets/bootstrap5/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url('assets/bootstrap5/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+  <link href="{{ url('assets/bootstrap5/vendor/aos/aos.css') }}" rel="stylesheet">
+  <link href="{{ url('assets/bootstrap5/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+  <link href="{{ url('assets/bootstrap5/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
   <!-- Main CSS File -->
-  <link href="{{ url('/public/assets/bootstrap5/css/main.css') }}" rel="stylesheet">
+  <link href="{{ url('assets/bootstrap5/css/main.css') }}" rel="stylesheet">
   @stack('css')
 </head>
 <body>
@@ -35,7 +35,7 @@
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
       <a href="{{ url('/') }}" class="logo d-flex align-items-center me-auto">
         <h1 class="">SIPLAB</h1>
-        {{-- <img src="{{ url('/public/assets/img/logo_unesa.png') }}"> --}}
+        {{-- <img src="{{ url('assets/img/logo_unesa.png') }}"> --}}
       </a>
       <nav id="navmenu" class="navmenu">
         <ul>
@@ -88,16 +88,16 @@
   <div id="preloader"></div>
 
   <!-- Vendor JS Files -->
-  <script src="{{ url('/public/assets/bootstrap5/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-  <script src="{{ url('/public/assets/bootstrap5/vendor/php-email-form/validate.js') }}"></script>
-  <script src="{{ url('/public/assets/bootstrap5/vendor/aos/aos.js') }}"></script>
-  <script src="{{ url('/public/assets/bootstrap5/vendor/glightbox/js/glightbox.min.js') }}"></script>
-  <script src="{{ url('/public/assets/bootstrap5/vendor/purecounter/purecounter_vanilla.js') }}"></script>
-  <script src="{{ url('/public/assets/bootstrap5/vendor/swiper/swiper-bundle.min.js') }}"></script>
+  <script src="{{ url('assets/bootstrap5/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url('assets/bootstrap5/vendor/php-email-form/validate.js') }}"></script>
+  <script src="{{ url('assets/bootstrap5/vendor/aos/aos.js') }}"></script>
+  <script src="{{ url('assets/bootstrap5/vendor/glightbox/js/glightbox.min.js') }}"></script>
+  <script src="{{ url('assets/bootstrap5/vendor/purecounter/purecounter_vanilla.js') }}"></script>
+  <script src="{{ url('assets/bootstrap5/vendor/swiper/swiper-bundle.min.js') }}"></script>
   <script src="{{ url('js/jquery-3.6.0.min.js') }}"></script>
   <script src="{{ url('js/jquery-ui.min.js') }}"></script>
   <!-- Main JS File -->
-  <script src="{{ url('/public/assets/bootstrap5/js/main.js') }}"></script>
+  <script src="{{ url('assets/bootstrap5/js/main.js') }}"></script>
   @stack('scripts')
 </body>
 

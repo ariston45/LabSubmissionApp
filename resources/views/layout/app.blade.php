@@ -1,8 +1,9 @@
 <!doctype html>
 @php
-  use App\Http\Controllers\ProfileController;
-	$user = ProfileController::IdenUser();
-	$menus = ProfileController::IdenMenu();
+  // use App\Http\Controllers\ProfileController;
+  $testX = new App\Http\Controllers\ProfileController;
+	$user = $testX->IdenUser();
+	$menus = $testX->IdenMenu();
   actionEliminateSubmission();
   actionRecountTool();
 @endphp

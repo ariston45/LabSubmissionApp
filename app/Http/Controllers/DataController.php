@@ -395,9 +395,9 @@ class DataController extends Controller
 				<div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100" style="margin-bottom:20px;">
 				<div class="course-item">';
 				if($value->lab_img == null){
-					$web_data.= '<img src="' . url('public/assets/img/img_placeholder.png') . '" class="img-fluid" alt="...">';
+					$web_data.= '<img src="' . url('assets/img/img_placeholder.png') . '" class="img-fluid" alt="...">';
 				}else{
-					$web_data .= '<img src="' . url('/storage/image_lab/'. $value->lab_img ) . '" class="img-fluid" alt="...">';
+					$web_data .= '<img src="' . url('storage/image_lab/'. $value->lab_img ) . '" class="img-fluid" alt="...">';
 				}
 				$web_data .= '<div class="course-content" style="color: #495057;">
 				<p style="color:#0b4d70;">'.$value->lab_name. '</p>
@@ -435,9 +435,9 @@ class DataController extends Controller
 				<div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100" style="margin-bottom:20px;">
 				<div class="course-item">';
 				if ($value->lab_img == null) {
-					$web_data .= '<img src="' . url('public/assets/img/img_placeholder.png') . '" class="img-fluid" alt="...">';
+					$web_data .= '<img src="' . url('assets/img/img_placeholder.png') . '" class="img-fluid" alt="...">';
 				} else {
-					$web_data .= '<img src="' . url('/storage/image_lab/' . $value->lab_img) . '" class="img-fluid" alt="...">';
+					$web_data .= '<img src="' . url('storage/image_lab/' . $value->lab_img) . '" class="img-fluid" alt="...">';
 				}
 				$web_data .= '<div class="course-content" style="color: #495057;">
 				<p style="color:#0b4d70;">' . $value->lab_name . '</p>
@@ -498,9 +498,9 @@ class DataController extends Controller
 				<div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100" style="margin-bottom:20px;">
 				<div class="course-item">';
 				if ($value->lsv_img == null) {
-					$web_data .= '<img src="' . url('public/assets/img/img_placeholder.png') . '" class="img-fluid" alt="...">';
+					$web_data .= '<img src="' . url('assets/img/img_placeholder.png') . '" class="img-fluid" alt="...">';
 				} else {
-					$web_data .= '<img src="' . url('/storage/image_lab/' . $value->lsv_img) . '" class="img-fluid" alt="...">';
+					$web_data .= '<img src="' . url('storage/image_lab/' . $value->lsv_img) . '" class="img-fluid" alt="...">';
 				}
 				$web_data .= '<div class="course-content" style="color: #495057;">
 				<p style="color:#0b4d70;">' . $value->lsv_name . '</p>

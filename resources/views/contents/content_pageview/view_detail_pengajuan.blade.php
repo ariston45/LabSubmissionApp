@@ -304,6 +304,15 @@ Lab management | Dashboard
               @elseif ($data_pengajuan->lsb_type == 'rental')
                 {{-- user applicant --}}
                 @if ($data_pengajuan->level == 'STUDENT')
+                  @if ($user_technical == null)
+                    <a href="#" onclick="actionSetTech();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Set Teknikal</button>
+                    </a>
+                  @else
+                    <a href="#" onclick="">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-tools-line" style="margin-right: 4px;"></i> Konfirmasi Pengembalian Alat</button>
+                    </a>
+                  @endif
                   @if ($data_result != null)
                     <a href="#" onclick="actValidationReport()">
                       <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Validasi Laporan</button>
@@ -357,6 +366,9 @@ Lab management | Dashboard
                   </a>
                 @endif
               @elseif ($data_pengajuan->lsb_type == 'rental')
+                <a href="#" onclick="">
+                  <button class="btn btn-flat btn-xs btn-default"><i class="ri-tools-line" style="margin-right: 4px;"></i> Konfirmasi Pengembalian Alat</button>
+                </a>
               @elseif ($data_pengajuan->lsb_type == 'testing')
               @endif
             @elseif (rulesUser(['STUDENT']))

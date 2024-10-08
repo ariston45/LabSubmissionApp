@@ -2156,7 +2156,7 @@ class PengajuanController extends Controller
 					'head_acc' => $data_user_head->name . ', pada ' . strDatetimes(date('Y-m-d H:i:s')),
 				];
 			$data_applicant = array_merge($data_applicant, $data_accepting);
-			$updateTool = Lab_facility::where('lsf_submission', $request->lsb_id)->update(['lsf_end_dt' => $data_pengajuan->lsb_date_end]);
+			$updateTool = Lab_facility::where('lsf_submission', $request->lsb_id)->update(['lsf_end_dt' => $data_pengajuan->lsb_date_end,'lsf_loan_status'=>'loaned']);
 			$udateStatus = Lab_submission::where('lsb_id', $request->lsb_id)->update(['lsb_status' => 'disetujui', 'lsb_notes' => $request->inp_catatan]);
 			$storeSchedule = Lab_schedule::insert($data_a);
 			$storeSchDate = Lab_sch_date::insert($inp_date);

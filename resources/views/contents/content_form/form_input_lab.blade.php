@@ -27,7 +27,7 @@ Lab management | Dashboard
         {{-- !! --}}
         <div class="form-group">
           <div class="col-md-offset-3 col-md-9">
-            <img src="{{ url('public/assets/img/noimage.jpg') }}" id="wrap-img" class="img img-thumbnail" style="width: 30%"><br>
+            <img src="{{ url('assets/img/noimage.jpg') }}" id="wrap-img" class="img img-thumbnail" style="width: 30%"><br>
             <input type="file" class="upload_url_img" id="upload_url_img" name="upload_url_img" />
             <label for="upload_url_img">
               <i class="fas fa-cloud-upload-alt"></i>

@@ -816,7 +816,7 @@ class PengajuanController extends Controller
 				$tool_ids[$key] = $value;
 			}
 			$data_tool = Laboratory_facility::leftjoin('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
-			->leftJoin('laboratories', 'Laboratory_facilities.laf_laboratorium', '=', 'laboratories.lab_id')
+			->leftJoin('laboratories', 'laboratory_facilities.laf_laboratorium', '=', 'laboratories.lab_id')
 			->whereIn('laf_id', $tool_ids)
 			->get();
 			foreach ($data_tool as $key => $value) {
@@ -944,7 +944,7 @@ class PengajuanController extends Controller
 				$jumlah_pinjam[$index_unit] = $request->inp_jml_unit[$index_unit];
 				$id_tool[$index_unit] = $value;
 				$data_tool[$index_unit] = Laboratory_facility::leftjoin('laboratory_facility_count_statuses', 'laboratory_facilities.laf_id', '=', 'laboratory_facility_count_statuses.lcs_facility')
-				->leftJoin('laboratories', 'Laboratory_facilities.laf_laboratorium', '=', 'laboratories.lab_id')
+				->leftJoin('laboratories', 'laboratory_facilities.laf_laboratorium', '=', 'laboratories.lab_id')
 				->where('laf_id', $value)
 				->first();
 				if ($data_tool[$index_unit]->lcs_ready < $jumlah_pinjam[$index_unit]) {

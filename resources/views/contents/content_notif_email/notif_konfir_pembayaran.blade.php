@@ -67,7 +67,7 @@
 			</tr>
 			<tr>
 				<td >
-					Pembayaran dengan menggunakan nomor VA yang tertera melalui channel BTN maupun Bank lain menggunkan menu 'transfer ke bank lain'.
+					Pembayaran dengan menggunakan nomor VA yang tertera melalui channel BTN maupun Bank lain menggunakan menu 'transfer ke bank lain'.
 				</td>
 			</tr>
 			<tr>

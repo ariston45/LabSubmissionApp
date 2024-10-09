@@ -31,7 +31,7 @@ Lab management | Dashboard
       <div class="row">
         <div class="col-lg-8">
           @if ($data_labtest->lsv_img == null)
-          <img src="{{ url('public/assets/img/img_placeholder.png') }}" class="img-fluid" alt="">
+          <img src="{{ url('assets/img/img_placeholder.png') }}" class="img-fluid" alt="">
           @else
           <img src="{{ url('public/storage/image_lab_test/'.$data_labtest->lsv_img) }}" class="img-fluid" alt="">
           @endif

@@ -107,7 +107,7 @@ Lab management | Dashboard
           <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100" style="margin-bottom:20px;">
             <div class="course-item">
               @if ($list['img'] == null)
-              <img src="{{ url('public/assets/img/img_placeholder.png') }}" class="img-fluid" alt="...">  
+              <img src="{{ url('assets/img/img_placeholder.png') }}" class="img-fluid" alt="...">  
               @else
               <img src="{{ url('/storage/image_lab/'. $list['img'] ) }}" class="img-fluid" alt="...">
               @endif
@@ -137,7 +137,7 @@ Lab management | Dashboard
           <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100" style="margin-bottom:20px;">
             <div class="course-item">
               @if ($list['img'] == null)
-              <img src="{{ url('public/assets/img/img_placeholder.png') }}" class="img-fluid" alt="...">  
+              <img src="{{ url('assets/img/img_placeholder.png') }}" class="img-fluid" alt="...">  
               @else
               <img src="{{ url('/storage/image_lab/'. $list->lsv_img ) }}" class="img-fluid" alt="...">
               @endif

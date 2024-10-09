@@ -35,7 +35,7 @@ Lab management | Dashboard
       <div class="row">
         <div class="col-lg-8">
           @if ($data_lab->lab_img == null)
-          <img src="{{ url('public/assets/img/img_placeholder.png') }}" class="img-fluid" alt="">
+          <img src="{{ url('assets/img/img_placeholder.png') }}" class="img-fluid" alt="">
           @else
           <img src="{{ url('public/storage/image_lab/'.$data_lab->lab_img) }}" class="img-fluid" alt="">
           @endif

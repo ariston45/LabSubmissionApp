@@ -120,6 +120,8 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('action-confirm-payment', [PengajuanController::class, 'actionConfirmPayment'])->name('confirm_payment');
 		Route::post('action-upload-bukti', [PengajuanController::class, 'actionUploadBukti'])->name('upload_bukti_pembayaran');
 		Route::post('action-konfirmasi-tech', [PengajuanController::class, 'actionTechConfirm'])->name('action_konfirmasi_tech');
+		Route::post('action-rent-tool', [PengajuanController::class, 'actionRentTool'])->name('action_rent_tool');
+		Route::post('action-return-tool', [PengajuanController::class, 'actionReturnTool'])->name('action_return_tool');
 
 		Route::match(['get', 'post'], 'action-reload-data-skripsi/{id}', [DataController::class, 'actionReloadDataSkripsi'])->name('action_reload_data_skripsi');
 		Route::post('action-pengajuan-static-by-day', [PengajuanController::class, 'actionPengajuanStaticDay'])->name('action_pengajuan_static_by_day');

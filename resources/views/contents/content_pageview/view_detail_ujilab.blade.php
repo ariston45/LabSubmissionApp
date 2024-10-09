@@ -26,7 +26,7 @@ Lab management | Dashboard
       <div class="row">
         <div class="col-md-3" style="text-align: center;">
           @if ($data->lsv_img == null)
-          <img src="{{ url('public/assets/img/noimage.jpg') }}" id="wrap-img" class="img img-thumbnail" style="width: 80%">
+          <img src="{{ url('assets/img/noimage.jpg') }}" id="wrap-img" class="img img-thumbnail" style="width: 80%">
           @else
           <img src="{{ url('storage/image_lab_test/'. $data->lsv_img) }}" id="wrap-img" class="img img-thumbnail" style="width: 80%">
           @endif

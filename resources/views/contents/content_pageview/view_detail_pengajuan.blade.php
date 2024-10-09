@@ -308,23 +308,65 @@ Lab management | Dashboard
                     <a href="#" onclick="actionSetTech();">
                       <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Set Teknikal</button>
                     </a>
-                  @else
-                    <a href="#" onclick="">
-                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-tools-line" style="margin-right: 4px;"></i> Konfirmasi Pengembalian Alat</button>
-                    </a>
                   @endif
+                  @foreach ($data_facility_listed as $list)
+                    @if ($list->lsf_loan_status == null)
+                      <button class="btn btn-flat btn-xs btn-primary" onclick="actRentTool()"><i class="ri-tools-line" style="margin-right: 4px;"></i>Pinjamkan Alat/Fasilitas</button>
+                      @break
+                    @endif
+                  @endforeach
+                  @foreach ($data_facility_listed as $list)
+                    @if ($list->lsf_loan_status == 'loaned')
+                      <button class="btn btn-flat btn-xs btn-warning" onclick="actReturnTool()"><i class="ri-tools-line" style="margin-right: 4px;"></i>Konfirmasi Pengembalian Alat/Fasilitas</button>
+                      @break
+                    @endif
+                  @endforeach
                   @if ($data_result != null)
                     <a href="#" onclick="actValidationReport()">
                       <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Validasi Laporan</button>
                     </a>
                   @endif
                 @elseif ($data_pengajuan->level == 'LECTURE')
+                  @if ($user_technical == null)
+                    <a href="#" onclick="actionSetTech();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Set Teknikal</button>
+                    </a>
+                  @endif
+                  @foreach ($data_facility_listed as $list)
+                    @if ($list->lsf_loan_status == null)
+                      <button class="btn btn-flat btn-xs btn-primary" onclick="actRentTool()"><i class="ri-tools-line" style="margin-right: 4px;"></i>Pinjamkan Alat/Fasilitas</button>
+                      @break
+                    @endif
+                  @endforeach
+                  @foreach ($data_facility_listed as $list)
+                    @if ($list->lsf_loan_status == 'loaned')
+                      <button class="btn btn-flat btn-xs btn-warning" onclick="actReturnTool()"><i class="ri-tools-line" style="margin-right: 4px;"></i>Konfirmasi Pengembalian Alat/Fasilitas</button>
+                      @break
+                    @endif
+                  @endforeach
                   @if ($data_result != null)
                     <a href="#" onclick="actValidationReport()">
                       <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Validasi Laporan</button>
                     </a>
                   @endif
                 @elseif ($data_pengajuan->level == 'PUBLIC_MEMBER' || $data_pengajuan->level == 'PUBLIC_NON_MEMBER')
+                  @if ($user_technical == null)
+                    <a href="#" onclick="actionSetTech();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Set Teknikal</button>
+                    </a>
+                  @endif
+                  @foreach ($data_facility_listed as $list)
+                    @if ($list->lsf_loan_status == null)
+                      <button class="btn btn-flat btn-xs btn-primary" onclick="actRentTool()"><i class="ri-tools-line" style="margin-right: 4px;"></i>Pinjamkan Alat/Fasilitas</button>
+                      @break
+                    @endif
+                  @endforeach
+                  @foreach ($data_facility_listed as $list)
+                    @if ($list->lsf_loan_status == 'loaned')
+                      <button class="btn btn-flat btn-xs btn-warning" onclick="actReturnTool()"><i class="ri-tools-line" style="margin-right: 4px;"></i>Konfirmasi Pengembalian Alat/Fasilitas</button>
+                      @break
+                    @endif
+                  @endforeach
                   <a href="#" onclick="actEndRentalReport()">
                     <button class="btn btn-flat btn-xs btn-default"><i class="ri-pass-valid-line" style="margin-right: 4px;"></i> Sewa Alat Selesai</button>
                   </a>
@@ -366,9 +408,23 @@ Lab management | Dashboard
                   </a>
                 @endif
               @elseif ($data_pengajuan->lsb_type == 'rental')
-                <a href="#" onclick="">
-                  <button class="btn btn-flat btn-xs btn-default"><i class="ri-tools-line" style="margin-right: 4px;"></i> Konfirmasi Pengembalian Alat</button>
-                </a>
+                @if ($user_technical == null)
+                    <a href="#" onclick="actionSetTech();">
+                      <button class="btn btn-flat btn-xs btn-default"><i class="ri-flag-line" style="margin-right: 4px;"></i> Set Teknikal</button>
+                    </a>
+                  @endif
+                  @foreach ($data_facility_listed as $list)
+                    @if ($list->lsf_loan_status == null)
+                      <button class="btn btn-flat btn-xs btn-primary" onclick="actRentTool()"><i class="ri-tools-line" style="margin-right: 4px;"></i>Pinjamkan Alat/Fasilitas</button>
+                      @break
+                    @endif
+                  @endforeach
+                  @foreach ($data_facility_listed as $list)
+                    @if ($list->lsf_loan_status == 'loaned')
+                      <button class="btn btn-flat btn-xs btn-warning" onclick="actReturnTool()"><i class="ri-tools-line" style="margin-right: 4px;"></i>Konfirmasi Pengembalian Alat/Fasilitas</button>
+                      @break
+                    @endif
+                  @endforeach
               @elseif ($data_pengajuan->lsb_type == 'testing')
               @endif
             @elseif (rulesUser(['STUDENT']))
@@ -553,7 +609,7 @@ Lab management | Dashboard
                 @foreach ($data_facility_listed as $list)
                     <tr>
                       <td>
-                        <b>-</b> {{ $list->laf_name }} <i>[Jumlah Unit : {{ $list->lsf_cnt_unit }}]</i>
+                        <b>-</b> {{ $list->laf_name }} <i>[Jumlah Unit : {{ $list->lsf_cnt_unit }}]</i> 
                       </td>
                     </tr>
                     @endforeach
@@ -609,7 +665,7 @@ Lab management | Dashboard
               @endif
             </td>
           </tr> --}}
-          <tr>
+          {{-- <tr>
             <td style="width: 30%;"><b>Laporan Legalitas</b></td>
             <td style="width: 70%;">
               @if ($data_result == null)
@@ -625,7 +681,7 @@ Lab management | Dashboard
                 @endif
               @endif
             </td>
-          </tr>
+          </tr> --}}
           <tr>
             <td style="width: 30%;"><b>Validasi Laporan</b></td>
             <td style="width: 70%;">
@@ -730,6 +786,50 @@ Lab management | Dashboard
     </table>
     </div>
   </div>
+</div>
+<div class="modal" id="modalRentConfirm" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Konfirmasi Peminjaman Alat/Fasilitas</h4>
+			</div>
+      <form action="{{ route('action_rent_tool') }}" method="POST" enctype="multipart/form-data" autocomplete="new-password">
+				@csrf
+				<div class="modal-body">
+					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
+          <input type="hidden" name="lab_subhead" value="{{ $data_pengajuan->lab_head }}">
+					Anda akan meminjamkan alat atau fasiltas sesuai dengan pengajuan
+				</div>
+				<div class="modal-footer">
+					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
+					<button type="submit" class="btn btn-sm btn-primary btn-flat"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Oke</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="modal" id="modalReturnConfirm" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Konfirmasi Pengembalian Alat/Fasilitas</h4>
+			</div>
+      <form action="{{ route('action_return_tool') }}" method="POST" enctype="multipart/form-data" autocomplete="new-password">
+				@csrf
+				<div class="modal-body">
+					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
+          <input type="hidden" name="lab_subhead" value="{{ $data_pengajuan->lab_head }}">
+					Alat atau fasiltas yang telah dipinjam oleh pemohon sudah dikembalikan.
+				</div>
+				<div class="modal-footer">
+					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
+					<button type="submit" class="btn btn-sm btn-primary btn-flat"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Oke</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 <div class="modal" id="modalTechConfirm" role="dialog">
 	<div class="modal-dialog modal-lg">
@@ -1098,36 +1198,6 @@ Lab management | Dashboard
 <script src="{{ url('assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
 {{-- varibles --}}
 <script>
-  var select_technician = new TomSelect("#inp-teknisi",{
-    create: false,
-    maxItems: 1,
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
-			}
-		}
-  });
-  var select_status = new TomSelect("#inp-status",{
-    create: false,
-    maxItems: 1,
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
-			}
-		}
-  });
 </script>
 @if ($errors->has('inp_error_a'))
 {{-- <span style="color: red;"><i>{{ $errors->first('inp_lab') }}</i></span> --}}
@@ -1137,6 +1207,12 @@ Lab management | Dashboard
 @endif
 {{-- function --}}
 <script>
+  function actRentTool() {
+    $('#modalRentConfirm').modal('show');
+  };
+  function actReturnTool() {
+    $('#modalReturnConfirm').modal('show');
+  };
   function actionUploadBukti() {
     $('#modalUploadBukti').modal('show');
   };

@@ -79,7 +79,7 @@ class ApiUnesaController extends Controller
   /* Tags:... */
   public function datasourceMhsSkripsi_i()
   { 
-    $url = url('public/assets/data_source/data_simontasi_skripsi.json');
+    $url = url('assets/data_source/data_simontasi_skripsi.json');
     $client = new Client();
     $response = $client->request('GET', $url, [
       'headers' => [
@@ -93,7 +93,7 @@ class ApiUnesaController extends Controller
   }
   public function datasourceMhsSkripsi_ii($value)
   {
-    $url = url('public/assets/data_source/data_simontasi_skripsi.json');
+    $url = url('assets/data_source/data_simontasi_skripsi.json');
     $client = new Client();
     $response = $client->request('GET', $url, [
       'headers' => [

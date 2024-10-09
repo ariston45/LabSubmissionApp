@@ -43,7 +43,7 @@ Lab management | Dashboard
         <div class="form-group">
           <div class="col-md-offset-4 col-md-8">
             @if ($data_facility->laf_image == null)
-              <img src="{{ url('public/assets/img/noimage.jpg') }}" id="wrap-img" class="img img-thumbnail" style="width: 30%"><br>
+              <img src="{{ url('assets/img/noimage.jpg') }}" id="wrap-img" class="img img-thumbnail" style="width: 30%"><br>
               <input type="file" class="upload_url_img" id="upload_url_img" name="upload_url_img" />
               <label for="upload_url_img">
                 <i class="fas fa-cloud-upload-alt"></i>
@@ -54,7 +54,7 @@ Lab management | Dashboard
               @endif
             @else
               <img src="{{ url('storage/image_facility/'.$data_facility->laf_image) }}" id="wrap-img" class="img img-thumbnail" style="width: 30%">
-              <img src="{{ url('public/assets/img/noimage.jpg') }}" id="wrap-img-new" class="img img-thumbnail" style="width: 30%;display: none;">
+              <img src="{{ url('assets/img/noimage.jpg') }}" id="wrap-img-new" class="img img-thumbnail" style="width: 30%;display: none;">
               <button type="button" id="btn-delete-picture" class="btn btn-sm btn-default" onclick="actRemoveImage()">
                 <i class="ri-delete-bin-5-line"></i>
               </button>

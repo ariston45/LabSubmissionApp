@@ -66,8 +66,8 @@ class ReportController extends Controller
 					$date_ar[$key_i] = date('d-m-Y',strtotime($value_i->lsd_date));
 				}
 				foreach ($data_submission[$key] as $skey => $svalue) {
-					if ($svalue->lsr_status == 'true') {
-						$btn_download_report = '<a href="' . route('download_result_report', ['filename' => $svalue->lsr_filename]) . '"><button class="btn btn-flat btn-xs btn-default">Download</button></a>';
+					if ($svalue->lsr_status_validation == 'true') {
+						$btn_download_report = '<a href="' . route('download_result_report', ['filename' => $svalue->lsr_file_result]) . '"><button class="btn btn-flat btn-xs btn-default">Download</button></a>';
 					} else {
 						$btn_download_report = '-';
 					}

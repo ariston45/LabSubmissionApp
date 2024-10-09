@@ -26,7 +26,7 @@ Lab management | Dashboard
       <div class="row">
         <div class="col-md-3" style="text-align: center;">
           @if ($data_fasilitas->laf_image == null)
-          <img src="{{ url('public/assets/img/noimage.jpg') }}" id="wrap-img" class="img img-thumbnail" style="width: 80%">
+          <img src="{{ url('assets/img/noimage.jpg') }}" id="wrap-img" class="img img-thumbnail" style="width: 80%">
           @else
           <img src="{{ url('storage/image_facility/'. $data_fasilitas->laf_image) }}" id="wrap-img" class="img img-thumbnail" style="width: 80%">
           @endif

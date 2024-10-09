@@ -1455,8 +1455,9 @@ class PengajuanController extends Controller
 		# Data fasilitas
 		$data_facility_listed = Lab_facility::join('laboratory_facilities', 'lab_facilities.lsf_facility_id','=','laboratory_facilities.laf_id')
 		->where('lab_facilities.lsf_submission', $request->id)
-		->select('laf_name', 'laf_id', 'lsf_id', 'lsf_cnt_unit')
+		->select('laf_name', 'laf_id', 'lsf_id', 'lsf_cnt_unit','lsf_loan_status')
 		->get();
+		// dd($data_facility_listed);
 		$data_facility_unlisted = Lab_facility::where('lsf_submission', $request->id)
 		->where('lsf_facility_status','unlisted')
 		->get();
@@ -2130,45 +2131,32 @@ class PengajuanController extends Controller
 			'dates_reschedule' => strDateStart($data_tenggal_testlab->lsd_date_opsional),
 			'dates_now' => date('Y-m-d h:i:s'),
 		];
-		# set alat
-		$tool_loan = Lab_facility::where('lsf_submission', $data_pengajuan->lsb_id)->get();
-		foreach ($tool_loan as $key => $value) {
-			if ($value->lsf_facility_status == 'listed') {
-				$lab_tool[$key] = Laboratory_facility_count_status::where('lcs_facility', $value->lsf_facility_id)->first();
-				if ($lab_tool[$key]->lcs_ready < $value->lsf_cnt_unit) {
-					// return redirect()->back();
-				} else {
-					$data_status_tool[$key] = [
-						'lcs_ready' => $lab_tool[$key]->lcs_ready - $value->lsf_cnt_unit,
-						'lcs_used' => $lab_tool[$key]->lcs_used + $value->lsf_cnt_unit
-					];
-					# Update data alat
-					Laboratory_facility_count_status::where('lcs_facility', $lab_tool[$key]->lcs_facility)->update($data_status_tool[$key]);
-				}
-			}
-		}
 		# insert data acc by head
 		Lab_submission_acc::insert($data_acc);
 		# update data pengajuan
 		if ($request->inp_acc == 'disetujui') {
+			# set alat
 			# pengajuan diterima
 			$data_accepting = [
-					'head_acc' => $data_user_head->name . ', pada ' . strDatetimes(date('Y-m-d H:i:s')),
-				];
+				'head_acc' => $data_user_head->name . ', pada ' . strDatetimes(date('Y-m-d H:i:s')),
+			];
 			$data_applicant = array_merge($data_applicant, $data_accepting);
-			$updateTool = Lab_facility::where('lsf_submission', $request->lsb_id)->update(['lsf_end_dt' => $data_pengajuan->lsb_date_end,'lsf_loan_status'=>'loaned']);
 			$udateStatus = Lab_submission::where('lsb_id', $request->lsb_id)->update(['lsb_status' => 'disetujui', 'lsb_notes' => $request->inp_catatan]);
 			$storeSchedule = Lab_schedule::insert($data_a);
 			$storeSchDate = Lab_sch_date::insert($inp_date);
 			$storeSctTime = Lab_sch_time::insert($inp_time);
+			# pinjam lab
 			if ($data_pengajuan->lsb_type == 'borrowing') {
 				if ($data_kasublab->email != null) {
 					Mail::to($data_kasublab->email)->send(new Mail_head_acc($data_applicant));
 				}
+			# sewa alat
 			} else if ($data_pengajuan->lsb_type == 'rental') {
+				
 				if ($data_pengajuan->email != null) {
 					Mail::to($data_pengajuan->email)->send(new Mail_head_acc_i($data_applicant));
 				}
+			# uji lab
 			} else {
 				if ($data_tenggal_testlab->lsd_date_opsional == null) {
 					if ($data_pengajuan->email != null) {
@@ -2395,7 +2383,7 @@ class PengajuanController extends Controller
 		// 
 		if ($getFile_ii == true) {
 			$fileRename_b =  $no_id . '_' . $name_ii . '_' . $date . '.' . $getFile_ii->extension();
-			$filePath = $getFile_ii->storeAs('public/data_legalitas', $fileRename_b);
+			$filePath = $getFile_ii->storeAs('public/data_laporan', $fileRename_b);
 			$data = [
 				"lsr_lsb_id" => $request->lsb_id,
 				"lsr_file_attachment" => null,
@@ -2440,7 +2428,7 @@ class PengajuanController extends Controller
 			// $fileRename_a =  $no_id . '_' . $name . '_' . $date . '.' . $getFile->extension();
 			$fileRename_b =  $no_id . '_' . $name_ii . '_' . $date . '.' . $getFile_ii->extension();
 			// $filePath = $getFile->storeAs('public/data_laporan', $fileRename_a);
-			$filePath = $getFile_ii->storeAs('public/data_lampiran_mhs', $fileRename_b);
+			$filePath = $getFile_ii->storeAs('public/data_laporan', $fileRename_b);
 			$data = [
 				"lsr_lsb_id" => $request->lsb_id,
 				"lsr_file_attachment" => null,
@@ -2563,6 +2551,50 @@ class PengajuanController extends Controller
 		];
 		Lab_submission::where('lsb_id', $request->lsb_id)->update($data_subs);
 		Lab_submission_result::insert($data_validate);
+		return redirect()->back();
+	}
+	/* Tags:... */
+	public function actionRentTool(Request $request)
+	{
+		$tool_loan = Lab_facility::where('lsf_submission', $request->lsb_id)->get();
+		foreach ($tool_loan as $key => $value) {
+			if ($value->lsf_facility_status == 'listed') {
+				$lab_tool[$key] = Laboratory_facility_count_status::where('lcs_facility', $value->lsf_facility_id)->first();
+				if ($lab_tool[$key]->lcs_ready < $value->lsf_cnt_unit) {
+					# return redirect()->back();
+				} else {
+					$data_status_tool[$key] = [
+						'lcs_ready' => $lab_tool[$key]->lcs_ready - $value->lsf_cnt_unit,
+						'lcs_used' => $lab_tool[$key]->lcs_used + $value->lsf_cnt_unit
+					];
+					# Update data alat
+					Laboratory_facility_count_status::where('lcs_facility', $lab_tool[$key]->lcs_facility)->update($data_status_tool[$key]);
+				}
+			}
+		}
+		$updateTool = Lab_facility::where('lsf_submission', $request->lsb_id)->update(['lsf_loan_status' => 'loaned']);
+		return redirect()->back();
+	}
+	public function actionReturnTool(Request $request)
+	{
+		$tool_loan = Lab_facility::where('lsf_submission', $request->lsb_id)->get();
+		foreach ($tool_loan as $key => $value) {
+			if ($value->lsf_facility_status == 'listed') {
+				$lab_tool[$key] = Laboratory_facility_count_status::where('lcs_facility', $value->lsf_facility_id)->first();
+				if ($lab_tool[$key]->lcs_ready < $value->lsf_cnt_unit) {
+					# return redirect()->back();
+				} else {
+					$data_status_tool[$key] = [
+						'lcs_ready' => $lab_tool[$key]->lcs_ready + $value->lsf_cnt_unit,
+						'lcs_used' => $lab_tool[$key]->lcs_used - $value->lsf_cnt_unit
+					];
+					# Update data alat
+					Laboratory_facility_count_status::where('lcs_facility', $lab_tool[$key]->lcs_facility)->update($data_status_tool[$key]);
+				}
+			}
+		}
+		$updateTool = Lab_facility::where('lsf_submission', $request->lsb_id)->update(['lsf_loan_status' => 'returned']);
+
 		return redirect()->back();
 	}
 }

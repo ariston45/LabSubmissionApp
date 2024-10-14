@@ -46,6 +46,7 @@ class PengaturanController extends Controller
 			'rumpun_id' => $request->rumpun,
 			'name' => $request->inp_name,
 			'level' => $request->inp_level,
+			'email_verified_at' => date('Y-m-d H:i:s'),
 			'password' => bcrypt($request->password)
 		];
 		$data_ii = [

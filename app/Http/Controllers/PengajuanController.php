@@ -1455,7 +1455,7 @@ class PengajuanController extends Controller
 		# Data fasilitas
 		$data_facility_listed = Lab_facility::join('laboratory_facilities', 'lab_facilities.lsf_facility_id','=','laboratory_facilities.laf_id')
 		->where('lab_facilities.lsf_submission', $request->id)
-		->select('laf_name', 'laf_id', 'lsf_id', 'lsf_cnt_unit','lsf_loan_status')
+		->select('laf_name', 'laf_id', 'lsf_id', 'lsf_cnt_unit','lsf_loan_status', 'lsf_out_img', 'lsf_out_time', 'lsf_in_img', 'lsf_in_time')
 		->get();
 		// dd($data_facility_listed);
 		$data_facility_unlisted = Lab_facility::where('lsf_submission', $request->id)
@@ -1755,19 +1755,23 @@ class PengajuanController extends Controller
 		// dd($data_applicant);
 		######
 		$getFile = $request->file('bukti_pembayaran');
-		$fileRename = null;
-		if ($getFile == true) {
-			$file_name = $fileRename = date('Ymd') . '_' . date('His') . '_' . $user->email . '.' . $getFile->extension();
-			$filePath = $getFile->storeAs('public/bukti_bayar', $fileRename);
-		} else {
-			$file_name = null;
+		if (in_array($getFile->extension(),['png','jpg','jpeg']) AND $getFile->getSize() <= 1000000 ) {
+			$fileRename = null;
+			if ($getFile == true) {
+				$file_name = $fileRename = date('Ymd') . '_' . date('His') . '_' . $user->email . '.' . $getFile->extension();
+				$filePath = $getFile->storeAs('public/bukti_bayar', $fileRename);
+			} else {
+				$file_name = null;
+			}
+			$data = [
+				'lsb_file_1' => $file_name,
+			];
+			Lab_submission::where('lsb_id',$request->lsb_id)->update($data);
+			Mail::to($data_kalab->email)->send(new NotifMailForHeadUpBukti($data_applicant));
+			return redirect()->back();
+		}else{
+			return redirect()->back()->with('error_bukti_bayar', 'Periksa kembali file upload anda, harap upload file dengan format .png .jpg atau .jpeg dan ukuran maksimum file tidak boleh dari 1mb.');
 		}
-		$data = [
-			'lsb_file_1' => $file_name,
-		];
-		Lab_submission::where('lsb_id',$request->lsb_id)->update($data);
-		Mail::to($data_kalab->email)->send(new NotifMailForHeadUpBukti($data_applicant));
-		return redirect()->back();
 	}
 	/* Tags:... */
 	public function actionTechConfirm(Request $request)
@@ -2386,9 +2390,7 @@ class PengajuanController extends Controller
 			$filePath = $getFile_ii->storeAs('public/data_laporan', $fileRename_b);
 			$data = [
 				"lsr_lsb_id" => $request->lsb_id,
-				"lsr_file_attachment" => null,
-				"lsr_file_result" => null,
-				"lsr_file_legalization" => $fileRename_b,
+				"lsr_file_result" => $fileRename_b,
 				"lsr_status_validation" => 'true',
 				"lsr_user_validator" => $user->id,
 				"lsr_notes" => null,
@@ -2556,45 +2558,73 @@ class PengajuanController extends Controller
 	/* Tags:... */
 	public function actionRentTool(Request $request)
 	{
-		$tool_loan = Lab_facility::where('lsf_submission', $request->lsb_id)->get();
-		foreach ($tool_loan as $key => $value) {
-			if ($value->lsf_facility_status == 'listed') {
-				$lab_tool[$key] = Laboratory_facility_count_status::where('lcs_facility', $value->lsf_facility_id)->first();
-				if ($lab_tool[$key]->lcs_ready < $value->lsf_cnt_unit) {
-					# return redirect()->back();
-				} else {
-					$data_status_tool[$key] = [
-						'lcs_ready' => $lab_tool[$key]->lcs_ready - $value->lsf_cnt_unit,
-						'lcs_used' => $lab_tool[$key]->lcs_used + $value->lsf_cnt_unit
-					];
-					# Update data alat
-					Laboratory_facility_count_status::where('lcs_facility', $lab_tool[$key]->lcs_facility)->update($data_status_tool[$key]);
+		$user = Auth::user();
+		$getFile = $request->file('foto_alat_dipinjam');
+		if(in_array($getFile->extension(), ['png','jpeg','jpg'])) {
+			echo "ada";
+			$fileRename = null;
+			if ($getFile == true) {
+				$file_name = $fileRename = date('Ymd') . '_' . date('His') . '_' . $user->email . '.' . $getFile->extension();
+				$filePath = $getFile->storeAs('public/data_img', $fileRename);
+			} else {
+				$file_name = null;
+			}
+			$date = date('Y-m-d H:i:s');
+			$tool_loan = Lab_facility::where('lsf_submission', $request->lsb_id)->get();
+			foreach ($tool_loan as $key => $value) {
+				if ($value->lsf_facility_status == 'listed') {
+					$lab_tool[$key] = Laboratory_facility_count_status::where('lcs_facility', $value->lsf_facility_id)->first();
+					if ($lab_tool[$key]->lcs_ready < $value->lsf_cnt_unit) {
+						# return redirect()->back();
+					} else {
+						$data_status_tool[$key] = [
+							'lcs_ready' => $lab_tool[$key]->lcs_ready - $value->lsf_cnt_unit,
+							'lcs_used' => $lab_tool[$key]->lcs_used + $value->lsf_cnt_unit
+						];
+						# Update data alat
+						Laboratory_facility_count_status::where('lcs_facility', $lab_tool[$key]->lcs_facility)->update($data_status_tool[$key]);
+					}
 				}
 			}
+			$updateTool = Lab_facility::where('lsf_submission', $request->lsb_id)->update(['lsf_loan_status' => 'loaned','lsf_out_time'=>$date,'lsf_out_img'=> $file_name]);
+			return redirect()->back();
+		}else{
+			return redirect()->back();
 		}
-		$updateTool = Lab_facility::where('lsf_submission', $request->lsb_id)->update(['lsf_loan_status' => 'loaned']);
-		return redirect()->back();
 	}
 	public function actionReturnTool(Request $request)
 	{
-		$tool_loan = Lab_facility::where('lsf_submission', $request->lsb_id)->get();
-		foreach ($tool_loan as $key => $value) {
-			if ($value->lsf_facility_status == 'listed') {
-				$lab_tool[$key] = Laboratory_facility_count_status::where('lcs_facility', $value->lsf_facility_id)->first();
-				if ($lab_tool[$key]->lcs_ready < $value->lsf_cnt_unit) {
-					# return redirect()->back();
-				} else {
-					$data_status_tool[$key] = [
-						'lcs_ready' => $lab_tool[$key]->lcs_ready + $value->lsf_cnt_unit,
-						'lcs_used' => $lab_tool[$key]->lcs_used - $value->lsf_cnt_unit
-					];
-					# Update data alat
-					Laboratory_facility_count_status::where('lcs_facility', $lab_tool[$key]->lcs_facility)->update($data_status_tool[$key]);
+		$user = Auth::user();
+		$getFile = $request->file('foto_alat_kembali');
+		if(in_array($getFile->extension(), ['png','jpeg','jpg'])) {
+			$fileRename = null;
+			if ($getFile == true) {
+				$file_name = $fileRename = date('Ymd') . '_' . date('His') . '_' . $user->email . '.' . $getFile->extension();
+				$filePath = $getFile->storeAs('public/data_img', $fileRename);
+			} else {
+				$file_name = null;
+			}
+			$date = date('Y-m-d H:i:s');
+			$tool_loan = Lab_facility::where('lsf_submission', $request->lsb_id)->get();
+			foreach ($tool_loan as $key => $value) {
+				if ($value->lsf_facility_status == 'listed') {
+					$lab_tool[$key] = Laboratory_facility_count_status::where('lcs_facility', $value->lsf_facility_id)->first();
+					if ($lab_tool[$key]->lcs_ready < $value->lsf_cnt_unit) {
+						# return redirect()->back();
+					} else {
+						$data_status_tool[$key] = [
+							'lcs_ready' => $lab_tool[$key]->lcs_ready + $value->lsf_cnt_unit,
+							'lcs_used' => $lab_tool[$key]->lcs_used - $value->lsf_cnt_unit
+						];
+						# Update data alat
+						Laboratory_facility_count_status::where('lcs_facility', $lab_tool[$key]->lcs_facility)->update($data_status_tool[$key]);
+					}
 				}
 			}
+			$updateTool = Lab_facility::where('lsf_submission', $request->lsb_id)->update(['lsf_loan_status' => 'returned', 'lsf_in_time' =>$date, 'lsf_in_img' => $file_name]);
+			return redirect()->back();
+		}else{
+			return redirect()->back();
 		}
-		$updateTool = Lab_facility::where('lsf_submission', $request->lsb_id)->update(['lsf_loan_status' => 'returned']);
-
-		return redirect()->back();
 	}
 }

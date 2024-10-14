@@ -475,6 +475,18 @@ Lab management | Dashboard
       </div>
     </div>
     <div class="box-body">
+      @if ($data_pengajuan->lsb_status == 'menunggu')
+        @if ($data_pengajuan->no_id == DataAuth()->no_id)
+        <div class="callout bg-purple-active">
+          Harap cek email secara berkala untuk mendapatkan informasi mengenai pembayaran.
+        </div>
+        @endif
+      @endif
+      @if (session('error_bukti_bayar'))
+        <div class="alert alert-danger">
+          {{ session('error_bukti_bayar') }}
+        </div>
+      @endif
       {{-- {{ $data_pengajuan }} --}}
       <table class="table table-bordered">
         <tbody>
@@ -586,12 +598,39 @@ Lab management | Dashboard
               <b>Hari/Tanggal </b>
               @if ($data_pengajuan->lsb_type == 'testing')
                 <b>Rilis Hasil</b>
-                @else
+              @elseif ($data_pengajuan->lsb_type == 'rental')
+                <b>Peminjaman</b>
+              @else
                 <b>Pelaksanaan</b>
+              @endif
+            </td>
+            <td style="width: 70%;">{!! $web_date !!}</td>
+          </tr>
+          @if ($data_pengajuan->lsb_type == 'rental')
+          <tr>
+            <td style="width: 30%;"><b>Serah/Terima Alat</b></td>
+            <td style="width: 70%;">
+              Tanggal alat dipinjamkan : 
+              @foreach ( $data_facility_listed as $list)
+                @if ($list != null)
+                {{ $list->lsf_out_time }} <br>
+                <img src="{{ url('storage/data_img/'.$list->lsf_out_img) }}" alt="" style="max-width: 300px;">
+                @break
                 @endif
-              </td>
-              <td style="width: 70%;">{!! $web_date !!}</td>
-            </tr>
+              @endforeach
+              <hr style="margin-bottom: 3px;margin-top: 3px;">
+              Tanggal alat dikembalikan : 
+              @foreach ( $data_facility_listed as $list)
+                @if ($list != null)
+                {{ $list->lsf_in_time }} <br>
+                <img src="{{ url('storage/data_img/'.$list->lsf_in_img) }}" alt="" style="max-width: 300px;">
+                @break
+                @endif
+              @endforeach
+              {{-- Tanggal alat Dikembalikan : {{ $data_facility_listed->lsf_in_img }} <br> --}}
+            </td>
+          </tr>
+          @endif
           <tr>
             <td style="width: 30%;"><b>Laboratorium</b></td>
             <td style="width: 70%;">{{ strJudul($data_pengajuan->lab_name) }}</td>
@@ -799,7 +838,19 @@ Lab management | Dashboard
 				<div class="modal-body">
 					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
           <input type="hidden" name="lab_subhead" value="{{ $data_pengajuan->lab_head }}">
-					Anda akan meminjamkan alat atau fasiltas sesuai dengan pengajuan
+          <div class="form-group has-feedback" style="margin-bottom: 12px;">
+            Anda akan meminjamkan alat atau fasilitas sesuai dengan pengajuan. Sebelum alat dipinjamkan silakan upload foto/gambar pada form dibawah ini.
+					</div>
+          <div class="form-group has-feedback" style="margin-bottom: 12px;">
+						<div class="input-group">
+							<span class="input-group-btn">
+								<span id="btn-file-foto-pinjam" class="btn btn-default btn-file btn-flat">
+									Buka Berkas <input type="file" id="id-alat-pinjam" name="foto_alat_dipinjam" >
+								</span>
+							</span>
+              <input type="text" class="form-control" readonly="" name="image2">
+						</div>
+					</div>
 				</div>
 				<div class="modal-footer">
 					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
@@ -821,7 +872,19 @@ Lab management | Dashboard
 				<div class="modal-body">
 					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
           <input type="hidden" name="lab_subhead" value="{{ $data_pengajuan->lab_head }}">
-					Alat atau fasiltas yang telah dipinjam oleh pemohon sudah dikembalikan.
+          <div class="form-group has-feedback" style="margin-bottom: 12px;">
+            Alat atau fasiltas yang telah dipinjam oleh pemohon sudah dikembalikan.
+          </div>
+          <div class="form-group has-feedback" style="margin-bottom: 12px;">
+						<div class="input-group">
+							<span class="input-group-btn">
+								<span id="btn-file-foto-kembali" class="btn btn-default btn-file btn-flat">
+									Buka Berkas <input type="file" id="id-alat-kembali" name="foto_alat_kembali" >
+								</span>
+							</span>
+              <input type="text" class="form-control" readonly="" name="image2">
+						</div>
+					</div>
 				</div>
 				<div class="modal-footer">
 					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
@@ -871,7 +934,6 @@ Lab management | Dashboard
 		</div>
 	</div>
 </div>
-
 <div class="modal fade" id="modalUploadBukti" role="dialog">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
@@ -885,6 +947,9 @@ Lab management | Dashboard
 					<input type="hidden" name="lsb_id" value="{{ $data_pengajuan->lsb_id }}">
           <input type="hidden" name="lab_subhead" value="{{ $data_pengajuan->lab_head }}">
           <div class="form-group has-feedback" style="margin-bottom: 12px;">
+            <div class="form-group has-feedback" style="margin-bottom: 12px;">
+              Silakan capture/screenshot bukti bayar anda, kemudaian upload form berikut dalam format png, jpg, jpeg.
+            </div>
 						<div class="input-group">
 							<span class="input-group-btn">
 								<span id="btn-file-foto" class="btn btn-default btn-file btn-flat">
@@ -1283,6 +1348,38 @@ Lab management | Dashboard
       input.trigger('fileselect', [label]);
     });
     $('#btn-file-foto :file').on('fileselect', function(event, label) {
+      var input = $(this).parents('.input-group').find(':text'),
+      log = label;
+      if( input.length ) {
+        input.val(log);
+      } else {
+        if( log ) alert(log);
+      }
+    });
+  });
+  $(document).ready( function() {
+    $(document).on('change', '#btn-file-foto-pinjam :file', function() {
+      var input = $(this),
+        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+      input.trigger('fileselect', [label]);
+    });
+    $('#btn-file-foto-pinjam :file').on('fileselect', function(event, label) {
+      var input = $(this).parents('.input-group').find(':text'),
+      log = label;
+      if( input.length ) {
+        input.val(log);
+      } else {
+        if( log ) alert(log);
+      }
+    });
+  });
+  $(document).ready( function() {
+    $(document).on('change', '#btn-file-foto-kembali :file', function() {
+      var input = $(this),
+        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+      input.trigger('fileselect', [label]);
+    });
+    $('#btn-file-foto-kembali :file').on('fileselect', function(event, label) {
       var input = $(this).parents('.input-group').find(':text'),
       log = label;
       if( input.length ) {

@@ -1275,10 +1275,10 @@ class DatatablesController extends Controller
 				return '';
 			})
 			->addColumn('opsi', function ($data) {
-				$web ='';
+				$web = '<div style="text-align:center;">';
 				if ($data->lab_status == 'tersedia') {
 					if($data->lop_pinjam_lab == 'true'){
-						$web.='<div style="text-align:center;"><a href="' . url('pengajuan/laboratorium/form-pengajuan-pinjam/' . $data->lab_id) . '">
+						$web.='<a href="' . url('pengajuan/laboratorium/form-pengajuan-pinjam/' . $data->lab_id) . '">
 						<button class="btn btn-flat btn-default btn-xs " type="button" > <b>Pinjam Laboratorium</b></button></a>';
 					}
 					if($data->lop_sewa_alat_lab == 'true'){

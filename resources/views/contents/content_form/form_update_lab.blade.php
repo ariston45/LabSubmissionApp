@@ -82,6 +82,7 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        @if (DataAuth()->level == 'LAB_HEAD')
         <div class="form-group has-feedback {{ $errors->has('inp_kalab') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -96,10 +97,12 @@ Lab management | Dashboard
               @endforeach
             </select>
             @if ($errors->has('inp_kalab'))
-						<span style="color: red;"><i>{{ $errors->first('inp_kalab') }}</i></span>
-						@endif
+            <span style="color: red;"><i>{{ $errors->first('inp_kalab') }}</i></span>
+            @endif
           </div>
         </div>
+        @else
+        @endif
         <div class="form-group has-feedback {{ $errors->has('inp_teknisi') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -338,21 +341,26 @@ Lab management | Dashboard
 <script src="{{ url('assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
 <script src="{{ url('assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
 {{-- varibles --}}
+@if (DataAuth()->level == 'LAB_HEAD')
 <script>
   var select_kasublab = new TomSelect("#inp-kalab",{
     create: false,			
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
-			}
-		}
+    valueField: 'id',
+    labelField: 'title',
+    searchField: 'title',
+    render: {
+      option: function(data, escape) {
+        return '<div><span class="title">'+escape(data.title)+'</span></div>';
+      },
+      item: function(data, escape) {
+        return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+      }
+    }
   });
+</script>
+@else
+@endif
+<script>
   var select_technicians = new TomSelect("#inp-teknisi",{
     create: false,
     maxItems: 10,

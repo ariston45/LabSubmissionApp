@@ -28,6 +28,7 @@ class UserPostRequest extends FormRequest
 			'inp_no_id' => 'required',
 			'inp_email' => 'required',
 			'inp_level' => 'required',
+			// 'inp_rumpun'=> 'required',
 			'inp_password' => 'required|min:8',
 			'inp_password_confirm' => 'required|same:inp_password'
 		];

@@ -43,11 +43,11 @@ class PengaturanController extends Controller
 			'status' => 'active',
 			'email' => $request->inp_email,
 			'nip' => $request->inp_nip,
-			'rumpun_id' => $request->rumpun,
+			'rumpun_id' => $request->inp_rumpun,
 			'name' => $request->inp_name,
 			'level' => $request->inp_level,
 			'email_verified_at' => date('Y-m-d H:i:s'),
-			'password' => bcrypt($request->password)
+			'password' => bcrypt($request->inp_password)
 		];
 		$data_ii = [
 			'usd_user' => $id,
@@ -67,14 +67,16 @@ class PengaturanController extends Controller
 	}
 	public function actionUpdateUser(UserPostUpdateRequest $request)
 	{
+		// die('test');
 		$id_user = $request->id;
 		$id_user_detail = $request->usd_id;
 		$cek_user = User::where('id', $id_user)->first();
+		// dd($cek_user);
 		if ($cek_user->email == $request->inp_email) {
 			$email = $cek_user->email;
 		} else {
 			$email = $request->inp_email;
-			$cek_email = User::where('email', $email)->first();
+			$cek_email = User::where('email', $email)->get();
 			if ($cek_email->count() > 0) {
 				return redirect()->back()->withInput($request->input())->withErrors(['check_email' => 'Alamat email sudah terdaftar.']);
 			}
@@ -89,7 +91,7 @@ class PengaturanController extends Controller
 				'name' => $request->inp_name,
 				'level' => $request->inp_level,
 				'nip' => $request->inp_nip,
-				'rumpun_id' => $request->rumpun,
+				'rumpun_id' => $request->inp_rumpun,
 			];
 		}else{
 			$data = [
@@ -101,10 +103,9 @@ class PengaturanController extends Controller
 				'level' => $request->inp_level,
 				'password' => bcrypt($request->inp_password),
 				'nip' => $request->nip,
-				'rumpun_id' => $request->rumpun,
+				'rumpun_id' => $request->inp_rumpun,
 			];
 		}
-		
 		if ($id_user_detail == null) {
 			$data_ii = [
 				'usd_user' => $id_user,

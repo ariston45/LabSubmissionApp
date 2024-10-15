@@ -50,7 +50,7 @@ Lab management | Dashboard
 				<table id="tabel_laboratorium" class="table tabel_custom table-condensed">
 					<thead>
 						<tr>
-							<th style="width: 5%">Check</th>
+							<th style="width: 5%"><input type="checkbox" class="check_in_data" id="check_all" value=""></th>
 							<th style="width: 30%">Nama</th>
 							<th style="width: 20%">ID</th>
 							<th style="width: 15%">Email</th>
@@ -93,6 +93,11 @@ Lab management | Dashboard
 <script src="{{ url('assets/plugins/datatables/media/js/dataTables.bootstrap.min.js') }}"></script>
 <script src="{{ url('assets/plugins/datatables/extensions/Responsive/js/dataTables.responsive.js') }}"></script>
 <script>
+	$('#check_all').click(function() {
+    $('.check_in_data').prop('checked', this.checked);
+  });
+</script>
+<script>
 	$(document).ready(function (){
 		tabel_siswa = $('#tabel_laboratorium').DataTable({
 			processing: true,
@@ -105,7 +110,7 @@ Lab management | Dashboard
 			},
 			columns: [
 				// {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-				{data: 'check', name: 'check', orderable: true, searchable: true },
+				{data: 'check', name: 'check', orderable: false, searchable: false },
 				{data: 'name', name: 'name', orderable: true, searchable: true },
 				{data: 'no_id', name: 'no_id', orderable: true, searchable: true },
 				{data: 'email', name: 'email', orderable: true, searchable: true },

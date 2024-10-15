@@ -1446,7 +1446,7 @@ class DatatablesController extends Controller
 			</div></div>';
 		})
 		->addColumn('check', function ($data) {
-			$res = '<input type="checkbox" name="idusers[]" value="'.$data->id.'">';
+			$res = '<input type="checkbox" class="check_in_data" name="idusers[]" value="'.$data->id.'">';
 			return $res;
 		})
 		->addColumn('name', function ($data) {

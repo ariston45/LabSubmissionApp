@@ -82,7 +82,6 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
-        @if (DataAuth()->level == 'LAB_HEAD')
         <div class="form-group has-feedback {{ $errors->has('inp_kalab') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -90,19 +89,26 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select type="text" class="form-control" name="inp_kalab" id="inp-kalab" value="" placeholder="Pilih user.." required>
+            @if (DataAuth()->level == 'LAB_HEAD')
+            <select type="text" class="form-control" name="inp_kalab" id="inp-kalab" value="" placeholder="Pilih user..">
               <option value=""></option>
               @foreach ($data_kasublab as $list)
               <option value="{{ $list->id }}" @if ( $list->id == $data_lab->lab_head) selected @endif>{{ $list->name }}</option>
               @endforeach
-            </select>
+            </select> 
+            @else
+            <select type="text" class="form-control" name="inp_kalab" value="" placeholder="Pilih user.." readonly>
+              <option value="{{ $data_lab->lab_head }}">{{ $data_lab->name }}</option>
+            </select> 
+            @endif
             @if ($errors->has('inp_kalab'))
             <span style="color: red;"><i>{{ $errors->first('inp_kalab') }}</i></span>
             @endif
           </div>
         </div>
+        {{-- @if (DataAuth()->level == 'LAB_HEAD')
         @else
-        @endif
+        @endif --}}
         <div class="form-group has-feedback {{ $errors->has('inp_teknisi') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">

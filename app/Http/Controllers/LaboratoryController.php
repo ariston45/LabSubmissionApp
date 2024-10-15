@@ -45,11 +45,13 @@ class LaboratoryController extends Controller
 	/* Tags:... */
 	public function formUpdateLab(Request $request)
 	{
+		// die();
 		$data_lab = Laboratory::join('laboratory_options','laboratories.lab_id','=', 'laboratory_options.lop_lab_id')
 		->leftjoin('users', 'laboratories.lab_head','=','users.id')
 		->where('lab_id',$request->id)
 		->select('*')
 		->first();
+		// dd($data_lab);
 		// dd($data_lab);
 		$data_kasublab = User::where('level','LAB_SUBHEAD')->get();
 		$data_all_tech = Laboratory_technician::leftjoin('users', 'laboratory_technicians.lat_tech_id', '=', 'users.id')
@@ -130,9 +132,9 @@ class LaboratoryController extends Controller
 		return redirect('laboratorium');
 	}
 	/* Tags:... */
-	public function actionUpdateLaboratory(LabPostRequest $request)
+	public function actionUpdateLaboratory(Request $request)
 	{
-		
+		// die('hai');
 		$lab_id = $request->lab_id;
 		$lab_data = Laboratory::where('lab_id', $lab_id)->first();
 

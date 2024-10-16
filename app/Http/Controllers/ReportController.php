@@ -59,14 +59,14 @@ class ReportController extends Controller
 			->whereIn('lsb_status', ['disetujui', 'selesai'])
 			->select('lsb_id','id','lab_id','lsb_title','lsb_date_start','lsb_date_end','lab_name','name', 'los_cost_total', 'lsr_status_validation', 'lsr_file_result','lsb_file_1', 'lsd_date')
 			->get();
-
-			if ($data_submission[$key] != null) {
+			if ($data_submission[$key]->count() != 0) {
 				$date_ar[0]=[];
 				foreach ($data_submission[$key] as $key_i => $value_i) {
 					$date_ar[$key_i] = date('d-m-Y',strtotime($value_i->lsd_date));
 				}
+				// dd($data_submission);
 				foreach ($data_submission[$key] as $skey => $svalue) {
-					if ($svalue->lsr_status_validation == 'true') {
+					if ($svalue->lsr_status_validation == 'true' && $svalue->lsr_file_result != null) {
 						$btn_download_report = '<a href="' . route('download_result_report', ['filename' => $svalue->lsr_file_result]) . '"><button class="btn btn-flat btn-xs btn-default">Download</button></a>';
 					} else {
 						$btn_download_report = '-';
@@ -76,9 +76,6 @@ class ReportController extends Controller
 					} else {
 						$btn_download_letter = '<a href="' . route('download_bukti_bayar', ['filename' => $svalue->lsb_file_1]) . '"><button class="btn btn-flat btn-xs btn-default">Download</button></a>';
 					}
-					// $dt1 = date('d M Y', strtotime($svalue->lsb_date_start));
-					// $dt2 = date('d M Y', strtotime($svalue->lsb_date_end));
-					// $time_str = $dt1 . '  <b>s/d</b>  ' . $dt2;
 					$data_subs[$svalue->lsb_id] = [
 						'title' => $report_title,
 						'id' => $svalue->lsb_id,

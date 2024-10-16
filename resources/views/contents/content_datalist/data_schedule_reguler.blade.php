@@ -14,7 +14,7 @@ Lab management | Dashboard
 		<div class="box-header with-border">
 			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Jadwal Reguler {{ $lab->lab_name }}</h3>
 			<div class="pull-right">
-				<a href="{{ url('jadwal_lab') }}/{{ $lab->lab_id }}">
+				<a href="{{ url('jadwal_lab/reguler') }}/{{ $lab->lab_id }}">
 					<button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
 				</a>
 			</div>
@@ -25,7 +25,7 @@ Lab management | Dashboard
 				<thead>
 					<tr>
 						<th style="width: 5%">No</th>
-						<th style="width: 10%">Hari</th>
+						<th style="width: 15%">Tanggal</th>
 						<th style="width: 10%;">Jam</th>
 						<th style="width: 20%;">Grup Belajar</th>
 						<th style="width: 20%;">Subyek Belajar</th>
@@ -91,8 +91,8 @@ Lab management | Dashboard
 					name: 'DT_RowIndex'
 				},
 				{
-					data: 'day',
-					name: 'day',
+					data: 'date_start',
+					name: 'date_start',
 					orderable: true,
 					searchable: true
 				},

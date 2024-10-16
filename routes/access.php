@@ -49,7 +49,8 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('source-datatables-lab-byfacility', [DatatablesController::class, 'sourceDataLabFacility'])->name('source_datatables_lab_byfacility');
 		#schedule
 		Route::post('source-datatables-lab-byshcedule', [DatatablesController::class, 'sourceDataLabSchedule'])->name('source_datatables_lab_byshcedule');
-		Route::match(['get','post'], 'source-datatables-schedule-lab',[DatatablesController::class, 'sourceDataScheduleLab'])->name('source-datatables-schedule-lab');
+		Route::match(['get','post'], 'source-datatables-schedule-lab',[DatatablesController::class, 'sourceDataScheduleLabAkademik'])->name('source-datatables-schedule-lab');
+		Route::match(['get', 'post'], 'source-datatables-schedule-lab-pinjam', [DatatablesController::class, 'sourceDataScheduleLab'])->name('source-datatables-schedule-lab-pinjam');
 		#Pengajuan
 		Route::post('source-datatables-pengajuan', [DatatablesController::class, 'sourceDataPengajuan'])->name('source-datatables-pengajuan');
 		Route::post('source-datatables-pengajuan-archieve', [DatatablesController::class, 'sourceDataPengajuanArchive'])->name('source-datatables-pengajuan-archieve');
@@ -63,9 +64,10 @@ Route::group(['middleware' => ['auth']], function () {
 		// Route::match(['get', 'post'], 'source-data-labtest', [DatatablesController::class, 'sourceDataLabUji'])->name('source_datatables_ujilab');
 		#User
 		Route::post('source-datatables-user', [DatatablesController::class, 'sourceDataUsers'])->name('source-datatables-user');
-		
+
 		#Other
-		Route::post('source-data-sch-lab', [LaboratoryController::class, 'sourceDataScheduleLabJson'])->name('source_data_sch_lab');
+		Route::post('source-data-sch-lab-pinjam', [LaboratoryController::class, 'sourceDataScheduleLabJson'])->name('source_data_sch_lab_pinjam');
+		Route::post('source-data-sch-lab', [LaboratoryController::class, 'sourceDataScheduleLabAkademicJson'])->name('source_data_sch_lab');
 		Route::post('users', [DataController::class, 'sourceDataUser'])->name('source-data-users');
 		Route::post('user-lectures', [DataController::class, 'sourceDataUserLectures'])->name('source-data-users-lectures');
 		Route::post('all-lab', [DataController::class, 'sourceDataLab'])->name('source-data-all-lab');
@@ -171,8 +173,6 @@ Route::group(['middleware' => ['auth']], function () {
 		// Route::post('update-fasilitas-laboratorium', [LaboratoryController::class, 'actionUpdateLabFacilities'])->name('update_fasilitas_laboratorium');
 		Route::get('delete-facility-laboratorium/{id}', [LaboratoryController::class, 'actionDeleteLabFacilities']);
 		Route::post('input-sch-laboratorium', [LaboratoryController::class, 'actionInputLabSch'])->name('input_sch_laboratorium');
-		Route::post('update-sch-laboratorium', [LaboratoryController::class, 'actionUpdateLabSch'])->name('update_sch_laboratorium');
-		
 		Route::post('input-exclude-sch', [LaboratoryController::class, 'actionInputExcludeSch'])->name('input_exclude_sch');
 		
 		// 
@@ -182,11 +182,13 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::prefix('jadwal_lab')->group(function () {
 		# first
 		Route::get('/', [ScheduleController::class, 'dataLabSchedule']);
-		Route::get('/{id}', [ScheduleController::class, 'dataSchedule'])->name('schedule_lab');
+		Route::get('pinjam/{id}', [ScheduleController::class, 'dataSchedulePinjam'])->name('schedule_lab_pinjam');
+		Route::get('reguler/{id}', [ScheduleController::class, 'dataSchedule'])->name('schedule_lab');
 		Route::get('form-exclude-jadwal/{id}', [ScheduleController::class, 'formExcludeLaboratorySch']);
 		Route::get('form-input-jadwal/{id}', [ScheduleController::class, 'formInputLaboratorySch']);
 		Route::get('data-jadwal-reguler/{id}', [ScheduleController::class, 'dataSchReguler']);
 		Route::post('input-sch-laboratorium', [ScheduleController::class, 'actionInputLabSch'])->name('input_schedule_laboratorium');
+		Route::post('update-sch-laboratorium', [ScheduleController::class, 'actionUpdateLabSch'])->name('update_sch_laboratorium');
 		Route::get('update-jadwal-lab/{id_lab}/{id_sch_lab}', [LaboratoryController::class, 'formUpdateLaboratorySch']);
 		Route::get('delete-sch-lab-reguler/{id_sch_lab}', [LaboratoryController::class, 'actionDelLabSch'])->name('delete_sch_laboratorium');
 	});

@@ -30,25 +30,23 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_day') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Hari
+              Tanggal
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select type="text" class="form-control" name="inp_day" id="inp-day" value="" placeholder="Pilih hari..">
-              <option value=""></option>
-              <option value="sunday" @if (old('inp_day') == 'sunday') selected @endif >Minggu</option>
-              <option value="monday" @if (old('inp_day') == 'monday') selected @endif >Senin</option>
-              <option value="tuesday" @if (old('inp_day') == 'tuesday') selected @endif >Selasa</option>
-              <option value="wednesday" @if (old('inp_day') == 'wednesday') selected @endif >Rabu</option>
-              <option value="thursday" @if (old('inp_day') == 'thursday') selected @endif >Kamis</option>
-              <option value="friday" @if (old('inp_day') == 'friday') selected @endif >Jumat</option>
-              <option value="saturday" @if (old('inp_day') == 'saturday') selected @endif >Sabtu</option>
-            </select>
-            @if ($errors->has('inp_day'))
-						<span style="color: red;"><i>{{ $errors->first('inp_day') }}</i></span>
-						@endif
+            <input type="text" id="inp-dt-start" class="form-control" name="inp_dt_start" value="{{ old('inp_subject') }}" placeholder="Input tanggal mulai jadwal..">
           </div>
         </div>
+        {{-- <div class="form-group has-feedback {{ $errors->has('inp_day') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Tanggal Akhir Jadwal
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <input type="text" id="inp-dt-end" class="form-control" name="inp_dt_end" value="{{ old('inp_subject') }}" placeholder="Input tanggal akhir jadwal..">
+          </div>
+        </div> --}}
         <div class="form-group has-feedback {{ $errors->has('inp_time_start') ? ' has-error' : '' }} {{ $errors->has('inp_time_end') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -62,33 +60,11 @@ Lab management | Dashboard
               <option value="{{ $list->lti_id }}">{{ setTime($list->lti_start) }} - {{ setTime($list->lti_end) }}</option>  
               @endforeach
             </select>
-            @if ($errors->has('inp_time'))
-						<span style="color: red;"><i>{{ $errors->first('inp_time') }}</i></span>
+            @if ($errors->has('msg_err'))
+						<span style="color: red;"><i>{{ $errors->first('msg_err') }}</i></span>
 						@endif
           </div>
-          {{-- <div class="col-sm-12 col-md-9">
-            <div class="row">
-              <div class="col-sm-6">
-                <input type="text" id="time-pick-start" class="form-control cst-mb-input-a" name="inp_time_start" value="{{ old('inp_time_start') }}" placeholder="Input waktu mulai..">
-              </div>
-              <div class="col-sm-6">
-                <input type="text" id="time-pick-end" class="form-control" name="inp_time_end" value="{{ old('inp_time_end') }}" placeholder="Input waktu selesai..">
-              </div>
-              <div class="col-lg-12">
-                @if ($errors->has('inp_time_start'))
-                <span style="color: red;"><i>{{ $errors->first('inp_time_start') }}</i></span>
-                @endif
-                @if ($errors->has('inp_time_end'))
-                <span style="color: red;"><i>{{ $errors->first('inp_time_end') }}</i></span>
-                @endif
-                @if ($errors->has('check_time'))
-                <span style="color: red;"><i>{{ $errors->first('check_time') }}</i></span>
-                @endif
-              </div>
-            </div>
-          </div> --}}
         </div>
-        
         <div class="form-group has-feedback {{ $errors->has('inp_subject') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -97,9 +73,6 @@ Lab management | Dashboard
           </label>
           <div class="col-sm-12 col-md-9">
             <input type="text" id="inp-subject" class="form-control" name="inp_subject" value="{{ old('inp_subject') }}" placeholder="Input mata kuliah..">
-            {{-- <select type="text" class="form-control" name="inp_teknisi[]" id="inp-teknisi" value="" placeholder="Pilih user..">
-              <option value=""></option>
-            </select> --}}
             @if ($errors->has('inp_subject'))
 						<span style="color: red;"><i>{{ $errors->first('inp_subject') }}</i></span>
 						@endif
@@ -127,7 +100,7 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select id="inp-res-person" class="form-control" name="inp_res_person[]" placeholder="Input dosen atau penanggung jawab..">>
+            <select id="inp-res-person" class="form-control" name="inp_res_person" placeholder="Input dosen atau penanggung jawab..">
               <option value="{{ null }}"></option>
             </select>
             @if ($errors->has('inp_res_person'))
@@ -205,20 +178,6 @@ Lab management | Dashboard
 			},
 		});
   };
-  var select_hari = new TomSelect("#inp-day",{
-    create: false,			
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
-			}
-		}
-  });
   var select_jam = new TomSelect("#inp-time",{
     create: false,			
 		valueField: 'id',
@@ -276,13 +235,13 @@ Lab management | Dashboard
 </script>
 {{-- call by id or class --}}
 <script>
-  $('#date-pick-start').datepicker({
+  $('#inp-dt-start').datepicker({
     autoclose: true,
     format: 'yyyy-mm-dd',
     todayHighlight: true,
     orientation:'bottom',
   });
-  $('#date-pick-end').datepicker({
+  $('#inp-dt-end').datepicker({
     autoclose: true,
     format: 'yyyy-mm-dd',
     todayHighlight: true,

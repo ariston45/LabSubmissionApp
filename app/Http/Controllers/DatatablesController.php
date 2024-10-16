@@ -841,8 +841,6 @@ class DatatablesController extends Controller
 		->make(true);
 	}
 	/* Tags:... */
-	// public function sourceDataUji(Request $request)
-	// {
 	// 	$data = Laboratory_labtest::where('lsv_lab_id',$request->lab_id)->get();
 	// 	return DataTables::of($data)
 	// 	->addIndexColumn()
@@ -911,32 +909,32 @@ class DatatablesController extends Controller
 		->get();
 		$sch_index = 0;
 		$dataSch = [];
-		foreach ($datesAr as $key => $value) {
-			$day = date('l',strtotime($value));
-			$data_reguler = Lab_schedule::join('lab_sch_dates', 'lab_schedules.lbs_id', '=', 'lab_sch_dates.lscd_sch')
-			->leftjoin('users', 'lab_schedules.lbs_res_person', '=', 'users.id')
-			->where('lscd_day', $day)
-			->where('lbs_lab', $lab_id)
-			->where('lbs_type', 'reguler')
-			->get();
-			foreach ($data_reguler as $skey => $svalue) {
-				$ddate = date('l, d-m-Y',strtotime($value));
-				$dataSch[$sch_index] = [
-					'date_index' => $value,
-					'date' => $ddate,
-					'date_id' => $svalue->lscd_id,
-					'lab_id' => $svalue->lbs_lab,
-					'lbs_id' => $svalue->lbs_id,
-					'lbs_submission' =>	$svalue->lbs_submission,
-					'subject' => $svalue->lbs_matkul,
-					'group' =>  $svalue->lbs_tenant_name,
-					'person' => $svalue->name,
-					'type' => 'Reguler',
-					'type_par' => $svalue->lbs_type,
-				];
-				$sch_index++;
-			}
-		}
+		// foreach ($datesAr as $key => $value) {
+			// $day = date('l',strtotime($value));
+			// $data_reguler = Lab_schedule::join('lab_sch_dates', 'lab_schedules.lbs_id', '=', 'lab_sch_dates.lscd_sch')
+			// ->leftjoin('users', 'lab_schedules.lbs_res_person', '=', 'users.id')
+			// ->where('lscd_day', $day)
+			// ->where('lbs_lab', $lab_id)
+			// ->where('lbs_type', 'reguler')
+			// ->get();
+			// foreach ($data_reguler as $skey => $svalue) {
+			// 	$ddate = date('l, d-m-Y',strtotime($value));
+			// 	$dataSch[$sch_index] = [
+			// 		'date_index' => $value,
+			// 		'date' => $ddate,
+			// 		'date_id' => $svalue->lscd_id,
+			// 		'lab_id' => $svalue->lbs_lab,
+			// 		'lbs_id' => $svalue->lbs_id,
+			// 		'lbs_submission' =>	$svalue->lbs_submission,
+			// 		'subject' => $svalue->lbs_matkul,
+			// 		'group' =>  $svalue->lbs_tenant_name,
+			// 		'person' => $svalue->name,
+			// 		'type' => 'Reguler',
+			// 		'type_par' => $svalue->lbs_type,
+			// 	];
+			// 	$sch_index++;
+			// }
+		// }
 		foreach ($data_non_reguler as $key => $value) {
 			$ddate = date('l, d-m-Y', strtotime($value->lscd_date));
 			$dataSch[$sch_index] = [
@@ -954,6 +952,8 @@ class DatatablesController extends Controller
 			];
 			$sch_index++;
 		}
+		// print_r($dataSch);
+		// die();
 		if (count($dataSch) == 0) {
 			return DataTables::of($dataSch)
 			->addIndexColumn()
@@ -1042,6 +1042,150 @@ class DatatablesController extends Controller
 			->make(true);
 		}
 	}
+	public function sourceDataScheduleLabAkademik(Request $request)
+	{
+		$s = $request->dtStart;
+		$e = $request->dtEnd;
+		$lab_id = $request->lab_id;
+		$dtStart = Carbon::parse(date('Y-m-d', strtotime($s)))->format('Y-m-d');
+		$dtEnd = Carbon::parse(date('Y-m-d', strtotime($e)))->format('Y-m-d');
+		$period = CarbonPeriod::create($dtStart, $dtEnd);
+		foreach ($period as $key => $value) {
+			$dateFormated = date('Y-m-d', strtotime($value));
+			$datesAr[$key] = $dateFormated;
+		}
+		$sch_index = 0;
+		$dataSch = [];
+		foreach ($datesAr as $key => $value) {
+			$data_reguler = Lab_schedule::join('lab_sch_dates', 'lab_schedules.lbs_id', '=', 'lab_sch_dates.lscd_sch')
+			->leftjoin('users', 'lab_schedules.lbs_res_person', '=', 'users.id')
+			->where('lbs_lab', $lab_id)
+			->where('lbs_type', 'reguler')
+			->where('lbs_dates_period', 'like','%'.$value.'%')
+			->get();
+			foreach ($data_reguler as $key => $svalue) {
+				$ddate = date('l, d-m-Y', strtotime($value));
+				$dataSch[$sch_index] = [
+					'date_index' => $value,
+					'date' => $ddate,
+					'date_id' => $svalue->lscd_id,
+					'lab_id' => $svalue->lbs_lab,
+					'lbs_id' => $svalue->lbs_id,
+					'subject' => $svalue->lbs_matkul,
+					'group' =>  $svalue->lbs_tenant_name,
+					'person' => $svalue->name,
+					'type' => 'Reguler',
+					'type_par' => $svalue->lbs_type,
+				];
+				$sch_index++;
+			}
+			// if ($data_reguler != null) {
+			// 	$ddate = date('l, d-m-Y', strtotime($value));
+			// 	$dataSch[$sch_index] = [
+			// 		'date_index' => $value,
+			// 		'date' => $ddate,
+			// 		'date_id' => $data_reguler->lscd_id,
+			// 		'lab_id' => $data_reguler->lbs_lab,
+			// 		'lbs_id' => $data_reguler->lbs_id,
+			// 		'subject' => $data_reguler->lbs_matkul,
+			// 		'group' =>  $data_reguler->lbs_tenant_name,
+			// 		'person' => $data_reguler->name,
+			// 		'type' => 'Reguler',
+			// 		'type_par' => $data_reguler->lbs_type,
+			// 	];
+			// 	$sch_index++;
+			// }
+		}
+		// print_r($dataSch);
+		// die();
+		if (count($dataSch) == 0) {
+			return DataTables::of($dataSch)
+				->addIndexColumn()
+				->addColumn('empty_str', function ($k) {})
+				->addColumn('opsi', function ($dataSch) {})
+				->addColumn('day', function ($dataSch) {})
+				->addColumn('time', function ($dataSch) {})
+				->addColumn('type', function ($dataSch) {})
+				->addColumn('subject', function ($dataSch) {})
+				->addColumn('group', function ($dataSch) {})
+				->addColumn('person', function ($dataSch) {})
+				->rawColumns(['opsi', 'day', 'time', 'type', 'subject', 'group', 'person'])
+				->make(true);
+		} else {
+			usort($dataSch, function ($a, $b) {
+				return strtotime($a['date_index']) - strtotime($b['date_index']);
+			});
+			return DataTables::of($dataSch)
+				->addIndexColumn()
+				->addColumn('empty_str', function ($k) {
+					return '';
+				})
+				->addColumn('opsi', function ($dataSch) {
+					if ($dataSch['type_par'] == 'reguler') {
+						return ' <div style="text-align:center;">
+				<div class="btn-group">
+					<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Menu <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu pull-right">
+						<li><a href="' . url('laboratorium/update-jadwal-lab/' . $dataSch['lab_id'] . '/' . $dataSch['lbs_id']) . '"><i class="ri-edit-2-line" aria-hidden="true" style="margin-right:12px;"></i>Update</a></li>
+						<li><a href="#" onclick="actDeleteSchLab(' . $dataSch['lbs_id'] . ')"><i class="ri-delete-bin-line" aria-hidden="true" style="margin-right:12px;"></i>Delete</a></li>
+					</ul>
+				</div></div>';
+					} else {
+						return ' <div style="text-align:center;">
+				<div class="btn-group">
+					<button class="btn btn-flat btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Menu <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu pull-right">
+						<li><a href="' . url('pengajuan/detail-pengajuan/' . $dataSch['lbs_submission']) . '"><i class="ri-eye-2-line" aria-hidden="true" style="margin-right:12px;"></i>Lihat Detail</a></li>
+					</ul>
+				</div></div>';
+					}
+				})
+				->addColumn('day', function ($dataSch) {
+					$res = $dataSch['date'];
+					return $res;
+				})
+				->addColumn('time', function ($dataSch) {
+					if ($dataSch['date_id'] == null) {
+						$res = null;
+					} else {
+						$data = Lab_sch_time::join('laboratory_time_options', 'lab_sch_times.lsct_time_id', '=', 'laboratory_time_options.lti_id')
+						->where('lsct_date_id', $dataSch['date_id'])
+						->get();
+						$res = '';
+						foreach ($data as $key => $value) {
+							$res .= '<b>-</b> ' . date('H:i', strtotime($value->lti_start)) . '-' . date('H:i', strtotime($value->lti_end)) . '<br>';
+						}
+					}
+					return $res;
+				})
+				->addColumn('type', function ($dataSch) {
+					$res = $dataSch['type'];
+					return $res;
+				})
+				->addColumn('subject', function ($dataSch) {
+					$res = $dataSch['subject'];
+					return $res;
+				})
+				->addColumn('group', function ($dataSch) {
+					$res = $dataSch['group'];
+					return $res;
+				})
+				->addColumn('person', function ($dataSch) {
+					$res = $dataSch['person'];
+					return $res;
+				})
+				->addColumn('date', function ($dataSch) {
+					$res = $dataSch['date'];
+					return $res;
+				})
+				->rawColumns(['opsi', 'day', 'time', 'type', 'subject', 'group', 'person', 'date'])
+				->make(true);
+		}
+	}
 	public function sourceDataScheduleLabReguler(Request $request)
 	{
 		$lab_id = $request->lab_id;
@@ -1055,6 +1199,7 @@ class DatatablesController extends Controller
 		foreach ($data_reguler as $skey => $svalue) {
 			$dataSch[$skey] = [
 				'date_id' => $svalue->lscd_id,
+				'date_start' => $svalue->lbs_date_start,
 				'day' => $svalue->lscd_day,
 				'lab_id' => $svalue->lbs_lab,
 				'lbs_id' => $svalue->lbs_id,
@@ -1065,6 +1210,8 @@ class DatatablesController extends Controller
 				'type_par' => $svalue->lbs_type,
 			];
 		};
+		// print_r($dataSch);
+		// die();
 		if (count($dataSch) == 0) {
 			return DataTables::of($dataSch)
 			->addIndexColumn()
@@ -1079,10 +1226,6 @@ class DatatablesController extends Controller
 			->rawColumns(['opsi', 'day', 'time', 'type', 'subject', 'group', 'person'])
 			->make(true);
 		}else{
-			usort($dataSch, function ($a, $b) {
-				return strtotime($a['date_index']) - strtotime($b['date_index']);
-			});
-			// dd($dataSch);
 			return DataTables::of($dataSch)
 			->addIndexColumn()
 			->addColumn('empty_str', function ($k) {
@@ -1102,6 +1245,10 @@ class DatatablesController extends Controller
 			})
 			->addColumn('day', function ($dataSch) {
 				$res = $dataSch['day'];
+				return $res;
+			})
+			->addColumn('date_start', function ($dataSch) {
+				$res = $dataSch['date_start'];
 				return $res;
 			})
 			->addColumn('time', function ($dataSch) {
@@ -1134,7 +1281,7 @@ class DatatablesController extends Controller
 				$res = $dataSch['person'];
 				return $res;
 			})
-			->rawColumns(['opsi','day' ,'time', 'type', 'subject', 'group','person'])
+			->rawColumns(['opsi','day' ,'time', 'type', 'subject', 'group','person', 'date_start'])
 			->make(true);
 		}
 	}
@@ -1236,8 +1383,11 @@ class DatatablesController extends Controller
 				return '';
 			})
 			->addColumn('opsi', function ($data) {
-				return '<a href="'.url('jadwal_lab/'. $data->lab_id).'">
-				<button class="btn btn-block btn-flat btn-default btn-xs " type="button" > <b>Lihat Jadwal</b></button></a>';
+				$res = '<a href="'.url('jadwal_lab/pinjam/'. $data->lab_id).'">
+				<button class="btn btn-block btn-flat btn-default btn-xs " type="button" > <b>Jadwal Pinjam</b></button></a>';
+				$res .= '<a href="' . url('jadwal_lab/reguler/' . $data->lab_id) . '">
+				<button class="btn btn-block btn-flat btn-default btn-xs " type="button" > <b>Jadwal Reguler</b></button></a>';
+				return $res;
 			})
 			->addColumn('name', function ($data) {
 				$res = $data->lab_name;

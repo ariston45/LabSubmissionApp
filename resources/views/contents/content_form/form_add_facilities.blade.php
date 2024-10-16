@@ -131,7 +131,7 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_brand') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-4 control-label" >
             <span style="padding-right: 30px;">
-              Biaya Pinjam <span style="color: red;">*</span>
+              Biaya Pinjam (/hari) <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-8">

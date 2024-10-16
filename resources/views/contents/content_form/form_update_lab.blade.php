@@ -7,7 +7,7 @@ Lab management | Dashboard
 <h4>Laboratorium</h4>
 <ol class="breadcrumb">
   <li><a href="#"><i class="fa fa-home"></i> Laboratorium</a></li>
-  <li class="active"><a href="#">Form Laboratorium</a></li>
+  <li class="active"><a href="#">Form Update Laboratorium</a></li>
 </ol>
 @endsection
 @section('content')
@@ -82,6 +82,7 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        @if (DataAuth()->level == 'LAB_HEAD')
         <div class="form-group has-feedback {{ $errors->has('inp_kalab') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -89,26 +90,17 @@ Lab management | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            @if (DataAuth()->level == 'LAB_HEAD')
             <select type="text" class="form-control" name="inp_kalab" id="inp-kalab" value="" placeholder="Pilih user..">
               <option value=""></option>
               @foreach ($data_kasublab as $list)
               <option value="{{ $list->id }}" @if ( $list->id == $data_lab->lab_head) selected @endif>{{ $list->name }}</option>
               @endforeach
             </select> 
-            @else
-            <select type="text" class="form-control" name="inp_kalab" value="" placeholder="Pilih user.." readonly>
-              <option value="{{ $data_lab->lab_head }}">{{ $data_lab->name }}</option>
-            </select> 
-            @endif
             @if ($errors->has('inp_kalab'))
             <span style="color: red;"><i>{{ $errors->first('inp_kalab') }}</i></span>
             @endif
           </div>
         </div>
-        {{-- @if (DataAuth()->level == 'LAB_HEAD')
-        @else
-        @endif --}}
         <div class="form-group has-feedback {{ $errors->has('inp_teknisi') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -131,6 +123,35 @@ Lab management | Dashboard
 						@endif
           </div>
         </div>
+        @elseif (DataAuth()->level == 'LAB_SUBHEAD')
+        <input type="hidden" name="inp_kalab" value="{{ $data_lab->lab_head }}">
+        <div class="form-group has-feedback {{ $errors->has('inp_teknisi') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Teknisi Lab
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <select type="text" class="form-control" name="inp_teknisi[]" id="inp-teknisi" multiple value="" placeholder="Pilih user.." required>
+              <option value=""></option>
+              @foreach ($data_all_tech as $list)
+                @if (in_array($list->id,$data_tech)  )
+                  <option value="{{ $list->id }}" selected>{{ $list->name }}</option>
+                @else
+                  <option value="{{ $list->id }}">{{ $list->name }}</option>
+                @endif
+              @endforeach
+            </select>
+            @if ($errors->has('inp_teknisi'))
+						<span style="color: red;"><i>{{ $errors->first('inp_teknisi') }}</i></span>
+						@endif
+          </div>
+        </div>
+        @else
+        <input type="hidden" name="inp_kalab" value="{{ $data_lab->lab_head }}">
+        @dd($data_tech)
+        {{-- {{$data_tech}} --}}
+        @endif
         {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_notes_short') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
@@ -347,41 +368,7 @@ Lab management | Dashboard
 <script src="{{ url('assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
 <script src="{{ url('assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
 {{-- varibles --}}
-@if (DataAuth()->level == 'LAB_HEAD')
 <script>
-  var select_kasublab = new TomSelect("#inp-kalab",{
-    create: false,			
-    valueField: 'id',
-    labelField: 'title',
-    searchField: 'title',
-    render: {
-      option: function(data, escape) {
-        return '<div><span class="title">'+escape(data.title)+'</span></div>';
-      },
-      item: function(data, escape) {
-        return '<div id="select-signed-user">'+escape(data.title)+'</div>';
-      }
-    }
-  });
-</script>
-@else
-@endif
-<script>
-  var select_technicians = new TomSelect("#inp-teknisi",{
-    create: false,
-    maxItems: 10,
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
-			}
-		}
-  });
   var select_status = new TomSelect("#inp-status",{
     create: false,
 		valueField: 'id',
@@ -481,7 +468,39 @@ Lab management | Dashboard
     location.reload();
   };
 </script>
-{{-- ready function --}}
+{{--  --}}
+@if (DataAuth()->level == 'LAB_HEAD')
+<script>
+  var select_kasublab = new TomSelect("#inp-kalab",{
+    create: false,			
+    valueField: 'id',
+    labelField: 'title',
+    searchField: 'title',
+    render: {
+      option: function(data, escape) {
+        return '<div><span class="title">'+escape(data.title)+'</span></div>';
+      },
+      item: function(data, escape) {
+        return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+      }
+    }
+  });
+  var select_technicians = new TomSelect("#inp-teknisi",{
+    create: false,
+    maxItems: 10,
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+</script>
 <script>
   $(document).ready(function () {
     var user_subhead_lab = actGetUser_labSubhead();
@@ -489,6 +508,35 @@ Lab management | Dashboard
     select_kasublab.addOptions(user_subhead_lab);
     select_technicians.addOptions(user_technicians);
   });
+</script>
+@elseif(DataAuth()->level == 'LAB_SUBHEAD')
+<script>
+  var select_technicians = new TomSelect("#inp-teknisi",{
+    create: false,
+    maxItems: 10,
+		valueField: 'id',
+		labelField: 'title',
+		searchField: 'title',
+		render: {
+			option: function(data, escape) {
+				return '<div><span class="title">'+escape(data.title)+'</span></div>';
+			},
+			item: function(data, escape) {
+				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
+			}
+		}
+  });
+</script>
+<script>
+  $(document).ready(function () {
+    var user_technicians = actGetUser_labTechnicians();
+    select_technicians.addOptions(user_technicians);
+  });
+</script>
+@endif
+{{--  --}}
+{{-- ready function --}}
+<script>
   $(document).ready( function() {
     $(document).on('change', '#btn-file-foto :file', function() {
       var input = $(this),

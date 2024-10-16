@@ -10,6 +10,7 @@ use App\Models\Lab_facility;
 use App\Models\Lab_schedule;
 use Auth;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 use App\Models\Laboratory;
 use App\Models\Lab_sch_date;
@@ -27,6 +28,13 @@ class ScheduleController extends Controller
 		return view('contents.content_datalist.data_schedule_lab');
 	}
 	/* Tags:... */
+	public function dataSchedulePinjam(Request $request)
+	{
+		// die();
+		$lab_id = $request->id;
+		$data_lab = Laboratory::where('lab_id', $lab_id)->first();
+		return view('contents.content_datalist.data_schedule_pinjam', compact('lab_id', 'data_lab'));
+	}
 	public function dataSchedule(Request $request)
 	{
 		// die();
@@ -51,52 +59,126 @@ class ScheduleController extends Controller
 		$user = Auth::user();
 		$err = array();
 		$id_lab_sch = genIdLaSch();
-		$day = date('l', strtotime($request->inp_day));
 		$id_sch_date = genIdDateSch();
-		$check_sch = Lab_sch_date::join('lab_schedules', 'lab_sch_dates.lscd_sch','=','lab_schedules.lbs_id')
-		->join('lab_sch_times', 'lab_sch_dates.lscd_id','=', 'lab_sch_times.lsct_date_id')
-		->join('laboratory_time_options', 'lab_sch_times.lsct_time_id','=', 'laboratory_time_options.lti_id')
-		->where('lbs_lab', $request->lab_id)
-		->where('lscd_day', $day)
-		->where('lbs_type', 'reguler')
-		->select('lbs_id', 'lbs_lab', 'lbs_matkul', 'lbs_submission', 'lbs_tenant_init', 'lbs_tenant_name', 'lbs_type',
-			'lscd_date','lscd_day','lscd_status','lscd_id','lscd_sch','lscd_status','lsct_date_id','lsct_status','lti_id','lti_start','lti_end')
-		->get();
-		$ck_id = $check_sch->whereIn('lti_id',[$request->inp_time]);
-		$ids_str = implode('.', $request->inp_res_person);
-		if ($ck_id->count() == 0) {
-			$data_sch = [
-				'lbs_id' => $id_lab_sch,
-				'lbs_lab' =>  $request->lab_id,
-				'lbs_type' => 'reguler',
-				'lbs_matkul' => $request->inp_subject,
-				'lbs_tenant_name' => $request->inp_group,
-				'lbs_res_person' => $ids_str,
-				'created_by' => $user->id
+		$dtStart = Carbon::parse(date('Y-m-d', strtotime($request->inp_dt_start)))->format('Y-m-d');
+		$dtEnd = Carbon::parse(date('Y-m-d', strtotime($request->inp_dt_start)))->format('Y-m-d');
+		$period = CarbonPeriod::create($dtStart, $dtEnd);
+		foreach ($period as $key => $value) {
+			$dateFormated = date('Y-m-d', strtotime($value));
+			$datesAr[$key] = $dateFormated;
+		}
+		$dateStr = implode('#', $datesAr);
+		// dd($request->inp_time);
+		foreach ($datesAr as $key => $value) {
+			$c = lab_schedule::where('lbs_dates_period','like', '%'.$value.'%')
+			->where('lbs_type', 'reguler')
+			->first();
+			if ($c != null) {
+				// echo $c ."<br>";
+				$check_dt = Lab_sch_date::join('lab_sch_times', 'lab_sch_dates.lscd_id', '=', 'lab_sch_times.lsct_date_id')
+				->join('laboratory_time_options', 'lab_sch_times.lsct_time_id', '=', 'laboratory_time_options.lti_id')
+				->where('lscd_sch', $c->lbs_id)
+				->select('lscd_sch','lsct_date_id', 'lsct_time_id','lti_id')
+				->get();
+				// echo $check_dt->lbs_id;
+				foreach ($check_dt as $key => $svalue) {
+					echo $svalue.'<br>';
+					if (in_array($svalue->lti_id, $request->inp_time)) {
+						echo 'ada<br>';
+						return redirect()->back()->withErrors(['msg_err' => 'Jadwal yang anda buat konflik, harap cek kembali jadwal anda.']);
+					}
+				}
+			}
+		}
+		$data_sch = [
+			'lbs_id' => $id_lab_sch,
+			'lbs_lab' =>  $request->lab_id,
+			'lbs_type' => 'reguler',
+			'lbs_matkul' => $request->inp_subject,
+			'lbs_tenant_name' => $request->inp_group,
+			'lbs_res_person' => $request->inp_res_person,
+			'created_by' => $user->id,
+			'lbs_date_start' => $request->inp_dt_start,
+			'lbs_date_end'=> $request->inp_dt_end,
+			'lbs_dates_period' => $dateStr,
+		];
+		$data_date = [
+			'lscd_id' => $id_sch_date,
+			'lscd_sch' => $id_lab_sch,
+			'lscd_day' => null,
+			'lscd_date' => null,
+			'lscd_status' => 'active'
+		];
+		foreach ($request->inp_time as $key => $value) {
+			$data_time[$key] = [
+				'lsct_date_id' => $id_sch_date,
+				'lsct_time_id' => $value,
+				'lsct_status' => 'active'
 			];
-
-			$data_date = [
-				'lscd_id' => $id_sch_date,
-				'lscd_sch' => $id_lab_sch,
-				'lscd_day' => $day,
-				'lscd_date' => null,
-				'lscd_status' => 'active'
-			];
-			// dd($request->inp_time);
-			foreach ($request->inp_time as $key => $value) {
-				$data_time[$key] = [
-					'lsct_date_id' => $id_sch_date,
+		}
+		$storeLabSch = Lab_schedule::insert($data_sch);
+		$storeLabSchdate = Lab_sch_date::insert($data_date);
+		$storeLabSchTime = Lab_sch_time::insert($data_time);
+		return redirect()->route('schedule_lab', ['id' => $request->lab_id]);
+	}
+	public function actionUpdateLabSch(Request $request)
+	{
+		$user = Auth::user();
+		$dtStart = Carbon::parse(date('Y-m-d', strtotime($request->inp_dt_start)))->format('Y-m-d');
+		$dtEnd = Carbon::parse(date('Y-m-d', strtotime($request->inp_dt_start)))->format('Y-m-d');
+		$period = CarbonPeriod::create($dtStart, $dtEnd);
+		foreach ($period as $key => $value) {
+			$dateFormated = date('Y-m-d', strtotime($value));
+			$datesAr[$key] = $dateFormated;
+		}
+		$dateStr = implode('#', $datesAr);
+		// dd($request->inp_time);
+		foreach ($datesAr as $key => $value) {
+			$c = lab_schedule::where('lbs_dates_period', 'like', '%' . $value . '%')
+				->where('lbs_type', 'reguler')
+				->first();
+			if ($c != null) {
+				// echo $c ."<br>";
+				$check_dt = Lab_sch_date::join('lab_sch_times', 'lab_sch_dates.lscd_id', '=', 'lab_sch_times.lsct_date_id')
+				->join('laboratory_time_options', 'lab_sch_times.lsct_time_id', '=', 'laboratory_time_options.lti_id')
+				->where('lscd_sch', $c->lbs_id)
+					->select('lscd_sch', 'lsct_date_id', 'lsct_time_id', 'lti_id')
+					->get();
+				// echo $check_dt->lbs_id;
+				foreach ($check_dt as $key => $svalue) {
+					echo $svalue . '<br>';
+					if (in_array($svalue->lti_id, $request->inp_time ) && $svalue->lscd_sch != $request->lscd_id ) {
+						echo 'ada<br>';
+						return redirect()->back()->withErrors(['msg_err' => 'Jadwal yang anda buat konflik, harap cek kembali jadwal anda.']);
+					}
+				}
+			}
+		}
+		$data = [
+			'lbs_type' => 'reguler',
+			'lbs_matkul' => $request->inp_subject,
+			'lbs_tenant_name' => $request->inp_group,
+			'lbs_res_person' => $request->inp_res_person,
+			'lbs_date_start' => $request->inp_dt_start,
+			'lbs_date_end' => $request->inp_dt_end,
+			'lbs_dates_period' => $dateStr,
+		];
+		$times = $request->inp_time;
+		$data_times = [];
+		if (count($times) > 0) {
+			foreach ($times as $key => $value) {
+				$data_times[$key] = [
+					'lsct_date_id' => $request->lscd_id,
 					'lsct_time_id' => $value,
 					'lsct_status' => 'active'
 				];
 			}
-			$storeLabSch = Lab_schedule::insert($data_sch);
-			$storeLabSchdate = Lab_sch_date::insert($data_date);
-			$storeLabSchTime = Lab_sch_time::insert($data_time);
-			return redirect()->route('schedule_lab', ['id' => $request->lab_id]);
-		} else {
-			return redirect()->back();
 		}
+		Lab_sch_time::where('lsct_date_id', $request->lscd_id)->delete();
+		Lab_sch_time::insert($data_times);
+		Lab_sch_date::where('lscd_id', $request->lscd_id)->update(['lscd_day' => $request->inp_day]);
+		Lab_schedule::where('lbs_id', $request->lbs_id)->update($data);
+		return redirect()->back();
 	}
 	/* Tags:... */
 	public function dataSchReguler(Request $request)

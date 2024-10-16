@@ -635,23 +635,23 @@ class PengajuanController extends Controller
 			}
 			$commonValues_nr[$key] = array_intersect($value, $id_time);
 		}
-		# non_reguler
-		foreach ($mkdate as $key => $value) {
-			$day = date('l', strtotime($key));
-			$check_dt = Lab_sch_date::join('lab_sch_times', 'lab_sch_dates.lscd_id', '=', 'lab_sch_times.lsct_date_id')
-			->join('lab_schedules', 'lab_sch_dates.lscd_id', '=', 'lab_schedules.lbs_id')
-			->where('lbs_type', 'reguler')
-			->where('lbs_lab', $request->inp_lab)
-			->where('lscd_day', $day)
-			->select('lsct_date_id', 'lsct_time_id')
-			->get();
-			$id_time = [];
-			foreach ($check_dt as $skey => $svalue) {
-				$id_time[$b] = $svalue->lsct_time_id;
-				$b++;
-			}
-			$commonValues_r[$key] = array_intersect($value, $id_time);
-		}
+		# reguler
+		// foreach ($mkdate as $key => $value) {
+		// 	$day = date('l', strtotime($key));
+		// 	$check_dt = Lab_sch_date::join('lab_sch_times', 'lab_sch_dates.lscd_id', '=', 'lab_sch_times.lsct_date_id')
+		// 	->join('lab_schedules', 'lab_sch_dates.lscd_id', '=', 'lab_schedules.lbs_id')
+		// 	->where('lbs_type', 'reguler')
+		// 	->where('lbs_lab', $request->inp_lab)
+		// 	->where('lscd_day', $day)
+		// 	->select('lsct_date_id', 'lsct_time_id')
+		// 	->get();
+		// 	$id_time = [];
+		// 	foreach ($check_dt as $skey => $svalue) {
+		// 		$id_time[$b] = $svalue->lsct_time_id;
+		// 		$b++;
+		// 	}
+		// 	$commonValues_r[$key] = array_intersect($value, $id_time);
+		// }
 		$web_err_time = '';
 		foreach ($commonValues_nr as $key => $value) {
 			foreach ($value as $skey => $svalue) {
@@ -660,13 +660,13 @@ class PengajuanController extends Controller
 				$web_err_time .= 'Jadwal konflik pada ' . $day . ' jam ' . $dtime->lti_start . ' - ' . $dtime->lti_end . '<br>';
 			}
 		}
-		foreach ($commonValues_r as $key => $value) {
-			foreach ($value as $skey => $svalue) {
-				$dtime = Laboratory_time_option::where('lti_id', $svalue)->first();
-				$day = date('d-M-Y', strtotime($key));
-				$web_err_time .= 'Jadwal konflik pada ' . $day . ' jam ' . $dtime->lti_start . ' - ' . $dtime->lti_end . '<br>';
-			}
-		}
+		// foreach ($commonValues_r as $key => $value) {
+		// 	foreach ($value as $skey => $svalue) {
+		// 		$dtime = Laboratory_time_option::where('lti_id', $svalue)->first();
+		// 		$day = date('d-M-Y', strtotime($key));
+		// 		$web_err_time .= 'Jadwal konflik pada ' . $day . ' jam ' . $dtime->lti_start . ' - ' . $dtime->lti_end . '<br>';
+		// 	}
+		// }
 		if ($web_err_time != '') {
 			return redirect()->back()->withErrors(['sch_konflik_err' => $web_err_time]);
 		}
@@ -759,7 +759,6 @@ class PengajuanController extends Controller
 			'dates' => implode(', ', $p_dates),
 			'datetimes' => $times_text,
 		];
-		
 		#data order by date
 		$id_order = getIdOrder();
 		$no_deatil_order = 0;
@@ -1944,12 +1943,13 @@ class PengajuanController extends Controller
 					"lscd_status" => 'active',
 				];
 			$data_jam[$key] = Lab_sub_time::where('lstt_date_subs_id', $value->lsd_id)->get();
+			
 			if ($data_jam[$key] != null) {
 				$idx_time = 0;
 				$cek_time = [];
 				foreach ($data_jam[$key] as $skey => $value) {
 					$inp_time[$idx_time] = [
-						"lsct_date_id" => $value->lstt_date_subs_id,
+						"lsct_date_id" => $id_sch_date,
 						"lsct_time_id" => $value->lstt_time_id,
 						"lsct_status" => 'active'
 					];
@@ -1960,6 +1960,8 @@ class PengajuanController extends Controller
 			$recek_date[$p_dates[$key]] = $cek_time;
 			$id_sch_date++;
 		}
+		// dd($inp_time);
+		// die();
 		# data jadwal
 		$web_date = '';
 		#skop action rule

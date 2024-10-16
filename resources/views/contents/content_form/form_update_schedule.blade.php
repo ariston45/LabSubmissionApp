@@ -32,23 +32,11 @@ Lab management | Dashboard
         <div class="form-group has-feedback {{ $errors->has('inp_day') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Hari
+              Tanggal
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select type="text" class="form-control" name="inp_day" id="inp-day" value="" placeholder="Pilih hari..">
-              <option value=""></option>
-              <option value="Sunday" @if ( $data_sch_lab->lscd_day == 'Sunday') selected @endif >Minggu</option>
-              <option value="Monday" @if ( $data_sch_lab->lscd_day == 'Monday') selected @endif >Senin</option>
-              <option value="Tuesday" @if ( $data_sch_lab->lscd_day == 'Tuesday') selected @endif >Selasa</option>
-              <option value="Wednesday" @if ( $data_sch_lab->lscd_day== 'Wednesday') selected @endif >Rabu</option>
-              <option value="Thursday" @if ( $data_sch_lab->lscd_day == 'Thursday') selected @endif >Kamis</option>
-              <option value="Friday" @if ( $data_sch_lab->lscd_day == 'Friday') selected @endif >Jumat</option>
-              <option value="Saturday" @if ( $data_sch_lab->lscd_day == 'Saturday') selected @endif >Sabtu</option>
-            </select>
-            @if ($errors->has('inp_day'))
-						<span style="color: red;"><i>{{ $errors->first('inp_day') }}</i></span>
-						@endif
+            <input type="text" id="inp-dt-start" class="form-control" name="inp_dt_start" value="{{ $data_sch_lab->lbs_date_start }}" placeholder="Input tanggal mulai jadwal..">
           </div>
         </div>
         <div class="form-group has-feedback {{ $errors->has('inp_time_start') ? ' has-error' : '' }} {{ $errors->has('inp_time_end') ? ' has-error' : '' }}">
@@ -66,8 +54,8 @@ Lab management | Dashboard
               </option>  
               @endforeach
             </select>
-            @if ($errors->has('inp_time'))
-						<span style="color: red;"><i>{{ $errors->first('inp_time') }}</i></span>
+            @if ($errors->has('msg_err'))
+						<span style="color: red;"><i>{{ $errors->first('msg_err') }}</i></span>
 						@endif
           </div>
         </div>
@@ -189,20 +177,6 @@ Lab management | Dashboard
 			},
 		});
   };
-  var select_hari = new TomSelect("#inp-day",{
-    create: false,			
-		valueField: 'id',
-		labelField: 'title',
-		searchField: 'title',
-		render: {
-			option: function(data, escape) {
-				return '<div><span class="title">'+escape(data.title)+'</span></div>';
-			},
-			item: function(data, escape) {
-				return '<div id="select-signed-user">'+escape(data.title)+'</div>';
-			}
-		}
-  });
   var select_user = new TomSelect("#inp-res-person",{
     create: false,
     maxItems: 1,
@@ -260,7 +234,7 @@ Lab management | Dashboard
 </script>
 {{-- call by id or class --}}
 <script>
-  $('#date-pick-start').datepicker({
+  $('#inp-dt-start').datepicker({
     autoclose: true,
     format: 'yyyy-mm-dd',
     todayHighlight: true,

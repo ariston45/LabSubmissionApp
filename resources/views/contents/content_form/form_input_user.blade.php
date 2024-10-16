@@ -1,21 +1,21 @@
 
 @extends('layout.app')
 @section('title')
-Lab management | Dashboard
+SIPLAB | Input User
 @endsection
 @section('breadcrumb')
-<h4>Laboratorium</h4>
+<h4>Pengaturan</h4>
 <ol class="breadcrumb">
-  <li><a href="#"><i class="fa fa-home"></i> Laboratorium</a></li>
-  <li class=""><a href="#">Jadwal Laboratorium</a></li>
-  <li class="active"><a href="#">Form Jadwal Laboratorium</a></li>
+  <li><a href="#"><i class="fa fa-home"></i> Pengaturan</a></li>
+  <li class=""><a href="#">Data User</a></li>
+  <li class="active"><a href="#">Input User</a></li>
 </ol>
 @endsection
 @section('content')
 <div class="col-md-12">
   <div class="box box-primary">
     <div class="box-header with-border">
-      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Input Jadwal Laboratorium</h3>
+      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Input Data User</h3>
       <div class="pull-right">
         <a href="{{ url('pengaturan/user') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>

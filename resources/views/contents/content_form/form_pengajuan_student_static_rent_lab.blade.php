@@ -1,7 +1,7 @@
 
 @extends('layout.app')
 @section('title')
-Lab management | Dashboard
+SIPLAB | Dashboard
 @endsection
 @section('breadcrumb')
 <h4>Pengajuan</h4>
@@ -130,7 +130,7 @@ Lab management | Dashboard
           </label>
           <div class="col-sm-12 col-md-9">
             <div style="margin-bottom: 5px;">
-              <select id="inp-tool-opsional" class="form-control" multiple name="inp_fasilitas_opsional">
+              <select id="inp-tool-opsional" class="form-control" multiple name="inp_fasilitas_opsional[]">
                 <option value="{{ null }}">Pilih fasilitas/alat..</option>
               </select>
             </div>

@@ -1,6 +1,6 @@
 @extends('layout.app')
 @section('title')
-Lab management | Dashboard
+SIPLAB | Dashboard
 @endsection
 @section('breadcrumb')
 <h4>Jadwal Laboratorium</h4>
@@ -40,8 +40,8 @@ Lab management | Dashboard
 				<div class="row">
 					<div class="col-sm-12">
 						<i>Catatan : </i>
-						<small class="label bg-navy">Label warna untuk jadwal reguler</small>
-						<small class="label bg-purple">Label warna untuk jadwal non-reguler</small>
+						{{-- <small class="label bg-navy">Label warna untuk jadwal reguler</small> --}}
+						<small class="label bg-purple">Label warna untuk jadwal pinjam</small>
 					</div>
 				</div>
 			</div>

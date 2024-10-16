@@ -377,10 +377,10 @@ class DataController extends Controller
 	{
 		if ($request->group == 'all' || $request->group == null) {
 			# code...
-			$data = Laboratory::join('laboratory_groups','laboratories.lab_group','=', 'laboratory_groups.lag_id')
+			$data = Laboratory::join('ft_groups','laboratories.lab_group','=', 'ft_groups.lag_id')
 			->get();
 		}else{
-			$data = Laboratory::join('laboratory_groups', 'laboratories.lab_group', '=', 'laboratory_groups.lag_id')
+			$data = Laboratory::join('ft_groups', 'laboratories.lab_group', '=', 'ft_groups.lag_id')
 			->where('lag_id',$request->group)
 			->get();
 		}
@@ -415,11 +415,11 @@ class DataController extends Controller
 	{
 		if ($request->group == 'all' || $request->group == null) {
 			# code...
-			$data = Laboratory::join('laboratory_groups', 'laboratories.lab_group', '=', 'laboratory_groups.lag_id')
+			$data = Laboratory::join('ft_groups', 'laboratories.lab_group', '=', 'ft_groups.lag_id')
 			->where('lab_name','like','%'.$request->find.'%')
 			->get();
 		} else {
-			$data = Laboratory::join('laboratory_groups', 'laboratories.lab_group', '=', 'laboratory_groups.lag_id')
+			$data = Laboratory::join('ft_groups', 'laboratories.lab_group', '=', 'ft_groups.lag_id')
 			->where('lag_id', $request->group)
 			->where('lab_name', 'like', '%' . $request->find . '%')
 			->get();

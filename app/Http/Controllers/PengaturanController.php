@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Laboratory_group;
 use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\UserPostRequest;
 use App\Http\Requests\UserPostUpdateRequest;
+use App\Models\Ft_group;
 use App\Models\Unesa_data;
 use App\Models\User;
 use App\Models\User_detail;
@@ -22,11 +22,25 @@ class PengaturanController extends Controller
 	{
 		return view('contents.content_datalist.data_user');
 	}
+	public function viewManagementRumpun(Request $request)
+	{
+		return view('contents.content_datalist.data_rumpun');
+	}
 	/* Tags:... */
 	public function formInputUser(Request $request)
 	{
-		$data_rumpun = Laboratory_group::get();
+		$data_rumpun = Ft_group::get();
 		return view('contents.content_form.form_input_user',compact('data_rumpun'));
+	}
+	public function formInputRumpun(Request $request)
+	{
+		$data_rumpun = Ft_group::get();
+		return view('contents.content_form.form_input_rumpun', compact('data_rumpun'));
+	}
+	public function formUpdateRumpun(Request $request)
+	{
+		$data_rumpun = Ft_group::where('lag_id',$request->id)->first();
+		return view('contents.content_form.form_input_rumpun', compact('data_rumpun'));
 	}
 	public function formInputSmtp(Request $request)
 	{
@@ -64,6 +78,25 @@ class PengaturanController extends Controller
 		$storeUser = User::insert($data);
 		User_detail::insert($data_ii);
 		return redirect()->route('setting_user');
+	}
+	public function actionInputRumpun(Request $request)
+	{
+		$max_id = Ft_group::max('lag_id');
+		$new_id = $max_id + 1;
+		$data = [
+			'lag_id' => $new_id,
+			'lag_name' => $request->inp_name,
+		];
+		Ft_group::insert($data);
+		return redirect()->route('setting_rumpun');
+	}
+	public function actionUpdateRumpun(Request $request)
+	{
+		$data = [
+			'lag_name' => $request->inp_name,
+		];
+		Ft_group::where('lag_id',$request->inp_id)->update(['lag_name'=>$request->inp_name]);
+		return redirect()->route('setting_rumpun');
 	}
 	public function actionUpdateUser(UserPostUpdateRequest $request)
 	{
@@ -153,6 +186,7 @@ class PengaturanController extends Controller
 				'email' => $email,
 				'name' => $request->inp_name,
 				'nip' => $request->inp_nip,
+				'rumpun_id' => $request->inp_rumpun,
 			];
 		} else {
 			$data = [
@@ -163,6 +197,7 @@ class PengaturanController extends Controller
 				'level' => $request->inp_level,
 				'password' => bcrypt($request->inp_password),
 				'nip' => $request->nip,
+				'rumpun_id' => $request->inp_rumpun,
 			];
 		}
 		# cek user detail
@@ -230,21 +265,22 @@ class PengaturanController extends Controller
 	public function formUpdateUser(Request $request)
 	{
 		$data_user = User::leftjoin('user_details', 'users.id', '=', 'user_details.usd_user')
-		->leftJoin('laboratory_groups','users.rumpun_id','=', 'laboratory_groups.lag_id')
+		->leftJoin('ft_groups','users.rumpun_id','=', 'ft_groups.lag_id')
 		->where('id', $request->id)
 		->first();
 		// dd($data_user);
-		$data_rumpun = Laboratory_group::get();
+		$data_rumpun = Ft_group::get();
 		// dd($data_user);
 		return view('contents.content_form.form_update_user',compact('data_user', 'data_rumpun'));
 	}
 	public function formUpdateProfil(Request $request)
 	{
 		$data_user = User::leftjoin('user_details', 'users.id', '=', 'user_details.usd_user')
+		->leftJoin('ft_groups','users.rumpun_id','=', 'ft_groups.lag_id')
 		->where('id', $request->id)
 		->first();
-		// dd($data_user);
-		return view('contents.content_form.form_update_profile', compact('data_user'));
+		$data_rumpun = Ft_group::get();
+		return view('contents.content_form.form_update_profile', compact('data_user', 'data_rumpun'));
 	}
 	public function formPengaturanDatasource(Request $request)
 	{

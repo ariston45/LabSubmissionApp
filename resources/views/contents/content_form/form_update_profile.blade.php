@@ -1,7 +1,7 @@
 
 @extends('layout.app')
 @section('title')
-Lab management | Dashboard
+SIPLAB | Dashboard
 @endsection
 @section('breadcrumb')
 <h4>Pengaturan</h4>
@@ -71,6 +71,25 @@ Lab management | Dashboard
             <input type="number" id="inp-no-id" class="form-control" name="inp_nip" value="{{ $data_user->nip }}" placeholder="Input nip .." autocomplete="new-password" >
             @if ($errors->has('inp_nip'))
 						<span style="color: red;"><i>{{ $errors->first('inp_nip') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{--  --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_rumpun') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Pilih Rumpun <span style="color:red;">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <select type="text" class="form-control" name="inp_rumpun" id="inp-rumpun" value="" placeholder="Pilih rumpun.." autocomplete="new-password" required>
+              <option value="{{ null }}">Pilih rumpun</option>
+              @foreach ($data_rumpun as $list)
+                <option value="{{ $list->lag_id }}" @if ($list->lag_id == $data_user->rumpun_id) selected @endif>{{ $list->lag_name }}</option>                    
+              @endforeach
+            </select>
+            @if ($errors->has('inp_rumpun'))
+						<span style="color: red;"><i>{{ $errors->first('inp_rumpun') }}</i></span>
 						@endif
           </div>
         </div>

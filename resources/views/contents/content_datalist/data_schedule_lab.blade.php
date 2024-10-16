@@ -1,6 +1,6 @@
 @extends('layout.app')
 @section('title')
-Lab management | Dashboard
+SIPLAB | Dashboard
 @endsection
 @section('breadcrumb')
 <h4>Jadwal Laboratorium</h4>
@@ -25,11 +25,11 @@ Lab management | Dashboard
 				<thead>
 					<tr>
 						<th style="width: 3%">No</th>
-						<th style="width: 25%">Nama Laboratorium</th>
-						<th style="width: 25%">Kepala Lab</th>
-            <th style="width: 25%">Lokasi</th>
+						<th style="width: 20%">Nama Laboratorium</th>
+						<th style="width: 20%">Kepala Lab</th>
+            <th style="width: 25%">Rumpun</th>
 						<th style="width: 10%;text-align:center;">Status</th>
-						<th style="width: 10%;text-align:center;">Opsi</th>
+						<th style="width: 20%;text-align:center;">Opsi</th>
 					</tr>
 				</thead>
 			</table>
@@ -82,7 +82,7 @@ Lab management | Dashboard
 				{data: 'DT_RowIndex', name: 'DT_RowIndex'},
 				{data: 'name', name: 'name', orderable: true, searchable: true },
 				{data: 'head', name: 'head', orderable: true, searchable: true },
-				{data: 'location', name: 'location', orderable: true, searchable: true },
+				{data: 'rumpun', name: 'rumpun', orderable: true, searchable: true },
 				{data: 'status', name: 'status', orderable: false, searchable: true },
 				{data: 'opsi', name: 'opsi', orderable: false, searchable: false},
 			]

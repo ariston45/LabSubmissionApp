@@ -806,7 +806,7 @@ class PengajuanController extends Controller
 			}
 		}
 		if (isset($request->inp_fasilitas_opsional)) {
-			foreach ($request->inp_fasilitas as $key => $value) {
+			foreach ($request->inp_fasilitas_opsional as $key => $value) {
 				$tool_ids_oposional[$key] = $value;
 			}
 		}

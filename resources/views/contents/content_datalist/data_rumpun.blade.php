@@ -1,40 +1,42 @@
 @extends('layout.app')
 @section('title')
-SIPLAB | Dashboard
+SIPLAB | Pengaturan
 @endsection
 @section('breadcrumb')
-<h4>Laboratorium</h4>
+<h4>Pengaturan</h4>
 <ol class="breadcrumb">
-	<li><a href="#"><i class="fa fa-home"></i> Uji Laboratorium</a></li>
+	<li><a href="#"><i class="fa fa-home"></i> Rumpun</a></li>
 </ol>
 @endsection
 @section('content')
 <div class="col-md-12">
 	<div class="box box-primary">
 		<div class="box-header with-border">
-			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Uji Laboratorium</h3>
+			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Rumpun</h3>
 			<div class="pull-right">
-				@if (rulesUser(['ADMIN_SYSTEM','ADMIN_MASTER','LAB_HEAD']))
-				<a href="{{ url('uji_laboratorium/select-laboratorium') }}">
-					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah Uji Laboratorium</button>
+				<a href="{{ url('pengaturan/rumpun/form-input-rumpun') }}">
+					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah </button>
 				</a>
-				@endif
 			</div>
 		</div>
 		<div class="box-body">
 			<div class="clearfix"></div>
-			<table id="tabel_uji_laboratorium" class="table tabel_custom table-condensed">
-				<thead>
-					<tr>
-						<th style="width: 5%">No</th>
-						<th style="width: 30%">Nama Uji Lab</th>
-						<th style="width: 30%">Laboratorium</th>
-						<th style="width: 20%">Kepala Lab</th>
-						<th style="width: 15%">Status</th>
-						<th style="width: 10%;text-align:center;">Opsi</th>
-					</tr>
-				</thead>
-			</table>
+				<div class="callout bg-purple-active">
+          Perhatian, anda hanya dapat melakukan tambah data rumpun dan perbarui data rumpun.
+        </div>
+			<div class="row">
+				<div class="col-md-8">
+					<table id="tabel_rumpun" class="table tabel_custom table-condensed">
+						<thead>
+							<tr>
+								<th style="width: 3%">No</th>
+								<th style="width: 30%">Nama</th>
+								<th style="width: 10%;text-align:center;">Opsi</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -67,22 +69,24 @@ SIPLAB | Dashboard
 <script src="{{ url('assets/plugins/datatables/media/js/dataTables.bootstrap.min.js') }}"></script>
 <script src="{{ url('assets/plugins/datatables/extensions/Responsive/js/dataTables.responsive.js') }}"></script>
 <script>
+	$('#check_all').click(function() {
+    $('.check_in_data').prop('checked', this.checked);
+  });
+</script>
+<script>
 	$(document).ready(function (){
-		tabel_siswa = $('#tabel_uji_laboratorium').DataTable({
+		tabel_siswa = $('#tabel_rumpun').DataTable({
 			processing: true,
 			serverSide: true,
 			responsive: true,
 			lengthChange: true,
 			ajax: {
-				"url" : "{!! route('source_data_labtest') !!}",
+				"url" : "{!! route('source-datatables-rumpun') !!}",
 				"type" : "POST",
 			},
 			columns: [
 				{data: 'DT_RowIndex', name: 'DT_RowIndex'},
-				{data: 'name', name: 'name', orderable: true, searchable: true },
-				{data: 'lab', name: 'lab', orderable: true, searchable: true },
-				{data: 'name_kasublab', name: 'name_kasublab', orderable: true, searchable: true },
-				{data: 'status', name: 'status', orderable: true, searchable: true },
+				{data: 'nama_rumpun', name: 'nama_rumpun', orderable: false, searchable: false },
 				{data: 'opsi', name: 'opsi', orderable: false, searchable: false},
 			]
 		});

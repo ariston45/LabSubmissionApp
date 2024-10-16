@@ -64,7 +64,8 @@ Route::group(['middleware' => ['auth']], function () {
 		// Route::match(['get', 'post'], 'source-data-labtest', [DatatablesController::class, 'sourceDataLabUji'])->name('source_datatables_ujilab');
 		#User
 		Route::post('source-datatables-user', [DatatablesController::class, 'sourceDataUsers'])->name('source-datatables-user');
-
+		#Rumpun
+		Route::post('source-datatables-rumpun', [DatatablesController::class, 'sourceDataRumpun'])->name('source-datatables-rumpun');
 		#Other
 		Route::post('source-data-sch-lab-pinjam', [LaboratoryController::class, 'sourceDataScheduleLabJson'])->name('source_data_sch_lab_pinjam');
 		Route::post('source-data-sch-lab', [LaboratoryController::class, 'sourceDataScheduleLabAkademicJson'])->name('source_data_sch_lab');
@@ -229,15 +230,20 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('profil', [PengaturanController::class, 'viewDetailProfile']);
 		Route::get('user', [PengaturanController::class, 'viewManagementUser'])->name('setting_user');
 		Route::get('user-detail/{id}', [PengaturanController::class, 'viewDetailUser']);
+		Route::get('rumpun', [PengaturanController::class, 'viewManagementRumpun'])->name('setting_rumpun');
 		# form
 		Route::get('email', [PengaturanController::class, 'formInputSmtp']);
-		Route::get('form-input-user', [PengaturanController::class, 'formInputUser']);
+		Route::get('user/form-input-user', [PengaturanController::class, 'formInputUser']);
 		Route::get('profil/form-update-profil/{id}', [PengaturanController::class, 'formUpdateProfil']);
 		Route::get('user-detail/form-update-user/{id}', [PengaturanController::class, 'formUpdateUser']);
 		Route::get('form-datasource', [PengaturanController::class, 'formPengaturanDatasource']);
+		Route::get('rumpun/form-input-rumpun', [PengaturanController::class, 'formInputRumpun']);
+		Route::get('rumpun/form-update-rumpun/{id}', [PengaturanController::class, 'formUpdateRumpun']);
 		# action
 		Route::post('action-to-users', [PengaturanController::class, 'actionToUser'])->name('actio_to_users');
 		Route::post('input-data-user', [PengaturanController::class, 'actionInputUser'])->name('input-data-user');
+		Route::post('input-data-rumpun', [PengaturanController::class, 'actionInputRumpun'])->name('input-data-rumpun');
+		Route::post('update-data-rumpun', [PengaturanController::class, 'actionUpdateRumpun'])->name('update-data-rumpun');
 		Route::post('update-data-user', [PengaturanController::class, 'actionUpdateUser'])->name('update_data_user');
 		Route::post('update-data-profile', [PengaturanController::class, 'actionUpdateProfile'])->name('update_data_profile');
 		Route::post('update-datasource', [PengaturanController::class, 'actionUpdateDataSource'])->name('update_datasource');

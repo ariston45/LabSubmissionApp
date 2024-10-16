@@ -6,7 +6,7 @@ use App\Models\Lab_labtest;
 use App\Models\Lab_submission;
 use Illuminate\Http\Request;
 
-use App\Models\Laboratory_group;
+use App\Models\Ft_group;
 use App\Models\Laboratory;
 use App\Models\Laboratory_labtest;
 use App\Models\Laboratory_facility;
@@ -50,15 +50,15 @@ class LandController extends Controller
 	/* Tags:... */
 	public function viewLaboratoriumPage(Request $request)
 	{
-		$group = Laboratory_group::get();
+		$group = Ft_group::get();
 		return view('contents.content_landing.page_laboratorium',compact('group'));
 	}
 	/* Tags:... */
 	public function viewLayananPage(Request $request)
 	{
-		$data = Laboratory::join('laboratory_groups', 'laboratories.lab_group', '=', 'laboratory_groups.lag_id')
+		$data = Laboratory::join('ft_groups', 'laboratories.lab_group', '=', 'ft_groups.lag_id')
 		->get();
-		$group = Laboratory_group::get();
+		$group = Ft_group::get();
 		return view('contents.content_landing.page_layanan',compact('group','data'));
 	}
 	/* Tags:... */
@@ -145,7 +145,7 @@ class LandController extends Controller
 		->where('lst_lsv_id', $data_labtest->lsv_id)
 		->get();
 		// dd($data_labtest);
-		$data = Laboratory::join('laboratory_groups', 'laboratories.lab_group', '=', 'laboratory_groups.lag_id')
+		$data = Laboratory::join('ft_groups', 'laboratories.lab_group', '=', 'ft_groups.lag_id')
 		->where('lab_id', $request->id)
 		->first();
 		return view('contents.content_landing.detail_ujilab', compact('data_labtest', 'user_kalab', 'data_technicians', 'data_time', 'data_facility'));

@@ -1,7 +1,7 @@
 
 @extends('layout.app3')
 @section('title')
-Lab management | Dashboard
+SIPLAB | Dashboard
 @endsection
 @section('content')
 <main class="main">

@@ -581,23 +581,23 @@ CREATE TABLE `laboratory_facility_count_statuses`  (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for laboratory_groups
+-- Table structure for ft_groups
 -- ----------------------------
-DROP TABLE IF EXISTS `laboratory_groups`;
-CREATE TABLE `laboratory_groups`  (
+DROP TABLE IF EXISTS `ft_groups`;
+CREATE TABLE `ft_groups`  (
   `lag_id` int(11) NOT NULL,
   `lag_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`lag_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of laboratory_groups
+-- Records of ft_groups
 -- ----------------------------
-INSERT INTO `laboratory_groups` VALUES (1, 'Prodi S1 Pendidikan Tata Boga, Prodi S1 Pendidikan Tata Busana, dan Prodi S1 Pendidikan Tata Rias');
-INSERT INTO `laboratory_groups` VALUES (2, 'Prodi S1 Teknik Elektro dan Prodi S1 Pendidikan Teknik Elektro');
-INSERT INTO `laboratory_groups` VALUES (3, 'Prodi S1 Teknik Informatika, Prodi S1 Pendidikan Teknologi Informasi dan Prodi S1 Sistem Informasi');
-INSERT INTO `laboratory_groups` VALUES (4, 'Prodi S1 Teknik Mesin dan Prodi S1 Pendidikan Teknik Mesin');
-INSERT INTO `laboratory_groups` VALUES (5, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan');
+INSERT INTO `ft_groups` VALUES (1, 'Prodi S1 Pendidikan Tata Boga, Prodi S1 Pendidikan Tata Busana, dan Prodi S1 Pendidikan Tata Rias');
+INSERT INTO `ft_groups` VALUES (2, 'Prodi S1 Teknik Elektro dan Prodi S1 Pendidikan Teknik Elektro');
+INSERT INTO `ft_groups` VALUES (3, 'Prodi S1 Teknik Informatika, Prodi S1 Pendidikan Teknologi Informasi dan Prodi S1 Sistem Informasi');
+INSERT INTO `ft_groups` VALUES (4, 'Prodi S1 Teknik Mesin dan Prodi S1 Pendidikan Teknik Mesin');
+INSERT INTO `ft_groups` VALUES (5, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan');
 
 -- ----------------------------
 -- Table structure for laboratory_labtest_facilities

@@ -606,10 +606,10 @@ INSERT INTO `laboratory_facility_count_statuses` VALUES (29, '29', 1, 1, 0, 0, N
 INSERT INTO `laboratory_facility_count_statuses` VALUES (30, '30', 10, 5, 0, 2, NULL, '2024-08-08 11:08:10');
 
 -- ----------------------------
--- Table structure for laboratory_groups
+-- Table structure for ft_groups
 -- ----------------------------
-DROP TABLE IF EXISTS `laboratory_groups`;
-CREATE TABLE `laboratory_groups`  (
+DROP TABLE IF EXISTS `ft_groups`;
+CREATE TABLE `ft_groups`  (
   `lag_id` int(11) NOT NULL,
   `lag_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `created_at` datetime NULL DEFAULT NULL,
@@ -618,14 +618,14 @@ CREATE TABLE `laboratory_groups`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of laboratory_groups
+-- Records of ft_groups
 -- ----------------------------
-INSERT INTO `laboratory_groups` VALUES (0, 'Semua Rumpun', NULL, NULL);
-INSERT INTO `laboratory_groups` VALUES (1, 'Prodi S1 Pendidikan Tata Boga, Prodi S1 Pendidikan Tata Busana, dan Prodi S1 Pendidikan Tata Rias', NULL, NULL);
-INSERT INTO `laboratory_groups` VALUES (2, 'Prodi S1 Teknik Elektro dan Prodi S1 Pendidikan Teknik Elektro', NULL, NULL);
-INSERT INTO `laboratory_groups` VALUES (3, 'Prodi S1 Teknik Informatika, Prodi S1 Pendidikan Teknologi Informasi dan Prodi S1 Sistem Informasi', NULL, NULL);
-INSERT INTO `laboratory_groups` VALUES (4, 'Prodi S1 Teknik Mesin dan Prodi S1 Pendidikan Teknik Mesin', NULL, NULL);
-INSERT INTO `laboratory_groups` VALUES (5, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL);
+INSERT INTO `ft_groups` VALUES (0, 'Semua Rumpun', NULL, NULL);
+INSERT INTO `ft_groups` VALUES (1, 'Prodi S1 Pendidikan Tata Boga, Prodi S1 Pendidikan Tata Busana, dan Prodi S1 Pendidikan Tata Rias', NULL, NULL);
+INSERT INTO `ft_groups` VALUES (2, 'Prodi S1 Teknik Elektro dan Prodi S1 Pendidikan Teknik Elektro', NULL, NULL);
+INSERT INTO `ft_groups` VALUES (3, 'Prodi S1 Teknik Informatika, Prodi S1 Pendidikan Teknologi Informasi dan Prodi S1 Sistem Informasi', NULL, NULL);
+INSERT INTO `ft_groups` VALUES (4, 'Prodi S1 Teknik Mesin dan Prodi S1 Pendidikan Teknik Mesin', NULL, NULL);
+INSERT INTO `ft_groups` VALUES (5, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for laboratory_labtest_facilities

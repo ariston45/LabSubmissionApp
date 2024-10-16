@@ -1,6 +1,6 @@
 @extends('layout.app')
 @section('title')
-Lab management | Dashboard
+SIPLAB | Dashboard
 @endsection
 @section('breadcrumb')
 <h4>Pengaturan</h4>
@@ -14,7 +14,7 @@ Lab management | Dashboard
 		<div class="box-header with-border">
 			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Users</h3>
 			<div class="pull-right">
-				<a href="{{ url('pengaturan/form-input-user') }}">
+				<a href="{{ url('pengaturan/user/form-input-user') }}">
 					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah </button>
 				</a>
 			</div>

@@ -1,6 +1,6 @@
 @extends('layout.app')
 @section('title')
-Lab management | Dashboard
+SIPLAB | Dashboard
 @endsection
 @section('breadcrumb')
 <h4>Jadwal Laboratorium</h4>

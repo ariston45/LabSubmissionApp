@@ -1,10 +1,10 @@
 
 @extends('layout.app')
 @section('title')
-SIPLAB | Dashboard
+SIPLAB | Input Rumpun
 @endsection
 @section('breadcrumb')
-<h4>Laboratorium</h4>
+<h4>Pengaturan</h4>
 <ol class="breadcrumb">
   <li><a href="#"><i class="fa fa-home"></i> Laboratorium</a></li>
   <li class=""><a href="#">Jadwal Laboratorium</a></li>
@@ -17,46 +17,35 @@ SIPLAB | Dashboard
     <div class="box-header with-border">
       <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Input Jadwal Laboratorium</h3>
       <div class="pull-right">
-        <a href="{{ url('jadwal_lab/'.$lab_id) }}">
+        <a href="{{ url('pengaturan/rumpun') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>
     </div>
-    <form class="form-horizontal" action="{{ route('input_exclude_sch') }}" method="POST" enctype="multipart/form-data">
+    <form class="form-horizontal" action="{{ route('update-data-rumpun') }}" method="POST" enctype="multipart/form-data" autocomplete="off">
       @csrf
       <div class="box-body">
         {{-- !! --}}
-        <input type="hidden" name="lab_id" value="{{ $lab_id }}">
-        <div class="form-group has-feedback {{ $errors->has('inp_day') ? ' has-error' : '' }}">
+        {{-- <input type="hidden" name="lab_id" value="{{ $lab_id }}"> --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_name') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
-              Pilih tanggal
+              Nama <span style="color: red;">*</span>
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="date-pick-start" name="date_exclude" onchange="actionGetTime()"  value="{{ old('date_start') }}" class="form-control pull-right" placeholder="yyyy-mm-dd" readonly>
-            @if ($errors->has('inp_day'))
-						<span style="color: red;"><i>{{ $errors->first('inp_day') }}</i></span>
+            <input type="hidden" id="inp-id" class="form-control" name="inp_id" value="{{ $data_rumpun->lag_id }}">
+            <input type="text" id="inp-name" class="form-control" name="inp_name" value="{{ $data_rumpun->lag_name }}" placeholder="Input nama.." autocomplete="new-password" required>
+            @if ($errors->has('inp_name'))
+						<span style="color: red;"><i>{{ $errors->first('inp_name') }}</i></span>
 						@endif
           </div>
         </div>
-        <div class="form-group has-feedback {{ $errors->has('inp_time_start') ? ' has-error' : '' }} {{ $errors->has('inp_time_end') ? ' has-error' : '' }}">
-          <label class="col-sm-12 col-md-3 control-label" >
-            <span style="padding-right: 30px;">
-              Pilih Jam
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-9">
-            <select id="inp-times" class="form-control" name="inp_times" placeholder="Input jam..">
-              <option value="{{ null }}"></option>
-            </select>
-            @if ($errors->has('inp_res_person'))
-						<span style="color: red;"><i>{{ $errors->first('inp_res_person') }}</i></span>
-						@endif
-          </div>
-        </div>
+        {{--  --}}
+        {{--  --}}
       </div>
       <div class="box-footer">
+        <i>Tanda ( <span style="color: red;">*</span> ) wajib diisi.</i>
         <button type="submit" class="btn btn-success btn-flat pull-right"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Simpan</button>
         <button type="reset" class="btn btn-default btn-flat pull-right" style="margin-right: 5px;"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Bersih</button>
       </div>
@@ -100,10 +89,33 @@ SIPLAB | Dashboard
 <script src="{{ url('assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
 {{-- varibles --}}
 <script>
-  var dataOption_times = [];
-  var select_time = new TomSelect("#inp-times",{
-    create: false,
-    maxItems: 1,
+  var dataOption_users = [];
+  new function () {  
+    $.ajaxSetup({
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			}
+		});
+		$.ajax({
+			type: 'POST',
+			url: "{{ route('source-data-users') }}",
+			data: {
+				"level": null,
+			},
+			async: false,
+			success: function(result) {
+        var dataOpt_users = JSON.parse(result);
+				for (let index = 0; index < dataOpt_users.length; index++) {
+          dataOption_users.push({
+            id:dataOpt_users[index].id,
+            title:dataOpt_users[index].title,
+          });
+        }
+			},
+		});
+  };
+  var select_akses = new TomSelect("#inp-level",{
+    create: false,			
 		valueField: 'id',
 		labelField: 'title',
 		searchField: 'title',
@@ -140,33 +152,6 @@ SIPLAB | Dashboard
 		});
 		return data_a;
 	};
-  function actionGetTime() {
-    var get_date =  $('#date-pick-start').val();
-    $.ajaxSetup({
-			headers: {
-				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-			}
-		});
-		$.ajax({
-			type: 'POST',
-			url: "{{ route('data-times-sch') }}",
-			data: {
-        "date_sch":get_date,
-				"lab_id": "{{ $lab_id }}",
-			},
-			async: false,
-			success: function(result) {
-        var dataOpt_users = JSON.parse(result);
-				for (let index = 0; index < dataOpt_users.length; index++) {
-          dataOption_times.push({
-            id:dataOpt_users[index].id,
-            title:dataOpt_users[index].title,
-          });
-        }
-			},
-		});
-    select_time.addOptions(dataOption_times);
-  };
 </script>
 {{-- call by id or class --}}
 <script>

@@ -20,7 +20,7 @@ use App\Models\Lab_sch_date;
 use App\Models\Lab_sch_time;
 use App\Models\Lab_schedule;
 use App\Models\Laboratory;
-use App\Models\Laboratory_group;
+use App\Models\Ft_group;
 use App\Models\Laboratory_technician;
 use App\Models\User;
 use App\Models\Laboratory_facility_count_status;
@@ -40,7 +40,7 @@ class LaboratoryController extends Controller
 	/* Tags:... */
 	public function formLaboratory(Request $request)
 	{
-		$data_rumpun = Laboratory_group::get();
+		$data_rumpun = Ft_group::get();
 		return view('contents.content_form.form_input_lab',compact('data_rumpun'));
 	}
 	/* Tags:... */
@@ -66,7 +66,7 @@ class LaboratoryController extends Controller
 		foreach($data_technicians as $key => $value){
 			$data_tech[$key] = $value->id;
 		}
-		$data_rumpun = Laboratory_group::get();
+		$data_rumpun = Ft_group::get();
 		return view('contents.content_form.form_update_lab',compact('data_all_tech','data_lab', 'data_technicians', 'data_rumpun', 'data_tech', 'data_kasublab'));
 	}
 	/* Tags:... */

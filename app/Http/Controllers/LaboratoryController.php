@@ -461,13 +461,15 @@ class LaboratoryController extends Controller
 		->leftjoin('users','lab_schedules.lbs_res_person','=','users.id')
 		->where('lbs_id',$lbs_id)
 		->first();
+		$users = User::whereIn('level', ['LECTURE', 'LAB_HEAD', 'LAB_SUBHEAD', 'LAB_TECHNICIAN'])->get();
+		// dd($users);
 		$times = Laboratory_time_option::get();
 		$data_sch_times = Lab_sch_time::where('lsct_date_id',$data_sch_lab->lscd_id)->get();
 		$time_ids = [];
 		foreach ($data_sch_times as $key => $value) {
 			$time_ids[$key] = $value->lsct_time_id;
 		}
-		return view('contents.content_form.form_update_schedule', compact('lab_id','lbs_id','data_sch_lab', 'times', 'time_ids'));
+		return view('contents.content_form.form_update_schedule', compact('lab_id','lbs_id','data_sch_lab', 'times', 'time_ids', 'users'));
 	}
 	/* Tags:... */
 	

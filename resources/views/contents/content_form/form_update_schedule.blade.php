@@ -98,9 +98,9 @@ SIPLAB | Dashboard
           </label>
           <div class="col-sm-12 col-md-9">
             <select id="inp-res-person" class="form-control" name="inp_res_person" placeholder="Input dosen atau penanggung jawab..">
-              @if ($data_sch_lab->id != null)
-              <option value="{{ $data_sch_lab->id }}" selected>{{ $data_sch_lab->name }}</option>
-              @endif
+              @foreach ($users as $list)
+              <option value="{{ $list->id }}" @if ($data_sch_lab->id == $list->id) selected @endif>{{ $list->name }}</option>
+              @endforeach
             </select>
             @if ($errors->has('inp_res_person'))
 						<span style="color: red;"><i>{{ $errors->first('inp_res_person') }}</i></span>
@@ -183,7 +183,6 @@ SIPLAB | Dashboard
 		valueField: 'id',
 		labelField: 'title',
 		searchField: 'title',
-    options: dataOption_users,
 		render: {
 			option: function(data, escape) {
 				return '<div><span class="title">'+escape(data.title)+'</span></div>';

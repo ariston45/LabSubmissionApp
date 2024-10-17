@@ -135,7 +135,7 @@ class LaboratoryController extends Controller
 	/* Tags:... */
 	public function actionUpdateLaboratory(Request $request)
 	{
-		// die('hai');
+		// die('test');
 		$lab_id = $request->lab_id;
 		$lab_data = Laboratory::where('lab_id', $lab_id)->first();
 		$lab_name = Str::slug($request->inp_laboratorium, '_');
@@ -166,6 +166,8 @@ class LaboratoryController extends Controller
 			"lab_img" => $file_name,
 			"lab_rent_cost" => funFormatCurToDecimal($request->inp_cost),
 			"lab_costbase" => $request->inp_base,
+			"lab_group"=> $request->inp_rumpun,
+			"lab_costbase" => "by_day",
 		];
 		if ($request->inp_check_borrow == null) {
 			$inp_check_borrow = 'false';
@@ -461,13 +463,15 @@ class LaboratoryController extends Controller
 		->leftjoin('users','lab_schedules.lbs_res_person','=','users.id')
 		->where('lbs_id',$lbs_id)
 		->first();
+		$users = User::whereIn('level', ['LECTURE', 'LAB_HEAD', 'LAB_SUBHEAD', 'LAB_TECHNICIAN'])->get();
+		// dd($users);
 		$times = Laboratory_time_option::get();
 		$data_sch_times = Lab_sch_time::where('lsct_date_id',$data_sch_lab->lscd_id)->get();
 		$time_ids = [];
 		foreach ($data_sch_times as $key => $value) {
 			$time_ids[$key] = $value->lsct_time_id;
 		}
-		return view('contents.content_form.form_update_schedule', compact('lab_id','lbs_id','data_sch_lab', 'times', 'time_ids'));
+		return view('contents.content_form.form_update_schedule', compact('lab_id','lbs_id','data_sch_lab', 'times', 'time_ids', 'users'));
 	}
 	/* Tags:... */
 	

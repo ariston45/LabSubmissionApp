@@ -17,7 +17,7 @@ SIPLAB | Dashboard
     <div class="box-header with-border">
       <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Input Jadwal Laboratorium</h3>
       <div class="pull-right">
-        <a href="{{ url('jadwal_lab/'.$lab_id) }}">
+        <a href="{{ url('jadwal_lab/reguler/'.$lab_id) }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
         </a>
       </div>

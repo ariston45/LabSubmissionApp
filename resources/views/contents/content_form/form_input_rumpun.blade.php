@@ -34,8 +34,7 @@ SIPLAB | Input Rumpun
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="hidden" id="inp-id" class="form-control" name="inp_id" value="{{ $data_rumpun->lag_id }}">
-            <input type="text" id="inp-name" class="form-control" name="inp_name" value="{{ $data_rumpun->lag_name }}" placeholder="Input nama.." autocomplete="new-password" required>
+            <input type="text" id="inp-name" class="form-control" name="inp_name" placeholder="Input nama.." autocomplete="new-password" required>
             @if ($errors->has('inp_name'))
 						<span style="color: red;"><i>{{ $errors->first('inp_name') }}</i></span>
 						@endif

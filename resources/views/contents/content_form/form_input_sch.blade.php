@@ -22,7 +22,7 @@ SIPLAB | Dashboard
         </a>
       </div>
     </div>
-    <form class="form-horizontal" action="{{ route('input_schedule_laboratorium') }}" method="POST" enctype="multipart/form-data">
+    <form class="form-horizontal" action="{{ route('input_schedule_laboratorium') }}" method="POST" enctype="multipart/form-data" autocomplete="off">
       @csrf
       <div class="box-body">
         {{-- !! --}}
@@ -34,19 +34,9 @@ SIPLAB | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-dt-start" class="form-control" name="inp_dt_start" value="{{ old('inp_subject') }}" placeholder="Input tanggal mulai jadwal..">
+            <input type="text" id="inp-dt-start" class="form-control" name="inp_dt_start" value="{{ old('inp_subject') }}" placeholder="Input tanggal mulai jadwal.." readonly>
           </div>
         </div>
-        {{-- <div class="form-group has-feedback {{ $errors->has('inp_day') ? ' has-error' : '' }}">
-          <label class="col-sm-12 col-md-3 control-label" >
-            <span style="padding-right: 30px;">
-              Tanggal Akhir Jadwal
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-dt-end" class="form-control" name="inp_dt_end" value="{{ old('inp_subject') }}" placeholder="Input tanggal akhir jadwal..">
-          </div>
-        </div> --}}
         <div class="form-group has-feedback {{ $errors->has('inp_time_start') ? ' has-error' : '' }} {{ $errors->has('inp_time_end') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -54,7 +44,7 @@ SIPLAB | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <select type="text" class="form-control" name="inp_time[]" id="inp-time" multiple placeholder="Pilih jam..">
+            <select type="text" class="form-control" name="inp_time[]" id="inp-time" multiple placeholder="Pilih jam.." required>
               <option value=""></option>
               @foreach ($times as $list)
               <option value="{{ $list->lti_id }}">{{ setTime($list->lti_start) }} - {{ setTime($list->lti_end) }}</option>  
@@ -237,7 +227,7 @@ SIPLAB | Dashboard
 <script>
   $('#inp-dt-start').datepicker({
     autoclose: true,
-    format: 'yyyy-mm-dd',
+    format: 'dd MM yyyy',
     todayHighlight: true,
     orientation:'bottom',
   });

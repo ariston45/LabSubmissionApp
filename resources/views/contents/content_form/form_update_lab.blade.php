@@ -149,10 +149,8 @@ SIPLAB | Dashboard
         </div>
         @else
         <input type="hidden" name="inp_kalab" value="{{ $data_lab->lab_head }}">
-        @dd($data_tech)
-        {{-- {{$data_tech}} --}}
+        
         @endif
-        {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_notes_short') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">

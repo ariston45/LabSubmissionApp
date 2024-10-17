@@ -68,7 +68,6 @@ class ScheduleController extends Controller
 			$datesAr[$key] = $dateFormated;
 		}
 		$dateStr = implode('#', $datesAr);
-		// dd($request->inp_time);
 		foreach ($datesAr as $key => $value) {
 			$c = lab_schedule::where('lbs_dates_period','like', '%'.$value.'%')
 			->where('lbs_type', 'reguler')
@@ -98,8 +97,8 @@ class ScheduleController extends Controller
 			'lbs_tenant_name' => $request->inp_group,
 			'lbs_res_person' => $request->inp_res_person,
 			'created_by' => $user->id,
-			'lbs_date_start' => $request->inp_dt_start,
-			'lbs_date_end'=> $request->inp_dt_end,
+			'lbs_date_start' => $dtStart,
+			'lbs_date_end'=> $dtEnd,
 			'lbs_dates_period' => $dateStr,
 		];
 		$data_date = [
@@ -159,8 +158,8 @@ class ScheduleController extends Controller
 			'lbs_matkul' => $request->inp_subject,
 			'lbs_tenant_name' => $request->inp_group,
 			'lbs_res_person' => $request->inp_res_person,
-			'lbs_date_start' => $request->inp_dt_start,
-			'lbs_date_end' => $request->inp_dt_end,
+			'lbs_date_start' => $dtStart,
+			'lbs_date_end' => $dtEnd,
 			'lbs_dates_period' => $dateStr,
 		];
 		$times = $request->inp_time;

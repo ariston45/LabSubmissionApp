@@ -22,7 +22,7 @@ SIPLAB | Dashboard
         </a>
       </div>
     </div>
-    <form class="form-horizontal" action="{{ route('update_sch_laboratorium') }}" method="POST" enctype="multipart/form-data">
+    <form class="form-horizontal" action="{{ route('update_sch_laboratorium') }}" method="POST" enctype="multipart/form-data" autocomplete="off">
       @csrf
       <div class="box-body">
         {{-- !! --}}
@@ -36,7 +36,7 @@ SIPLAB | Dashboard
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-dt-start" class="form-control" name="inp_dt_start" value="{{ $data_sch_lab->lbs_date_start }}" placeholder="Input tanggal mulai jadwal..">
+            <input type="text" id="inp-dt-start" class="form-control" name="inp_dt_start" value="{{ date('d F Y',strtotime($data_sch_lab->lbs_date_start)) }}" placeholder="Input tanggal mulai jadwal.." readonly>
           </div>
         </div>
         <div class="form-group has-feedback {{ $errors->has('inp_time_start') ? ' has-error' : '' }} {{ $errors->has('inp_time_end') ? ' has-error' : '' }}">
@@ -235,7 +235,7 @@ SIPLAB | Dashboard
 <script>
   $('#inp-dt-start').datepicker({
     autoclose: true,
-    format: 'yyyy-mm-dd',
+    format: 'dd MM yyyy',
     todayHighlight: true,
     orientation:'bottom',
   });

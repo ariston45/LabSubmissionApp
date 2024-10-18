@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : UnesaSever
- Source Server Type    : MySQL
- Source Server Version : 80039 (8.0.39-0ubuntu0.24.04.1)
- Source Host           : localhost:3306
+ Source Server         : LocalMariaDB
+ Source Server Type    : MariaDB
+ Source Server Version : 110502 (11.5.2-MariaDB)
+ Source Host           : localhost:3307
  Source Schema         : lab_unesa
 
- Target Server Type    : MySQL
- Target Server Version : 80039 (8.0.39-0ubuntu0.24.04.1)
+ Target Server Type    : MariaDB
+ Target Server Version : 110502 (11.5.2-MariaDB)
  File Encoding         : 65001
 
- Date: 17/10/2024 14:15:11
+ Date: 18/10/2024 08:48:00
 */
 
 SET NAMES utf8mb4;
@@ -22,11 +22,11 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `cost_reductions`;
 CREATE TABLE `cost_reductions`  (
-  `reduction_id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `reduction_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `reduction_usr_level` enum('STUDENT','LECTURE','PUBLIC_NON_MEMBER','PUBLIC_MEMBER') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `reduction_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `reduction_act_cat` enum('tp_penelitian','tp_pelatihan','tp_pengabdian_masyarakat','tp_magang','tp_lain_lain','tp_penelitian_skripsi') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `reduction_val` int NULL DEFAULT NULL,
+  `reduction_val` int(11) NULL DEFAULT NULL,
   `created_at` datetime NULL DEFAULT NULL,
   `updated_at` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`reduction_id`) USING BTREE
@@ -43,11 +43,11 @@ INSERT INTO `cost_reductions` VALUES (2, 'STUDENT', 'Diskon Lainnya', 'tp_lain_l
 -- ----------------------------
 DROP TABLE IF EXISTS `email_activations`;
 CREATE TABLE `email_activations`  (
-  `id_act` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `user_id` int NULL DEFAULT NULL,
+  `id_act` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NULL DEFAULT NULL,
   `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `used_token` enum('false','true') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'false',
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id_act`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
@@ -76,16 +76,16 @@ INSERT INTO `email_activations` VALUES (15, 197, '1fed883b-8013-4b2d-b750-f0c35f
 -- ----------------------------
 DROP TABLE IF EXISTS `failed_jobs`;
 CREATE TABLE `failed_jobs`  (
-  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `uuid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `connection` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `queue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `exception` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `failed_jobs_uuid_unique`(`uuid` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+  UNIQUE INDEX `failed_jobs_uuid_unique`(`uuid`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of failed_jobs
@@ -96,7 +96,7 @@ CREATE TABLE `failed_jobs`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `ft_groups`;
 CREATE TABLE `ft_groups`  (
-  `lag_id` int NOT NULL,
+  `lag_id` int(11) NOT NULL,
   `lag_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `created_at` datetime NULL DEFAULT NULL,
   `updated_at` datetime NULL DEFAULT NULL,
@@ -120,20 +120,20 @@ INSERT INTO `ft_groups` VALUES (8, 'Prodi S1 Pendidikan Tata Rias', NULL, NULL);
 -- ----------------------------
 DROP TABLE IF EXISTS `lab_facilities`;
 CREATE TABLE `lab_facilities`  (
-  `lsf_id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `lsf_submission` bigint NULL DEFAULT NULL,
+  `lsf_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lsf_submission` bigint(20) NULL DEFAULT NULL,
   `lsf_lab` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsf_start_dt` date NULL DEFAULT NULL,
   `lsf_end_dt` date NULL DEFAULT NULL,
   `lsf_loan_status` enum('loaned','returned') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lsf_facility_id` int NULL DEFAULT NULL,
+  `lsf_facility_id` int(11) NULL DEFAULT NULL,
   `lsf_facility_status` enum('listed','unlisted') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsf_facility_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lsf_cnt_unit` int NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `lsf_cnt_unit` int(11) NULL DEFAULT NULL,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `created_by` bigint NULL DEFAULT NULL,
-  `updated_by` bigint NULL DEFAULT NULL,
+  `created_by` bigint(20) NULL DEFAULT NULL,
+  `updated_by` bigint(20) NULL DEFAULT NULL,
   `lsf_out_img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsf_in_img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsf_out_time` datetime NULL DEFAULT NULL,
@@ -150,10 +150,10 @@ CREATE TABLE `lab_facilities`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `lab_labtests`;
 CREATE TABLE `lab_labtests`  (
-  `ltd_id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `ltd_submission` bigint NULL DEFAULT NULL,
-  `ltd_labtest` int NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `ltd_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ltd_submission` bigint(20) NULL DEFAULT NULL,
+  `ltd_labtest` int(11) NULL DEFAULT NULL,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ltd_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
@@ -167,12 +167,12 @@ CREATE TABLE `lab_labtests`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `lab_sch_dates`;
 CREATE TABLE `lab_sch_dates`  (
-  `lscd_id` int NOT NULL,
+  `lscd_id` int(11) NOT NULL,
   `lscd_sch` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lscd_day` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lscd_date` date NULL DEFAULT NULL,
   `lscd_status` enum('active','nonactive') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`lscd_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
@@ -196,22 +196,23 @@ INSERT INTO `lab_sch_dates` VALUES (16, '16', NULL, NULL, 'active', '2024-10-17 
 INSERT INTO `lab_sch_dates` VALUES (17, '17', NULL, NULL, 'active', '2024-10-17 02:54:02', NULL);
 INSERT INTO `lab_sch_dates` VALUES (18, '18', NULL, NULL, 'active', '2024-10-17 02:55:54', NULL);
 INSERT INTO `lab_sch_dates` VALUES (19, '19', NULL, NULL, 'active', '2024-10-17 03:18:14', '2024-10-17 10:19:55');
-INSERT INTO `lab_sch_dates` VALUES (20, '20', NULL, NULL, 'active', '2024-10-17 03:28:20', NULL);
+INSERT INTO `lab_sch_dates` VALUES (20, '20', NULL, NULL, 'active', '2024-10-17 03:28:20', '2024-10-17 21:16:32');
 INSERT INTO `lab_sch_dates` VALUES (21, '21', NULL, NULL, 'active', '2024-10-17 03:31:25', NULL);
+INSERT INTO `lab_sch_dates` VALUES (23, '23', NULL, NULL, 'active', '2024-10-17 21:50:37', NULL);
 
 -- ----------------------------
 -- Table structure for lab_sch_times
 -- ----------------------------
 DROP TABLE IF EXISTS `lab_sch_times`;
 CREATE TABLE `lab_sch_times`  (
-  `lsct_id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `lsct_date_id` int NULL DEFAULT NULL,
-  `lsct_time_id` int NULL DEFAULT NULL,
+  `lsct_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lsct_date_id` int(11) NULL DEFAULT NULL,
+  `lsct_time_id` int(11) NULL DEFAULT NULL,
   `lsct_status` enum('active','nonactive') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lsct_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 152 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 168 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_sch_times
@@ -289,21 +290,22 @@ INSERT INTO `lab_sch_times` VALUES (142, 19, 0, 'active', '2024-10-17 03:19:55',
 INSERT INTO `lab_sch_times` VALUES (143, 19, 2, 'active', '2024-10-17 03:19:55', NULL);
 INSERT INTO `lab_sch_times` VALUES (144, 19, 3, 'active', '2024-10-17 03:19:55', NULL);
 INSERT INTO `lab_sch_times` VALUES (145, 19, 5, 'active', '2024-10-17 03:19:55', NULL);
-INSERT INTO `lab_sch_times` VALUES (146, 20, 2, 'active', '2024-10-17 03:28:20', NULL);
-INSERT INTO `lab_sch_times` VALUES (147, 20, 3, 'active', '2024-10-17 03:28:20', NULL);
 INSERT INTO `lab_sch_times` VALUES (148, 21, 4, 'active', '2024-10-17 03:31:25', NULL);
 INSERT INTO `lab_sch_times` VALUES (149, 21, 5, 'active', '2024-10-17 03:31:25', NULL);
+INSERT INTO `lab_sch_times` VALUES (152, 20, 2, 'active', '2024-10-17 21:16:32', NULL);
+INSERT INTO `lab_sch_times` VALUES (153, 20, 3, 'active', '2024-10-17 21:16:32', NULL);
+INSERT INTO `lab_sch_times` VALUES (160, 23, 3, 'active', '2024-10-17 21:50:37', NULL);
 
 -- ----------------------------
 -- Table structure for lab_schedules
 -- ----------------------------
 DROP TABLE IF EXISTS `lab_schedules`;
 CREATE TABLE `lab_schedules`  (
-  `lbs_id` int NOT NULL,
-  `lbs_lab` int NULL DEFAULT NULL,
-  `lbs_submission` bigint NULL DEFAULT NULL,
+  `lbs_id` int(11) NOT NULL,
+  `lbs_lab` int(11) NULL DEFAULT NULL,
+  `lbs_submission` bigint(20) NULL DEFAULT NULL,
   `lbs_type` enum('reguler','non_reguler') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lbs_tenant_init` bigint NULL DEFAULT NULL,
+  `lbs_tenant_init` bigint(20) NULL DEFAULT NULL,
   `lbs_res_person` varchar(75) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lbs_tenant_name` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lbs_matkul` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
@@ -312,11 +314,11 @@ CREATE TABLE `lab_schedules`  (
   `lbs_time_start` time NULL DEFAULT NULL,
   `lbs_date_end` date NULL DEFAULT NULL,
   `lbs_time_end` time NULL DEFAULT NULL,
-  `lbs_dates_period` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
-  `lbs_sch_dates_excluded` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
-  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created_by` int NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `lbs_dates_period` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lbs_sch_dates_excluded` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `updated_at` datetime NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` int(11) NULL DEFAULT NULL,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`lbs_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
@@ -339,20 +341,21 @@ INSERT INTO `lab_schedules` VALUES (16, 57, NULL, 'reguler', NULL, '11', 's1 ts 
 INSERT INTO `lab_schedules` VALUES (17, 57, NULL, 'reguler', NULL, '5', 's1 ts 2023', 'Pengkerasan jalan', NULL, '2024-10-05', NULL, NULL, NULL, '2024-10-05', NULL, '2024-10-17 02:54:02', 210, '2024-10-17 02:54:02');
 INSERT INTO `lab_schedules` VALUES (18, 57, NULL, 'reguler', NULL, '4', 's1 ts 2023', 'perkerasan jalan', NULL, '2024-05-10', NULL, NULL, NULL, '2024-05-10', NULL, '2024-10-17 02:55:54', 210, '2024-10-17 02:55:54');
 INSERT INTO `lab_schedules` VALUES (19, 81, NULL, 'reguler', NULL, '4', 'boga a', 'indonesia', NULL, '2024-10-17', NULL, NULL, NULL, '2024-10-17', NULL, '2024-10-17 10:19:55', 203, '2024-10-17 03:18:14');
-INSERT INTO `lab_schedules` VALUES (20, 4, NULL, 'reguler', NULL, '119', '2023B', 'ELEKTRONIKA DIGITAL LANJUT', NULL, '2024-08-26', NULL, NULL, NULL, '2024-08-26', NULL, '2024-10-17 03:28:20', 209, '2024-10-17 03:28:20');
+INSERT INTO `lab_schedules` VALUES (20, 4, NULL, 'reguler', NULL, '119', '2023B', 'ELEKTRONIKA DIGITAL LANJUT', NULL, '2024-08-26', NULL, '2024-08-26', NULL, '2024-08-26', NULL, '2024-10-17 21:16:32', 209, '2024-10-17 03:28:20');
 INSERT INTO `lab_schedules` VALUES (21, 4, NULL, 'reguler', NULL, '119', '2023A', 'ELEKTRONIKA DIGITAL LANJUT', NULL, '2024-09-30', NULL, NULL, NULL, '2024-09-30', NULL, '2024-10-17 03:31:25', 209, '2024-10-17 03:31:25');
+INSERT INTO `lab_schedules` VALUES (23, 49, NULL, 'reguler', NULL, '0', 'wd', 'ghs', NULL, '2024-10-18', NULL, '2024-10-18', NULL, '2024-10-18', NULL, '2024-10-17 21:50:37', 206, '2024-10-17 21:50:37');
 
 -- ----------------------------
 -- Table structure for lab_sub_dates
 -- ----------------------------
 DROP TABLE IF EXISTS `lab_sub_dates`;
 CREATE TABLE `lab_sub_dates`  (
-  `lsd_id` bigint NOT NULL,
-  `lsd_lsb_id` int NULL DEFAULT NULL,
+  `lsd_id` bigint(20) NOT NULL,
+  `lsd_lsb_id` int(11) NULL DEFAULT NULL,
   `lsd_date` date NULL DEFAULT NULL,
   `lsd_date_opsional` date NULL DEFAULT NULL,
-  `lsd_lab` int NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `lsd_lab` int(11) NULL DEFAULT NULL,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lsd_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
@@ -367,13 +370,13 @@ INSERT INTO `lab_sub_dates` VALUES (1, 1, '2024-10-21', NULL, 1, '2024-10-16 04:
 -- ----------------------------
 DROP TABLE IF EXISTS `lab_sub_order_details`;
 CREATE TABLE `lab_sub_order_details`  (
-  `lod_id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `lod_los_id` int NULL DEFAULT NULL,
-  `lod_item_id` int NULL DEFAULT NULL,
-  `lod_item_type` enum('tool','lab','reduction') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lod_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lod_los_id` int(11) NULL DEFAULT NULL,
+  `lod_item_id` int(11) NULL DEFAULT NULL,
+  `lod_item_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lod_item_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lod_cost` decimal(10, 2) NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `lod_note_order` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lod_note_return` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
@@ -383,15 +386,15 @@ CREATE TABLE `lab_sub_order_details`  (
 -- ----------------------------
 -- Records of lab_sub_order_details
 -- ----------------------------
-INSERT INTO `lab_sub_order_details` VALUES (1, 1, 0, '', 'Peminjaman tanggal 2024-10-21', 40000.00, '2024-10-16 04:11:33', NULL, NULL, NULL);
+INSERT INTO `lab_sub_order_details` VALUES (1, 1, 0, 'lab', 'Peminjaman tanggal 2024-10-21', 40000.00, '2024-10-16 04:11:33', NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for lab_sub_orders
 -- ----------------------------
 DROP TABLE IF EXISTS `lab_sub_orders`;
 CREATE TABLE `lab_sub_orders`  (
-  `los_id` int NOT NULL,
-  `los_lsb_id` int NULL DEFAULT NULL,
+  `los_id` int(11) NOT NULL,
+  `los_lsb_id` int(11) NULL DEFAULT NULL,
   `los_invoice_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `los_date_order` datetime NULL DEFAULT NULL,
   `los_cost_total` decimal(10, 2) NULL DEFAULT NULL,
@@ -399,7 +402,7 @@ CREATE TABLE `lab_sub_orders`  (
   `los_confirm_payment` enum('false','true') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'false',
   `los_cost_reduction` decimal(10, 2) NULL DEFAULT NULL,
   `los_cost_after` decimal(10, 2) NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`los_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
@@ -414,10 +417,10 @@ INSERT INTO `lab_sub_orders` VALUES (1, 1, NULL, '2024-10-16 11:11:33', 40000.00
 -- ----------------------------
 DROP TABLE IF EXISTS `lab_sub_times`;
 CREATE TABLE `lab_sub_times`  (
-  `lstt_id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `lstt_date_subs_id` int NULL DEFAULT NULL,
-  `lstt_time_id` int NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `lstt_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lstt_date_subs_id` int(11) NULL DEFAULT NULL,
+  `lstt_time_id` int(11) NULL DEFAULT NULL,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lstt_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
@@ -432,14 +435,14 @@ INSERT INTO `lab_sub_times` VALUES (1, 1, 1, '2024-10-16 04:11:33', NULL);
 -- ----------------------------
 DROP TABLE IF EXISTS `lab_submission_accs`;
 CREATE TABLE `lab_submission_accs`  (
-  `lsa_id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lsa_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `lsa_submission` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsa_rule` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsa_user_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'tp_lain_lain',
   `las_username` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `las_note` varchar(600) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `las_date_acc` datetime NULL DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`lsa_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
@@ -453,15 +456,15 @@ CREATE TABLE `lab_submission_accs`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `lab_submission_advisers`;
 CREATE TABLE `lab_submission_advisers`  (
-  `las_id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `las_lbs_id` int NULL DEFAULT NULL,
-  `las_user_id` int NULL DEFAULT NULL,
+  `las_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `las_lbs_id` int(11) NULL DEFAULT NULL,
+  `las_user_id` int(11) NULL DEFAULT NULL,
   `las_nip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `las_byname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `las_fullname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `las_user_no_id` int NULL DEFAULT NULL,
+  `las_user_no_id` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`las_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
@@ -475,18 +478,18 @@ INSERT INTO `lab_submission_advisers` VALUES (1, 1, NULL, '199105282019032019', 
 -- ----------------------------
 DROP TABLE IF EXISTS `lab_submission_results`;
 CREATE TABLE `lab_submission_results`  (
-  `lsr_id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `lsr_lsb_id` int NULL DEFAULT NULL,
+  `lsr_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lsr_lsb_id` int(11) NULL DEFAULT NULL,
   `lsr_file_attachment` varchar(450) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsr_file_result` varchar(450) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsr_file_legalization` varchar(450) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsr_status_validation` enum('true','false') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'false',
-  `lsr_user_validator` int NULL DEFAULT NULL,
-  `lsr_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `lsr_user_validator` int(11) NULL DEFAULT NULL,
+  `lsr_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lsr_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of lab_submission_results
@@ -497,16 +500,16 @@ CREATE TABLE `lab_submission_results`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `lab_submissions`;
 CREATE TABLE `lab_submissions`  (
-  `lsb_id` bigint NOT NULL,
-  `lsb_lab_id` int NULL DEFAULT NULL,
+  `lsb_id` bigint(20) NOT NULL,
+  `lsb_lab_id` int(11) NULL DEFAULT NULL,
   `lsb_title` varchar(600) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsb_type` enum('borrowing','rental','testing') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsb_purpose` varchar(600) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsb_activity` enum('tp_penelitian','tp_pelatihan','tp_pengabdian_masyarakat','tp_magang','tp_lain_lain','tp_penelitian_skripsi') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'tp_lain_lain',
   `lsb_date_start` datetime NULL DEFAULT NULL,
   `lsb_date_end` datetime NULL DEFAULT NULL,
-  `lsb_period` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
-  `lsb_user_id` int NULL DEFAULT NULL,
+  `lsb_period` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lsb_user_id` int(11) NULL DEFAULT NULL,
   `lsb_user_head` varchar(55) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsb_user_lecture` varchar(55) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsb_user_subhead` varchar(55) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
@@ -517,7 +520,7 @@ CREATE TABLE `lab_submissions`  (
   `lsb_status` enum('menunggu','disetujui','ditolak','selesai','tidak_terpakai') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'menunggu',
   `lsb_report_url` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsb_report_filename` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`lsb_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
@@ -532,24 +535,24 @@ INSERT INTO `lab_submissions` VALUES (1, 1, 'MODIFIKASI STRUKTUR GEDUNG RUMAH SA
 -- ----------------------------
 DROP TABLE IF EXISTS `laboratories`;
 CREATE TABLE `laboratories`  (
-  `lab_id` int UNSIGNED NOT NULL,
-  `lab_group` int NULL DEFAULT NULL,
+  `lab_id` int(10) UNSIGNED NOT NULL,
+  `lab_group` int(11) NULL DEFAULT NULL,
   `lab_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lab_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lab_status` enum('tersedia','tidak_tersedia') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lab_head` int NULL DEFAULT NULL,
-  `lab_note_short` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
-  `lab_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+  `lab_head` int(11) NULL DEFAULT NULL,
+  `lab_note_short` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lab_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lab_location` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lab_timestart` time NULL DEFAULT NULL,
   `lab_timeend` time NULL DEFAULT NULL,
   `lab_costbase` enum('by_day','by_tool','by_sample') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lab_rent_cost` decimal(10, 2) NULL DEFAULT NULL,
   `lab_img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lab_id`) USING BTREE,
-  UNIQUE INDEX `unq_laboratories`(`lab_code` ASC) USING BTREE
+  UNIQUE INDEX `unq_laboratories`(`lab_code`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -608,9 +611,9 @@ INSERT INTO `laboratories` VALUES (51, 5, 'Lab. Pembelajaran', NULL, 'tersedia',
 INSERT INTO `laboratories` VALUES (52, 5, 'Lab. Bengkel Kayu Tangan ', NULL, 'tersedia', 32, NULL, NULL, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:23');
 INSERT INTO `laboratories` VALUES (53, 5, 'Lab. Bengkel kayu Mesin', NULL, 'tersedia', 32, NULL, NULL, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:23');
 INSERT INTO `laboratories` VALUES (55, 5, 'Lab. Keairan', NULL, 'tersedia', 33, NULL, NULL, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:24');
-INSERT INTO `laboratories` VALUES (56, 5, 'Lab. Bahan', NULL, 'tersedia', 34, NULL, NULL, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, NULL, 0.00, NULL, NULL, '2024-08-15 11:12:37');
+INSERT INTO `laboratories` VALUES (56, 5, 'Lab. Bahan', NULL, 'tersedia', 34, '<p>lab bahan</p>', '<p>test keterangan</p>', 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', 300000.00, NULL, NULL, '2024-10-17 22:10:51');
 INSERT INTO `laboratories` VALUES (57, 5, 'Lab. Transportasi', NULL, 'tersedia', 34, NULL, NULL, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:24');
-INSERT INTO `laboratories` VALUES (58, 5, 'Lab. Beton', NULL, 'tersedia', 34, '<p>\r\n\r\nDilengkapi dengan peralatan uji beton dan bahan\r\n\r\n<br></p>', '<p>\r\n\r\n</p><p>Dilengkapi dengan peralatan uji beton dan bahan, antara lain :</p><p></p><ul><li>universal testing machine (utm) 1000 ton, 200 ton, dan 50 ton.</li><li>Analisa gradasi material</li><li>Konsistensi beton,</li><li>Berat jenis bahan.</li></ul><p></p>\r\n\r\n<br><p></p>', 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, NULL, 100000.00, '20240806_155831_lab_beton.jpg', NULL, '2024-08-07 15:23:17');
+INSERT INTO `laboratories` VALUES (58, 5, 'Lab. Beton', NULL, 'tersedia', 34, '<p>\r\n\r\nDilengkapi dengan peralatan uji beton dan bahan\r\n\r\n<br></p>', '<p>\r\n\r\n</p><p>Dilengkapi dengan peralatan uji beton dan bahan, antara lain :</p><p></p><ul><li>universal testing machine (utm) 1000 ton, 200 ton, dan 50 ton.</li><li>Analisa gradasi material</li><li>Konsistensi beton,</li><li>Berat jenis bahan.</li></ul><p></p>\r\n\r\n<br><p></p>', 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', 100000.00, '20240806_155831_lab_beton.jpg', NULL, '2024-10-17 20:22:47');
 INSERT INTO `laboratories` VALUES (59, 5, 'Lab. Mekanika Tanah', NULL, 'tersedia', 34, NULL, NULL, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:24');
 INSERT INTO `laboratories` VALUES (60, 5, 'Lab. Studio Gambar Manual', NULL, 'tersedia', 35, NULL, NULL, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:24');
 INSERT INTO `laboratories` VALUES (61, 5, 'Lab. Komputer', NULL, 'tersedia', 35, NULL, NULL, 'Prodi S1 Teknik Sipil dan Prodi S1 Pendidikan Teknik Bangunan', NULL, NULL, 'by_day', NULL, NULL, NULL, '2024-07-15 09:35:24');
@@ -660,19 +663,19 @@ INSERT INTO `laboratories` VALUES (107, NULL, 'Kendaraan Listrik', NULL, 'tersed
 -- ----------------------------
 DROP TABLE IF EXISTS `laboratory_facilities`;
 CREATE TABLE `laboratory_facilities`  (
-  `laf_id` int NOT NULL,
+  `laf_id` int(11) NOT NULL,
   `laf_laboratorium` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `laf_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `laf_utility` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `laf_brand` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `laf_base` enum('Hari','Minggu','Bulan') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `laf_value` decimal(10, 2) NULL DEFAULT NULL,
-  `laf_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+  `laf_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `laf_image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL,
-  `created_by` int NULL DEFAULT NULL,
-  `updated_by` int NULL DEFAULT NULL,
+  `created_by` int(11) NULL DEFAULT NULL,
+  `updated_by` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`laf_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
@@ -755,14 +758,14 @@ INSERT INTO `laboratory_facilities` VALUES (70, '39', 'infra red tachometer', 'm
 -- ----------------------------
 DROP TABLE IF EXISTS `laboratory_facility_count_statuses`;
 CREATE TABLE `laboratory_facility_count_statuses`  (
-  `lcs_id` int NOT NULL,
+  `lcs_id` int(11) NOT NULL,
   `lcs_facility` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `lcs_count` int NULL DEFAULT NULL,
-  `lcs_ready` int NULL DEFAULT NULL,
-  `lcs_used` int NULL DEFAULT NULL,
-  `lcs_unwearable` int NULL DEFAULT NULL,
+  `lcs_count` int(11) NULL DEFAULT NULL,
+  `lcs_ready` int(11) NULL DEFAULT NULL,
+  `lcs_used` int(11) NULL DEFAULT NULL,
+  `lcs_unwearable` int(11) NULL DEFAULT NULL,
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`lcs_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
@@ -845,8 +848,8 @@ INSERT INTO `laboratory_facility_count_statuses` VALUES (70, '70', 1, 1, 0, 0, N
 -- ----------------------------
 DROP TABLE IF EXISTS `laboratory_labtest_facilities`;
 CREATE TABLE `laboratory_labtest_facilities`  (
-  `lst_id` int NOT NULL,
-  `lst_lsv_id` int NULL DEFAULT NULL,
+  `lst_id` int(11) NOT NULL,
+  `lst_lsv_id` int(11) NULL DEFAULT NULL,
   `lst_facility` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`lst_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
@@ -866,13 +869,13 @@ INSERT INTO `laboratory_labtest_facilities` VALUES (10, 4, '35');
 -- ----------------------------
 DROP TABLE IF EXISTS `laboratory_labtests`;
 CREATE TABLE `laboratory_labtests`  (
-  `lsv_id` int NOT NULL,
-  `lsv_lab_id` int NULL DEFAULT NULL,
+  `lsv_id` int(11) NOT NULL,
+  `lsv_lab_id` int(11) NULL DEFAULT NULL,
   `lsv_status` enum('tersedia','tidak_tersedia') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsv_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsv_price` decimal(10, 2) NULL DEFAULT NULL,
-  `lsv_notes_short` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
-  `lsv_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+  `lsv_notes_short` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lsv_notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lsv_img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `updated_at` datetime NULL DEFAULT NULL,
   `created_at` datetime NULL DEFAULT NULL,
@@ -892,13 +895,13 @@ INSERT INTO `laboratory_labtests` VALUES (4, 95, NULL, 'tes', 900000.00, '<p>tes
 -- ----------------------------
 DROP TABLE IF EXISTS `laboratory_options`;
 CREATE TABLE `laboratory_options`  (
-  `lop_id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `lop_lab_id` int UNSIGNED NOT NULL,
+  `lop_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lop_lab_id` int(10) UNSIGNED NOT NULL,
   `lop_pinjam_lab` enum('true','false') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lop_sewa_alat_lab` enum('true','false') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `lop_uji_lab` enum('true','false') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lop_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 204 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
@@ -960,9 +963,9 @@ INSERT INTO `laboratory_options` VALUES (152, 52, 'true', 'true', 'true', '2024-
 INSERT INTO `laboratory_options` VALUES (153, 53, 'true', 'true', 'true', '2024-07-25 13:03:36', '2024-07-25 13:06:20');
 INSERT INTO `laboratory_options` VALUES (154, 54, 'true', 'true', 'true', '2024-07-25 13:03:36', '2024-07-25 13:06:20');
 INSERT INTO `laboratory_options` VALUES (155, 55, 'true', 'true', 'true', '2024-07-25 13:03:36', '2024-07-25 13:06:20');
-INSERT INTO `laboratory_options` VALUES (156, 56, 'true', 'true', 'false', '2024-07-25 13:03:36', '2024-08-15 11:12:37');
+INSERT INTO `laboratory_options` VALUES (156, 56, 'true', 'true', 'true', '2024-07-25 13:03:36', '2024-10-17 22:10:51');
 INSERT INTO `laboratory_options` VALUES (157, 57, 'true', 'true', 'true', '2024-07-25 13:03:36', '2024-07-25 13:06:20');
-INSERT INTO `laboratory_options` VALUES (158, 58, 'true', 'true', 'true', '2024-07-25 13:03:36', '2024-08-07 15:23:17');
+INSERT INTO `laboratory_options` VALUES (158, 58, 'true', 'true', 'true', '2024-07-25 13:03:36', '2024-10-17 20:22:47');
 INSERT INTO `laboratory_options` VALUES (159, 59, 'true', 'true', 'true', '2024-07-25 13:03:36', '2024-07-25 13:06:20');
 INSERT INTO `laboratory_options` VALUES (160, 60, 'true', 'true', 'true', '2024-07-25 13:03:36', '2024-07-25 13:06:20');
 INSERT INTO `laboratory_options` VALUES (161, 61, 'true', 'true', 'true', '2024-07-25 13:03:36', '2024-07-25 13:06:20');
@@ -1014,10 +1017,10 @@ INSERT INTO `laboratory_options` VALUES (203, 107, 'false', 'false', 'false', '2
 -- ----------------------------
 DROP TABLE IF EXISTS `laboratory_technicians`;
 CREATE TABLE `laboratory_technicians`  (
-  `lat_id` int NOT NULL,
-  `lat_laboratory` int NULL DEFAULT NULL,
-  `lat_tech_id` int NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `lat_id` int(11) NOT NULL,
+  `lat_laboratory` int(11) NULL DEFAULT NULL,
+  `lat_tech_id` int(11) NULL DEFAULT NULL,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lat_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
@@ -1103,9 +1106,7 @@ INSERT INTO `laboratory_technicians` VALUES (97, 99, 5, '2024-07-24 12:16:40', N
 INSERT INTO `laboratory_technicians` VALUES (98, 100, 62, '2024-07-24 12:20:01', NULL);
 INSERT INTO `laboratory_technicians` VALUES (100, 72, 81, '2024-07-24 13:56:28', NULL);
 INSERT INTO `laboratory_technicians` VALUES (104, 88, 85, '2024-07-24 14:17:56', NULL);
-INSERT INTO `laboratory_technicians` VALUES (107, 58, 73, '2024-08-07 15:23:17', NULL);
 INSERT INTO `laboratory_technicians` VALUES (109, 101, 51, '2024-08-08 11:10:34', NULL);
-INSERT INTO `laboratory_technicians` VALUES (110, 56, 73, '2024-08-15 11:12:37', NULL);
 INSERT INTO `laboratory_technicians` VALUES (111, 102, 5, '2024-08-19 15:11:31', NULL);
 INSERT INTO `laboratory_technicians` VALUES (112, 103, 5, '2024-08-19 15:35:31', NULL);
 INSERT INTO `laboratory_technicians` VALUES (113, 103, 52, '2024-08-19 15:35:31', NULL);
@@ -1129,16 +1130,18 @@ INSERT INTO `laboratory_technicians` VALUES (132, 63, 190, '2024-10-15 06:16:43'
 INSERT INTO `laboratory_technicians` VALUES (133, 29, 63, '2024-10-17 01:51:16', NULL);
 INSERT INTO `laboratory_technicians` VALUES (134, 38, 60, '2024-10-17 02:13:13', NULL);
 INSERT INTO `laboratory_technicians` VALUES (135, 65, 77, '2024-10-17 06:49:47', NULL);
+INSERT INTO `laboratory_technicians` VALUES (138, 58, 73, '2024-10-17 20:22:47', NULL);
+INSERT INTO `laboratory_technicians` VALUES (139, 56, 73, '2024-10-17 22:10:51', NULL);
 
 -- ----------------------------
 -- Table structure for laboratory_time_options
 -- ----------------------------
 DROP TABLE IF EXISTS `laboratory_time_options`;
 CREATE TABLE `laboratory_time_options`  (
-  `lti_id` int NOT NULL,
+  `lti_id` int(11) NOT NULL,
   `lti_start` time NULL DEFAULT NULL,
   `lti_end` time NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`lti_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
@@ -1167,8 +1170,8 @@ INSERT INTO `laboratory_time_options` VALUES (14, '19:40:00', '20:30:00', '2024-
 -- ----------------------------
 DROP TABLE IF EXISTS `laboratory_working_times`;
 CREATE TABLE `laboratory_working_times`  (
-  `ltw_id` int NOT NULL,
-  `ltw_lab_id` int NULL DEFAULT NULL,
+  `ltw_id` int(11) NOT NULL,
+  `ltw_lab_id` int(11) NULL DEFAULT NULL,
   `ltw_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `ltw_time_start` datetime NULL DEFAULT NULL,
   `ltw_time_end` datetime NULL DEFAULT NULL,
@@ -1187,9 +1190,9 @@ INSERT INTO `laboratory_working_times` VALUES (1, NULL, NULL, NULL, NULL, NULL, 
 -- ----------------------------
 DROP TABLE IF EXISTS `menus`;
 CREATE TABLE `menus`  (
-  `id_menu` int NOT NULL,
+  `id_menu` int(11) NOT NULL,
   `mn_level_user` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `mn_parent_id` int NULL DEFAULT NULL,
+  `mn_parent_id` int(11) NULL DEFAULT NULL,
   `mn_icon_code` varchar(90) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `mn_title` varchar(90) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `mn_slug` varchar(90) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
@@ -1275,9 +1278,9 @@ INSERT INTO `menus` VALUES (1005, 'PUBLIC_NON_MEMBER', 1004, 'ri-subtract-fill',
 -- ----------------------------
 DROP TABLE IF EXISTS `migrations`;
 CREATE TABLE `migrations`  (
-  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `batch` int NOT NULL,
+  `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
@@ -1296,8 +1299,8 @@ DROP TABLE IF EXISTS `password_resets`;
 CREATE TABLE `password_resets`  (
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  INDEX `password_resets_email_index`(`email` ASC) USING BTREE
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  INDEX `password_resets_email_index`(`email`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -1315,18 +1318,18 @@ INSERT INTO `password_resets` VALUES ('arizluck@gmail.com', 'd31a4cbd-5552-47e8-
 -- ----------------------------
 DROP TABLE IF EXISTS `personal_access_tokens`;
 CREATE TABLE `personal_access_tokens`  (
-  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `tokenable_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tokenable_id` bigint UNSIGNED NOT NULL,
+  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `token` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `abilities` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+  `abilities` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `last_used_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `personal_access_tokens_token_unique`(`token` ASC) USING BTREE,
-  INDEX `personal_access_tokens_tokenable_type_tokenable_id_index`(`tokenable_type` ASC, `tokenable_id` ASC) USING BTREE
+  UNIQUE INDEX `personal_access_tokens_token_unique`(`token`) USING BTREE,
+  INDEX `personal_access_tokens_tokenable_type_tokenable_id_index`(`tokenable_type`, `tokenable_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -1339,16 +1342,16 @@ INSERT INTO `personal_access_tokens` VALUES (8, 'App\\Models\\User', 1, 'auth_to
 -- ----------------------------
 DROP TABLE IF EXISTS `unesa_datas`;
 CREATE TABLE `unesa_datas`  (
-  `api_id` int NOT NULL,
+  `api_id` int(11) NOT NULL,
   `api_code_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `api_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `api_url_status` enum('aktif','nonaktif') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `api_url` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+  `api_url` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `api_file_data` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `created_at` datetime NULL DEFAULT NULL,
   `updated_at` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`api_id`) USING BTREE,
-  INDEX `kode unik`(`api_code_name` ASC) USING BTREE
+  INDEX `kode unik`(`api_code_name`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -1363,29 +1366,29 @@ INSERT INTO `unesa_datas` VALUES (3, 'data_dosen', 'dosen', 'aktif', 'https://i-
 -- ----------------------------
 DROP TABLE IF EXISTS `user_details`;
 CREATE TABLE `user_details`  (
-  `usd_id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
-  `usd_user` bigint NULL DEFAULT NULL,
+  `usd_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `usd_user` bigint(20) NULL DEFAULT NULL,
   `usd_phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `usd_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `usd_prodi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `usd_fakultas` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `usd_universitas` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime NULL DEFAULT current_timestamp(),
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `created_by` bigint NULL DEFAULT NULL,
-  `updated_by` bigint NULL DEFAULT NULL,
+  `created_by` bigint(20) NULL DEFAULT NULL,
+  `updated_by` bigint(20) NULL DEFAULT NULL,
   PRIMARY KEY (`usd_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 193 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user_details
 -- ----------------------------
-INSERT INTO `user_details` VALUES (1, 31, '085799004533', NULL, 'S1 Perencanaan Wilayah dan Kota', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-08-09 10:17:45', NULL, NULL);
+INSERT INTO `user_details` VALUES (1, 31, '085799004533', NULL, 'S1 Perencanaan Wilayah dan Kota', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-10-17 20:36:06', NULL, NULL);
 INSERT INTO `user_details` VALUES (2, 3, '085799004533', NULL, 'S1 Pendidikan Teknik Bangunan', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-08-12 08:33:44', NULL, NULL);
 INSERT INTO `user_details` VALUES (3, 46, '085799004533', NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-07-10 09:22:27', NULL, NULL);
 INSERT INTO `user_details` VALUES (4, 24, '085799004533', NULL, 'S1 Pendidikan Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-07-10 09:22:27', NULL, NULL);
 INSERT INTO `user_details` VALUES (5, 36, '085799004533', NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-07-10 09:22:27', NULL, NULL);
-INSERT INTO `user_details` VALUES (6, 41, '081357813377', NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-10-15 11:18:06', NULL, NULL);
+INSERT INTO `user_details` VALUES (6, 41, '081357813377', NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-10-17 20:04:34', NULL, NULL);
 INSERT INTO `user_details` VALUES (7, 49, '085799004533', NULL, 'S1 Sistem Informasi', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-07-10 09:22:27', NULL, NULL);
 INSERT INTO `user_details` VALUES (8, 23, '085799004533', NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-07-10 09:22:27', NULL, NULL);
 INSERT INTO `user_details` VALUES (9, 12, '085799004533', NULL, 'S2 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-07-10 09:22:27', NULL, NULL);
@@ -1395,7 +1398,7 @@ INSERT INTO `user_details` VALUES (12, 29, '085799004533', NULL, 'S1 Pendidikan 
 INSERT INTO `user_details` VALUES (13, 34, '085799004533', NULL, 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-07-10 09:22:27', NULL, NULL);
 INSERT INTO `user_details` VALUES (14, 50, '085799004533', NULL, 'S1 Teknik Informatika', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-07-10 09:22:27', NULL, NULL);
 INSERT INTO `user_details` VALUES (15, 15, '085799004533', NULL, 'S1 Teknik Elektro', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-07-10 09:22:27', NULL, NULL);
-INSERT INTO `user_details` VALUES (16, 22, '085730235172', 'Babatan Pratama XXVII-86, Surabaya', 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-10-15 11:16:40', NULL, NULL);
+INSERT INTO `user_details` VALUES (16, 22, '085730235172', 'Babatan Pratama XXVII-86, Surabaya', 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-10-17 20:05:00', NULL, NULL);
 INSERT INTO `user_details` VALUES (17, 39, '085799004533', NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-07-10 09:22:27', NULL, NULL);
 INSERT INTO `user_details` VALUES (18, 40, '085799004533', NULL, 'S1 Pendidikan Tata Busana', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-07-10 09:22:27', NULL, NULL);
 INSERT INTO `user_details` VALUES (19, 28, '085799004533', NULL, 'S1 Teknik Mesin', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:35', '2024-10-15 11:40:32', NULL, NULL);
@@ -1511,7 +1514,7 @@ INSERT INTO `user_details` VALUES (128, 181, '085799004533', NULL, 'S1 Pendidika
 INSERT INTO `user_details` VALUES (129, 182, '085799004533', NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', '2024-07-10 09:24:32', NULL, NULL);
 INSERT INTO `user_details` VALUES (130, 183, '085799004533', NULL, 'S1 Pendidikan Tata Boga', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 11:26:41', '2024-07-10 09:24:32', NULL, NULL);
 INSERT INTO `user_details` VALUES (131, 184, '085799004533', 'SIMOREJO SARI B-8/22-A Kota Surabaya Prov. Jawa Timur 60181 RT. 4 RW. 7', 'S1 Teknik Sipil', 'Fakultas Teknik', 'Universitas Negeri Surabaya', '2024-06-12 13:03:19', '2024-10-16 11:11:33', NULL, NULL);
-INSERT INTO `user_details` VALUES (135, 73, '081232381184', 'KETINTANG BARU 13/49 SURABAYA', 'PRODI S1 TEKNIK SIPIL DAN PRODI S1 PENDIDIKAN TEKNIK BANGUNAN', 'FAKULTAS TEKNIK', 'UNUVERSITAS NEGERI SURABAYA', '2024-07-10 09:50:39', '2024-10-16 07:18:24', NULL, NULL);
+INSERT INTO `user_details` VALUES (135, 73, '081232381184', 'KETINTANG BARU 13/49 SURABAYA', 'PRODI S1 TEKNIK SIPIL DAN PRODI S1 PENDIDIKAN TEKNIK BANGUNAN', 'FAKULTAS TEKNIK', 'UNUVERSITAS NEGERI SURABAYA', '2024-07-10 09:50:39', '2024-10-17 22:10:26', NULL, NULL);
 INSERT INTO `user_details` VALUES (158, 185, '081959082331', 'jl. sukolilo', NULL, NULL, 'PT TRUST', '2024-10-08 09:28:18', '2024-10-08 16:33:47', NULL, NULL);
 INSERT INTO `user_details` VALUES (159, 186, NULL, NULL, NULL, NULL, 'UNiversitas Negeri Surabaya', '2024-10-11 07:44:02', '2024-10-11 14:44:44', NULL, NULL);
 INSERT INTO `user_details` VALUES (160, 4, NULL, NULL, NULL, NULL, 'UNiversitas Negeri Surabaya', '2024-10-11 07:55:54', NULL, NULL, NULL);
@@ -1539,24 +1542,24 @@ INSERT INTO `user_details` VALUES (192, 68, '08122244034', 'KavLing Al-Risma JL.
 -- ----------------------------
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users`  (
-  `id` bigint NOT NULL,
-  `no_id` bigint NOT NULL,
+  `id` bigint(20) NOT NULL,
+  `no_id` bigint(20) NOT NULL,
   `name` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `username` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `status` enum('active','block') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'block',
   `level` enum('UNSET','LECTURE','STUDENT','PUBLIC_MEMBER','PUBLIC_NON_MEMBER','LAB_HEAD','LAB_SUBHEAD','LAB_TECHNICIAN','ADMIN_PRODI','ADMIN_MASTER','ADMIN_SYSTEM') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'UNSET',
   `password` varchar(90) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `rumpun_id` int NULL DEFAULT NULL,
+  `rumpun_id` int(11) NULL DEFAULT NULL,
   `nip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `remember_token` varchar(90) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `created_by` int NULL DEFAULT NULL,
+  `created_by` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `users_email_unique`(`email` ASC) USING BTREE,
-  UNIQUE INDEX `users_username_unique`(`username` ASC) USING BTREE
+  UNIQUE INDEX `users_email_unique`(`email`) USING BTREE,
+  UNIQUE INDEX `users_username_unique`(`username`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -1581,7 +1584,7 @@ INSERT INTO `users` VALUES (18, 199012262019031016, 'Fendi Achmad, S.Pd., M.Pd.'
 INSERT INTO `users` VALUES (19, 202103045, 'Roswina Dianawati, S.Pd., M.Ed.', 'roswinadianawati@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$lnzacy6cCjOkKJT4yzycvOoN7o.DI1x2iFp32ih7VtoOgNlYpyWhW', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-15 11:12:41', NULL);
 INSERT INTO `users` VALUES (20, 196109131992031001, 'Prof. Dr.  Muhaji, ST., M.T.', 'muhaji61@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:08:36', NULL);
 INSERT INTO `users` VALUES (21, 196712281994031003, 'Prof. Dr. I Made Arsana, S.Pd., MT.', 'madearsana@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:08:36', NULL);
-INSERT INTO `users` VALUES (22, 196208231986011001, 'Dr. A. Grummy Wailanduw, M.Pd., M.T.', 'grummywailanduw@unesa.ac.id', NULL, NULL, 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, '196208231986011001', '2022-12-01 08:03:18', NULL, NULL, '2024-10-15 11:16:40', NULL);
+INSERT INTO `users` VALUES (22, 196208231986011001, 'Dr. A. Grummy Wailanduw, M.Pd., M.T.', 'grummywailanduw@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 0, '196208231986011001', '2022-12-01 08:03:18', NULL, NULL, '2024-10-17 20:05:00', NULL);
 INSERT INTO `users` VALUES (23, 198803202014041001, 'Akhmad Hafizh Ainur Rasyid, S.T., M.T.', 'akhmadrasyid@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:08:37', NULL);
 INSERT INTO `users` VALUES (24, 196408091992021001, 'Dr. Dewanto, M.Pd.', 'dewanto@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:08:37', NULL);
 INSERT INTO `users` VALUES (25, 196504231992031001, 'Dr. Yunus, M.Pd.', 'yunus@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:08:37', NULL);
@@ -1590,7 +1593,7 @@ INSERT INTO `users` VALUES (27, 197109072005011002, 'Indra Herlambang  Siregar, 
 INSERT INTO `users` VALUES (28, 197803302008121002, 'Aris Ansori, S.Pd., M.T.', 'arisansori@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-15 11:40:32', NULL);
 INSERT INTO `users` VALUES (29, 198904202019031017, 'Ali Hasbi Ramadani, S.Pd., M.Pd', 'aliramadani@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:08:39', NULL);
 INSERT INTO `users` VALUES (30, 197803272008012016, 'Novi Sukma Drastiawati, S.T., M.Eng.', 'novidrastiawati@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:08:39', NULL);
-INSERT INTO `users` VALUES (31, 197012041999031003, 'Prof. Dr. Agus Wiyono, S.Pd., M.T.', 'aguswiyono@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:08:39', NULL);
+INSERT INTO `users` VALUES (31, 197012041999031003, 'Prof. Dr. Agus Wiyono, S.Pd., M.T.', 'aguswiyono@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 5, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-17 20:36:06', NULL);
 INSERT INTO `users` VALUES (32, 196206291998021001, 'Drs. Djoni Irianto, M.T.', 'djoniirianto@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:08:39', NULL);
 INSERT INTO `users` VALUES (33, 198905102018032001, 'Danayanti Azmi Dewi Nusantara, S.T., M.T.', 'danayantinusantara@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:08:40', NULL);
 INSERT INTO `users` VALUES (34, 201405003, 'Muhammad Imaduddin, S.T., M.T.', 'muhammadimaduddin@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-15 03:29:37', NULL);
@@ -1600,13 +1603,13 @@ INSERT INTO `users` VALUES (37, 195707311987122001, 'Prof. Dr. Marniati, S.E., M
 INSERT INTO `users` VALUES (38, 197405142005012002, 'Prof. Dr. Mutimmatul Faidah, S.Ag., M.Ag.', 'mutimmatulfaidah@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:08:41', NULL);
 INSERT INTO `users` VALUES (39, 196705071993021001, 'Drs. Ec. Mein Kharnolis, M.SM.', 'meinkharnolis@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:08:41', NULL);
 INSERT INTO `users` VALUES (40, 197111141997022001, 'Dr. Sn. Inty Nahari, S.Pd., M.Ds.', 'intynahari@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:08:42', NULL);
-INSERT INTO `users` VALUES (41, 197807052005012001, 'Dr. Deny Arifiana, S.Pd., M.A.', 'denyarifiana@unesa.ac.id', NULL, NULL, 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-15 11:18:06', NULL);
-INSERT INTO `users` VALUES (42, 198008022008122002, 'Octaverina Kecvara Pritasari, S.Pd., M.Farm.', 'octaverinakecvara@unesa.ac.id', NULL, NULL, 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, '198008022008122002', '2022-12-01 08:03:18', NULL, NULL, '2024-10-15 11:23:37', NULL);
+INSERT INTO `users` VALUES (41, 197807052005012001, 'Dr. Deny Arifiana, S.Pd., M.A.', 'denyarifiana@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 0, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-17 20:04:34', NULL);
+INSERT INTO `users` VALUES (42, 198008022008122002, 'Octaverina Kecvara Pritasari, S.Pd., M.Farm.', 'octaverinakecvara@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, '198008022008122002', '2022-12-01 08:03:18', NULL, NULL, '2024-10-17 20:25:38', NULL);
 INSERT INTO `users` VALUES (43, 198801262023211007, 'Apt. M.A.Hanny Ferry Fernanda, S.Farm., M.Farm.', 'apt.fernanda@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:08:59', NULL);
 INSERT INTO `users` VALUES (44, 198709252015042004, 'Dindy Sinta Megasari, S.Pd., M.Pd.', 'dindymegasari@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:09:00', NULL);
 INSERT INTO `users` VALUES (45, 196709281993032002, 'Dr. Lucia Tri Pangesti, M.Pd.', 'luciapangesthi@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:09:00', NULL);
 INSERT INTO `users` VALUES (46, 196803221994032001, 'Nugrahani Astuti, S.Pd., M.Pd.', 'nugrahaniastuti@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:09:00', NULL);
-INSERT INTO `users` VALUES (47, 199107022020121012, 'Andika Kuncoro Widagdo, M.Pd.', 'andikawidagdo@unesa.ac.id', NULL, NULL, 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-15 11:14:31', NULL);
+INSERT INTO `users` VALUES (47, 199107022020121012, 'Andika Kuncoro Widagdo, M.Pd.', 'andikawidagdo@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-17 20:25:40', NULL);
 INSERT INTO `users` VALUES (48, 196004041987011001, 'Prof. Dr. Ekohariadi, M.Pd.', 'ekohariadi@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:09:01', NULL);
 INSERT INTO `users` VALUES (49, 198702092015041003, 'Rahadian Bisma, S.Kom., M.Kom.', 'rahadianbisma@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:09:01', NULL);
 INSERT INTO `users` VALUES (50, 198411242015041003, 'I Made Suartana, S.Kom., M.Kom.', 'madesuartana@unesa.ac.id', NULL, 'active', 'LAB_SUBHEAD', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, NULL, '2024-10-14 20:09:01', NULL);
@@ -1632,7 +1635,7 @@ INSERT INTO `users` VALUES (69, 196809131993031002, 'Langgeng, ST.', 'langgengla
 INSERT INTO `users` VALUES (70, 196812091994031003, 'Tohir Widada, S.Pd, ST, MM', 'tohirwidada@unesa.ac.id', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, '2024-05-27 09:59:09', '2024-10-15 13:31:37', NULL);
 INSERT INTO `users` VALUES (71, 2200804121, 'Novi Camelia', NULL, NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, '2024-05-27 09:59:09', '2024-10-14 20:09:07', NULL);
 INSERT INTO `users` VALUES (72, 2200803120, 'Ali Mustain, ST', 'alimustain@unesa.ac.id', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, '2024-05-27 09:59:09', '2024-10-15 04:51:54', NULL);
-INSERT INTO `users` VALUES (73, 197311172001121002, 'Sunyata, S.E', 'sunyatasunyata@unesa.ac.id', NULL, NULL, 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, '197311172001121002', '2022-12-01 08:03:18', NULL, '2024-05-27 09:59:09', '2024-10-16 07:18:24', NULL);
+INSERT INTO `users` VALUES (73, 197311172001121002, 'Sunyata, S.E', 'sunyatasunyata@unesa.ac.id', NULL, NULL, 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', 7, '197311172001121002', '2022-12-01 08:03:18', NULL, '2024-05-27 09:59:09', '2024-10-17 22:10:26', NULL);
 INSERT INTO `users` VALUES (74, 2201401236, 'Agus Faudin, S.Pd', 'agusfaudin@unesa.ac.id', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, '2024-05-27 09:59:09', '2024-10-15 04:32:23', NULL);
 INSERT INTO `users` VALUES (75, 202204060, 'Tuesday Tri Wardani, S.Pd', 'tuesdaywardani@unesa.ac.id', NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, '2024-05-27 09:59:10', '2024-10-15 04:32:08', NULL);
 INSERT INTO `users` VALUES (76, 197507021999031002, 'Rifky.S.T', NULL, NULL, 'active', 'LAB_TECHNICIAN', '$2y$10$qpHnMm3I0ePEu9p4kYcWLu6x.jJC1ZvyzgIQa3moj8H9PI9HuZQzO', NULL, NULL, '2022-12-01 08:03:18', NULL, '2024-05-27 09:59:10', '2024-10-14 20:09:22', NULL);

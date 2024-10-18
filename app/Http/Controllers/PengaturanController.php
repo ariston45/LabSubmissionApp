@@ -268,9 +268,7 @@ class PengaturanController extends Controller
 		->leftJoin('ft_groups','users.rumpun_id','=', 'ft_groups.lag_id')
 		->where('id', $request->id)
 		->first();
-		// dd($data_user);
 		$data_rumpun = Ft_group::get();
-		// dd($data_user);
 		return view('contents.content_form.form_update_user',compact('data_user', 'data_rumpun'));
 	}
 	public function formUpdateProfil(Request $request)

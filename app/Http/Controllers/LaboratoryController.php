@@ -52,8 +52,6 @@ class LaboratoryController extends Controller
 		->where('lab_id',$request->id)
 		->select('*')
 		->first();
-		// dd($data_lab);
-		// dd($data_lab);
 		$data_kasublab = User::where('level','LAB_SUBHEAD')->get();
 		$data_all_tech = Laboratory_technician::leftjoin('users', 'laboratory_technicians.lat_tech_id', '=', 'users.id')
 		->select('lat_id', 'lat_tech_id', 'id', 'name')
@@ -62,6 +60,7 @@ class LaboratoryController extends Controller
 		->select('lat_id', 'lat_tech_id','id','name')
 		->where('lat_laboratory',$request->id)
 		->get();
+		// dd($data_technicians);
 		$data_tech =[];
 		foreach($data_technicians as $key => $value){
 			$data_tech[$key] = $value->id;
@@ -489,15 +488,6 @@ class LaboratoryController extends Controller
 	{
 		$dtStart = Carbon::parse($request->start);
 		$dtEnd = Carbon::parse($request->end);
-		// $collect_sch_reguler = Lab_sch_date::join('lab_schedules', 'lab_sch_dates.lscd_sch', '=', 'lab_schedules.lbs_id')
-		// ->join('lab_sch_times', 'lab_sch_dates.lscd_id', '=', 'lab_sch_times.lsct_date_id')
-		// ->join('laboratory_time_options', 'lab_sch_times.lsct_time_id', '=', 'laboratory_time_options.lti_id')
-		// ->where('lbs_lab', $request->lab_id)
-		// ->where('lbs_type', 'reguler')
-		// ->select('lbs_id', 'lbs_lab', 'lbs_matkul', 'lbs_submission', 'lbs_tenant_init', 'lbs_tenant_name', 'lbs_type',
-		// 	'lscd_date','lscd_day','lscd_status','lscd_id','lscd_sch','lscd_status','lsct_date_id','lsct_status','lti_start','lti_end')
-		// ->get();
-
 		$collect_sch_non_reguler = Lab_sch_date::join('lab_schedules', 'lab_sch_dates.lscd_sch','=','lab_schedules.lbs_id')
 		->join('lab_sch_times', 'lab_sch_dates.lscd_id','=', 'lab_sch_times.lsct_date_id')
 		->join('laboratory_time_options', 'lab_sch_times.lsct_time_id','=', 'laboratory_time_options.lti_id')
@@ -520,36 +510,6 @@ class LaboratoryController extends Controller
 			$dtStart = date("Y-m-d", strtotime("+1 day", strtotime($dtStart)));
 			$idx_date_range++;
 		}
-		// foreach ($dataDays as $key => $value) {
-		// 	$dts[$key] = $collect_sch_reguler->where('lscd_day',$value['day']);
-		// 	foreach ($dts[$key] as $skey => $svalue) {
-		// 		// $date_exclude[$sch_index] = explode('$',$svalue->lbs_sch_dates_excluded);
-		// 		$str_start = $value['date'].' '.$svalue->lti_start;
-		// 		$datetime_start = date('Y-m-d H:i:s',strtotime($str_start));
-		// 		$str_end = $value['date'] . ' ' . $svalue->lti_end;
-		// 		$datetime_end = date('Y-m-d H:i:s', strtotime($str_end));
-		// 		if ($svalue->lsct_status == 'active') {
-		// 			$dataSch[$sch_index] = [
-		// 				'url' => url('jadwal_lab/'. $svalue->lbs_lab.'#'),
-		// 				'title' => $svalue->lbs_matkul,
-		// 				'start' => $datetime_start,
-		// 				'end' => $datetime_end,
-		// 				'color' => '#0955c7',
-		// 				'className' => 'sch_reguler'
-		// 			];
-		// 		}else{
-		// 			$dataSch[$sch_index] = [
-		// 				'url' => url('jadwal_lab/' . $svalue->lbs_lab . '#'),
-		// 				'title' => '(Batal)'.$svalue->lbs_matkul,
-		// 				'start' => $datetime_start,
-		// 				'end' => $datetime_end,
-		// 				'color' => '#e31497',
-		// 				'className' => 'sch_exclude'
-		// 			];
-		// 		}
-		// 		$sch_index++;
-		// 	}
-		// }
 		# processing sch data with parameter non_reguler
 		foreach ($collect_sch_non_reguler as $key => $value) {
 			$str_start = $value->lscd_date . ' ' . $value->lti_start;
@@ -559,7 +519,7 @@ class LaboratoryController extends Controller
 			$datetime_end = date('Y-m-d H:i:s', strtotime($str_end));
 
 			$dataSch[$sch_index] = [
-				'url' => url('pengajuan/detail-pengajuan/' . $value->lbs_submission),
+				'url' => url('#'),
 				'title' => $value->lbs_tenant_name,
 				'start' => $datetime_start,
 				'end' => $datetime_end,
@@ -599,7 +559,7 @@ class LaboratoryController extends Controller
 				$datetime_start = date('Y-m-d H:i:s', strtotime($value.' '. $svalue->lti_start));
 				$datetime_end = date('Y-m-d H:i:s', strtotime($value.' '. $svalue->lti_end));
 				$dataSch[$sch_index] = [
-					'url' => url('jadwal_lab/' . $svalue->lbs_lab . '#'),
+					'url' => url('#'),
 					'title' => $svalue->lbs_matkul,
 					'start' => $datetime_start,
 					'end' => $datetime_end,

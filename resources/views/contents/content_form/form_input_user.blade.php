@@ -69,6 +69,25 @@ SIPLAB | Input User
           </div>
         </div>
         {{--  --}}
+        <div class="form-group has-feedback {{ $errors->has('inp_rumpun') ? ' has-error' : '' }}">
+          <label class="col-sm-12 col-md-3 control-label" >
+            <span style="padding-right: 30px;">
+              Pilih Rumpun <span style="color: red;">*</span>
+            </span>
+          </label>
+          <div class="col-sm-12 col-md-9">
+            <select type="text" class="form-control" name="inp_rumpun" id="inp-rumpun" value="" placeholder="Pilih rumpun.." autocomplete="new-password" required>
+              <option value="{{ null }}">Pilih rumpun</option>
+              @foreach ($data_rumpun as $list)
+                <option value="{{ $list->lag_id }}">{{ $list->lag_name }}</option>                    
+              @endforeach
+            </select>
+            @if ($errors->has('inp_rumpun'))
+						<span style="color: red;"><i>{{ $errors->first('inp_rumpun') }}</i></span>
+						@endif
+          </div>
+        </div>
+        {{--  --}}
         <div class="form-group has-feedback {{ $errors->has('inp_email') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >
             <span style="padding-right: 30px;">
@@ -96,25 +115,6 @@ SIPLAB | Input User
             <input type="text" id="inp-no-contact" class="form-control" name="inp_no_contact" value="{{ old('inp_no_contact') }}" placeholder="Input email.." autocomplete="new-password">
             @if ($errors->has('inp_no_contact'))
 						<span style="color: red;"><i>{{ $errors->first('inp_no_contact') }}</i></span>
-						@endif
-          </div>
-        </div>
-        {{--  --}}
-        <div class="form-group has-feedback {{ $errors->has('inp_rumpun') ? ' has-error' : '' }}">
-          <label class="col-sm-12 col-md-3 control-label" >
-            <span style="padding-right: 30px;">
-              Pilih Rumpun
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-9">
-            <select type="text" class="form-control" name="inp_rumpun" id="inp-rumpun" value="" placeholder="Pilih rumpun.." autocomplete="new-password">
-              <option value="{{ null }}">Pilih rumpun</option>
-              @foreach ($data_rumpun as $list)
-                <option value="{{ $list->lag_id }}">{{ $list->lag_name }}</option>                    
-              @endforeach
-            </select>
-            @if ($errors->has('inp_rumpun'))
-						<span style="color: red;"><i>{{ $errors->first('inp_rumpun') }}</i></span>
 						@endif
           </div>
         </div>

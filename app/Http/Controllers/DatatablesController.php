@@ -1170,7 +1170,7 @@ class DatatablesController extends Controller
 				return $res;
 			})
 			->addColumn('date_start', function ($dataSch) {
-				$res = $dataSch['date_start'];
+				$res = date('d F Y',strtotime($dataSch['date_start']));
 				return $res;
 			})
 			->addColumn('time', function ($dataSch) {
@@ -1182,7 +1182,7 @@ class DatatablesController extends Controller
 					->get();
 					$res='';
 					foreach ($data as $key => $value) {
-						$res.= '<b>-</b> '.date('H:i',strtotime($value->lti_start)). '-' . date('H:i', strtotime($value->lti_end)) . '<br>';
+						$res.= '<b>-</b> '.date('H:i',strtotime($value->lti_start)). ' - ' . date('H:i', strtotime($value->lti_end)) . '<br>';
 					}
 				}
 				return $res;
@@ -1287,6 +1287,11 @@ class DatatablesController extends Controller
 			$data = Laboratory::join('ft_groups', 'laboratories.lab_group','=', 'ft_groups.lag_id')
 			->leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
 			->get();
+		} elseif (rulesUser(['ADMIN_PRODI'])) {
+			$data = Laboratory::join('ft_groups', 'laboratories.lab_group', '=', 'ft_groups.lag_id')
+			->leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
+			->where('laboratories.lab_group', $user->rumpun_id)
+			->get();
 		} elseif (rulesUser(['LAB_SUBHEAD'])) {
 			$data = Laboratory::join('ft_groups', 'laboratories.lab_group', '=', 'ft_groups.lag_id')
 			->leftjoin('users', 'laboratories.lab_head', '=', 'users.id')
@@ -1309,10 +1314,10 @@ class DatatablesController extends Controller
 				return '';
 			})
 			->addColumn('opsi', function ($data) {
-				$res = '<div style="text-align:center;"><a href="'.url('jadwal_lab/pinjam/'. $data->lab_id).'">
-				<button class="btn btn-flat btn-default btn-xs" type="button" > <b>Jadwal Pinjam</b></button></a>';
+				$res = '<div style="text-align:center;"><a href="'.url('jadwal_lab/pinjam/'. $data->lab_id). '">
+				<button class="btn btn-flat bg-purple btn-xs" type="button" > <b>Jadwal Pinjam</b></button></a>';
 				$res .= '<a href="' . url('jadwal_lab/reguler/' . $data->lab_id) . '">
-				<button class="btn btn-flat btn-default btn-xs" type="button" > <b>Jadwal Reguler</b></button></a></div>';
+				<button class="btn btn-flat bg-navy btn-xs" type="button" > <b>Jadwal Reguler</b></button></a></div>';
 				return $res;
 			})
 			->addColumn('name', function ($data) {

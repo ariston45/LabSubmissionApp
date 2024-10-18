@@ -161,10 +161,9 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('{id}/form-tambah-fasilitas', [LaboratoryController::class, 'formAddLaboratoryFacility']);
 		Route::get('{id}/form-tambah-ujilab', [LaboratoryController::class, 'formAddLaboratoryTest']);
 		// Route::get('form-update-fasilitas/{id}', [LaboratoryController::class, 'formUpdateLaboratoryFacility']);
-		
-		Route::get('form-input-jadwal/{id}', [LaboratoryController::class, 'formInputLaboratorySch']);
-		Route::get('form-exclude-jadwal/{id}', [LaboratoryController::class, 'formExcludeLaboratorySch']);
-		Route::get('update-jadwal-lab/{id_lab}/{id_sch_lab}', [LaboratoryController::class, 'formUpdateLaboratorySch']);
+		// Route::get('form-input-jadwal/{id}', [LaboratoryController::class, 'formInputLaboratorySch']);
+		// Route::get('form-exclude-jadwal/{id}', [LaboratoryController::class, 'formExcludeLaboratorySch']);
+		// Route::get('update-jadwal-lab/{id_lab}/{id_sch_lab}', [LaboratoryController::class, 'formUpdateLaboratorySch']);
 		# action
 		Route::post('input-laboratorium', [LaboratoryController::class, 'actionInputLaboratory'])->name('input_laboratorium');
 		Route::post('update-laboratorium', [LaboratoryController::class, 'actionUpdateLaboratory'])->name('update_laboratorium');
@@ -185,9 +184,9 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('/', [ScheduleController::class, 'dataLabSchedule']);
 		Route::get('pinjam/{id}', [ScheduleController::class, 'dataSchedulePinjam'])->name('schedule_lab_pinjam');
 		Route::get('reguler/{id}', [ScheduleController::class, 'dataSchedule'])->name('schedule_lab');
-		Route::get('form-exclude-jadwal/{id}', [ScheduleController::class, 'formExcludeLaboratorySch']);
+		// Route::get('form-exclude-jadwal/{id}', [ScheduleController::class, 'formExcludeLaboratorySch']);
 		Route::get('form-input-jadwal/{id}', [ScheduleController::class, 'formInputLaboratorySch']);
-		Route::get('data-jadwal-reguler/{id}', [ScheduleController::class, 'dataSchReguler']);
+		Route::get('data-jadwal-reguler/{id}', [ScheduleController::class, 'dataSchReguler'])->name('data_jadwal_reguler');
 		Route::post('input-sch-laboratorium', [ScheduleController::class, 'actionInputLabSch'])->name('input_schedule_laboratorium');
 		Route::post('update-sch-laboratorium', [ScheduleController::class, 'actionUpdateLabSch'])->name('update_sch_laboratorium');
 		Route::get('update-jadwal-lab/{id_lab}/{id_sch_lab}', [LaboratoryController::class, 'formUpdateLaboratorySch']);

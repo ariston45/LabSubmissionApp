@@ -83,73 +83,79 @@ SIPLAB | Dashboard
           </div>
         </div>
         @if (DataAuth()->level == 'LAB_HEAD')
-        <div class="form-group has-feedback {{ $errors->has('inp_kalab') ? ' has-error' : '' }}">
-          <label class="col-sm-12 col-md-3 control-label" >
-            <span style="padding-right: 30px;">
-              Kepala Sub Lab
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-9">
-            <select type="text" class="form-control" name="inp_kalab" id="inp-kalab" value="" placeholder="Pilih user..">
-              <option value=""></option>
-              @foreach ($data_kasublab as $list)
-              <option value="{{ $list->id }}" @if ( $list->id == $data_lab->lab_head) selected @endif>{{ $list->name }}</option>
-              @endforeach
-            </select> 
-            @if ($errors->has('inp_kalab'))
-            <span style="color: red;"><i>{{ $errors->first('inp_kalab') }}</i></span>
-            @endif
+          <div class="form-group has-feedback {{ $errors->has('inp_kalab') ? ' has-error' : '' }}">
+            <label class="col-sm-12 col-md-3 control-label" >
+              <span style="padding-right: 30px;">
+                Kepala Sub Lab
+              </span>
+            </label>
+            <div class="col-sm-12 col-md-9">
+              <select type="text" class="form-control" name="inp_kalab" id="inp-kalab" value="" placeholder="Pilih user..">
+                <option value=""></option>
+                @foreach ($data_kasublab as $list)
+                <option value="{{ $list->id }}" @if ( $list->id == $data_lab->lab_head) selected @endif>{{ $list->name }}</option>
+                @endforeach
+              </select> 
+              @if ($errors->has('inp_kalab'))
+              <span style="color: red;"><i>{{ $errors->first('inp_kalab') }}</i></span>
+              @endif
+            </div>
           </div>
-        </div>
-        <div class="form-group has-feedback {{ $errors->has('inp_teknisi') ? ' has-error' : '' }}">
-          <label class="col-sm-12 col-md-3 control-label" >
-            <span style="padding-right: 30px;">
-              Teknisi Lab
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-9">
-            <select type="text" class="form-control" name="inp_teknisi[]" id="inp-teknisi" multiple value="" placeholder="Pilih user.." required>
-              <option value=""></option>
-              @foreach ($data_all_tech as $list)
-                @if (in_array($list->id,$data_tech)  )
-                  <option value="{{ $list->id }}" selected>{{ $list->name }}</option>
-                @else
-                  <option value="{{ $list->id }}">{{ $list->name }}</option>
-                @endif
-              @endforeach
-            </select>
-            @if ($errors->has('inp_teknisi'))
-						<span style="color: red;"><i>{{ $errors->first('inp_teknisi') }}</i></span>
-						@endif
+          <div class="form-group has-feedback {{ $errors->has('inp_teknisi') ? ' has-error' : '' }}">
+            <label class="col-sm-12 col-md-3 control-label" >
+              <span style="padding-right: 30px;">
+                Teknisi Lab
+              </span>
+            </label>
+            <div class="col-sm-12 col-md-9">
+              <select type="text" class="form-control" name="inp_teknisi[]" id="inp-teknisi" multiple value="" placeholder="Pilih user.." required>
+                <option value=""></option>
+                @foreach ($data_all_tech as $list)
+                  @if (in_array($list->id,$data_tech)  )
+                    <option value="{{ $list->id }}" selected>{{ $list->name }}</option>
+                  @else
+                    <option value="{{ $list->id }}">{{ $list->name }}</option>
+                  @endif
+                @endforeach
+              </select>
+              @if ($errors->has('inp_teknisi'))
+              <span style="color: red;"><i>{{ $errors->first('inp_teknisi') }}</i></span>
+              @endif
+            </div>
           </div>
-        </div>
         @elseif (DataAuth()->level == 'LAB_SUBHEAD')
-        <input type="hidden" name="inp_kalab" value="{{ $data_lab->lab_head }}">
-        <div class="form-group has-feedback {{ $errors->has('inp_teknisi') ? ' has-error' : '' }}">
-          <label class="col-sm-12 col-md-3 control-label" >
-            <span style="padding-right: 30px;">
-              Teknisi Lab
-            </span>
-          </label>
-          <div class="col-sm-12 col-md-9">
-            <select type="text" class="form-control" name="inp_teknisi[]" id="inp-teknisi" multiple value="" placeholder="Pilih user.." required>
-              <option value=""></option>
-              @foreach ($data_all_tech as $list)
-                @if (in_array($list->id,$data_tech)  )
-                  <option value="{{ $list->id }}" selected>{{ $list->name }}</option>
-                @else
-                  <option value="{{ $list->id }}">{{ $list->name }}</option>
-                @endif
-              @endforeach
-            </select>
-            @if ($errors->has('inp_teknisi'))
-						<span style="color: red;"><i>{{ $errors->first('inp_teknisi') }}</i></span>
-						@endif
+          <input type="hidden" name="inp_kalab" value="{{ $data_lab->lab_head }}">
+          <div class="form-group has-feedback {{ $errors->has('inp_teknisi') ? ' has-error' : '' }}">
+            <label class="col-sm-12 col-md-3 control-label" >
+              <span style="padding-right: 30px;">
+                Teknisi Lab
+              </span>
+            </label>
+            <div class="col-sm-12 col-md-9">
+              <select type="text" class="form-control" name="inp_teknisi[]" id="inp-teknisi" multiple value="" placeholder="Pilih user.." required>
+                <option value=""></option>
+                @foreach ($data_all_tech as $list)
+                  @if (in_array($list->id,$data_tech)  )
+                    <option value="{{ $list->id }}" selected>{{ $list->name }}</option>
+                  @else
+                    <option value="{{ $list->id }}">{{ $list->name }}</option>
+                  @endif
+                @endforeach
+              </select>
+              @if ($errors->has('inp_teknisi'))
+              <span style="color: red;"><i>{{ $errors->first('inp_teknisi') }}</i></span>
+              @endif
+            </div>
           </div>
-        </div>
         @else
-        <input type="hidden" name="inp_kalab" value="{{ $data_lab->lab_head }}">
-        
+          <input type="hidden" name="inp_kalab" value="{{ $data_lab->lab_head }}">
+          @if ($data_technicians->count()  > 0)
+            @foreach ($data_technicians as $list)
+              <input type="hidden" name="inp_teknisi[]" value="{{ $list->id }}">
+            @endforeach
+          @else
+            <input type="hidden" name="inp_teknisi[]" value="">
+          @endif
         @endif
         <div class="form-group has-feedback {{ $errors->has('inp_notes_short') ? ' has-error' : '' }}">
           <label class="col-sm-12 col-md-3 control-label" >

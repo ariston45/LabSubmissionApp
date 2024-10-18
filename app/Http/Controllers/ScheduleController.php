@@ -57,7 +57,7 @@ class ScheduleController extends Controller
 	public function actionInputLabSch(Request $request)
 	{
 		$user = Auth::user();
-		$err = array();
+		$lab_id = $request->lab_id;
 		$id_lab_sch = genIdLaSch();
 		$id_sch_date = genIdDateSch();
 		$dtStart = Carbon::parse(date('Y-m-d', strtotime($request->inp_dt_start)))->format('Y-m-d');
@@ -68,9 +68,11 @@ class ScheduleController extends Controller
 			$datesAr[$key] = $dateFormated;
 		}
 		$dateStr = implode('#', $datesAr);
+		
 		foreach ($datesAr as $key => $value) {
 			$c = lab_schedule::where('lbs_dates_period','like', '%'.$value.'%')
 			->where('lbs_type', 'reguler')
+			->where('lbs_lab',$lab_id)
 			->first();
 			if ($c != null) {
 				// echo $c ."<br>";
@@ -79,7 +81,7 @@ class ScheduleController extends Controller
 				->where('lscd_sch', $c->lbs_id)
 				->select('lscd_sch','lsct_date_id', 'lsct_time_id','lti_id')
 				->get();
-				// echo $check_dt->lbs_id;
+				// die();
 				foreach ($check_dt as $key => $svalue) {
 					echo $svalue.'<br>';
 					if (in_array($svalue->lti_id, $request->inp_time)) {
@@ -89,6 +91,7 @@ class ScheduleController extends Controller
 				}
 			}
 		}
+		// die();
 		$data_sch = [
 			'lbs_id' => $id_lab_sch,
 			'lbs_lab' =>  $request->lab_id,
@@ -123,6 +126,7 @@ class ScheduleController extends Controller
 	public function actionUpdateLabSch(Request $request)
 	{
 		$user = Auth::user();
+		$lab_id = $request->lab_id;
 		$dtStart = Carbon::parse(date('Y-m-d', strtotime($request->inp_dt_start)))->format('Y-m-d');
 		$dtEnd = Carbon::parse(date('Y-m-d', strtotime($request->inp_dt_start)))->format('Y-m-d');
 		$period = CarbonPeriod::create($dtStart, $dtEnd);
@@ -135,14 +139,15 @@ class ScheduleController extends Controller
 		foreach ($datesAr as $key => $value) {
 			$c = lab_schedule::where('lbs_dates_period', 'like', '%' . $value . '%')
 				->where('lbs_type', 'reguler')
+				->where('lbs_lab', $lab_id)
 				->first();
 			if ($c != null) {
 				// echo $c ."<br>";
 				$check_dt = Lab_sch_date::join('lab_sch_times', 'lab_sch_dates.lscd_id', '=', 'lab_sch_times.lsct_date_id')
 				->join('laboratory_time_options', 'lab_sch_times.lsct_time_id', '=', 'laboratory_time_options.lti_id')
 				->where('lscd_sch', $c->lbs_id)
-					->select('lscd_sch', 'lsct_date_id', 'lsct_time_id', 'lti_id')
-					->get();
+				->select('lscd_sch', 'lsct_date_id', 'lsct_time_id', 'lti_id')
+				->get();
 				// echo $check_dt->lbs_id;
 				foreach ($check_dt as $key => $svalue) {
 					echo $svalue . '<br>';
@@ -177,7 +182,8 @@ class ScheduleController extends Controller
 		Lab_sch_time::insert($data_times);
 		Lab_sch_date::where('lscd_id', $request->lscd_id)->update(['lscd_day' => $request->inp_day]);
 		Lab_schedule::where('lbs_id', $request->lbs_id)->update($data);
-		return redirect()->back();
+		// return redirect()->back();
+		return redirect()->route('data_jadwal_reguler', ['id' => $request->lab_id]);
 	}
 	/* Tags:... */
 	public function dataSchReguler(Request $request)

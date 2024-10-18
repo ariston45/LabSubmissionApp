@@ -14,8 +14,11 @@ SIPLAB | Dashboard
 		<div class="box-header with-border">
 			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Users</h3>
 			<div class="pull-right">
+				<a href="{{ url('pengaturan/user/sync-lecture') }}">
+					<button class="btn btn-flat btn-xs btn-default"><i class="ri-refresh-line" style="margin-right: 4px;"></i> Sinkron Data Dosen </button>
+				</a>
 				<a href="{{ url('pengaturan/user/form-input-user') }}">
-					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah </button>
+					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah User</button>
 				</a>
 			</div>
 		</div>

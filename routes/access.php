@@ -246,8 +246,14 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('update-data-user', [PengaturanController::class, 'actionUpdateUser'])->name('update_data_user');
 		Route::post('update-data-profile', [PengaturanController::class, 'actionUpdateProfile'])->name('update_data_profile');
 		Route::post('update-datasource', [PengaturanController::class, 'actionUpdateDataSource'])->name('update_datasource');
+		Route::get('user/sync-lecture', [DataController::class, 'actionSyncLecture'])->name('action_sync_lecture');
 	});
 	/*************************************************************************************************************************************************/
+	#for Test
+	Route::prefix('sync')->group(function () {
+		
+	});
+
 	Route::prefix('notif')->group(function () {
 		Route::get('send_email',function(){
 			$data = [

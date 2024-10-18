@@ -51,8 +51,9 @@ class ScheduleController extends Controller
 	{
 		$lab_id = $request->id;
 		$data_lab = Laboratory::where('lab_id', $lab_id)->first();
+		$users = User::whereIn('level', ['LECTURE', 'LAB_HEAD', 'LAB_SUBHEAD', 'LAB_TECHNICIAN'])->get();
 		$times = Laboratory_time_option::get();
-		return view('contents.content_form.form_input_sch', compact('lab_id', 'data_lab', 'times'));
+		return view('contents.content_form.form_input_sch', compact('lab_id', 'data_lab', 'times','users'));
 	}
 	public function actionInputLabSch(Request $request)
 	{

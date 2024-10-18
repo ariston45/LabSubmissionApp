@@ -75,7 +75,7 @@ class PengaturanController extends Controller
 		if ($check_email != null) {
 			return redirect()->back()->withInput($request->input())->withErrors(['check_email' => 'Alamat email sudah didaftarkan.']);
 		}
-		$storeUser = User::insert($data);
+		User::insert($data);
 		User_detail::insert($data_ii);
 		return redirect()->route('setting_user');
 	}
@@ -92,9 +92,6 @@ class PengaturanController extends Controller
 	}
 	public function actionUpdateRumpun(Request $request)
 	{
-		$data = [
-			'lag_name' => $request->inp_name,
-		];
 		Ft_group::where('lag_id',$request->inp_id)->update(['lag_name'=>$request->inp_name]);
 		return redirect()->route('setting_rumpun');
 	}

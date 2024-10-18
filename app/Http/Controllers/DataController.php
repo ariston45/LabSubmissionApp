@@ -14,11 +14,12 @@ use App\Models\Laboratory_facility;
 use App\Models\Laboratory_labtest;
 use App\Models\Laboratory_labtest_facility;
 use App\Models\Laboratory_technician;
-
+use App\Models\Unesa_data;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\User_detail;
 use Auth;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Storage;
 use DataTables;
 use Str;
@@ -1319,5 +1320,88 @@ class DataController extends Controller
 			];
 		}
 		return $data;
+	}
+	/* Tags:... */
+	public function actionSyncLecture(Request $request)
+	{
+		$data = Unesa_data::where("api_code_name", 'data_dosen')->first();
+		if ($data->api_url_status == 'aktif') {
+			$url = $data->api_url;
+			$client = new Client();
+			$response = $client->request('GET', $url, [
+				'headers' => [
+					'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+					'Accept' => 'application/json',
+				],
+			]);
+			$data = json_decode($response->getBody(), true);
+			$dataCollection = collect($data);
+		} else {
+			$path = Storage::url('data_source/' . $data->api_file_data);
+			$url = url($path);
+			$client = new Client();
+			$response = $client->request('GET', $url, [
+				'headers' => [
+					'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+					'Accept' => 'application/json',
+				],
+			]);
+			$data = json_decode($response->getBody(), true);
+			$dataCollection = collect($data)->values();
+		}
+		$i = 0;
+		$j = 0;
+		$id = genIdUser();
+		$data_tabel = [];
+		foreach ($dataCollection as $key => $value) {
+			$user_lecture[$key] = User::where('email', $value['email'])
+			->first();
+			if ($user_lecture[$key] == null) {
+				$data_tabel[$key]= [
+					'nama' => $value['nama'],
+					'email'=> $value['email'],	
+					'prodi' => $value['prodi'],
+				];
+				$data_unregistered[$i] = [
+					'id' => $id,
+					'no_id' => mt_rand(1, 10000000000000),
+					'username' => null,
+					'status' => 'active',
+					'email' => $value['email'],
+					'nip' => null,
+					'rumpun_id' => '0',
+					'name' => $value['nama'],
+					'level' => 'LECTURE',
+					'email_verified_at' => date('Y-m-d H:i:s'),
+					'password' => bcrypt('open@123'),
+				];
+				$data_unregistered_det[$i] = [
+					'usd_user' => $id,
+					'usd_phone' => null,
+					'usd_address' => null,
+					'usd_prodi' => $value['prodi'],
+					'usd_fakultas' => 'Fakultas Teknik',
+					'usd_universitas' => 'Universitas Negeri Surabaya',
+				];
+				$i++;
+				$id++;
+			}else{
+				#update to lecture
+				if (in_array($user_lecture[$key]->level,['PUBLIC_MEMBER', 'PUBLIC_NON_MEMBER'])) {
+					$data_tabel[$key] = [
+						'nama' => $value['nama'],
+						'email' => $value['email'],
+						'prodi' => $value['prodi'],
+					];
+					User::where('id', $user_lecture[$key]->id)->update(['level'=>'LECTURE']);
+				};
+			}
+		}
+		if (isset($data_unregistered)) {
+			# code...
+			User::insert($data_unregistered);
+			User_detail::insert($data_unregistered_det);
+		}
+		return view('contents.content_datalist.data_sinkronisasi_dosen', compact('data_tabel'));
 	}
 }

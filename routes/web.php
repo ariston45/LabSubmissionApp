@@ -23,7 +23,8 @@ use App\Http\Controllers\TestController;
 
 Route::get('/', [LandController::class, 'viewFirstPage'])->name('landing');
 Route::get('page-laboratorium', [LandController::class, 'viewLaboratoriumPage']);
-Route::get('page-laboratorium/detail-laboratorium/{id}', [LandController::class, 'viewLaboratoriumDetail']);
+Route::get('page-laboratorium/detail-laboratorium/{id}', [LandController::class, 'viewLaboratoriumDetail_a']);
+Route::get('page-laboratorium/detail-laboratorium-b/{id}', [LandController::class, 'viewLaboratoriumDetail_b']);
 Route::get('page-layanan', [LandController::class, 'viewLayananPage']);
 Route::get('page-layanan/detail-uji-lab/{id}', [LandController::class, 'viewUjiLabDetail']);
 Route::get('page-kontak', [LandController::class, 'viewKontakPage']);
@@ -39,6 +40,7 @@ Route::post('source-data-labs-find', [DataController::class, 'sourceDataLabsFind
 Route::post('source-data-lab-test', [DataController::class, 'sourceDataLabTest'])->name('source-data-lab-test');
 Route::post('source-data-filter-lab', [DataController::class, 'sourceDataFilterLab'])->name('source-data-filter-lab');
 Route::post('source-data-sch-lab-open', [LaboratoryController::class, 'sourceDataScheduleLabJson'])->name('source_data_sch_lab_open');
+Route::post('source-data-sch-lab-open-reg', [LaboratoryController::class, 'sourceDataScheduleLabAkademicJson'])->name('source_data_sch_lab_open_reg');
 #eksternal data
 Route::prefix('unesa_api')->group(function () {
   Route::get('skripsi_mahasiswa_ft', [ApiUnesaController::class, 'DataMahasiswa'])->name('data_mahasiswa');

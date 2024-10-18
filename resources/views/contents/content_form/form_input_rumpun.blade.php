@@ -6,16 +6,16 @@ SIPLAB | Input Rumpun
 @section('breadcrumb')
 <h4>Pengaturan</h4>
 <ol class="breadcrumb">
-  <li><a href="#"><i class="fa fa-home"></i> Laboratorium</a></li>
-  <li class=""><a href="#">Jadwal Laboratorium</a></li>
-  <li class="active"><a href="#">Form Jadwal Laboratorium</a></li>
+  <li><a href="#"><i class="fa fa-home"></i> Pengaturan</a></li>
+  <li class=""><a href="#">Rumpun</a></li>
+  <li class="active"><a href="#">Form Update Rumpun</a></li>
 </ol>
 @endsection
 @section('content')
 <div class="col-md-12">
   <div class="box box-primary">
     <div class="box-header with-border">
-      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Input Jadwal Laboratorium</h3>
+      <h3 class="box-title" style="color: #0277bd"><i class="ri-survey-line" style="margin-right: 4px;"></i> Form Update Rumpun</h3>
       <div class="pull-right">
         <a href="{{ url('pengaturan/rumpun') }}">
           <button class="btn btn-flat btn-xs btn-danger"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tutup</button>
@@ -34,7 +34,8 @@ SIPLAB | Input Rumpun
             </span>
           </label>
           <div class="col-sm-12 col-md-9">
-            <input type="text" id="inp-name" class="form-control" name="inp_name" placeholder="Input nama.." autocomplete="new-password" required>
+            <input type="hidden" name="inp_id" value="{{ $data_rumpun->lag_id }}">
+            <input type="text" id="inp-name" class="form-control" name="inp_name" value="{{ $data_rumpun->lag_name }}" placeholder="Input nama.." autocomplete="new-password" required>
             @if ($errors->has('inp_name'))
 						<span style="color: red;"><i>{{ $errors->first('inp_name') }}</i></span>
 						@endif

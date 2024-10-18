@@ -99,7 +99,7 @@ class LandController extends Controller
 		}
 	}
 	/* Tags:... */
-	public function viewLaboratoriumDetail(Request $request)
+	public function viewLaboratoriumDetail_a(Request $request)
 	{
 		$lab_id = $request->id;
 		$data_lab = Laboratory::leftJoin('users','laboratories.lab_head','=','users.id')
@@ -119,6 +119,27 @@ class LandController extends Controller
 		->get();
 		$user_kalab = User::where('level', 'LAB_HEAD')->get();
 		return view('contents.content_landing.detail_laboratorium',compact('lab_id','user_kalab','data_lab', 'data_technicians', 'data_time', 'data_uji_lab', 'data_facility'));
+	}
+	public function viewLaboratoriumDetail_b(Request $request)
+	{
+		$lab_id = $request->id;
+		$data_lab = Laboratory::leftJoin('users', 'laboratories.lab_head', '=', 'users.id')
+		->where('lab_id', $request->id)
+			->first();
+		$data_technicians = Laboratory_technician::leftJoin('users', 'laboratory_technicians.lat_tech_id', '=', 'users.id')
+		->where('lat_laboratory', $request->id)
+			->get();
+		$data_time = Laboratory_working_time::join('laboratories', 'laboratory_working_times.ltw_lab_id', '=', 'laboratories.lab_id')
+		->where('lab_id', $request->id)
+			->get();
+		$data_uji_lab = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id', '=', 'laboratories.lab_id')
+		->where('lab_id', $request->id)
+			->get();
+		$data_facility = Laboratory_facility::join('laboratories', 'laboratory_facilities.laf_laboratorium', '=', 'laboratories.lab_id')
+		->where('lab_id', $request->id)
+			->get();
+		$user_kalab = User::where('level', 'LAB_HEAD')->get();
+		return view('contents.content_landing.detail_laboratorium_i', compact('lab_id', 'user_kalab', 'data_lab', 'data_technicians', 'data_time', 'data_uji_lab', 'data_facility'));
 	}
 
 	public function viewUjiLabDetail(Request $request)

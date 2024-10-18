@@ -92,6 +92,9 @@ SIPLAB | Dashboard
           <div class="col-sm-12 col-md-9">
             <select id="inp-res-person" class="form-control" name="inp_res_person" placeholder="Input dosen atau penanggung jawab..">
               <option value="{{ null }}"></option>
+              @foreach ($users as $list)
+                <option value="{{ $list->id }}">{{ $list->name }}</option>
+              @endforeach
             </select>
             @if ($errors->has('inp_res_person'))
 						<span style="color: red;"><i>{{ $errors->first('inp_res_person') }}</i></span>
@@ -143,31 +146,6 @@ SIPLAB | Dashboard
 <script src="{{ url('assets/plugins/tom-select/dist/js/tom-select.base.js') }}"></script>
 {{-- varibles --}}
 <script>
-  var dataOption_users = [];
-  new function () {  
-    $.ajaxSetup({
-			headers: {
-				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-			}
-		});
-		$.ajax({
-			type: 'POST',
-			url: "{{ route('source-data-users-lectures') }}",
-			data: {
-				"level": null,
-			},
-			async: false,
-			success: function(result) {
-        var dataOpt_users = JSON.parse(result);
-				for (let index = 0; index < dataOpt_users.length; index++) {
-          dataOption_users.push({
-            id:dataOpt_users[index].id,
-            title:dataOpt_users[index].title,
-          });
-        }
-			},
-		});
-  };
   var select_jam = new TomSelect("#inp-time",{
     create: false,			
 		valueField: 'id',
@@ -188,7 +166,6 @@ SIPLAB | Dashboard
 		valueField: 'id',
 		labelField: 'title',
 		searchField: 'title',
-    options: dataOption_users,
 		render: {
 			option: function(data, escape) {
 				return '<div><span class="title">'+escape(data.title)+'</span></div>';

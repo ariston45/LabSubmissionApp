@@ -25,13 +25,9 @@ SIPLAB | Dashboard
         </ol>
       </div>
     </nav>
-  </div><!-- End Page Title -->
-
-  <!-- Courses Course Details Section -->
+  </div>
   <section id="courses-course-details" class="courses-course-details section" style="background-color: aliceblue;">
-
     <div class="container" data-aos="fade-up">
-
       <div class="row">
         <div class="col-lg-8">
           @if ($data_lab->lab_img == null)
@@ -45,7 +41,6 @@ SIPLAB | Dashboard
           </div>
         </div>
         <div class="col-lg-4">
-
           <div class="course-info justify-content-between align-items-center">
             <h5 style="color: #0b4d70;">Kalab</h5>
             <p style="color: #444444cc;">
@@ -54,12 +49,10 @@ SIPLAB | Dashboard
             @endforeach
             </p>
           </div>
-
           <div class="course-info justify-content-between align-items-center">
             <h5 style="color: #0b4d70;">Kasublab</h5>
             <p style="color: #444444cc;">{{ $data_lab->name }}</p>
           </div>
-
           <div class="course-info justify-content-between align-items-center">
             <h5 style="color: #0b4d70;">Teknisi</h5>
             <p style="color: #444444cc;">
@@ -109,17 +102,14 @@ SIPLAB | Dashboard
                   <div class="row">
                     <div class="col-md-12 mb-3">
                       <a href="{{url('page-laboratorium/detail-laboratorium/'.$lab_id.'#init-jadwal')}}">
-                        <button id="btn-sch-1" class="btn btn-primary">Jadwal Pinjam</button>
+                        <button id="btn-sch-1" class="btn btn-secondary">Jadwal Pinjam</button>
                       </a>
                       <a href="{{url('page-laboratorium/detail-laboratorium-b/'.$lab_id.'#init-jadwal')}}">
-                        <button id="btn-sch-2" class="btn btn-secondary">Jadwal Reguler</button>
+                        <button id="btn-sch-2" class="btn btn-primary">Jadwal Reguler</button>
                       </a>
                     </div>
                   </div>
-                  <div id="field-calender" style="display:block;">
-                    <div id="calender" style="width: 100%;"></div>
-                  </div>
-                  <div id="field-calender-reguler" style="display:none;">
+                  <div id="field-calender-reguler" style="display:block;">
                     <div id="calender_reguler" style="width: 100%;"></div>
                   </div>
                 </div>
@@ -423,7 +413,7 @@ SIPLAB | Dashboard
 <script>
   document.addEventListener('DOMContentLoaded', function() {
 		var now = '{{ date("Y-m-d H:i:s") }}';
-		var calendar1 = new FullCalendar.Calendar(document.getElementById('calender'), {
+		var calendar2 = new FullCalendar.Calendar(document.getElementById('calender_reguler'), {
 			schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
 			themeSystem: 'standard',
 			locale: 'id',
@@ -458,7 +448,7 @@ SIPLAB | Dashboard
 			events: function(fetchInfo, successCallback, failureCallback){
 				var parStart = fetchInfo.startStr;
 				var parEnd = fetchInfo.endStr;
-				var eventSource = actSourceSchedule(parStart,parEnd);
+				var eventSource = actSourceScheduleReguler(parStart,parEnd);
 				successCallback(eventSource);
 			},
       eventContent: function(arg) {
@@ -473,10 +463,11 @@ SIPLAB | Dashboard
         return{
           html: '<span class="badge bg-primary fc-event-title">'+evn_time+' : '+evn_title+'</span>'
         }
+				
 			},
       
 		});
-		calendar1.render();
+		calendar2.render();
 	});
 </script>
 @endpush

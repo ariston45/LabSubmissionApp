@@ -1589,25 +1589,28 @@ class DatatablesController extends Controller
 	}
 	public function sourceDataLabtest(Request $request)
 	{
+		$lab_id = $request->lab_id;
 		$user = DataAuth();
 		if($user->level == 'LAB_SUBHEAD'){
 			$data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id','=', 'laboratories.lab_id')
 			->join('users', 'laboratories.lab_head', '=', 'users.id')
 			->where('lab_head',$user->id)
+			->where('lab_id', $lab_id)
 			->get();
 		}elseif($user->level == 'LAB_TECHNICIAN'){
-			$lab_ar = Laboratory_technician::where('lat_tech_id',$user->id)->get();
-			$lab_ids = [];
-			foreach ($lab_ar as $key => $value) {
-				$lab_ids[$key] = $value->lat_laboratory;
-			}
+			// $lab_ar = Laboratory_technician::where('lat_tech_id',$user->id)->get();
+			// $lab_ids = [];
+			// foreach ($lab_ar as $key => $value) {
+			// 	$lab_ids[$key] = $value->lat_laboratory;
+			// }
 			$data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id', '=', 'laboratories.lab_id')
 			->join('users', 'laboratories.lab_head', '=', 'users.id')
-			->whereIn('lab_id',$lab_ids)
+			->where('lab_id', $lab_id)
 			->get();
 		}else{
 			$data = Laboratory_labtest::join('laboratories', 'laboratory_labtests.lsv_lab_id', '=', 'laboratories.lab_id')
 			->join('users', 'laboratories.lab_head','=','users.id')
+			->where('lab_id' , $lab_id)
 			->get();
 		}
 		return DataTables::of($data)

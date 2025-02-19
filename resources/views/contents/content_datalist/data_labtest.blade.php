@@ -11,81 +11,81 @@ SIPLAB | Dashboard
 </ol>
 @endsection
 @section('content')
-<div class="col-md-12">
-	<div class="box box-primary">
-		<div class="box-header with-border">
-			<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Uji Laboratorium</h3>
-			<div class="pull-right">
-				<a href="{{ url('uji_laboratorium/labtest/form-tambah-ujilab/'.$data_lab->lab_id) }}">
-					<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah Uji Lab</button>
-				</a>
-				<a href="{{ url('laboratorium') }}">
-					<button class="btn btn-flat btn-xs btn-danger"><i class="ri-close-circle-line" style="margin-right: 4px;"></i> Tutup</button>
-				</a>
+	<div class="col-md-12">
+		<div class="box box-primary">
+			<div class="box-header with-border">
+				<h3 class="box-title" style="color: #0277bd"><i class="ri-database-line" style="margin-right: 4px;"></i> Data Uji Laboratorium</h3>
+				<div class="pull-right">
+					<a href="{{ url('uji_laboratorium/labtest/form-tambah-ujilab/'.$data_lab->lab_id) }}">
+						<button class="btn btn-flat btn-xs btn-primary"><i class="ri-add-circle-line" style="margin-right: 4px;"></i> Tambah Uji Lab</button>
+					</a>
+					<a href="{{ url('uji_laboratorium') }}">
+						<button class="btn btn-flat btn-xs btn-danger"><i class="ri-close-circle-line" style="margin-right: 4px;"></i> Tutup</button>
+					</a>
+				</div>
 			</div>
-		</div>
-		<div class="box-body">
-			<table id="tabel-lab-name" class="table">
-				<tbody>
-					<tr>
-						<td style="width: 20%;"><b>Nama Laboratorium</b></td>
-						<td style="width: 1%;">:</td>
-						<td style="width: 79%;">{{ $data_lab->lab_name }}</td>
-					</tr>
-					<tr>
-						<td style="width: 20%;"><b>Kepala Laboratorium</b></td>
-						<td style="width: 1%;">:</td>
-						<td style="width: 79%;">{{ $data_lab->name }}</td>
-					</tr>
-				</tbody>
-			</table>
-			<div class="clearfix"></div>
-			<table id="tabel-failitas" class="table tabel-custom table-condensed">
-				<thead>
-					<tr>
-						<th style="width: 5%">No</th>
-						<th style="width: 25%">Nama Uji Lab</th>
-						<th style="width: 25%">Deskripsi</th>
-						<th style="width: 20%">Alat</th>
-						<th style="width: 15%">Biaya Per Sampel</th>
-						<th style="width: 10%;text-align:center;">Opsi</th>
-					</tr>
-				</thead>
-			</table>
+			<div class="box-body">
+				<table id="tabel-lab-name" class="table">
+					<tbody>
+						<tr>
+							<td style="width: 20%;"><b>Nama Laboratorium</b></td>
+							<td style="width: 1%;">:</td>
+							<td style="width: 79%;">{{ $data_lab->lab_name }}</td>
+						</tr>
+						<tr>
+							<td style="width: 20%;"><b>Kepala Laboratorium</b></td>
+							<td style="width: 1%;">:</td>
+							<td style="width: 79%;">{{ $data_lab->name }}</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="clearfix"></div>
+				<table id="tabel-failitas" class="table tabel-custom table-condensed">
+					<thead>
+						<tr>
+							<th style="width: 5%">No</th>
+							<th style="width: 25%">Nama Uji Lab</th>
+							<th style="width: 25%">Deskripsi</th>
+							<th style="width: 20%">Alat</th>
+							<th style="width: 15%">Biaya Per Sampel</th>
+							<th style="width: 10%;text-align:center;">Opsi</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
 		</div>
 	</div>
-</div>
-<div class="modal fade" id="modalInputTeechnicians" role="dialog">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Panduan Ujian</h4>
-			</div>
-			<form action="{{ route('input_user_tech') }}" method="POST">
-				@csrf
-				<div class="modal-body">
-					<input type="hidden" name="lab_id" value="{{ $data_lab->lab_id }}">
-					<div class="form-group has-feedback {{ $errors->has('inp_laboratorium') ? ' has-error' : '' }}" style="margin-bottom: 0px;">
-						<label>
-							Teknisi
-						</label>
-						<select name="inp_teknisi[]" id="inp-teknisi" class="form-control" placeholder="Input nama user..">
-							<option value=""></option>
-						</select>
-						@if ($errors->has('inp_laboratorium'))
-						<span style="color: red;"><i>{{ $errors->first('inp_laboratorium') }}</i></span>
-						@endif
+	<div class="modal fade" id="modalInputTeechnicians" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Panduan Ujian</h4>
+				</div>
+				<form action="{{ route('input_user_tech') }}" method="POST">
+					@csrf
+					<div class="modal-body">
+						<input type="hidden" name="lab_id" value="{{ $data_lab->lab_id }}">
+						<div class="form-group has-feedback {{ $errors->has('inp_laboratorium') ? ' has-error' : '' }}" style="margin-bottom: 0px;">
+							<label>
+								Teknisi
+							</label>
+							<select name="inp_teknisi[]" id="inp-teknisi" class="form-control" placeholder="Input nama user..">
+								<option value=""></option>
+							</select>
+							@if ($errors->has('inp_laboratorium'))
+							<span style="color: red;"><i>{{ $errors->first('inp_laboratorium') }}</i></span>
+							@endif
+						</div>
 					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
-					<button type="submit" class="btn btn-sm btn-primary btn-flat"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Simpan</button>
-				</div>
-			</form>
+					<div class="modal-footer">
+						<button type="reset" class="btn btn-sm btn-default btn-flat" data-dismiss="modal"><i class="ri-eraser-fill" style="margin-right: 5px;"></i>Tutup</button>
+						<button type="submit" class="btn btn-sm btn-primary btn-flat"><i class="ri-save-3-line" style="margin-right: 5px;"></i>Simpan</button>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
-</div>
 @endsection
 @push('css')
 <link rel="stylesheet" href="{{ url('assets/plugins/datatables/media/css/dataTables.bootstrap.css') }}">
